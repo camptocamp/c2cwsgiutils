@@ -1,4 +1,3 @@
-alembic==0.8.10
 cee_syslog_handler==0.3.4
 cornice==2.3.0
 flake8==3.2.1

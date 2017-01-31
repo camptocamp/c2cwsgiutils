@@ -30,8 +30,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'alembic==0.8.10',
         'cee_syslog_handler==0.3.4',
+        'netifaces==0.10.5',
         'psycopg2==2.6.2',
         'pyramid==1.7.3',
         'pyramid_tm==1.1.1',

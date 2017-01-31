@@ -17,6 +17,16 @@ tweens = Tweens()
 
 
 def setup_session(config, master_prefix, slave_prefix):
+    """
+    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
+    DB connection.
+    :param config: The pyramid Configuration object
+    :param master_prefix: The prefix for the master connection configuration entries in the application
+                          settings
+    :param slave_prefix: The prefix for the slave connection configuration entries in the application
+                          settings
+    :return: The SQLAlchemy session
+    """
     def db_chooser_tween_factory(handler, registry):
         """
         Tween factory to route to a slave DB for read-only queries.

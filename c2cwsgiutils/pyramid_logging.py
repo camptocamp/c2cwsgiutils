@@ -53,4 +53,7 @@ def _set_context(event):
 
 
 def install_subscriber(config):
+    """
+    Install a pyramid  event handler that adds the request information
+    """
     config.add_subscriber(_set_context, pyramid.events.NewRequest)

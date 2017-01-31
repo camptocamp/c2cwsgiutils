@@ -1,6 +1,7 @@
 from c2cwsgiutils import services
 from pyramid.httpexceptions import HTTPForbidden
 
+from c2cwsgiutils.stats import timer_context
 from c2cwsgiutils_app import models
 
 
@@ -16,7 +17,8 @@ def ping(request):
 
 @hello_service.get()
 def hello_get(request):
-    hello = models.DBSession.query(models.Hello).first()
+    with timer_context(['sql', 'read_hello']):
+        hello = models.DBSession.query(models.Hello).first()
     return {'value': hello.value}
 
 

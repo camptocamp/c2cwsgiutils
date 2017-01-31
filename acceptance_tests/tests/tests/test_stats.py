@@ -5,3 +5,4 @@ def test_ok(app_connection):
     assert 'render/GET/hello/200' in stats['timers']
     assert 'route/GET/hello/200' in stats['timers']
     assert 'sql/SELECT_FROM_hello_LIMIT_?'
+    assert 'sql/read_hello'

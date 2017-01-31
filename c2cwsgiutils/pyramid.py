@@ -5,6 +5,10 @@ from c2cwsgiutils import stats, pyramid_logging
 
 
 def includeme(config):
+    """
+    Setup all the pyramid services and event handlers provided by this library.
+    :param config: The pyramid Configuration
+    """
     config.include(pyramid_tm.includeme)
     config.include(cornice.includeme)
     stats.init(config)

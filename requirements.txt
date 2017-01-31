@@ -1,0 +1,12 @@
+alembic==0.8.10
+cee_syslog_handler==0.3.4
+cornice==2.3.0
+flake8==3.2.1
+netifaces==0.10.5
+psycopg2==2.6.2
+pyramid==1.7.3
+pyramid_tm==1.1.1
+SQLAlchemy==1.1.5
+zope.interface==4.3.3
+zope.sqlalchemy==0.7.7
+

@@ -1,0 +1,6 @@
+/acceptance_tests/app/c2cwsgiutils/
+/acceptance_tests/app/requirements.txt
+/acceptance_tests/app/setup.cfg
+/acceptance_tests/tests/c2cwsgiutils/
+/acceptance_tests/tests/setup.cfg
+/reports/

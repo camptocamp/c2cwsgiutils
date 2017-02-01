@@ -17,6 +17,9 @@ def ping(request):
 
 @hello_service.get()
 def hello_get(request):
+    """
+    Will use the slave
+    """
     with timer_context(['sql', 'read_hello']):
         hello = models.DBSession.query(models.Hello).first()
     return {'value': hello.value}
@@ -24,6 +27,18 @@ def hello_get(request):
 
 @hello_service.put()
 def hello_put(request):
+    """
+    Will use the master
+    """
+    hello = models.DBSession.query(models.Hello).first()
+    return {'value': hello.value}
+
+
+@hello_service.post()
+def hello_post(request):
+    """
+    Will use the slave (overridden by the config).
+    """
     hello = models.DBSession.query(models.Hello).first()
     return {'value': hello.value}
 

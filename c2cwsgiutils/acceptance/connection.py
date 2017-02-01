@@ -46,7 +46,7 @@ class Connection:
         finally:
             r.close()
 
-    def put_json(self, url, json, expected_status=200, headers={}, cors=True):
+    def put_json(self, url, json=None, expected_status=200, headers={}, cors=True):
         """
         POST the given URL (relative to the root of API).
         """

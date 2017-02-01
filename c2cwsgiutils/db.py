@@ -16,15 +16,23 @@ class Tweens(object):
 tweens = Tweens()
 
 
-def setup_session(config, master_prefix, slave_prefix):
+def setup_session(config, master_prefix, slave_prefix="", force_master=None, force_slave=None):
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection.
+
+    The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
+    all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
+    Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
+    path includes the route_prefix.
+
     :param config: The pyramid Configuration object
     :param master_prefix: The prefix for the master connection configuration entries in the application
                           settings
     :param slave_prefix: The prefix for the slave connection configuration entries in the application
-                          settings
+                         settings
+    :param force_master: The method/paths that needs to use the master
+    :param force_slave: The method/paths that needs to use the slave
     :return: The SQLAlchemy session
     """
     def db_chooser_tween_factory(handler, registry):
@@ -33,17 +41,16 @@ def setup_session(config, master_prefix, slave_prefix):
         Must be put over the pyramid_tm tween and share_config must have a "slave" engine
         configured.
         """
-        chooser_settings = registry.settings.get("db_chooser", {})
-        master_paths = [re.compile(i.replace("//", "/")) for i in chooser_settings.get("master", [])]
-        slave_paths = [re.compile(i.replace("//", "/")) for i in chooser_settings.get("slave", [])]
+        master_paths = list(map(re.compile, force_master)) if force_master else []
+        slave_paths = list(map(re.compile, force_slave)) if force_slave else []
 
         def db_chooser_tween(request):
             session = db_session()
             old = session.bind
             method_path = "%s %s" % (request.method, request.path)
-            force_master = any(r.match(method_path) for r in master_paths)
-            if not force_master and (request.method in ("GET", "OPTIONS") or
-                                     any(r.match(method_path) for r in slave_paths)):
+            has_force_master = any(r.match(method_path) for r in master_paths)
+            if not has_force_master and (request.method in ("GET", "OPTIONS") or
+                                         any(r.match(method_path) for r in slave_paths)):
                 LOG.debug("Using slave database for: %s", method_path)
                 session.bind = ro_engine
             else:
@@ -60,8 +67,8 @@ def setup_session(config, master_prefix, slave_prefix):
     settings = config.registry.settings
     rw_engine = sqlalchemy.engine_from_config(settings, master_prefix + ".")
 
-    # Setup a replica DB connection and add a tween to use it.
-    if settings[master_prefix + ".url"] != settings[slave_prefix + ".url"]:
+    # Setup a slave DB connection and add a tween to use it.
+    if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
         LOG.info("Using a slave DB for reading")
         ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
         tweens.__setattr__(master_prefix, db_chooser_tween_factory)

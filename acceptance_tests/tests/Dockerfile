@@ -19,7 +19,7 @@ RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE
     chmod a+x /usr/bin/docker-compose
 
 # Install python requirements
-COPY requirements.txt ./requirements.txt
+COPY requirements.txt c2cwsgiutils-0.0.0-py3-none-any.whl ./
 RUN pip install -r ./requirements.txt
 
 COPY . ./

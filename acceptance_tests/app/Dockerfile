@@ -5,7 +5,7 @@ MAINTAINER Camptocamp "info@camptocamp.com"
 # after changing code
 
 # Step #1 copy only the stuff needed to install the dependencies and run the script
-COPY requirements.txt setup.py /app/
+COPY requirements.txt setup.py c2cwsgiutils-0.0.0-py3-none-any.whl /app/
 COPY .whiskey /app/.whiskey
 RUN mod_wsgi-docker-build
 

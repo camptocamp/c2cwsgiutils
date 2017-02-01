@@ -24,16 +24,16 @@ all: lint acceptance
 lint: lint_code lint_test_app lint_acceptance
 
 .PHONY: lint_code
-lint_code: build_test_app
-	docker run --rm $(DOCKER_BASE)_test_app:$(DOCKER_TAG) flake8 /app/c2cwsgiutils
+lint_code: .venv/timestamp
+	.venv/bin/flake8 c2cwsgiutils
 
 .PHONY: lint_test_app
-lint_test_app: build_test_app
-	docker run --rm $(DOCKER_BASE)_test_app:$(DOCKER_TAG) flake8 /app/c2cwsgiutils_app
+lint_test_app: .venv/timestamp
+	.venv/bin/flake8 acceptance_tests/app/c2cwsgiutils_app
 
 .PHONY: lint_acceptance
-lint_acceptance: build_acceptance
-	docker run --rm $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) flake8 /acceptance_tests/tests
+lint_acceptance: .venv/timestamp
+	.venv/bin/flake8 acceptance_tests/tests/tests
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app
@@ -46,21 +46,31 @@ acceptance: build_acceptance build_test_app
 	exit $$status$$?
 
 .PHONY: build_acceptance
-build_acceptance:
-	rsync -a c2cwsgiutils setup.cfg acceptance_tests/tests/
+build_acceptance: dist
+	cp dist/c2cwsgiutils-*-py3-none-any.whl acceptance_tests/tests/c2cwsgiutils-0.0.0-py3-none-any.whl
 	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) acceptance_tests/tests
 
 .PHONY: build_test_app
-build_test_app:
-	rsync -a c2cwsgiutils requirements.txt setup.cfg acceptance_tests/app/
+build_test_app: dist
+	cp dist/c2cwsgiutils-*-py3-none-any.whl acceptance_tests/app/c2cwsgiutils-0.0.0-py3-none-any.whl
+	cp setup.cfg acceptance_tests/app/
 	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) acceptance_tests/app
 
 .venv/timestamp: requirements.txt acceptance_tests/tests/requirements.txt
 	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv
-	.venv/bin/pip install junit2html -r requirements.txt -r acceptance_tests/tests/requirements.txt
+	.venv/bin/pip install -r requirements.txt
 	touch $@
 
 .PHONY: pull
 pull:
 	for image in `find -name Dockerfile | xargs grep --no-filename FROM | awk '{print $$2}' | sort -u`; do docker pull $$image; done
 	for image in `find -name "docker-compose*.yml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do docker pull $$image; done
+
+.PHONY: dist
+dist: .venv/timestamp
+	rm -rf build dist
+	.venv/bin/python setup.py bdist_wheel
+
+.PHONY: release
+release: dist
+	.venv/bin/twine upload dist/*.whl

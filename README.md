@@ -23,10 +23,10 @@ To see how to test such an application, look at
 [acceptance_tests/tests](acceptance_tests/tests).
 
 
-Build
------
+Developer info
+--------------
 
-You will need `docker` (>=1.12.0), `docker-compose` (>=1.10.0) and
+You will need `docker` (>=1.12.0), `docker-compose` (>=1.10.0), twine and
 `make` installed on the machine to play with this project.
 Check available versions of `docker-engine` with
 `apt-get policy docker-engine` and eventually force install the
@@ -38,3 +38,16 @@ To lint and test everything, run the following command:
 ```shell
 make
 ```
+
+Make sure you are strict with the version numbers:
+
+* bug fix version change: Nothing added, removed or changed in the API and only bug fix
+  version number changes in the dependencies
+* minor version change: The API must remain backward compatible and only minor version
+  number changes in the dependencies
+* major version change: The API and the dependencies are not backward compatible
+
+To make a release:
+
+* Change the the version in [setup.py](setup.py)
+* run `make release`

@@ -54,3 +54,8 @@ build_acceptance:
 build_test_app:
 	rsync -a c2cwsgiutils requirements.txt setup.cfg acceptance_tests/app/
 	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) acceptance_tests/app
+
+.venv/timestamp: requirements.txt acceptance_tests/tests/requirements.txt
+	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv
+	.venv/bin/pip install junit2html -r requirements.txt -r acceptance_tests/tests/requirements.txt
+	touch $@

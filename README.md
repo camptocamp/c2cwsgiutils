@@ -33,7 +33,7 @@ Check available versions of `docker-engine` with
 up-to-date version using a command similar to
 `apt-get install docker-engine=1.12.3-0~xenial`.
 
-To lint and test everything, run:
+To lint and test everything, run the following command:
 
 ```shell
 make

@@ -27,7 +27,7 @@ def wait_url(url):
     retry_timeout(what)
 
 
-def retry_timeout(what, timeout=20, interval=0.5):
+def retry_timeout(what, timeout=60, interval=0.5):
     timeout = time.time() + timeout
     while True:
         try:

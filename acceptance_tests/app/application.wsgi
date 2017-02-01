@@ -1,13 +1,4 @@
-import os
-from logging.config import fileConfig
-from pyramid.paster import get_app
+from c2cwsgiutils.wsgi import create_application
 
-root = "/app"
 
-configfile = os.path.join(root, "production.ini")
-
-# Load the logging config without using pyramid to be able to use environment variables in there.
-fileConfig(configfile, defaults=os.environ)
-
-application = get_app(configfile, 'main', options=os.environ)
-
+application = create_application()

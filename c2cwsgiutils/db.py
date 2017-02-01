@@ -33,7 +33,7 @@ def setup_session(config, master_prefix, slave_prefix="", force_master=None, for
                          settings
     :param force_master: The method/paths that needs to use the master
     :param force_slave: The method/paths that needs to use the slave
-    :return: The SQLAlchemy session
+    :return: The SQLAlchemy session, the R/W engine and the R/O engine
     """
     def db_chooser_tween_factory(handler, registry):
         """
@@ -78,4 +78,4 @@ def setup_session(config, master_prefix, slave_prefix="", force_master=None, for
 
     db_session = sqlalchemy.orm.scoped_session(
         sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
-    return db_session
+    return db_session, rw_engine, ro_engine

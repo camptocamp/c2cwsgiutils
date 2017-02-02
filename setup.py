@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-version = '0.0.2'
+version = '0.1.0'
 
 setup(
     name='c2cwsgiutils',
@@ -29,6 +29,7 @@ setup(
     install_requires=[
         'cee_syslog_handler==0.3.4',
         'cornice==2.4.0',
+        'gunicorn==19.6.0',
         'netifaces==0.10.5',
         'psycopg2==2.6.2',
         'pyramid==1.8.1',
@@ -39,8 +40,12 @@ setup(
         'zope.interface==4.3.3',
         'zope.sqlalchemy==0.7.7',
     ],
-    entry_points="""
-    # -*- Entry points: -*-
-    """,
+    entry_points={
+        'console_scripts': [
+        ]
+    },
+    scripts=[
+        'c2cwsgiutils_run'
+    ]
 )
 

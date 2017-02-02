@@ -1,1 +1,0 @@
---compress-responses --include-file=/app/.whiskey/custom_apache.conf --keep-alive-timeout=30

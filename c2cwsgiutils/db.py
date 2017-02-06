@@ -71,8 +71,9 @@ def setup_session(config, master_prefix, slave_prefix="", force_master=None, for
     if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
         LOG.info("Using a slave DB for reading")
         ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
-        tweens.__setattr__(master_prefix, db_chooser_tween_factory)
-        config.add_tween('c2cwsgiutils.db.tweens.' + master_prefix, over="pyramid_tm.tm_tween_factory")
+        tween_name =  master_prefix.replace('.', '_')
+        tweens.__setattr__(tween_name, db_chooser_tween_factory)
+        config.add_tween('c2cwsgiutils.db.tweens.' + tween_name, over="pyramid_tm.tm_tween_factory")
     else:
         ro_engine = rw_engine
 

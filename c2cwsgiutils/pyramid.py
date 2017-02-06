@@ -9,6 +9,7 @@ def includeme(config):
     Setup all the pyramid services and event handlers provided by this library.
     :param config: The pyramid Configuration
     """
+    config.add_settings(handle_exceptions=False)
     config.include(pyramid_tm.includeme)
     config.include(cornice.includeme)
     stats.init(config)

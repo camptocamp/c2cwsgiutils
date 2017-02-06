@@ -1,7 +1,11 @@
 #!/bin/bash
-
 if [ -z "$GUNICORN_PARAMS" ]
 then
     GUNICORN_PARAMS="-b :80 --threads 10 --workers 5"
 fi
-gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application
+
+while true
+do
+    gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application
+    sleep 1
+done

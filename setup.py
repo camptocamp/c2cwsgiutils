@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-version = '0.1.0'
+version = '0.2.0'
 
 setup(
     name='c2cwsgiutils',
@@ -30,6 +30,7 @@ setup(
         'cee_syslog_handler==0.3.4',
         'cornice==2.4.0',
         'gunicorn==19.6.0',
+        'lxml==3.7.2',
         'netifaces==0.10.5',
         'psycopg2==2.6.2',
         'pyramid==1.8.1',

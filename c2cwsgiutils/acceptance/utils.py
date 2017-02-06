@@ -1,6 +1,7 @@
 import logging
 import netifaces
 import os
+import pytest
 import requests
 import time
 
@@ -39,3 +40,6 @@ def retry_timeout(what, timeout=60, interval=0.5):
         if time.time() > timeout:
             assert False, "Timeout"
         time.sleep(interval)
+
+
+skipIfCI = pytest.mark.skipif(os.environ.get('IN_CI', "0") == "1", reason="Not running on CI")

@@ -1,5 +1,7 @@
 import re
+from lxml import etree
 import requests
+
 
 COLON_SPLIT_RE = re.compile(r'\s*,\s*')
 
@@ -10,61 +12,109 @@ class Connection:
         self.session = requests.session()
         self.origin = origin
 
-    def get(self, url, expected_status=200, params=None, headers={}, cors=True):
+    def get(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
         """
         get the given URL (relative to the root of API).
         """
         r = self.session.get(self.base_url + url, params=params, headers=self._merge_headers(headers, cors))
         try:
-            check_response(r, expected_status, cache_allowed=False)
+            check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
             return r.text
         finally:
             r.close()
 
-    def get_json(self, url, expected_status=200, params=None, headers={}, cors=True):
+    def get_json(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
         """
         get the given URL (relative to the root of API).
         """
         r = self.session.get(self.base_url + url, params=params, headers=self._merge_headers(headers, cors))
         try:
-            check_response(r, expected_status, cache_allowed=False)
+            check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
             return r.json()
         finally:
             r.close()
 
-    def post_json(self, url, json=None, expected_status=200, headers={}, cors=True):
+    def get_xml(self, url, schema=None, expected_status=200, headers={}, params=None, cors=True,
+                cache_allowed=False):
+        """
+        get the given URL (relative to the root of API).
+        """
+        r = self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), params=params,
+                             stream=True)
+        try:
+            check_response(r, expected_status, cache_allowed=cache_allowed)
+            self._check_cors(cors, r)
+            doc = etree.parse(r.raw)
+            if schema is not None:
+                with open(schema, 'r') as schema_file:
+                    xml_schema = etree.XMLSchema(etree.parse(schema_file))
+                xml_schema.assertValid(doc)
+            return doc
+        finally:
+            r.close()
+
+    def post_json(self, url, data=None, json=None, expected_status=200, headers={}, cors=True,
+                  cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
-        r = self.session.post(self.base_url + url, json=json, headers=self._merge_headers(headers, cors))
+        r = self.session.post(self.base_url + url, data=data, json=json,
+                              headers=self._merge_headers(headers, cors))
         try:
-            check_response(r, expected_status)
+            check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
             return r.json()
         finally:
             r.close()
 
-    def put_json(self, url, json=None, expected_status=200, headers={}, cors=True):
+    def post_files(self, url, data=None, files=None, expected_status=200, headers={}, cors=True,
+                   cache_allowed=False):
+        """
+        POST files to the the given URL (relative to the root of API).
+        """
+        r = self.session.post(self.base_url + url, data=data, files=files,
+                              headers=self._merge_headers(headers, cors))
+        try:
+            check_response(r, expected_status, cache_allowed)
+            self._check_cors(cors, r)
+            return r.json()
+        finally:
+            r.close()
+
+    def post(self, url, data=None, expected_status=200, headers={}, cors=True, cache_allowed=False):
+        """
+        POST the given URL (relative to the root of API).
+        """
+        r = self.session.post(self.base_url + url, headers=self._merge_headers(headers, cors),
+                              data=data)
+        try:
+            check_response(r, expected_status, cache_allowed)
+            self._check_cors(cors, r)
+            return r.text
+        finally:
+            r.close()
+
+    def put_json(self, url, json=None, expected_status=200, headers={}, cors=True, cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
         r = self.session.put(self.base_url + url, json=json, headers=self._merge_headers(headers, cors))
         try:
-            check_response(r, expected_status)
+            check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
             return r.json()
         finally:
             r.close()
 
-    def delete(self, url, expected_status=204, headers={}, cors=True):
+    def delete(self, url, expected_status=204, headers={}, cors=True, cache_allowed=False):
         """
         DELETE the given URL (relative to the root of API).
         """
         r = self.session.delete(self.base_url + url, headers=self._merge_headers(headers, cors))
         try:
-            check_response(r, expected_status)
+            check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
             return r
         finally:

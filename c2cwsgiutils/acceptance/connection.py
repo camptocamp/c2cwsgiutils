@@ -46,6 +46,7 @@ class Connection:
         try:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
+            r.raw.decode_content = True
             doc = etree.parse(r.raw)
             if schema is not None:
                 with open(schema, 'r') as schema_file:

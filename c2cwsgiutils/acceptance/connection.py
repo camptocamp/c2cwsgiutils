@@ -24,6 +24,18 @@ class Connection:
         finally:
             r.close()
 
+    def get_raw(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
+        """
+        get the given URL (relative to the root of API).
+        """
+        r = self.session.get(self.base_url + url, params=params, headers=self._merge_headers(headers, cors))
+        try:
+            check_response(r, expected_status, cache_allowed=cache_allowed)
+            self._check_cors(cors, r)
+            return r
+        finally:
+            r.close()
+
     def get_json(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
         """
         get the given URL (relative to the root of API).

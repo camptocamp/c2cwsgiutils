@@ -6,7 +6,7 @@ from c2cwsgiutils_app import models
 
 
 ping_service = services.create("ping", "/ping")
-hello_service = services.create("hello", "/hello")
+hello_service = services.create("hello", "/hello", cors_credentials=True)
 error_service = services.create("error", "/error")
 
 

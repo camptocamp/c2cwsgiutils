@@ -143,7 +143,9 @@ class Connection:
 
     def _check_cors(self, cors, r):
         if cors:
-            assert r.headers["Access-Control-Allow-Origin"] == "*"
+
+            assert r.headers["Access-Control-Allow-Origin"] == \
+                   self.origin if 'Access-Control-Allow-Credentials' in r.headers else '*'
 
     def _merge_headers(self, headers, cors):
         merged = dict(headers)

@@ -19,6 +19,8 @@ endif
 
 GIT_TAG := $(shell git describe --tags --first-parent 2>/dev/null || echo "none")
 GIT_HASH := $(shell git rev-parse HEAD)
+THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
 .PHONY: all
 all: acceptance
@@ -27,13 +29,24 @@ all: acceptance
 build: build_acceptance build_test_app
 
 .PHONY: acceptance
-acceptance: build
-	mkdir -p reports
+acceptance: build_acceptance build_test_app
+	rm -rf reports/coverage/api reports/acceptance.xml
+	mkdir -p reports/coverage/api
+	#run the tests
 	docker run -e DOCKER_TAG=$(DOCKER_TAG) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) py.test -vv --color=yes --junitxml /reports/acceptance.xml $(PYTEST_OPTS) tests; \
 	status=$$?; \
-	docker cp c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID:/reports/acceptance.xml reports/acceptance.xml; \
+	#copy the reports locally \
+	docker cp c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID:/reports ./; \
 	status=$$status$$?; \
 	docker rm c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID; \
+	status=$$status$$?; \
+	#generate the HTML report for code coverage \
+	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_test_app:$(DOCKER_TAG) ./c2cwsgiutils_coverage_report.py c2cwsgiutils c2cwsgiutils_app; \
+	status=$$status$$?; \
+	#copy the HTML locally \
+	docker cp c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID:/tmp/coverage/api reports/coverage; \
+	status=$$status$$?; \
+	docker rm c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID; \
 	exit $$status$$?
 
 .PHONY: build_acceptance
@@ -43,7 +56,7 @@ build_acceptance:
 
 .PHONY: build_test_app
 build_test_app:
-	rsync -a c2cwsgiutils c2cwsgiutils_run c2cwsgiutils_genversion.py rel_requirements.txt setup.cfg acceptance_tests/app/
+	rsync -a c2cwsgiutils c2cwsgiutils_run c2cwsgiutils_genversion.py c2cwsgiutils_coverage_report.py rel_requirements.txt setup.cfg acceptance_tests/app/
 	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) --build-arg "GIT_TAG=$(GIT_TAG)" --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: rel_requirements.txt dev_requirements.txt

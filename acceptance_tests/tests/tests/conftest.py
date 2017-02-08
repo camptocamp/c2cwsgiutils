@@ -7,6 +7,7 @@ from c2cwsgiutils.acceptance.composition import Composition
 from c2cwsgiutils.acceptance.connection import Connection
 
 BASE_URL = 'http://' + utils.DOCKER_GATEWAY + ':8480/api/'
+PROJECT_NAME = 'c2cwsgiutils'
 LOG = logging.getLogger(__name__)
 
 
@@ -15,7 +16,8 @@ def composition(request):
     """
     Fixture that start/stop the Docker composition used for all the tests.
     """
-    result = Composition(request, 'c2cwsgiutils', '/acceptance_tests/docker-compose.yml')
+    result = Composition(request, PROJECT_NAME, '/acceptance_tests/docker-compose.yml',
+                         coverage_paths=[PROJECT_NAME + "_app_1:/tmp/coverage"])
     utils.wait_url(BASE_URL + 'ping')
     return result
 

@@ -11,3 +11,4 @@ requests==2.13.0
 SQLAlchemy==1.1.6
 zope.interface==4.3.3
 zope.sqlalchemy==0.7.7
+coverage==4.3.4

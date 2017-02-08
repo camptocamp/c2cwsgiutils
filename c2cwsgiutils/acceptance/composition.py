@@ -26,12 +26,11 @@ def _try(what, fail=True, times=5, delay=10):
 
 
 class Composition(object):
-    def __init__(self, request, project_name, composition):
+    def __init__(self, request, project_name, composition, coverage_paths=None):
         self.project_name = project_name
         self.composition = composition
+        self.coverage_paths = coverage_paths
         env = Composition._get_env()
-        if os.environ.get("docker_stop", "1") == "1":
-            request.addfinalizer(self.stop_all)
         if os.environ.get("docker_start", "1") == "1":
             _try(lambda:
                  subprocess.check_call(['docker-compose', '--file', composition,
@@ -58,12 +57,19 @@ class Composition(object):
                                        '--project-name', project_name, 'logs', '--follow', '--no-color'],
                                        env=env, stderr=subprocess.STDOUT)
         request.addfinalizer(log_watcher.kill)
+        if os.environ.get("docker_stop", "1") == "1":
+            request.addfinalizer(self.stop_all)
 
     def stop_all(self):
         _try(lambda:
              subprocess.check_call(['docker-compose', '--file', self.composition,
                                    '--project-name', self.project_name, 'stop'], env=Composition._get_env(),
                                    stderr=subprocess.STDOUT))
+        if self.coverage_paths:
+            target_dir = "/reports/"
+            os.makedirs(target_dir, exist_ok=True)
+            for path in self.coverage_paths:
+                subprocess.check_call(['docker', 'cp', path, target_dir], stderr=subprocess.STDOUT)
 
     def stop(self, container):
         _try(lambda:

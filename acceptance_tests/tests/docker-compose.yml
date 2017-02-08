@@ -15,6 +15,7 @@ services:
       SQL_LOG_LEVEL: DEBUG
       OTHER_LOG_LEVEL: DEBUG
       DEVELOPMENT: 1
+      COVERAGE: 1
     links:
       - db
       - db_slave

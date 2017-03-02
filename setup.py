@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-version = '0.3.2'
+version = '0.3.3'
 
 setup(
     name='c2cwsgiutils',
@@ -30,14 +30,14 @@ setup(
         'cee_syslog_handler==0.3.4',
         'cornice==2.4.0',
         'gunicorn==19.6.0',
-        'lxml==3.7.2',
+        'lxml==3.7.3',
         'netifaces==0.10.5',
         'psycopg2==2.6.2',
-        'pyramid==1.8.1',
+        'pyramid==1.8.2',
         'pyramid_tm==1.1.1',
         'pytest==3.0.6',
         'requests==2.13.0',
-        'SQLAlchemy==1.1.5',
+        'SQLAlchemy==1.1.6',
         'zope.interface==4.3.3',
         'zope.sqlalchemy==0.7.7',
     ],

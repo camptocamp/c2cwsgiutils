@@ -1,8 +1,14 @@
 def test_ok(app_connection):
+    # reset the stats to be sure where we are at
+    app_connection.get_json('stats.json?reset=1', cors=False)
+
     app_connection.get_json("hello")  # to be sure we have some stats
+
     stats = app_connection.get_json('stats.json', cors=False)
     print(stats)
-    assert 'render/GET/hello/200' in stats['timers']
-    assert 'route/GET/hello/200' in stats['timers']
-    assert 'sql/SELECT_FROM_hello_LIMIT_?'
-    assert 'sql/read_hello'
+    assert stats['timers']['render/GET/hello/200']['nb'] == 1
+    assert stats['timers']['route/GET/hello/200']['nb'] == 1
+    assert stats['timers']['sql/SELECT FROM hello LIMIT ?']['nb'] == 1
+    assert stats['timers']['sql/read_hello']['nb'] == 1
+    assert stats['gauges']['test/gauge_s'] == 42
+    assert stats['counters']['test/counter'] == 1

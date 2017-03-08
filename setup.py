@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-version = '0.3.3'
+version = '0.4.0'
 
 setup(
     name='c2cwsgiutils',

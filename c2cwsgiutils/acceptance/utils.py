@@ -13,9 +13,10 @@ def in_docker():
 
 
 DOCKER_GATEWAY = netifaces.gateways()[netifaces.AF_INET][0][0] if in_docker() else 'localhost'
+DEFAULT_TIMEOUT = 60
 
 
-def wait_url(url):
+def wait_url(url, timeout=DEFAULT_TIMEOUT):
     def what():
         LOG.info("Trying to connect to " + url + "... ")
         r = requests.get(url)
@@ -25,10 +26,10 @@ def wait_url(url):
         else:
             return False
 
-    retry_timeout(what)
+    retry_timeout(what, timeout=timeout)
 
 
-def retry_timeout(what, timeout=60, interval=0.5):
+def retry_timeout(what, timeout=DEFAULT_TIMEOUT, interval=0.5):
     timeout = time.time() + timeout
     while True:
         try:

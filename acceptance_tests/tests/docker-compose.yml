@@ -6,6 +6,8 @@ services:
       SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
       SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
       STATS_VIEW: 1
+      STATSD_ADDRESS: 127.0.0.1:8125
+      STATSD_PREFIX: acceptance
       SQL_LOG_LEVEL: DEBUG
       OTHER_LOG_LEVEL: DEBUG
       DEVELOPMENT: 1

@@ -1,7 +1,7 @@
 from c2cwsgiutils import services
 from pyramid.httpexceptions import HTTPForbidden
 
-from c2cwsgiutils.stats import timer_context
+from c2cwsgiutils.stats import timer_context, increment_counter, set_gauge
 from c2cwsgiutils_app import models
 
 
@@ -22,6 +22,8 @@ def hello_get(request):
     """
     with timer_context(['sql', 'read_hello']):
         hello = models.DBSession.query(models.Hello).first()
+    increment_counter(['test', 'counter'])
+    set_gauge(['test', 'gauge/s'], 42)
     return {'value': hello.value}
 
 

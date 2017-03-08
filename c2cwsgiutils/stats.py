@@ -40,6 +40,26 @@ def timer(key=None):
     return _Timer(key)
 
 
+def set_gauge(key, value):
+    """
+    Set a gauge value
+    :param key: The path of the key, given as a list.
+    :param value: The new value of the gauge
+    """
+    for backend in BACKENDS:
+        backend.gauge(key, value)
+
+
+def increment_counter(key, increment=1):
+    """
+    Increment a counter value
+    :param key: The path of the key, given as a list.
+    :param increment: The increment
+    """
+    for backend in BACKENDS:
+        backend.counter(key, increment)
+
+
 class _Timer(object):
     """
     Allow to measure the duration of some activity
@@ -58,14 +78,19 @@ class _Timer(object):
 class _MemoryBackend(object):
     def __init__(self):
         self._timers = {}  # key => (nb, sum, min, max)
+        self._gauges = {}  # key => value
+        self._counters = {}  # key => value
         self._stats_lock = threading.Lock()
         LOG.info("Starting a MemoryBackend for stats")
+
+    def _key(self, key):
+        return "/".join(v.replace('/', '_') for v in key)
 
     def timer(self, key, duration):
         """
         Add a duration measurement to the stats.
         """
-        the_key = "/".join(key)
+        the_key = self._key(key)
         with self._stats_lock:
             cur = self._timers.get(the_key, None)
             if cur is None:
@@ -74,10 +99,18 @@ class _MemoryBackend(object):
                 self._timers[the_key] = (cur[0] + 1, cur[1] + duration, min(cur[2], duration),
                                          max(cur[3], duration))
 
+    def gauge(self, key, value):
+        self._gauges[self._key(key)] = value
+
+    def counter(self, key, increment):
+        the_key = self._key(key)
+        with self._stats_lock:
+            self._counters[the_key] = self._counters.get(the_key, 0) + increment
+
     def get_stats(self, request):
         reset = request.params.get("reset", "0") == "1"
-        timers = {}
         with self._stats_lock:
+            timers = {}
             for key, value in self._timers.items():
                 timers[key] = {
                     "nb": value[0],
@@ -85,9 +118,14 @@ class _MemoryBackend(object):
                     "min_ms": int(round(value[2] * 1000.0)),
                     "max_ms": int(round(value[3] * 1000.0)),
                 }
+            gauges = dict(self._gauges)
+            counters = dict(self._counters)
+
             if reset:
                 self._timers.clear()
-        return {"timers": timers}
+                self._gauges.clear()
+                self._counters.clear()
+        return {"timers": timers, "gauges": gauges, "counters": counters}
 
 
 INVALID_KEY_CHARS = re.compile(r"[:|\. ]")
@@ -112,13 +150,26 @@ class _StatsDBackend(object):  # pragma: nocover
     def _key(self, key):
         return (self._prefix + ".".join([INVALID_KEY_CHARS.sub("_", i) for i in key]))[:500]
 
-    def timer(self, key, duration):
-        the_key = self._key(key)
-        message = "%s:%s|ms" % (the_key, int(round(duration * 1000.0)))
+    def _send(self, message):
         try:
             self._socket.send(message.encode('utf-8'))
         except:
             pass  # Ignore errors (must survive if stats cannot be sent)
+
+    def timer(self, key, duration):
+        the_key = self._key(key)
+        message = "%s:%s|ms" % (the_key, int(round(duration * 1000.0)))
+        self._send(message)
+
+    def gauge(self, key, value):
+        the_key = self._key(key)
+        message = "%s:%s|g" % (the_key, value)
+        self._send(message)
+
+    def counter(self, key, increment):
+        the_key = self._key(key)
+        message = "%s:%s|c" % (the_key, increment)
+        self._send(message)
 
 
 def _create_finished_cb(kind, measure):  # pragma: nocover

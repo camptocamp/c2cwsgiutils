@@ -8,6 +8,8 @@ applications:
   a web application (statsd protocol)
 * Allow to use a master/slave PostgresQL configuration
 * Logging handler for CEE/UDP logs
+  * An optional (enabled by setting the LOG_VIEW_SECRET env var) view (/logging/level)
+    to change runtime the log levels
 * Error handlers to send JSON messages to the client in case of error
 * A cornice service drop in replacement for setting up CORS
 

@@ -49,4 +49,3 @@ setup(
         'c2cwsgiutils_run'
     ]
 )
-

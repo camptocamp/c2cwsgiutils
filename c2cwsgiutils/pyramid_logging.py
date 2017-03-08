@@ -8,10 +8,14 @@ Install a filter on the logging handler to add some info about requests:
 A pyramid event handler is installed to setup this filter for the current request.
 """
 import logging
+import os
 import threading
 
 from cee_syslog_handler import CeeSysLogHandler
 import pyramid.events
+from pyramid.httpexceptions import HTTPForbidden
+
+LOG = logging.getLogger(__name__)
 
 
 class _PyramidFilter(logging.Filter):
@@ -57,3 +61,21 @@ def install_subscriber(config):
     Install a pyramid  event handler that adds the request information
     """
     config.add_subscriber(_set_context, pyramid.events.NewRequest)
+
+    if 'LOG_VIEW_SECRET' in os.environ:
+        config.add_route("logging_level", r"/logging/level", request_method="GET")
+        config.add_view(_logging_change_level, route_name="logging_level", renderer="json", http_cache=0)
+        LOG.info("Enabled the /logging/change_level API")
+
+
+def _logging_change_level(request):
+    if request.params.get('secret') != os.environ['LOG_VIEW_SECRET']:
+        raise HTTPForbidden('Missing or invalid secret parameter')
+    name = request.params['name']
+    level = request.params.get('level')
+    logger = logging.getLogger(name)
+    if level is not None:
+        LOG.critical("Logging of %s changed from %s to %s", name, logging.getLevelName(logger.level), level)
+        logger.setLevel(level)
+    return {'status': 200, 'name': name, 'level': logging.getLevelName(logger.level),
+            'effective_level': logging.getLevelName(logger.getEffectiveLevel())}

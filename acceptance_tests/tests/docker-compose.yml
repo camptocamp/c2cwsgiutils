@@ -8,6 +8,7 @@ services:
       STATS_VIEW: 1
       STATSD_ADDRESS: 127.0.0.1:8125
       STATSD_PREFIX: acceptance
+      LOG_VIEW_SECRET: changeme
       SQL_LOG_LEVEL: DEBUG
       OTHER_LOG_LEVEL: DEBUG
       DEVELOPMENT: 1

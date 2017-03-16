@@ -13,14 +13,9 @@ dockerBuild {
     }
     stage('Test') {
         checkout scm
-        sh 'make .venv/timestamp'
         try {
-            parallel 'Lint': {
-                sh 'make -j2 lint'
-            }, 'Acceptance Tests': {
-                lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
-                    sh 'make -j2 acceptance'
-                }
+            lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
+                sh 'make -j2 acceptance'
             }
         } finally {
             junit keepLongStdio: true, testResults: 'reports/*.xml'

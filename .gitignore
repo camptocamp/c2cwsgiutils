@@ -1,9 +1,14 @@
 /.venv/
+/acceptance_tests/app/c2cwsgiutils
+/acceptance_tests/app/c2cwsgiutils_run
+/acceptance_tests/app/rel_requirements.txt
 /acceptance_tests/app/setup.cfg
-/acceptance_tests/app/c2cwsgiutils-0.0.0-py3-none-any.whl
+/acceptance_tests/tests/c2cwsgiutils
+/acceptance_tests/tests/rel_requirements.txt
 /acceptance_tests/tests/setup.cfg
-/acceptance_tests/tests/c2cwsgiutils-0.0.0-py3-none-any.whl
 /build/
 /c2cwsgiutils.egg-info/
 /dist/
 /reports/
+.idea/dbnavigator.xml
+.idea/inspectionProfiles

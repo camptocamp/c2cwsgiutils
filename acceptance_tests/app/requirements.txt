@@ -1,2 +1,2 @@
-c2cwsgiutils-0.0.0-py3-none-any.whl
+-r rel_requirements.txt
 flake8==3.3.0

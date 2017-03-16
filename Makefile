@@ -18,22 +18,7 @@ DOCKER_COMPOSE_VERSION := $(DOCKER_COMPOSE_VERSION_ACTUAL)
 endif
 
 .PHONY: all
-all: lint acceptance
-
-.PHONY: lint
-lint: lint_code lint_test_app lint_acceptance
-
-.PHONY: lint_code
-lint_code: .venv/timestamp
-	.venv/bin/flake8 c2cwsgiutils
-
-.PHONY: lint_test_app
-lint_test_app: .venv/timestamp
-	.venv/bin/flake8 acceptance_tests/app/c2cwsgiutils_app
-
-.PHONY: lint_acceptance
-lint_acceptance: .venv/timestamp
-	.venv/bin/flake8 acceptance_tests/tests/tests
+all: acceptance
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app
@@ -46,19 +31,18 @@ acceptance: build_acceptance build_test_app
 	exit $$status$$?
 
 .PHONY: build_acceptance
-build_acceptance: dist
-	cp dist/c2cwsgiutils-*-py3-none-any.whl acceptance_tests/tests/c2cwsgiutils-0.0.0-py3-none-any.whl
+build_acceptance:
+	rsync -a c2cwsgiutils rel_requirements.txt setup.cfg acceptance_tests/tests/
 	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) acceptance_tests/tests
 
 .PHONY: build_test_app
-build_test_app: dist
-	cp dist/c2cwsgiutils-*-py3-none-any.whl acceptance_tests/app/c2cwsgiutils-0.0.0-py3-none-any.whl
-	cp setup.cfg acceptance_tests/app/
+build_test_app:
+	rsync -a c2cwsgiutils c2cwsgiutils_run rel_requirements.txt setup.cfg acceptance_tests/app/
 	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) acceptance_tests/app
 
-.venv/timestamp: requirements.txt acceptance_tests/tests/requirements.txt
+.venv/timestamp: rel_requirements.txt dev_requirements.txt
 	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv
-	.venv/bin/pip install -r requirements.txt
+	.venv/bin/pip install -r rel_requirements.txt -r dev_requirements.txt
 	touch $@
 
 .PHONY: pull

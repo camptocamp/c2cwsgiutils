@@ -6,7 +6,7 @@ MAINTAINER Camptocamp "info@camptocamp.com"
 
 # Step #1 copy only the stuff needed to install the dependencies and run the script
 WORKDIR /app
-COPY requirements.txt setup.py c2cwsgiutils-0.0.0-py3-none-any.whl /app/
+COPY requirements.txt rel_requirements.txt /app/
 RUN pip install -r requirements.txt
 
 EXPOSE 80
@@ -23,6 +23,7 @@ COPY . /app
 
 RUN python ./setup.py install && \
     ./models_graph.py > models.dot && \
-    ./models_graph.py Hello > models_hello.dot
+    ./models_graph.py Hello > models_hello.dot && \
+    flake8 c2cwsgiutils c2cwsgiutils_app
 
-CMD ["c2cwsgiutils_run"]
+CMD ["./c2cwsgiutils_run"]

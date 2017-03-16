@@ -5,6 +5,9 @@ ARG DOCKER_COMPOSE_VERSION=1.10.0
 
 WORKDIR /acceptance_tests
 
+ENV DOCKER_RUN 1
+ENV PYTHONPATH /acceptance_tests
+
 # Install all Debian dependencies except nodejs which requires https transport
 COPY  dockerproject.org.asc /acceptance_tests/
 RUN echo "deb http://apt.dockerproject.org/repo debian-jessie main" >> /etc/apt/sources.list && \
@@ -20,11 +23,10 @@ RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE
     chmod a+x /usr/bin/docker-compose
 
 # Install python requirements
-COPY requirements.txt c2cwsgiutils-0.0.0-py3-none-any.whl ./
+COPY requirements.txt rel_requirements.txt /acceptance_tests/
 RUN pip install -r ./requirements.txt
 
 COPY . ./
 
-ENV DOCKER_RUN 1
-ENV PYTHONPATH /acceptance_tests
+RUN flake8 tests
 CMD py.test -vv --color=yes --junitxml /reports/acceptance.xml tests

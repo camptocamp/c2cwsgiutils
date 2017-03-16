@@ -1,8 +1,6 @@
 from setuptools import setup, find_packages
 
-requires = [
-    'pyramid'
-    ]
+requires = []
 
 setup(name='c2cwsgiutils_app',
       version='0.0',

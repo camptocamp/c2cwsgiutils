@@ -20,6 +20,9 @@ ENV DEVELOPMENT 0
 
 # Step #2 copy the rest of the files (watch for the .dockerignore)
 COPY . /app
-RUN python /app/setup.py install
+
+RUN python ./setup.py install && \
+    ./models_graph.py > models.dot && \
+    ./models_graph.py Hello > models_hello.dot
 
 CMD ["c2cwsgiutils_run"]

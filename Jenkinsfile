@@ -11,6 +11,10 @@ dockerBuild {
         checkout scm
         sh 'make pull'
     }
+    stage('Build') {
+        checkout scm
+        sh 'make -j2 build'
+    }
     stage('Test') {
         checkout scm
         try {

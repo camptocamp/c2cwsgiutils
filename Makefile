@@ -20,8 +20,11 @@ endif
 .PHONY: all
 all: acceptance
 
+.PHONY: build
+build: build_acceptance build_test_app
+
 .PHONY: acceptance
-acceptance: build_acceptance build_test_app
+acceptance: build
 	mkdir -p reports
 	docker run -e DOCKER_TAG=$(DOCKER_TAG) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) py.test -vv --color=yes --junitxml /reports/acceptance.xml $(PYTEST_OPTS) tests; \
 	status=$$?; \

@@ -1,11 +1,20 @@
 #!/bin/bash
 if [ -z "$GUNICORN_PARAMS" ]
 then
-    GUNICORN_PARAMS="-b :80 --threads 10 --workers 5"
+    GUNICORN_PARAMS="-b :80 --worker-class gthread --threads 10 --workers 5"
 fi
+
+trap ctrl_c TERM INT
+function ctrl_c() {
+    echo "Caught a signal"
+    kill -SIGINT $PID
+    exit 1
+}
 
 while true
 do
-    gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application
+    gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application &
+    PID=$!
+    wait $PID
     sleep 1
 done

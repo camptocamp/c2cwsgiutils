@@ -17,6 +17,8 @@ ENV LOG_PORT 514
 ENV SQL_LOG_LEVEL WARN
 ENV OTHER_LOG_LEVEL WARN
 ENV DEVELOPMENT 0
+ENV SQLALCHEMY_URL postgresql://www-data:www-data@db:5432/test
+ENV SQLALCHEMY_URL_SLAVE postgresql://www-data:www-data@db_slave:5432/test
 
 # Step #2 copy the rest of the files (watch for the .dockerignore)
 COPY . /app

@@ -128,7 +128,7 @@ class _MemoryBackend(object):
         return {"timers": timers, "gauges": gauges, "counters": counters}
 
 
-INVALID_KEY_CHARS = re.compile(r"[:|\. ]")
+INVALID_KEY_CHARS = re.compile(r"[:|\.]")
 
 
 class _StatsDBackend(object):  # pragma: nocover
@@ -148,7 +148,7 @@ class _StatsDBackend(object):  # pragma: nocover
         self._socket.connect(sockaddr)
 
     def _key(self, key):
-        return (self._prefix + ".".join([INVALID_KEY_CHARS.sub("_", i) for i in key]))[:500]
+        return (self._prefix + ".".join([INVALID_KEY_CHARS.sub("_", i) for i in key]))[:450]
 
     def _send(self, message):
         try:

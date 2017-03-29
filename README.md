@@ -10,6 +10,9 @@ applications:
 * Logging handler for CEE/UDP logs
   * An optional (enabled by setting the LOG_VIEW_SECRET env var) view (/logging/level)
     to change runtime the log levels
+* SQL profiler to debug DB performance problems, disabled by default. You must enable it by setting the
+  SQL_PROFILER_SECRET env var and using the view (/sql_profiler) to switch it ON and OFF. Warning,
+  it will slow down everything.
 * Error handlers to send JSON messages to the client in case of error
 * A cornice service drop in replacement for setting up CORS
 

@@ -52,11 +52,14 @@ def _indent(statement, indent='  '):
 
 def _before_cursor_execute(conn, _cursor, statement, parameters, _context, _executemany):
     if statement.startswith("SELECT ") and LOG.isEnabledFor(logging.INFO):
-        output = "statement:\n%s\nparameters: %s\nplan:\n  " % (_indent(_beautify_sql(statement)),
-                                                                repr(parameters))
-        output += '\n  '.join([row[0] for row in conn.engine.execute("EXPLAIN ANALYZE " + statement,
-                                                                     parameters)])
-        LOG.info(output)
+        try:
+            output = "statement:\n%s\nparameters: %s\nplan:\n  " % (_indent(_beautify_sql(statement)),
+                                                                    repr(parameters))
+            output += '\n  '.join([row[0] for row in conn.engine.execute("EXPLAIN ANALYZE " + statement,
+                                                                         parameters)])
+            LOG.info(output)
+        except:
+            pass
 
 
 def init(config):

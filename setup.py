@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '0.7.0'
+VERSION = '0.8.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = open(os.path.join(HERE, 'rel_requirements.txt')).read().splitlines()
 
@@ -35,6 +35,7 @@ setup(
         ]
     },
     scripts=[
-        'c2cwsgiutils_run'
+        'c2cwsgiutils_run',
+        'c2cwsgiutils_genversion.py'
     ]
 )

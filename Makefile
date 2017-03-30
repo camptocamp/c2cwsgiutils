@@ -17,6 +17,9 @@ else
 DOCKER_COMPOSE_VERSION := $(DOCKER_COMPOSE_VERSION_ACTUAL)
 endif
 
+GIT_TAG := $(shell git describe --tags --first-parent 2>/dev/null || echo "none")
+GIT_HASH := $(shell git rev-parse HEAD)
+
 .PHONY: all
 all: acceptance
 
@@ -40,8 +43,8 @@ build_acceptance:
 
 .PHONY: build_test_app
 build_test_app:
-	rsync -a c2cwsgiutils c2cwsgiutils_run rel_requirements.txt setup.cfg acceptance_tests/app/
-	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) acceptance_tests/app
+	rsync -a c2cwsgiutils c2cwsgiutils_run c2cwsgiutils_genversion.py rel_requirements.txt setup.cfg acceptance_tests/app/
+	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) --build-arg "GIT_TAG=$(GIT_TAG)" --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: rel_requirements.txt dev_requirements.txt
 	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv

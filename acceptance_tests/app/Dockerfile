@@ -23,9 +23,13 @@ ENV SQLALCHEMY_URL_SLAVE postgresql://www-data:www-data@db_slave:5432/test
 # Step #2 copy the rest of the files (watch for the .dockerignore)
 COPY . /app
 
+ARG GIT_TAG
+ARG GIT_HASH
+
 RUN python ./setup.py install && \
     ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models_hello.dot && \
+    ./c2cwsgiutils_genversion.py $GIT_TAG $GIT_HASH && \
     flake8 c2cwsgiutils c2cwsgiutils_app
 
 CMD ["./c2cwsgiutils_run"]

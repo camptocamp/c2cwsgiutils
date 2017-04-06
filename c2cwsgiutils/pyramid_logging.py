@@ -15,6 +15,8 @@ from cee_syslog_handler import CeeSysLogHandler
 import pyramid.events
 from pyramid.httpexceptions import HTTPForbidden
 
+from c2cwsgiutils import _utils
+
 LOG = logging.getLogger(__name__)
 
 
@@ -63,8 +65,9 @@ def install_subscriber(config):
     config.add_subscriber(_set_context, pyramid.events.NewRequest)
 
     if 'LOG_VIEW_SECRET' in os.environ:
-        config.add_route("logging_level", r"/logging/level", request_method="GET")
-        config.add_view(_logging_change_level, route_name="logging_level", renderer="json", http_cache=0)
+        config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
+                         request_method="GET")
+        config.add_view(_logging_change_level, route_name="c2c_logging_level", renderer="json", http_cache=0)
         LOG.info("Enabled the /logging/change_level API")
 
 

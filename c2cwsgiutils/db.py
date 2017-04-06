@@ -16,7 +16,7 @@ class Tweens(object):
 tweens = Tweens()
 
 
-def setup_session(config, master_prefix, slave_prefix="", force_master=None, force_slave=None):
+def setup_session(config, master_prefix, slave_prefix=None, force_master=None, force_slave=None):
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection.
@@ -51,10 +51,10 @@ def setup_session(config, master_prefix, slave_prefix="", force_master=None, for
             has_force_master = any(r.match(method_path) for r in master_paths)
             if not has_force_master and (request.method in ("GET", "OPTIONS") or
                                          any(r.match(method_path) for r in slave_paths)):
-                LOG.debug("Using slave database for: %s", method_path)
+                LOG.debug("Using %s database for: %s", slave_prefix, method_path)
                 session.bind = ro_engine
             else:
-                LOG.debug("Using master database for: %s", method_path)
+                LOG.debug("Using %s database for: %s", master_prefix, method_path)
                 session.bind = rw_engine
 
             try:
@@ -64,6 +64,8 @@ def setup_session(config, master_prefix, slave_prefix="", force_master=None, for
 
         return db_chooser_tween
 
+    if slave_prefix is None:
+        slave_prefix = master_prefix
     settings = config.registry.settings
     rw_engine = sqlalchemy.engine_from_config(settings, master_prefix + ".")
 
@@ -79,4 +81,9 @@ def setup_session(config, master_prefix, slave_prefix="", force_master=None, for
 
     db_session = sqlalchemy.orm.scoped_session(
         sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
+    if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
+        db_session.c2c_rw_bind = rw_engine
+        db_session.c2c_ro_bind = ro_engine
+    rw_engine.c2c_name = master_prefix
+    ro_engine.c2c_name = slave_prefix
     return db_session, rw_engine, ro_engine

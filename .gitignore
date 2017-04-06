@@ -1,6 +1,7 @@
 /.venv/
 /acceptance_tests/app/c2cwsgiutils
 /acceptance_tests/app/c2cwsgiutils_run
+/acceptance_tests/app/c2cwsgiutils_genversion.py
 /acceptance_tests/app/rel_requirements.txt
 /acceptance_tests/app/setup.cfg
 /acceptance_tests/tests/c2cwsgiutils

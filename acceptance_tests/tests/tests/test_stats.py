@@ -1,10 +1,10 @@
 def test_ok(app_connection):
     # reset the stats to be sure where we are at
-    app_connection.get_json('stats.json?reset=1', cors=False)
+    app_connection.get_json('c2c/stats.json?reset=1', cors=False)
 
     app_connection.get_json("hello")  # to be sure we have some stats
 
-    stats = app_connection.get_json('stats.json', cors=False)
+    stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
     assert stats['timers']['render/GET/hello/200']['nb'] == 1
     assert stats['timers']['route/GET/hello/200']['nb'] == 1

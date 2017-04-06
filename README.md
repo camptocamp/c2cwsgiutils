@@ -14,6 +14,7 @@ applications:
   SQL_PROFILER_SECRET env var and using the view (/sql_profiler) to switch it ON and OFF. Warning,
   it will slow down everything.
 * A view to get the version information about the application and the installed packages (/versions.json)
+* A framework for implementing a health_check service (/health_check)
 * Error handlers to send JSON messages to the client in case of error
 * A cornice service drop in replacement for setting up CORS
 

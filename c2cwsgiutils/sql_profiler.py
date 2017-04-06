@@ -9,6 +9,8 @@ import re
 import sqlalchemy.event
 import sqlalchemy.engine
 
+from c2cwsgiutils import _utils
+
 ENV_KEY = 'SQL_PROFILER_SECRET'
 LOG = logging.getLogger(__name__)
 enabled = False
@@ -67,6 +69,7 @@ def init(config):
     Install a pyramid  event handler that adds the request information
     """
     if 'SQL_PROFILER_SECRET' in os.environ:
-        config.add_route("sql_profiler", r"/sql_profiler", request_method="GET")
-        config.add_view(_sql_profiler_view, route_name="sql_profiler", renderer="json", http_cache=0)
+        config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
+                         request_method="GET")
+        config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="json", http_cache=0)
         LOG.info("Enabled the /sql_profiler API")

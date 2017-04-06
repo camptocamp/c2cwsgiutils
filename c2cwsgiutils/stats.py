@@ -14,6 +14,8 @@ import pyramid.events
 from pyramid.httpexceptions import HTTPException
 import sqlalchemy.event
 
+from c2cwsgiutils import _utils
+
 BACKENDS = []
 LOG = logging.getLogger(__name__)
 
@@ -276,8 +278,10 @@ def init_backends(config):
         memory_backend = _MemoryBackend()
         BACKENDS.append(memory_backend)
 
-        config.add_route("read_stats_json", r"/stats.json", request_method="GET")
-        config.add_view(memory_backend.get_stats, route_name="read_stats_json", renderer="json", http_cache=0)
+        config.add_route("c2c_read_stats_json", _utils.get_base_path(config) + r"/stats.json",
+                         request_method="GET")
+        config.add_view(memory_backend.get_stats, route_name="c2c_read_stats_json", renderer="json",
+                        http_cache=0)
 
     statsd_address = _get_env_or_settings(config, "STATSD_ADDRESS", "statsd_address", None)
     if statsd_address is not None:  # pragma: nocover

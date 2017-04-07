@@ -4,7 +4,6 @@ Generate statsd metrics.
 
 import contextlib
 import logging
-import os
 import re
 import socket
 import time
@@ -261,20 +260,12 @@ def init_pyramid_spy(config):  # pragma: nocover
     config.add_subscriber(_before_rendered_callback, pyramid.events.BeforeRender)
 
 
-def _get_env_or_settings(config, what_env, what_vars, default):
-    from_env = os.environ.get(what_env, None)
-    if from_env is not None:  # pragma: nocover
-        return from_env
-    stats = config.get_settings().get("stats", {})
-    return stats.get(what_vars, default)
-
-
 def init_backends(config):
     """
     Initialize the backends according to the configuration.
     :param config: The Pyramid config
     """
-    if _get_env_or_settings(config, "STATS_VIEW", "view", False):  # pragma: nocover
+    if _utils.env_or_config(config, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
         memory_backend = _MemoryBackend()
         BACKENDS.append(memory_backend)
 
@@ -283,9 +274,9 @@ def init_backends(config):
         config.add_view(memory_backend.get_stats, route_name="c2c_read_stats_json", renderer="json",
                         http_cache=0)
 
-    statsd_address = _get_env_or_settings(config, "STATSD_ADDRESS", "statsd_address", None)
+    statsd_address = _utils.env_or_config(config, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
-        statsd_prefix = _get_env_or_settings(config, "STATSD_PREFIX", "statsd_prefix", "")
+        statsd_prefix = _utils.env_or_config(config, "STATSD_PREFIX", "c2c.statsd_prefix", "")
         BACKENDS.append(_StatsDBackend(statsd_address, statsd_prefix))
 
 

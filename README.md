@@ -1,7 +1,7 @@
 Camptocamp WSGI utilities
 =========================
 
-This is a python library providing common tools for Camptocamp WSGI
+This is a python 3 library providing common tools for Camptocamp WSGI
 applications:
 
 * Provide a small framework for gathering performance statistics about
@@ -27,6 +27,18 @@ Also provide tools for writing acceptance tests:
 As an example on how to use it in an application provided by a Docker image, you can look at the
 test application in [acceptance_tests/app](acceptance_tests/app).
 To see how to test such an application, look at [acceptance_tests/tests](acceptance_tests/tests).
+
+
+Install
+-------
+
+The library is available in PYPI:
+[https://pypi.python.org/pypi/c2cwsgiutils](https://pypi.python.org/pypi/c2cwsgiutils)
+
+With pip:
+```
+pip install c2cwsgiutils
+```
 
 
 General config

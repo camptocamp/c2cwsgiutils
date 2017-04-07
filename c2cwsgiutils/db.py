@@ -81,9 +81,8 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
 
     db_session = sqlalchemy.orm.scoped_session(
         sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
-    if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
-        db_session.c2c_rw_bind = rw_engine
-        db_session.c2c_ro_bind = ro_engine
+    db_session.c2c_rw_bind = rw_engine
+    db_session.c2c_ro_bind = ro_engine
     rw_engine.c2c_name = master_prefix
     ro_engine.c2c_name = slave_prefix
     return db_session, rw_engine, ro_engine

@@ -55,7 +55,7 @@ class HealthCheck:
             name = url
         self._checks.append((name, check, level))
 
-    def add_custom_check(self, name, check_cb, level):
+    def add_custom_check(self, name, check_cb, level=1):
         """
         Add a custom check
         :param name: the name of the check

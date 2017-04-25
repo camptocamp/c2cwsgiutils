@@ -9,11 +9,11 @@ A pyramid event handler is installed to setup this filter for the current reques
 """
 import logging
 import os
-import threading
+import uuid
 
 from cee_syslog_handler import CeeSysLogHandler
-import pyramid.events
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.threadlocal import get_current_request
 
 from c2cwsgiutils import _utils
 
@@ -24,22 +24,16 @@ class _PyramidFilter(logging.Filter):
     """
     A logging filter that adds request information to CEE logs.
     """
-    def __init__(self):
-        logging.Filter.__init__(self)
-        self.context = threading.local()
-
     def filter(self, record):
-        request = getattr(self.context, "request", None)
+        request = get_current_request()
         if request is not None:
             record.client_addr = request.client_addr
             record.method = request.method
             if request.matched_route is not None:
                 record.matched_route = request.matched_route.name
             record.path = request.path
+            record.request_id = request.c2c_request_id
         return True
-
-    def set_context(self, request):
-        self.context.request = request
 
 
 _PYRAMID_FILTER = _PyramidFilter()
@@ -54,16 +48,11 @@ class PyramidCeeSysLogHandler(CeeSysLogHandler):
         self.addFilter(_PYRAMID_FILTER)
 
 
-def _set_context(event):
-    _PYRAMID_FILTER.set_context(event.request)
-
-
 def install_subscriber(config):
     """
-    Install a pyramid  event handler that adds the request information
+    Install the view to configure the loggers, if configured to do so.
     """
-    config.add_subscriber(_set_context, pyramid.events.NewRequest)
-
+    config.add_request_method(lambda request: str(uuid.uuid4()), 'c2c_request_id', reify=True)
     if 'LOG_VIEW_SECRET' in os.environ:
         config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
                          request_method="GET")

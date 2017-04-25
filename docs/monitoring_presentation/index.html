@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Getting metrics from a Pyramid application</title>
+    <meta charset="utf-8">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+        @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+        body { font-family: 'Droid Serif'; }
+        h1, h2, h3 {
+            font-family: 'Droid Serif';
+            font-weight: normal;
+        }
+        img { width: 100%; }
+        .remark-code, .remark-inline-code {
+            font-family: 'Ubuntu Mono';
+            font-size: 20px;
+        }
+        .smallImage { width: 60%; display: table; margin: 0 auto;}
+        div.black { background-color: black; }
+        .black img { height: 90%; width: auto; }
+        div.remark-slide-content {
+            background-image: url("C2C-logo-RGB.svg");
+            background-size: 200px 40px;
+            background-position: 95% 15px;
+            font-size: 28px;
+        }
+        .title-slide {
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-size: 80% !important;
+        }
+        .title-slide .remark-slide-number {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<textarea id="source">
+class: title-slide
+count: false
+
+---
+
+class: center, middle
+
+# Getting metrics from a Pyramid application
+
+---
+
+# Plan
+
+1. Introduction
+1. Typical Architecture
+1. How we do it
+1. The results
+1. Conclusion
+
+---
+
+# Introduction
+
+* Why do we need metrics?
+    * Monitoring
+    * Profiling
+* How to get metrics?
+
+---
+
+# Typical Architecture
+
+![Architecture](architecture.png)
+
+---
+
+# Statsd protocol
+
+An UDP protocol to send metrics:
+
+* Gauges
+* Counters
+* Timers
+* Histograms
+* Meters
+
+---
+
+# c2cwsgiutils
+
+https://github.com/camptocamp/c2cwsgiutils
+
+A glue between Pyramid, SQLAlchemy (PostgresQL), statsd, syslog and other utilities to facilitate the development of
+REST services.
+
+* Statsd metrics
+    * Generic timers (routes, rendering, Alembic hooks)
+    * Facilities for custom timers
+* Logging (ability to send @cee JSON formatted logs to syslog)
+* Health checks
+* Master/slave DB connections
+* Tools to write acceptance tests
+
+---
+
+# Example
+
+The WSGI main:
+
+```python
+from c2cwsgiutils.health_check import HealthCheck
+import c2cwsgiutils.pyramid
+import my_app.models
+
+def main(_, **settings):
+    config = Configurator(settings=settings)
+    config.include(c2cwsgiutils.pyramid.includeme)
+    models.init(config)
+    health_check = HealthCheck(config)
+    health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
+    config.scan("my_app.services")
+    return config.make_wsgi_app()
+
+```
+
+---
+
+# Example
+
+A route/view:
+
+```python
+from c2cwsgiutils import services
+from c2cwsgiutils.stats import timer_context
+
+hello_service = services.create("hello", "/hello", cors_credentials=True)
+
+@hello_service.get()
+def hello_get(request):
+    with timer_context(['sql', 'read_hello']):
+        hello = models.DBSession.query(models.Hello).first()
+    return {'value': hello.value}
+```
+
+---
+
+# The results
+
+A graph for a single REST entry point in Grafana:
+
+![API graph](api_graph.png)
+
+---
+
+# The results
+
+A few single stats in Grafana:
+
+![API counters](api_counters.png)
+
+---
+
+# The results
+
+Summary tables in Grafana:
+
+![API table](api_table.png)
+
+---
+
+# The results
+
+Tracking of known bugs in Kibana:
+
+![Bugs](bugs.png)
+
+---
+
+# The results
+
+Details of a single log entry in Kibana:
+
+![Log details](log_detail1.png)
+
+---
+
+# The results
+
+Details of a single log entry in Kibana:
+
+![Log details](log_detail2.png)
+
+---
+
+# Conclusions
+
+This helps a lot for:
+* Monitoring everything is OK
+* Measuring performance problems and their source in a live system
+* Debugging problems
+* Providing nice dashboards for the customers and managers
+
+</textarea>
+<script src="remark-latest.min.js">
+</script>
+<script>
+      var slideshow = remark.create();
+    </script>
+</body>
+</html>

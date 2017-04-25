@@ -1,0 +1,36 @@
+digraph g {
+    rankdir="LR";
+    graph [dpi=300];
+    node [shape=rectangle style=filled fillcolor=white];
+
+    LB -> WSGI;
+
+    WSGI [fillcolor=yellow];
+
+    ExternalApi [fillcolor=cyan];
+    DB [fillcolor=cyan];
+
+    subgraph cluster_Metrics {
+        label="Metrics";
+        graph [color=green];
+        node [fillcolor=green];
+
+        Statsd -> Prometheus;
+        Prometheus -> Grafana;
+    }
+
+    subgraph cluster_Logs {
+        label="Logs";
+        graph [color=green];
+        node [fillcolor=green];
+
+        Syslogd -> ElasticSearch;
+        Syslogd -> Disk;
+        ElasticSearch -> Kibana;
+    }
+
+    WSGI -> Statsd;
+    WSGI -> DB;
+    WSGI -> Syslogd;
+    WSGI -> ExternalApi
+}

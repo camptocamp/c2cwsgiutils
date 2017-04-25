@@ -8,7 +8,7 @@ digraph g {
     WSGI [fillcolor=yellow];
 
     ExternalApi [fillcolor=cyan];
-    DB [fillcolor=cyan];
+    DB [fillcolor=cyan shape=cylinder];
 
     subgraph cluster_Metrics {
         label="Metrics";
@@ -16,7 +16,7 @@ digraph g {
         node [fillcolor=green];
 
         Statsd -> Prometheus;
-        Prometheus -> Grafana;
+        Prometheus -> Grafana [dir=back];
     }
 
     subgraph cluster_Logs {
@@ -26,7 +26,9 @@ digraph g {
 
         Syslogd -> ElasticSearch;
         Syslogd -> Disk;
-        ElasticSearch -> Kibana;
+        ElasticSearch -> Kibana [dir=back];
+
+        Disk [shape=cylinder];
     }
 
     WSGI -> Statsd;

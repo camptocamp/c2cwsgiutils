@@ -46,6 +46,9 @@ acceptance: build_acceptance build_test_app
 	#copy the HTML locally \
 	docker cp c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID:/tmp/coverage/api reports/coverage; \
 	status=$$status$$?; \
+	#fix code path in the cobertura XML file \
+	sed -ie 's%>/app/c2cwsgiutils_app<%>$(THIS_DIR)/acceptance_tests/app/c2cwsgiutils_app<%' reports/coverage/api/coverage.xml; \
+	sed -ie 's%>/app/c2cwsgiutils<%>$(THIS_DIR)/c2cwsgiutils<%' reports/coverage/api/coverage.xml; \
 	docker rm c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID; \
 	exit $$status$$?
 

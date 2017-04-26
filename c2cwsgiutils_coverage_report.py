@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import coverage
+import os
 import shutil
 import sys
 
@@ -13,6 +14,7 @@ def main():
     cov = coverage.Coverage(data_file='coverage', data_suffix=True, source=sources, branch=True)
     cov.combine([dest_dir], strict=True)
     cov.html_report(directory=dest_dir)
+    cov.xml_report(outfile=os.path.join(dest_dir, 'coverage.xml'))
     cov.report()
 
 main()

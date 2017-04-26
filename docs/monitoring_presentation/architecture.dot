@@ -29,6 +29,7 @@ digraph g {
         ElasticSearch -> Kibana [dir=back];
 
         Disk [shape=cylinder];
+        ElasticSearch [shape=cylinder];
     }
 
     WSGI -> Statsd;

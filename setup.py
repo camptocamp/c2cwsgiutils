@@ -26,7 +26,7 @@ setup(
     author_email='info@camptocamp.com',
     url='https://github.com/camptocamp/c2cwsgiutils',
     license='FreeBSD',
-    packages=find_packages(exclude=['ez_setup', 'acceptance_tests', 'tests', 'doc']),
+    packages=find_packages(exclude=['ez_setup', 'acceptance_tests', 'tests', 'docs']),
     include_package_data=True,
     zip_safe=False,
     install_requires=INSTALL_REQUIRES,

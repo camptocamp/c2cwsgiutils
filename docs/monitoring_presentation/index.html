@@ -11,18 +11,16 @@
         h1, h2, h3 {
             font-family: 'Droid Serif';
             font-weight: normal;
+            color: #FF680A;
         }
         img { width: 100%; }
         .remark-code, .remark-inline-code {
             font-family: 'Ubuntu Mono';
             font-size: 20px;
         }
-        .smallImage { width: 60%; display: table; margin: 0 auto;}
-        div.black { background-color: black; }
-        .black img { height: 90%; width: auto; }
         div.remark-slide-content {
             background-image: url("C2C-logo-RGB.svg");
-            background-size: 200px 40px;
+            background-size: 200px 35px;
             background-position: 95% 15px;
             font-size: 28px;
         }
@@ -34,6 +32,12 @@
         .title-slide .remark-slide-number {
             display: none;
         }
+        .c2cbackground {
+            background-image: url("c2c.png") !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-size: 100% !important;
+        }
     </style>
 </head>
 <body>
@@ -42,28 +46,44 @@ class: title-slide
 count: false
 
 ---
-
 class: center, middle
 
 # Getting metrics from a Pyramid application
 
 ---
+class: c2cbackground
 
-# Plan
+# Who is Camptocamp?
 
-1. Introduction
-1. Typical Architecture
-1. How we do it
-1. The results
-1. Conclusion
+* Open Source Editor and Service Provider
+* Staff 68
+* Since 2001
+* Geospatial
+* Complex infrastructure hosting (high availability, scalability)
+* Business (Odoo)
+
+
+---
+
+![Schweizmobil 3D](schweizmobil3d.png)
+
+---
+
+![c2c.org](c2corg.png)
 
 ---
 
 # Introduction
 
 * Why do we need metrics?
-    * Monitoring
-    * Profiling
+    * Several high visibility customer projects
+    * Irregular loads
+    * Continuous deployment could introduce higher loads
+    * Availablity requirement
+    * The current CPU/load level monitoring is not enough (granularity)
+* Who needs metric?
+    * Sysadmin (sizing, what is broken)
+    * Developers (optimization, debug)
 * How to get metrics?
 
 ---
@@ -90,16 +110,15 @@ An UDP protocol to send metrics:
 
 * CEE allows to stucture the logs using JSON
 * Allows better filtering and analysis downstream
+    * Some project generate more the 1000 logs/seconds
 
 
 ---
 
 # c2cwsgiutils
 
-https://github.com/camptocamp/c2cwsgiutils
-
-A glue between Pyramid, SQLAlchemy (PostgresQL), statsd, syslog and other utilities to facilitate the development of
-REST services.
+A glue between Pyramid, SQLAlchemy (PostGIS), statsd, syslog and others to facilitate the development of
+geographical REST services.
 
 * Statsd metrics
     * Generic timers (routes, rendering, Alembic hooks)
@@ -125,7 +144,9 @@ def main(_, **settings):
     config.include(c2cwsgiutils.pyramid.includeme)
     models.init(config)
     health_check = HealthCheck(config)
-    health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
+    health_check.add_db_session_check(
+        models.DBSession,
+        at_least_one_model=models.Hello)
     config.scan("my_app.services")
     return config.make_wsgi_app()
 
@@ -141,7 +162,8 @@ A route/view:
 from c2cwsgiutils import services
 from c2cwsgiutils.stats import timer_context
 
-hello_service = services.create("hello", "/hello", cors_credentials=True)
+hello_service = services.create("hello", "/hello",
+                                cors_credentials=True)
 
 @hello_service.get()
 def hello_get(request):

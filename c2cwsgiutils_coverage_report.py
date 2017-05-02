@@ -13,8 +13,8 @@ def main():
     shutil.copytree(report_dir, dest_dir)
     cov = coverage.Coverage(data_file='coverage', data_suffix=True, source=sources, branch=True)
     cov.combine([dest_dir], strict=True)
-    cov.html_report(directory=dest_dir)
-    cov.xml_report(outfile=os.path.join(dest_dir, 'coverage.xml'))
-    cov.report()
+    cov.html_report(directory=dest_dir, ignore_errors=True)
+    cov.xml_report(outfile=os.path.join(dest_dir, 'coverage.xml'), ignore_errors=True)
+    cov.report(ignore_errors=True)
 
 main()

@@ -16,5 +16,4 @@ def includeme(config):
     pyramid_logging.install_subscriber(config)
     sql_profiler.init(config)
     version.init(config)
-    config.scan("c2cwsgiutils.services")
     config.scan("c2cwsgiutils.errors")

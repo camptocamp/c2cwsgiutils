@@ -121,11 +121,11 @@ A glue between Pyramid, SQLAlchemy (PostGIS), statsd, syslog and others to facil
 geographical REST services.
 
 * Statsd metrics
-    * Generic timers (routes, rendering, Alembic hooks)
+    * Generic timers (routes, rendering, SQL hooks)
     * Facilities for custom timers
 * Logging (ability to send @cee JSON formatted logs to syslog)
-* Health checks
 * Master/slave DB connections
+* Health checks
 * Tools to write acceptance tests
 
 ---
@@ -162,8 +162,7 @@ A route/view:
 from c2cwsgiutils import services
 from c2cwsgiutils.stats import timer_context
 
-hello_service = services.create("hello", "/hello",
-                                cors_credentials=True)
+hello_service = services.create("hello", "/hello")
 
 @hello_service.get()
 def hello_get(request):

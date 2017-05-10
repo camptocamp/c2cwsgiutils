@@ -17,6 +17,8 @@ digraph g {
 
         Statsd -> Prometheus;
         Prometheus -> Grafana [dir=back];
+
+        Prometheus [shape=cylinder]
     }
 
     subgraph cluster_Logs {

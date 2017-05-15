@@ -10,6 +10,7 @@ services:
       STATSD_PREFIX: acceptance
       LOG_VIEW_SECRET: changeme
       SQL_PROFILER_SECRET: changeme
+      DEBUG_VIEW_SECRET: changeme
       LOG_HOST: 172.17.0.1
       LOG_TYPE: 'console,logstash'
       SQL_LOG_LEVEL: DEBUG

@@ -8,14 +8,15 @@ Install a filter on the logging handler to add some info about requests:
 A pyramid event handler is installed to setup this filter for the current request.
 """
 import logging
-import os
 import uuid
 
 from cee_syslog_handler import CeeSysLogHandler
-from pyramid.httpexceptions import HTTPForbidden
 from pyramid.threadlocal import get_current_request
 
 from c2cwsgiutils import _utils
+
+CONFIG_KEY = 'c2c.log_view_secret'
+ENV_KEY = 'LOG_VIEW_SECRET'
 
 LOG = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ def install_subscriber(config):
     Install the view to configure the loggers, if configured to do so.
     """
     config.add_request_method(lambda request: str(uuid.uuid4()), 'c2c_request_id', reify=True)
-    if 'LOG_VIEW_SECRET' in os.environ:
+    if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
                          request_method="GET")
         config.add_view(_logging_change_level, route_name="c2c_logging_level", renderer="json", http_cache=0)
@@ -61,8 +62,7 @@ def install_subscriber(config):
 
 
 def _logging_change_level(request):
-    if request.params.get('secret') != os.environ['LOG_VIEW_SECRET']:
-        raise HTTPForbidden('Missing or invalid secret parameter')
+    _utils.auth_view(request, ENV_KEY, CONFIG_KEY)
     name = request.params['name']
     level = request.params.get('level')
     logger = logging.getLogger(name)

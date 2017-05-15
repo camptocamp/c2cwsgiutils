@@ -3,8 +3,6 @@ A view (URL=/sql_provider) allowing to enabled/disable a SQL spy that runs an "E
 every SELECT query going through SQLAlchemy.
 """
 import logging
-import os
-from pyramid.httpexceptions import HTTPForbidden
 import re
 import sqlalchemy.event
 import sqlalchemy.engine
@@ -12,14 +10,14 @@ import sqlalchemy.engine
 from c2cwsgiutils import _utils
 
 ENV_KEY = 'SQL_PROFILER_SECRET'
+CONFIG_KEY = 'c2c.sql_profiler_secret'
 LOG = logging.getLogger(__name__)
 enabled = False
 
 
 def _sql_profiler_view(request):
     global enabled
-    if request.params.get('secret') != os.environ[ENV_KEY]:
-        raise HTTPForbidden('Missing or invalid secret parameter')
+    _utils.auth_view(request, ENV_KEY, CONFIG_KEY)
     if 'enable' in request.params:
         if request.params['enable'] == '1':
             if not enabled:
@@ -68,7 +66,7 @@ def init(config):
     """
     Install a pyramid  event handler that adds the request information
     """
-    if 'SQL_PROFILER_SECRET' in os.environ:
+    if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
                          request_method="GET")
         config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="json", http_cache=0)

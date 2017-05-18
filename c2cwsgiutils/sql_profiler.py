@@ -6,35 +6,57 @@ import logging
 import re
 import sqlalchemy.event
 import sqlalchemy.engine
+from threading import Lock
 
 from c2cwsgiutils import _utils
 
 ENV_KEY = 'SQL_PROFILER_SECRET'
 CONFIG_KEY = 'c2c.sql_profiler_secret'
 LOG = logging.getLogger(__name__)
-enabled = False
+repository = None
+
+
+class _Repository(set):
+    def __init__(self):
+        super().__init__()
+        self._lock = Lock()
+
+    def profile(self, conn, _cursor, statement, parameters, _context, _executemany):
+        if statement.startswith("SELECT ") and LOG.isEnabledFor(logging.INFO):
+            do_it = False
+            with self._lock:
+                if statement not in self:
+                    do_it = True
+                    self.add(statement)
+            if do_it:
+                try:
+                    LOG.info("statement:\n%s", _indent(_beautify_sql(statement)))
+                    LOG.info("parameters: %s", repr(parameters))
+                    output = '\n  '.join([
+                        row[0] for row in conn.engine.execute("EXPLAIN ANALYZE " + statement, parameters)
+                    ])
+                    LOG.info(output)
+                except:
+                    pass
 
 
 def _sql_profiler_view(request):
-    global enabled
+    global repository
     _utils.auth_view(request, ENV_KEY, CONFIG_KEY)
     if 'enable' in request.params:
         if request.params['enable'] == '1':
-            if not enabled:
+            if repository is None:
                 LOG.warning("Enabling the SQL profiler")
+                repository = _Repository()
                 sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute",
-                                        _before_cursor_execute)
-                enabled = True
-            return {'status': 200, 'enabled': True}
+                                        repository.profile)
         else:
-            if enabled:
+            if repository is not None:
                 LOG.warning("Disabling the SQL profiler")
                 sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute",
-                                        _before_cursor_execute)
-                enabled = False
-            return {'status': 200, 'enabled': False}
-    else:
-        return {'status': 200, 'enabled': enabled}
+                                        repository.profile)
+                repository = None
+    return {'status': 200, 'enabled': repository is not None}
 
 
 def _beautify_sql(statement):
@@ -48,18 +70,6 @@ def _beautify_sql(statement):
 
 def _indent(statement, indent='  '):
     return indent + ("\n" + indent).join(statement.split('\n'))
-
-
-def _before_cursor_execute(conn, _cursor, statement, parameters, _context, _executemany):
-    if statement.startswith("SELECT ") and LOG.isEnabledFor(logging.INFO):
-        try:
-            output = "statement:\n%s\nparameters: %s\nplan:\n  " % (_indent(_beautify_sql(statement)),
-                                                                    repr(parameters))
-            output += '\n  '.join([row[0] for row in conn.engine.execute("EXPLAIN ANALYZE " + statement,
-                                                                         parameters)])
-            LOG.info(output)
-        except:
-            pass
 
 
 def init(config):

@@ -16,3 +16,4 @@ def init(config):
                          request_method="GET")
         config.add_view(lambda request: versions, route_name="c2c_versions", renderer="json", http_cache=0)
         LOG.info("Installed the /versions.json service")
+        LOG.warning("Starting version %s (%s)", versions['main']['git_tag'], versions['main']['git_hash'])

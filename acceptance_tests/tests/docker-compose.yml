@@ -1,42 +1,45 @@
-version: '2'
-services:
-  app:
-    image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
-    environment:
-      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-      SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
-      STATS_VIEW: 1
-      STATSD_ADDRESS: 127.0.0.1:8125
-      STATSD_PREFIX: acceptance
-      LOG_VIEW_SECRET: changeme
-      SQL_PROFILER_SECRET: changeme
-      DEBUG_VIEW_SECRET: changeme
-      LOG_HOST: 172.17.0.1
-      LOG_TYPE: 'console,logstash'
-      SQL_LOG_LEVEL: DEBUG
-      OTHER_LOG_LEVEL: DEBUG
-      DEVELOPMENT: 1
-      COVERAGE: 1
-    links:
-      - db
-      - db_slave
-    ports:
-      - 8480:80
+app:
+  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  environment:
+    SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+    SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
+    STATS_VIEW: 1
+    STATSD_ADDRESS: 127.0.0.1:8125
+    STATSD_PREFIX: acceptance
+    LOG_VIEW_SECRET: changeme
+    SQL_PROFILER_SECRET: changeme
+    DEBUG_VIEW_SECRET: changeme
+    LOG_HOST: 172.17.0.1
+    LOG_TYPE: 'console,logstash'
+    SQL_LOG_LEVEL: DEBUG
+    OTHER_LOG_LEVEL: DEBUG
+    DEVELOPMENT: 1
+    COVERAGE: 1
+  links:
+    - db
+    - db_slave
+  ports:
+    - 8480:80
 
-  db:
-    image: camptocamp/postgresql:pg9.5-latest
-    environment:
-      POSTGRES_USER: www-data
-      POSTGRES_PASSWORD: www-data
-      POSTGRES_DB: test
-    ports:
-      - 15432:5432
+db:
+  image: camptocamp/postgresql:pg9.5-latest
+  environment:
+    POSTGRES_USER: www-data
+    POSTGRES_PASSWORD: www-data
+    POSTGRES_DB: test
+  ports:
+    - 15432:5432
 
-  db_slave:
-    image: camptocamp/postgresql:pg9.5-latest
-    environment:
-      POSTGRES_USER: www-data
-      POSTGRES_PASSWORD: www-data
-      POSTGRES_DB: test
-    ports:
-      - 25432:5432
+db_slave:
+  image: camptocamp/postgresql:pg9.5-latest
+  environment:
+    POSTGRES_USER: www-data
+    POSTGRES_PASSWORD: www-data
+    POSTGRES_DB: test
+  ports:
+    - 25432:5432
+
+
+run_test:
+  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  command: 'true'

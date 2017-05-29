@@ -88,7 +88,7 @@ class Composition(object):
                                '--project-name', self.project_name, 'run', '--rm', container] + list(command),
                               env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs)
 
-    def exec(self, container, timeout=None, *command, **kwargs):
+    def exec(self, container, *command, **kwargs):
         subprocess.check_call(['docker-compose', '--file', self.composition,
                                '--project-name', self.project_name, 'exec', '-T', container] + list(command),
                               env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs)

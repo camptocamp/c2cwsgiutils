@@ -72,7 +72,11 @@ Error catching views will be put in place to return errors as JSON.
 Logging
 -------
 
-A logging backend is provided to send @cee formatted logs to syslog through UDP.
+Two new logging backends are provided:
+
+* `c2cwsgiutils.pyramid_logging.PyramidCeeSysLogHandler`: to send @cee formatted logs to syslog through UDP.
+* `c2cwsgiutils.pyramid_logging.JsonLogHandler`: to output (on stdout or stderr) JSON formatted logs.
+
 Look at the logging configuration part of
 [acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for a usage example.
 

@@ -7,10 +7,11 @@ Install a filter on the logging handler to add some info about requests:
 
 A pyramid event handler is installed to setup this filter for the current request.
 """
+import json
 import logging
 import uuid
 
-from cee_syslog_handler import CeeSysLogHandler
+import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
 from c2cwsgiutils import _utils
@@ -34,19 +35,50 @@ class _PyramidFilter(logging.Filter):
                 record.matched_route = request.matched_route.name
             record.path = request.path
             record.request_id = request.c2c_request_id
+        record.level_name = record.levelname
         return True
 
 
 _PYRAMID_FILTER = _PyramidFilter()
 
 
-class PyramidCeeSysLogHandler(CeeSysLogHandler):
+def new_make_message_dict(*args, **kargv):
+    """
+    patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
+    """
+    msg = orig_make_message_dict(*args, **kargv)
+    if msg['message'] != msg['short_message']:
+        # only output full_message if it's different from short message
+        msg['full_message'] = msg['message']
+    del msg['message']
+    return msg
+
+
+orig_make_message_dict = cee_syslog_handler.make_message_dict
+cee_syslog_handler.make_message_dict = new_make_message_dict
+
+
+class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
     """
     A CEE (JSON format) log handler with additional information about the current request.
     """
     def __init__(self, *args):
-        CeeSysLogHandler.__init__(self, *args)
+        super().__init__(*args)
         self.addFilter(_PYRAMID_FILTER)
+
+
+class JsonLogHandler(logging.StreamHandler):
+    """
+    Log to stdout in JSON.
+    """
+    def __init__(self, stream=None):
+        super().__init__(stream)
+        self.addFilter(_PYRAMID_FILTER)
+
+    def format(self, record):
+        message = cee_syslog_handler.make_message_dict(record, debugging_fields=True, extra_fields=True,
+                                                       fqdn=False, localname=None, facility=None)
+        return json.dumps(message)
 
 
 def install_subscriber(config):

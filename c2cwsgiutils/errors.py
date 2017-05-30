@@ -58,13 +58,12 @@ def other_error(exception, request):
 
 def _do_error(request, status, exception):
     LOG.error("%s %s returned status code %s: %s",
-              request.method, request.url, status, str(exception))
-    trace = traceback.format_exc()
-    LOG.error(trace)
+              request.method, request.url, status, str(exception), exc_info=True)
     request.response.status_code = status
     _add_cors(request)
     response = {"message": str(exception), "status": status}
 
     if os.environ.get('DEVELOPMENT', '0') != '0':
+        trace = traceback.format_exc()
         response['stacktrace'] = trace
     return response

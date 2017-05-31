@@ -2,7 +2,7 @@ A sample acceptance test image
 ==============================
 
 This directory is used to build a Docker image that runs acceptance
-tests agains the sample application.
+tests against the sample application.
 
 When a container is run with this image, it will start tests. A typical
 test session runs like that:

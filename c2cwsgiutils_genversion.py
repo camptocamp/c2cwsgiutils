@@ -32,7 +32,7 @@ def _get_packages_version():
                 name, version = matcher.groups()
                 result[name] = version
             else:
-                print("Cannot parse pacakge version: " + comp)
+                print("Cannot parse package version: " + comp)
     return result
 
 

@@ -1,7 +1,7 @@
 import cornice
 import pyramid_tm
 
-from c2cwsgiutils import stats, pyramid_logging, sql_profiler, version, debug
+from c2cwsgiutils import stats_pyramid, pyramid_logging, sql_profiler, version, debug
 
 
 def includeme(config):
@@ -12,7 +12,7 @@ def includeme(config):
     config.add_settings(handle_exceptions=False)
     config.include(pyramid_tm.includeme)
     config.include(cornice.includeme)
-    stats.init(config)
+    stats_pyramid.init(config)
     pyramid_logging.install_subscriber(config)
     sql_profiler.init(config)
     version.init(config)

@@ -14,7 +14,7 @@ import uuid
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import _utils, _auth
 
 CONFIG_KEY = 'c2c.log_view_secret'
 ENV_KEY = 'LOG_VIEW_SECRET'
@@ -94,7 +94,7 @@ def install_subscriber(config):
 
 
 def _logging_change_level(request):
-    _utils.auth_view(request, ENV_KEY, CONFIG_KEY)
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     name = request.params['name']
     level = request.params.get('level')
     logger = logging.getLogger(name)

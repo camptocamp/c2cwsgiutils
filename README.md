@@ -111,6 +111,9 @@ with stats.timer_context('toto', 'tutu'):
 
 Other functions exists to generate metrics. Look at the `c2cwsgiutils.stats` module.
 
+Look at the `c2cwsgiutils_stats_db.py` utility if you want to generate statistics (gauges) about the
+row counts.
+
 
 SQL profiler
 ------------

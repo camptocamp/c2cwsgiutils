@@ -1,9 +1,7 @@
 """
 Private utilities.
 """
-
 import os
-from pyramid.httpexceptions import HTTPForbidden
 
 
 def get_base_path(config):
@@ -11,11 +9,10 @@ def get_base_path(config):
 
 
 def env_or_config(config, env_name, config_name, default):
+    return env_or_settings(config.get_settings(), env_name, config_name, default)
+
+
+def env_or_settings(settings, env_name, settings_name, default):
     if env_name in os.environ:
         return os.environ[env_name]
-    return config.get_settings().get(config_name, default)
-
-
-def auth_view(request, env_name, config_name):
-    if request.params.get('secret') != env_or_config(request.registry.settings, env_name, config_name, False):
-        raise HTTPForbidden('Missing or invalid secret parameter')
+    return settings.get(settings_name, default)

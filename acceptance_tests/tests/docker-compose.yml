@@ -43,3 +43,5 @@ db_slave:
 run_test:
   image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
   command: 'true'
+  links:
+    - db

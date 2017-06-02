@@ -9,13 +9,9 @@ import socket
 import time
 import threading
 
-import pyramid.events
-from pyramid.httpexceptions import HTTPException
-import sqlalchemy.event
-
 from c2cwsgiutils import _utils
 
-BACKENDS = []
+BACKENDS = {}
 LOG = logging.getLogger(__name__)
 
 
@@ -47,7 +43,7 @@ def set_gauge(key, value):
     :param key: The path of the key, given as a list.
     :param value: The new value of the gauge
     """
-    for backend in BACKENDS:
+    for backend in BACKENDS.values():
         backend.gauge(key, value)
 
 
@@ -57,7 +53,7 @@ def increment_counter(key, increment=1):
     :param key: The path of the key, given as a list.
     :param increment: The increment
     """
-    for backend in BACKENDS:
+    for backend in BACKENDS.values():
         backend.counter(key, increment)
 
 
@@ -72,7 +68,7 @@ class _Timer(object):
     def stop(self, key_final=None):
         if key_final is not None:
             self._key = key_final
-        for backend in BACKENDS:
+        for backend in BACKENDS.values():
             backend.timer(self._key, time.time() - self._start)
 
 
@@ -173,119 +169,15 @@ class _StatsDBackend(object):  # pragma: nocover
         self._send(message)
 
 
-def _create_finished_cb(kind, measure):  # pragma: nocover
-    def finished_cb(request):
-        if request.exception is not None:
-            if isinstance(request.exception, HTTPException):
-                status = request.exception.code
-            else:
-                status = 500
-        else:
-            status = request.response.status_code
-        if request.matched_route is None:
-            name = "_not_found"
-        else:
-            name = request.matched_route.name
-        key = [kind, request.method, name, str(status)]
-        measure.stop(key)
-    return finished_cb
-
-
-def _request_callback(event):  # pragma: nocover
-    """
-    Callback called when a new HTTP request is incoming.
-    """
-    measure = timer()
-    event.request.add_finished_callback(_create_finished_cb("route", measure))
-
-
-def _before_rendered_callback(event):  # pragma: nocover
-    """
-    Callback called when the rendering is starting.
-    """
-    request = event.get("request", None)
-    if request:
-        measure = timer()
-        request.add_finished_callback(_create_finished_cb("render", measure))
-
-
-def _simplify_sql(sql):
-    """
-    Simplify SQL statements to make them easier on the eye and shorter for the stats.
-    """
-    sql = " ".join(sql.split("\n"))
-    sql = re.sub(r"  +", " ", sql)
-    sql = re.sub(r"SELECT .*? FROM", "SELECT FROM", sql)
-    sql = re.sub(r"INSERT INTO (.*?) \(.*", r"INSERT INTO \1", sql)
-    sql = re.sub(r"SET .*? WHERE", "SET WHERE", sql)
-    sql = re.sub(r"IN \((?:%\(\w+\)\w(?:, *)?)+\)", "IN (?)", sql)
-    return re.sub(r"%\(\w+\)\w", "?", sql)
-
-
-def _before_cursor_execute(conn, _cursor, statement,
-                           _parameters, _context, _executemany):
-    measure = timer(["sql", _simplify_sql(statement)])
-
-    def after(*_args, **_kwargs):
-        measure.stop()
-
-    sqlalchemy.event.listen(conn, "after_cursor_execute", after, once=True)
-
-
-def _before_commit(session):  # pragma: nocover
-    measure = timer(["sql", "commit"])
-
-    def after(*_args, **_kwargs):
-        measure.stop()
-
-    sqlalchemy.event.listen(session, "after_commit", after, once=True)
-
-
-def init_db_spy():  # pragma: nocover
-    """
-    Subscribe to SQLAlchemy events in order to get some stats on DB interactions.
-    """
-    from sqlalchemy.engine import Engine
-    from sqlalchemy.orm import Session
-    sqlalchemy.event.listen(Engine, "before_cursor_execute", _before_cursor_execute)
-    sqlalchemy.event.listen(Session, "before_commit", _before_commit)
-
-
-def init_pyramid_spy(config):  # pragma: nocover
-    """
-    Subscribe to Pyramid events in order to get some stats on route time execution.
-    :param config: The Pyramid config
-    """
-    config.add_subscriber(_request_callback, pyramid.events.NewRequest)
-    config.add_subscriber(_before_rendered_callback, pyramid.events.BeforeRender)
-
-
-def init_backends(config):
+def init_backends(settings):
     """
     Initialize the backends according to the configuration.
     :param config: The Pyramid config
     """
-    if _utils.env_or_config(config, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
-        memory_backend = _MemoryBackend()
-        BACKENDS.append(memory_backend)
+    if _utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
+        BACKENDS['memory'] = _MemoryBackend()
 
-        config.add_route("c2c_read_stats_json", _utils.get_base_path(config) + r"/stats.json",
-                         request_method="GET")
-        config.add_view(memory_backend.get_stats, route_name="c2c_read_stats_json", renderer="json",
-                        http_cache=0)
-
-    statsd_address = _utils.env_or_config(config, "STATSD_ADDRESS", "c2c.statsd_address", None)
+    statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
-        statsd_prefix = _utils.env_or_config(config, "STATSD_PREFIX", "c2c.statsd_prefix", "")
-        BACKENDS.append(_StatsDBackend(statsd_address, statsd_prefix))
-
-
-def init(config):
-    """
-    Initialize the whole stats module.
-    :param config: The Pyramid config
-    """
-    init_backends(config)
-    if BACKENDS:  # pragma: nocover
-        init_pyramid_spy(config)
-        init_db_spy()
+        statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
+        BACKENDS['statsd'] = _StatsDBackend(statsd_address, statsd_prefix)

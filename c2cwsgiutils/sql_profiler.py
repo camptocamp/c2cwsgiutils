@@ -8,7 +8,7 @@ import sqlalchemy.event
 import sqlalchemy.engine
 from threading import Lock
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import _utils, _auth
 
 ENV_KEY = 'SQL_PROFILER_SECRET'
 CONFIG_KEY = 'c2c.sql_profiler_secret'
@@ -42,7 +42,7 @@ class _Repository(set):
 
 def _sql_profiler_view(request):
     global repository
-    _utils.auth_view(request, ENV_KEY, CONFIG_KEY)
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     if 'enable' in request.params:
         if request.params['enable'] == '1':
             if repository is None:

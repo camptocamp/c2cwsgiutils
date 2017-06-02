@@ -59,7 +59,7 @@ build_acceptance:
 
 .PHONY: build_test_app
 build_test_app:
-	rsync -a c2cwsgiutils c2cwsgiutils_run c2cwsgiutils_genversion.py c2cwsgiutils_coverage_report.py rel_requirements.txt setup.cfg acceptance_tests/app/
+	rsync -a c2cwsgiutils c2cwsgiutils_run c2cwsgiutils_genversion.py c2cwsgiutils_coverage_report.py c2cwsgiutils_stats_db.py rel_requirements.txt setup.cfg acceptance_tests/app/
 	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) --build-arg "GIT_TAG=$(GIT_TAG)" --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: rel_requirements.txt dev_requirements.txt

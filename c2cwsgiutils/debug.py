@@ -3,7 +3,7 @@ import threading
 import traceback
 import sys
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import _utils, _auth
 
 CONFIG_KEY = 'c2c.debug_view_secret'
 ENV_KEY = 'DEBUG_VIEW_SECRET'
@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 
 
 def _dump_stacks(request):
-    _utils.auth_view(request, ENV_KEY, CONFIG_KEY)
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
     code = []
     for threadId, stack in sys._current_frames().items():

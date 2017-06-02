@@ -59,8 +59,8 @@ def do_table(session, schema, table, reporter):
 
 
 def do_extra(session, extra, reporter):
-    metric, count = session.execute(extra).fetchone()
-    reporter.do_report(str(metric).split("."), count)
+    for metric, count in session.execute(extra):
+        reporter.do_report(str(metric).split("."), count)
 
 
 def main():

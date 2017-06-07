@@ -10,6 +10,12 @@ def test_http_error(app_connection):
     assert error['message'] == 'bam'
 
 
+def test_commit_time_db(app_connection):
+    error = app_connection.get_json('error', params={'db': '1'}, expected_status=400)
+    assert error['status'] == 400
+    assert 'duplicate key' in error['message']
+
+
 def test_other(app_connection):
     error = app_connection.get_json('error', expected_status=500)
     assert error['status'] == 500

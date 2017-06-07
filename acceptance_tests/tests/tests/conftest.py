@@ -45,7 +45,12 @@ def _create_table(master):
     connection = _connect(master)
     with connection.cursor() as curs:
         LOG.info("Creating table for " + name)
-        curs.execute("CREATE TABLE hello (id SERIAL PRIMARY KEY, value TEXT)")
+        curs.execute("""
+        CREATE TABLE hello (
+          id SERIAL PRIMARY KEY,
+          value TEXT UNIQUE INITIALLY DEFERRED
+        )
+        """)
         curs.execute("INSERT INTO hello (value) VALUES ('%s')" % (name))
     connection.commit()
     return connection

@@ -50,4 +50,9 @@ def error(request):
     code = int(request.params.get('code', '500'))
     if code == 403:
         raise HTTPForbidden('bam')
-    raise Exception('boom')
+    elif request.params.get('db', '0') == '1':
+        for _ in range(2):
+            models.DBSession.add(models.Hello(value='toto'))
+    else:
+        raise Exception('boom')
+    return {'status': 200}

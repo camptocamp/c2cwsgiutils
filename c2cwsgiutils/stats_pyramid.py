@@ -90,6 +90,7 @@ def init_db_spy():  # pragma: nocover
 def init_pyramid_spy(config):  # pragma: nocover
     """
     Subscribe to Pyramid events in order to get some stats on route time execution.
+
     :param config: The Pyramid config
     """
     config.add_subscriber(_request_callback, pyramid.events.NewRequest)
@@ -99,6 +100,7 @@ def init_pyramid_spy(config):  # pragma: nocover
 def init(config):
     """
     Initialize the whole stats module.
+
     :param config: The Pyramid config
     """
     stats.init_backends(config.get_settings())

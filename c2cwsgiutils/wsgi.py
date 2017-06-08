@@ -8,6 +8,7 @@ def create_application(configfile=None):
     """
     Create a standard WSGI application with the capabilities to use environment variables in the
     configuration file (use %(ENV_VAR)s place holders)
+
     :param config: The configuration file to use
     :return: The application
     """

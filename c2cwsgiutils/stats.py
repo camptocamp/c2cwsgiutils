@@ -19,6 +19,7 @@ LOG = logging.getLogger(__name__)
 def timer_context(key):
     """
     Add a duration measurement to the stats using the duration the context took to run
+
     :param key: The path of the key, given as a list.
     """
     measure = timer(key)
@@ -30,6 +31,7 @@ def timer(key=None):
     """
     Create a timer for the given key. The key can be omitted, but then need to be specified
     when stop is called.
+
     :param key: The path of the key, given as a list.
     :return: An instance of _Timer
     """
@@ -40,6 +42,7 @@ def timer(key=None):
 def set_gauge(key, value):
     """
     Set a gauge value
+
     :param key: The path of the key, given as a list.
     :param value: The new value of the gauge
     """
@@ -50,6 +53,7 @@ def set_gauge(key, value):
 def increment_counter(key, increment=1):
     """
     Increment a counter value
+
     :param key: The path of the key, given as a list.
     :param increment: The increment
     """
@@ -172,6 +176,7 @@ class _StatsDBackend(object):  # pragma: nocover
 def init_backends(settings):
     """
     Initialize the backends according to the configuration.
+
     :param config: The Pyramid config
     """
     if _utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover

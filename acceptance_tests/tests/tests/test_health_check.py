@@ -6,7 +6,8 @@ def test_ok(app_connection):
     print('response=' + json.dumps(response))
     assert response == {
         'status': 200,
-        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello'],
+        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+                      'alembic_app_alembic.ini'],
         'failures': {}
     }
 
@@ -16,7 +17,8 @@ def test_failure(app_connection):
     print('response=' + json.dumps(response))
     assert response == {
         'status': 500,
-        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello'],
+        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+                      'alembic_app_alembic.ini'],
         'failures': {
             'fail': {
                 'message': 'failing check',

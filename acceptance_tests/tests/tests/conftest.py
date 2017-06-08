@@ -32,25 +32,20 @@ def app_connection(composition):
 
 @pytest.fixture(scope="session")
 def master_db_setup(composition):
-    return _create_table(master=True)
+    return _create_table(composition, master=True)
 
 
 @pytest.fixture(scope="session")
 def slave_db_setup(composition):
-    return _create_table(master=False)
+    return _create_table(composition, master=False)
 
 
-def _create_table(master):
+def _create_table(composition, master):
     name = 'master' if master else 'slave'
+    composition.run('alembic_' + name, '/app/run_alembic.sh')
     connection = _connect(master)
     with connection.cursor() as curs:
-        LOG.info("Creating table for " + name)
-        curs.execute("""
-        CREATE TABLE hello (
-          id SERIAL PRIMARY KEY,
-          value TEXT UNIQUE INITIALLY DEFERRED
-        )
-        """)
+        LOG.info("Creating data for " + name)
         curs.execute("INSERT INTO hello (value) VALUES ('%s')" % (name))
     connection.commit()
     return connection

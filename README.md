@@ -182,15 +182,17 @@ health_check = HealthCheck(config)
 health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
 health_check.add_url_check('http://localhost/api/hello')
 health_check.add_custom_check('custom', custom_check, 2)
+health_check.add_alembic_check(models.DBSession, '/app/alembic.ini', 3)
 ```
 
-Then, the URL `{C2C_BASE_PATH}/health_check?max_level=2` can be used to run the health checks and get a report
+Then, the URL `{C2C_BASE_PATH}/health_check?max_level=3` can be used to run the health checks and get a report
 looking like that (in case of error):
 
 ```json
 {
     "status": 500,
-    "successes": ["db_engine_sqlalchemy", "db_engine_sqlalchemy_slave", "http://localhost/api/hello"],
+    "successes": ["db_engine_sqlalchemy", "db_engine_sqlalchemy_slave", "http://localhost/api/hello", 
+                  "alembic_app_alembic.ini"],
     "failures": {
         "custom": {
             "message": "I'm not happy"
@@ -198,6 +200,8 @@ looking like that (in case of error):
     }
 }
 ```
+
+Look at the documentation of the `c2cwsgiutils.health_check.HealthCheck` class for more information.
 
 
 SQLAlchemy models graph

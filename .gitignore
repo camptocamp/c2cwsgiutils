@@ -1,3 +1,5 @@
+__pycache__
+*.pyc
 /.venv/
 /acceptance_tests/app/c2cwsgiutils
 /acceptance_tests/app/c2cwsgiutils_coverage_report.py
@@ -13,5 +15,5 @@
 /c2cwsgiutils.egg-info/
 /dist/
 /reports/
-.idea/dbnavigator.xml
-.idea/inspectionProfiles
+/.idea/dbnavigator.xml
+/.idea/inspectionProfiles

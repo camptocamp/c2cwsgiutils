@@ -22,5 +22,6 @@ def main(_, **settings):
     health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
     health_check.add_url_check('http://localhost/api/hello')
     health_check.add_custom_check('fail', _failure, 2)
+    health_check.add_alembic_check(models.DBSession, '/app/alembic.ini', 1)
 
     return config.make_wsgi_app()

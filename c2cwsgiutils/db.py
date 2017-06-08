@@ -27,9 +27,9 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
     path includes the route_prefix.
 
     :param config: The pyramid Configuration object
-    :param master_prefix: The prefix for the master connection configuration entries in the application
+    :param master_prefix: The prefix for the master connection configuration entries in the application \
                           settings
-    :param slave_prefix: The prefix for the slave connection configuration entries in the application
+    :param slave_prefix: The prefix for the slave connection configuration entries in the application \
                          settings
     :param force_master: The method/paths that needs to use the master
     :param force_slave: The method/paths that needs to use the slave

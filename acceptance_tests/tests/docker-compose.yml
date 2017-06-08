@@ -10,7 +10,7 @@ app:
     SQL_PROFILER_SECRET: changeme
     DEBUG_VIEW_SECRET: changeme
     LOG_HOST: 172.17.0.1
-    LOG_TYPE: 'json,logstash'
+    LOG_TYPE: 'console,logstash'
     SQL_LOG_LEVEL: DEBUG
     OTHER_LOG_LEVEL: DEBUG
     DEVELOPMENT: 1
@@ -20,6 +20,22 @@ app:
     - db_slave
   ports:
     - 8480:80
+
+alembic_master:
+  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  environment:
+    SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+  links:
+    - db
+  command: /bin/true  # will use execute with another script from the tests to actually do it
+
+alembic_slave:
+  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  environment:
+    SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+  links:
+    - db_slave:db
+  command: /bin/true  # will use execute with another script from the tests to actually do it
 
 db:
   image: camptocamp/postgresql:pg9.5-latest

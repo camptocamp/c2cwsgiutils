@@ -7,6 +7,7 @@ from c2cwsgiutils import stats_pyramid, pyramid_logging, sql_profiler, version, 
 def includeme(config):
     """
     Setup all the pyramid services and event handlers provided by this library.
+
     :param config: The pyramid Configuration
     """
     config.add_settings(handle_exceptions=False)

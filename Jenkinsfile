@@ -28,13 +28,30 @@ dockerBuild {
 
     def CURRENT_TAG = sh(returnStdout: true, script: "git fetch --tags && git tag -l --points-at HEAD | tail -1").trim()
     if (CURRENT_TAG != "") {
-        stage("publish ${CURRENT_TAG} on docker hub") {
-            sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${CURRENT_TAG}"
+        if (CURRENT_TAG ==~ /\d+(?:\.\d+)*/) {
+            parts = CURRENT_TAG.tokenize('.')
+            tags = []
+            for (int i=1; i<=parts.size(); ++i) {
+                curTag = ""
+                for (int j = 0; j < i; ++j) {
+                    if (j > 0) curTag += '.'
+                    curTag += parts[j]
+                }
+                tags << curTag
+            }
+        } else {
+            tags = [CURRENT_TAG]
+        }
 
+
+        stage("publish ${tags} on docker hub") {
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
-                docker.image("camptocamp/c2cwsgiutils:${CURRENT_TAG}").push()
+                for (String tag: tags) {
+                    sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${tag}"
+                    docker.image("camptocamp/c2cwsgiutils:${tag}").push()
+                }
                 sh 'rm -rf ~/.docker*'
             }
         }

@@ -1,2 +1,0 @@
--r rel_requirements.txt
-flake8==3.3.0

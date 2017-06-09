@@ -269,4 +269,5 @@ Make sure you are strict with the version numbers:
 To make a release:
 
 * Change the the version in [setup.py](setup.py)
-* run `make release`
+* run `make release` to publish to PYPI
+* Tag the GIT commit and make sure to push the tag before the branch

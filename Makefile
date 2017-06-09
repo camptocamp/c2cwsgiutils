@@ -1,4 +1,4 @@
-DOCKER_TAG ?= latest
+DOCKER_TAG = latest
 DOCKER_BASE = camptocamp/c2cwsgiutils
 
 #Get the docker version (must use the same version for acceptance tests)
@@ -41,7 +41,7 @@ acceptance: build_acceptance build_test_app
 	docker rm c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID; \
 	status=$$status$$?; \
 	#generate the HTML report for code coverage \
-	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_test_app:$(DOCKER_TAG) ./c2cwsgiutils_coverage_report.py c2cwsgiutils c2cwsgiutils_app; \
+	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_test_app:$(DOCKER_TAG) c2cwsgiutils_coverage_report.py c2cwsgiutils c2cwsgiutils_app; \
 	status=$$status$$?; \
 	#copy the HTML locally \
 	docker cp c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID:/tmp/coverage/api reports/coverage; \
@@ -52,14 +52,16 @@ acceptance: build_acceptance build_test_app
 	docker rm c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID; \
 	exit $$status$$?
 
+.PHONY: build_docker
+build_docker:
+	docker build -t $(DOCKER_BASE):$(DOCKER_TAG) .
+
 .PHONY: build_acceptance
-build_acceptance:
-	rsync -a c2cwsgiutils rel_requirements.txt setup.cfg acceptance_tests/tests/
+build_acceptance: build_docker
 	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) acceptance_tests/tests
 
 .PHONY: build_test_app
-build_test_app:
-	rsync -a c2cwsgiutils c2cwsgiutils_run c2cwsgiutils_genversion.py c2cwsgiutils_coverage_report.py c2cwsgiutils_stats_db.py rel_requirements.txt setup.cfg acceptance_tests/app/
+build_test_app: build_docker
 	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) --build-arg "GIT_TAG=$(GIT_TAG)" --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: rel_requirements.txt dev_requirements.txt

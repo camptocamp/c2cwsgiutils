@@ -1,5 +1,7 @@
+alembic==0.9.2
 cee_syslog_handler==0.4.1
 cornice==2.4.0
+flake8==3.3.0
 gunicorn==19.7.1
 lxml==3.8.0
 netifaces==0.10.6

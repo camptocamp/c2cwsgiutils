@@ -17,4 +17,5 @@ def main():
     cov.xml_report(outfile=os.path.join(dest_dir, 'coverage.xml'), ignore_errors=True)
     cov.report(ignore_errors=True)
 
+
 main()

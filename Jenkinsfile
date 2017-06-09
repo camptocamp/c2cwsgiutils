@@ -11,7 +11,7 @@ dockerBuild {
 
     stage('Update docker') {
         sh 'make pull'
-        sh 'git clean -f'
+        sh 'git clean -f -d'
     }
     stage('Build') {
         sh 'make -j2 build'

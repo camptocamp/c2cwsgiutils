@@ -159,7 +159,9 @@ class _StatsDBackend(object):  # pragma: nocover
 
     def timer(self, key, duration):
         the_key = self._key(key)
-        message = "%s:%s|ms" % (the_key, int(round(duration * 1000.0)))
+        ms_duration = int(round(duration * 1000.0))
+        ms_duration = max(ms_duration, 1)  # collectd would ignore events with zero durations
+        message = "%s:%s|ms" % (the_key, ms_duration)
         self._send(message)
 
     def gauge(self, key, value):

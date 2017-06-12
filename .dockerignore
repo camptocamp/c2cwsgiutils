@@ -6,3 +6,4 @@
 !rel_requirements.txt
 !setup.py
 !setup.cfg
+!tests

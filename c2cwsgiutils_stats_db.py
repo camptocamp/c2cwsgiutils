@@ -12,6 +12,7 @@ import transaction
 from zope.sqlalchemy import ZopeTransactionExtension
 
 from c2cwsgiutils import stats
+from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)-15s %(levelname)5s %(name)s %(message)s",
@@ -28,6 +29,9 @@ def _parse_args():
                         help='A SQL query that returns a metric name and a value')
     parser.add_argument('--statsd_address', type=str, help='address:port for the statsd daemon')
     parser.add_argument('--statsd_prefix', type=str, default='c2c', help='prefix for the statsd metrics')
+    parser.add_argument('--prometheus_url', type=str, help='Base URL for the Prometheus Pushgateway')
+    parser.add_argument('--prometheus_instance', type=str,
+                        help='Instance name for the Prometheus Pushgateway')
     parser.add_argument('--verbosity', type=str, default='INFO')
     args = parser.parse_args()
     logging.root.setLevel(args.verbosity)
@@ -41,12 +45,28 @@ class Reporter(object):
         else:
             self.statsd = None
 
+        if args.prometheus_url:
+            self.prometheus = PushgatewayGroupPublisher(args.prometheus_url, 'db_counts',
+                                                        instance=args.prometheus_instance)
+        else:
+            self.prometheus = None
+
     def do_report(self, metric, count):
         LOG.info("%s -> %d", ".".join(metric), count)
         if self.statsd is not None:
             self.statsd.gauge(metric, count)
+        if self.prometheus is not None:
 
-    def error(self, metric):
+            self.prometheus.add('database_table_count', count, metric_labels={
+                'metric': ".".join(v.replace('.', '_') for v in metric)
+            })
+
+    def commit(self):
+        if self.prometheus is not None:
+            self.prometheus.commit()
+
+
+def error(self, metric):
         if self.statsd is not None:
             self.statsd.counter(['error'] + metric, 1)
 
@@ -83,7 +103,6 @@ def main():
             do_table(session, schema, table, reporter)
         except Exception:
             reporter.error([schema, table])
-            raise
 
     if args.extra:
         for pos, extra in enumerate(args.extra):
@@ -91,8 +110,8 @@ def main():
                 do_extra(session, extra, reporter)
             except Exception:
                 reporter.error(['extra', str(pos + 1)])
-                raise
 
+    reporter.commit()
     transaction.abort()
 
 

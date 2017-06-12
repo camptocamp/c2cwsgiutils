@@ -12,6 +12,7 @@ def create_application(configfile=None):
     :param config: The configuration file to use
     :return: The application
     """
+    logging.captureWarnings(True)
     if configfile is None:
         configfile = os.environ.get('C2CWSGIUTILS_CONFIG', "/app/production.ini")
     # Load the logging config without using pyramid to be able to use environment variables in there.

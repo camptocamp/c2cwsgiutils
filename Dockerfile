@@ -1,7 +1,8 @@
 FROM python:3.6
+LABEL maintainer "info@camptocamp.org"
 
 RUN apt-get update && \
-    apt-get install -y libpq-dev libgeos-dev libproj-dev libjpeg-dev postgresql-client graphviz: && \
+    apt-get install -y --no-install-recommends libpq-dev libgeos-dev libproj-dev libjpeg-dev postgresql-client graphviz: && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 COPY rel_requirements.txt /c2cwsgiutils/

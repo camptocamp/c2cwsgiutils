@@ -1,5 +1,5 @@
 FROM camptocamp/c2cwsgiutils:latest
-MAINTAINER Camptocamp "info@camptocamp.com"
+LABEL maintainer "info@camptocamp.org"
 
 # Doing things in two steps to avoid needing to re-install everything when we do a rebuild
 # after changing code

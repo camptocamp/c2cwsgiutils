@@ -1,4 +1,5 @@
 FROM camptocamp/c2cwsgiutils:latest
+LABEL maintainer "info@camptocamp.org"
 
 ARG DOCKER_VERSION=1.12.0
 ARG DOCKER_COMPOSE_VERSION=1.10.0
@@ -14,7 +15,7 @@ RUN echo "deb http://apt.dockerproject.org/repo debian-jessie main" >> /etc/apt/
     echo 'deb http://http.debian.net/debian jessie-backports main' >> /etc/apt/sources.list && \
     apt-key adv --import /acceptance_tests/dockerproject.org.asc && \
     apt-get update && \
-    apt-get install -y docker-engine=${DOCKER_VERSION}*  && \
+    apt-get install -y --no-install-recommends docker-engine=${DOCKER_VERSION}*  && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 

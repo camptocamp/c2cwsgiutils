@@ -54,9 +54,8 @@ acceptance: build_acceptance build_test_app
 	exit $$status$$?
 
 .PHONY: send-coverage
-send-coverage: .venv/timestamp
-	.venv/bin/pip install git+https://github.com/codacy/python-codacy-coverage.git
-	.venv/bin/python-codacy-coverage -r reports/coverage/api/coverage.xml
+send_coverage: build_docker
+	docker run --rm -v $(THIS_DIR):/src -e CODACY_PROJECT_TOKEN=$(CODACY_PROJECT_TOKEN) $(DOCKER_BASE):$(DOCKER_TAG) bash -c "cd /src && python-codacy-coverage -r reports/coverage/api/coverage.xml"
 
 .PHONY: build_docker
 build_docker:

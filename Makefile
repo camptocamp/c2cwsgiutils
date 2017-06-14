@@ -48,9 +48,14 @@ acceptance: build_acceptance build_test_app
 	status=$$status$$?; \
 	#fix code path in the cobertura XML file \
 	sed -ie 's%>/app/c2cwsgiutils_app<%>$(THIS_DIR)/acceptance_tests/app/c2cwsgiutils_app<%' reports/coverage/api/coverage.xml; \
-	sed -ie 's%>/app/c2cwsgiutils<%>$(THIS_DIR)/c2cwsgiutils<%' reports/coverage/api/coverage.xml; \
+	sed -ie 's%filename="/c2cwsgiutils/c2cwsgiutils%filename="$(THIS_DIR)/c2cwsgiutils%' reports/coverage/api/coverage.xml; \
 	docker rm c2cwsgiutils_acceptance_reports_$(DOCKER_TAG)_$$PPID; \
 	exit $$status$$?
+
+.PHONY: send-coverage
+send-coverage: .venv/timestamp
+	.venv/bin/pip install git+https://github.com/codacy/python-codacy-coverage.git
+	.venv/bin/python-codacy-coverage -r reports/coverage/api/coverage.xml
 
 .PHONY: build_docker
 build_docker:

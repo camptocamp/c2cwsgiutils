@@ -23,6 +23,12 @@ dockerBuild {
             }
         } finally {
             junit keepLongStdio: true, testResults: 'reports/*.xml'
+            withCredentials([[$class          : 'UsernamePasswordMultiBinding',
+                              credentialsId   : 'C2cwsgiutilsCodacityToken',
+                              usernameVariable: 'CODACY_PROJECT_USER',
+                              passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
+                sh 'make send-coverage'
+            }
         }
     }
 

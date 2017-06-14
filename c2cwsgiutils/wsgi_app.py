@@ -1,7 +1,13 @@
 """
 Module used by c2cwsgiutils_run.sh to provide a WSGI application when starting gunicorn
 """
-from c2cwsgiutils import wsgi, coverage_setup
+from c2cwsgiutils import coverage_setup  # pragma: no cover
+coverage_setup.init()  # pragma: no cover
 
-coverage_setup.init()
-application = wsgi.create_application()
+
+def create():  # pragma: no cover
+    from c2cwsgiutils import wsgi
+    return wsgi.create_application()
+
+
+application = create()  # pragma: no cover

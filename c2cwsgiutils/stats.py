@@ -84,7 +84,8 @@ class _MemoryBackend(object):
         self._stats_lock = threading.Lock()
         LOG.info("Starting a MemoryBackend for stats")
 
-    def _key(self, key):
+    @staticmethod
+    def _key(key):
         return "/".join(v.replace('/', '_') for v in key)
 
     def timer(self, key, duration):
@@ -154,7 +155,7 @@ class _StatsDBackend(object):  # pragma: nocover
     def _send(self, message):
         try:
             self._socket.send(message.encode('utf-8'))
-        except:
+        except Exception:
             pass  # Ignore errors (must survive if stats cannot be sent)
 
     def timer(self, key, duration):

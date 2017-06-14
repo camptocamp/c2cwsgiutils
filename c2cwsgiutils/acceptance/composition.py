@@ -18,7 +18,7 @@ def _try(what, fail=True, times=5, delay=10):
     for i in range(times):
         try:
             return what()
-        except:
+        except Exception:
             LOG.warning("Exception:", exc_info=True)
             if i+1 == times and fail:
                 raise

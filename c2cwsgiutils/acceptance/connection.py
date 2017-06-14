@@ -12,7 +12,7 @@ class Connection:
         self.session = requests.session()
         self.origin = origin
 
-    def get(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
+    def get(self, url, expected_status=200, params=None, headers=None, cors=True, cache_allowed=False):
         """
         get the given URL (relative to the root of API).
         """
@@ -24,7 +24,7 @@ class Connection:
         finally:
             r.close()
 
-    def get_raw(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
+    def get_raw(self, url, expected_status=200, params=None, headers=None, cors=True, cache_allowed=False):
         """
         get the given URL (relative to the root of API).
         """
@@ -36,7 +36,7 @@ class Connection:
         finally:
             r.close()
 
-    def get_json(self, url, expected_status=200, params=None, headers={}, cors=True, cache_allowed=False):
+    def get_json(self, url, expected_status=200, params=None, headers=None, cors=True, cache_allowed=False):
         """
         get the given URL (relative to the root of API).
         """
@@ -48,7 +48,7 @@ class Connection:
         finally:
             r.close()
 
-    def get_xml(self, url, schema=None, expected_status=200, headers={}, params=None, cors=True,
+    def get_xml(self, url, schema=None, expected_status=200, headers=None, params=None, cors=True,
                 cache_allowed=False):
         """
         get the given URL (relative to the root of API).
@@ -68,7 +68,7 @@ class Connection:
         finally:
             r.close()
 
-    def post_json(self, url, data=None, json=None, expected_status=200, headers={}, cors=True,
+    def post_json(self, url, data=None, json=None, expected_status=200, headers=None, cors=True,
                   cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
@@ -82,7 +82,7 @@ class Connection:
         finally:
             r.close()
 
-    def post_files(self, url, data=None, files=None, expected_status=200, headers={}, cors=True,
+    def post_files(self, url, data=None, files=None, expected_status=200, headers=None, cors=True,
                    cache_allowed=False):
         """
         POST files to the the given URL (relative to the root of API).
@@ -96,7 +96,7 @@ class Connection:
         finally:
             r.close()
 
-    def post(self, url, data=None, expected_status=200, headers={}, cors=True, cache_allowed=False):
+    def post(self, url, data=None, expected_status=200, headers=None, cors=True, cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
@@ -109,7 +109,7 @@ class Connection:
         finally:
             r.close()
 
-    def put_json(self, url, json=None, expected_status=200, headers={}, cors=True, cache_allowed=False):
+    def put_json(self, url, json=None, expected_status=200, headers=None, cors=True, cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
@@ -121,7 +121,7 @@ class Connection:
         finally:
             r.close()
 
-    def delete(self, url, expected_status=204, headers={}, cors=True, cache_allowed=False):
+    def delete(self, url, expected_status=204, headers=None, cors=True, cache_allowed=False):
         """
         DELETE the given URL (relative to the root of API).
         """
@@ -148,7 +148,7 @@ class Connection:
                    self.origin if 'Access-Control-Allow-Credentials' in r.headers else '*'
 
     def _merge_headers(self, headers, cors):
-        merged = dict(headers)
+        merged = dict(headers) if headers is not None else {}
         merged.update(self.session.headers)
         merged.update(self._cors_headers(cors))
         return merged

@@ -15,7 +15,7 @@ def _get_git_versions(root):
             git_tag = subprocess.check_output(["git", "describe", "--tags", "--first-parent"],
                                               stderr=devnull, cwd=root).strip()
         git_tag = re.sub(r"-g[a-f0-9]+$", "", git_tag)
-    except:
+    except subprocess.CalledProcessError:
         git_tag = None
     return {
         "git_hash": git_hash,

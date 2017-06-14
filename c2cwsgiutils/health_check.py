@@ -145,7 +145,8 @@ class HealthCheck:
 
         return {'status': 500 if failures else 200, 'failures': failures, 'successes': successes}
 
-    def _create_db_engine_check(self, session, bind, query_cb):
+    @staticmethod
+    def _create_db_engine_check(session, bind, query_cb):
         def check(request):
             prev_bind = session.bind
             try:
@@ -156,7 +157,8 @@ class HealthCheck:
                 session.bind = prev_bind
         return 'db_engine_' + bind.c2c_name, check
 
-    def _at_least_one(self, model):
+    @staticmethod
+    def _at_least_one(model):
         def query(session):
             result = session.query(model).first()
             if result is None:

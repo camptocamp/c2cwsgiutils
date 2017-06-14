@@ -36,7 +36,7 @@ class _Repository(set):
                         row[0] for row in conn.engine.execute("EXPLAIN ANALYZE " + statement, parameters)
                     ])
                     LOG.info(output)
-                except:
+                except Exception:
                     pass
 
 

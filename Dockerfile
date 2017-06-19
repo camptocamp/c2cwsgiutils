@@ -1,8 +1,17 @@
 FROM python:3.6
 LABEL maintainer "info@camptocamp.org"
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev libgeos-dev libproj-dev libjpeg-dev postgresql-client graphviz: && \
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/postgres.list && \
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libpq-dev \
+        libgeos-dev \
+        libproj-dev \
+        libjpeg-dev \
+        postgresql-client-9.5 \
+        graphviz \
+        vim && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 COPY rel_requirements.txt /c2cwsgiutils/

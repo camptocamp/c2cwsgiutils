@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/c2cwsgiutils" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/acceptance_tests/app" />
       <excludeFolder url="file://$MODULE_DIR$/acceptance_tests/tests" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/reports" />
     </content>
     <orderEntry type="inheritedJdk" />

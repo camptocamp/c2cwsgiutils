@@ -1,4 +1,4 @@
-DOCKER_TAG = latest
+DOCKER_TAG ?= latest
 DOCKER_BASE = camptocamp/c2cwsgiutils
 
 #Get the docker version (must use the same version for acceptance tests)

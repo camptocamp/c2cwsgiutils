@@ -268,6 +268,13 @@ Make sure you are strict with the version numbers:
 
 To make a release:
 
-* Change the the version in [setup.py](setup.py)
-* run `make release` to publish to PYPI
-* Tag the GIT commit and make sure to push the tag before the branch
+* Change the the version in [setup.py](setup.py).
+* run `make release` to publish to PYPI.
+* Commit and push to master.
+* Tag the GIT commit.
+* Rebase the `release_${MAJOR_VERSION}` branch to this commit and push the `release_${MAJOR_VERSION}` and
+  the tag to github. Make sure to do that at the same time so that Jenkins can see the tag when it builds
+  the branch.
+
+We need the `release_${MAJOR_VERSION}` branch, so that Jenkins can build a new docker image for the major
+versions every nights.

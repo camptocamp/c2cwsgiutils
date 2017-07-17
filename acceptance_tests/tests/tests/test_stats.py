@@ -12,3 +12,8 @@ def test_ok(app_connection):
     assert stats['timers']['sql/read_hello']['nb'] == 1
     assert stats['gauges']['test/gauge_s'] == 42
     assert stats['counters']['test/counter'] == 1
+
+
+def test_server_timing(app_connection):
+    r = app_connection.get_raw('hello')
+    assert 'Server-Timing' in r.headers

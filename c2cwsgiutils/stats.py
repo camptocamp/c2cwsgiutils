@@ -70,10 +70,12 @@ class _Timer(object):
         self._start = time.time()
 
     def stop(self, key_final=None):
+        duration = time.time() - self._start
         if key_final is not None:
             self._key = key_final
         for backend in BACKENDS.values():
-            backend.timer(self._key, time.time() - self._start)
+            backend.timer(self._key, duration)
+        return duration
 
 
 class _MemoryBackend(object):

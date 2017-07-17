@@ -9,6 +9,19 @@ import sqlalchemy.event
 from c2cwsgiutils import stats, _utils
 
 
+def _add_server_metric(request, name, duration=None, description=None):
+    metric = name
+    if duration is not None:
+        metric += '=' + str(duration * 1000)
+    if description is not None:
+        metric += ';' + description
+
+    if 'Server-Timing' not in request.response.headers:
+        request.response.headers['Server-Timing'] = metric
+    else:
+        request.response.headers['Server-Timing'] += ', ' + metric
+
+
 def _create_finished_cb(kind, measure):  # pragma: nocover
     def finished_cb(request):
         if request.exception is not None:
@@ -22,8 +35,11 @@ def _create_finished_cb(kind, measure):  # pragma: nocover
             name = "_not_found"
         else:
             name = request.matched_route.name
+            if kind == 'route':
+                _add_server_metric(request, 'route', description=name)
         key = [kind, request.method, name, str(status)]
-        measure.stop(key)
+        duration = measure.stop(key)
+        _add_server_metric(request, kind + '_duration', duration=duration)
     return finished_cb
 
 

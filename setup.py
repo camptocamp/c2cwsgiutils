@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '0.16.3'
+VERSION = '0.17.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = open(os.path.join(HERE, 'rel_requirements.txt')).read().splitlines()
 

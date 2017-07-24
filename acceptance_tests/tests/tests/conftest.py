@@ -46,7 +46,7 @@ def _create_table(composition, master):
     connection = _connect(master)
     with connection.cursor() as curs:
         LOG.info("Creating data for " + name)
-        curs.execute("INSERT INTO hello (value) VALUES ('%s')" % (name))
+        curs.execute("INSERT INTO hello (value) VALUES (%s)", (name, ))
     connection.commit()
     return connection
 

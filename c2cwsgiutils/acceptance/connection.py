@@ -1,5 +1,5 @@
 import re
-from lxml import etree
+from lxml import etree  # nosec
 import requests
 
 
@@ -52,10 +52,10 @@ class Connection:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
             r.raw.decode_content = True
-            doc = etree.parse(r.raw)
+            doc = etree.parse(r.raw)  # nosec
             if schema is not None:
                 with open(schema, 'r') as schema_file:
-                    xml_schema = etree.XMLSchema(etree.parse(schema_file))
+                    xml_schema = etree.XMLSchema(etree.parse(schema_file))  # nosec
                 xml_schema.assertValid(doc)
             return doc
 

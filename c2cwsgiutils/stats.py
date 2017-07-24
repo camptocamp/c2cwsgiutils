@@ -135,7 +135,7 @@ class _MemoryBackend(object):
 INVALID_KEY_CHARS = re.compile(r"[:|\.]")
 
 
-class _StatsDBackend(object):  # pragma: nocover
+class StatsDBackend(object):  # pragma: nocover
     def __init__(self, address, prefix):
         self._prefix = prefix
         if self._prefix != "" and not self._prefix.endswith("."):
@@ -190,4 +190,4 @@ def init_backends(settings):
     statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
         statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
-        BACKENDS['statsd'] = _StatsDBackend(statsd_address, statsd_prefix)
+        BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix)

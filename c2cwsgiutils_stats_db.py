@@ -41,7 +41,7 @@ def _parse_args():
 class Reporter(object):
     def __init__(self, args):
         if args.statsd_address:
-            self.statsd = stats._StatsDBackend(args.statsd_address, args.statsd_prefix)
+            self.statsd = stats.StatsDBackend(args.statsd_address, args.statsd_prefix)
         else:
             self.statsd = None
 

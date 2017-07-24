@@ -41,8 +41,7 @@ def hello_post(request):
     """
     Will use the slave (overridden by the config).
     """
-    hello = models.DBSession.query(models.Hello).first()
-    return {'value': hello.value}
+    return hello_put(request)
 
 
 @error_service.get()

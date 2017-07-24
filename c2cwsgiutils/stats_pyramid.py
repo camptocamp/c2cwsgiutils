@@ -74,23 +74,22 @@ def _simplify_sql(sql):
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 
-def _before_cursor_execute(conn, _cursor, statement,
-                           _parameters, _context, _executemany):
-    measure = stats.timer(["sql", _simplify_sql(statement)])
+def _create_sqlalchemy_timer_cb(what):
+    measure = stats.timer(["sql", what])
 
     def after(*_args, **_kwargs):
         measure.stop()
+    return after
 
-    sqlalchemy.event.listen(conn, "after_cursor_execute", after, once=True)
+
+def _before_cursor_execute(conn, _cursor, statement,
+                           _parameters, _context, _executemany):
+    sqlalchemy.event.listen(conn, "after_cursor_execute",
+                            _create_sqlalchemy_timer_cb(_simplify_sql(statement)), once=True)
 
 
 def _before_commit(session):  # pragma: nocover
-    measure = stats.timer(["sql", "commit"])
-
-    def after(*_args, **_kwargs):
-        measure.stop()
-
-    sqlalchemy.event.listen(session, "after_commit", after, once=True)
+    sqlalchemy.event.listen(session, "after_commit", _create_sqlalchemy_timer_cb("commit"), once=True)
 
 
 def init_db_spy():  # pragma: nocover

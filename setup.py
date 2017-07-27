@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 VERSION = '0.18.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
-INSTALL_REQUIRES = open(os.path.join(HERE, 'rel_requirements.txt')).read().splitlines()
+INSTALL_REQUIRES = open(os.path.join(HERE, 'requirements.txt')).read().splitlines()
 
 setup(
     name='c2cwsgiutils',

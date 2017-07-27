@@ -14,8 +14,8 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/
         vim && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
-COPY rel_requirements.txt /c2cwsgiutils/
-RUN pip install --no-cache-dir -r /c2cwsgiutils/rel_requirements.txt
+COPY requirements.txt /c2cwsgiutils/
+RUN pip install --no-cache-dir -r /c2cwsgiutils/requirements.txt
 
 COPY . /c2cwsgiutils/
 RUN flake8 /c2cwsgiutils && \

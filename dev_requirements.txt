@@ -1,2 +1,2 @@
-junit2html
-twine
+junit2html==6
+twine==1.9.1

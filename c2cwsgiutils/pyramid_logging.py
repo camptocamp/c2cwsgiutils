@@ -42,6 +42,21 @@ class _PyramidFilter(logging.Filter):
 _PYRAMID_FILTER = _PyramidFilter()
 
 
+def _un_underscore(message):
+    """
+    Elasticsearch is not indexing the fields starting with underscore and cee_syslog_handler is starting
+    a lot of interesting fields with underscore. Therefore, it's a good idea to remove all those underscore
+    prefixes.
+    """
+    for key, value in message.items():
+        if key.startswith('_'):
+            new_key = key[1:]
+            if new_key not in message:
+                del message[key]
+                message[new_key] = value
+    return message
+
+
 def new_make_message_dict(*args, **kargv):
     """
     patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
@@ -51,7 +66,7 @@ def new_make_message_dict(*args, **kargv):
         # only output full_message if it's different from short message
         msg['full_message'] = msg['message']
     del msg['message']
-    return msg
+    return _un_underscore(msg)
 
 
 orig_make_message_dict = cee_syslog_handler.make_message_dict

@@ -242,6 +242,19 @@ def hello_get(request):
 ```
 
 
+Sentry integration
+------------------
+
+The stacktraces can be sent to a sentry.io service for collection. To enable it, you must set the `SENTRY_URL`
+to point the the project's public DSN.
+
+A few other environment variables can be used to tune the info sent with each report:
+
+* GIT_HASH: will be used for the release
+* SENTRY_CLIENT_ENVIRONMENT: the environment (dev, int, prod, ...)
+* SENTRY_TAG_...: to add custom other tags
+
+
 Developer info
 ==============
 

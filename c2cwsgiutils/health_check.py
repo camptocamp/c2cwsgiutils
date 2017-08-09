@@ -133,11 +133,10 @@ class HealthCheck:
                     check(request)
                     successes.append(name)
                 except Exception as e:
-                    trace = traceback.format_exc()
-                    LOG.error(trace)
+                    LOG.error("Health check %s failed", name, exc_info=True)
                     failure = {'message': str(e)}
                     if os.environ.get('DEVELOPMENT', '0') != '0':
-                        failure['stacktrace'] = trace
+                        failure['stacktrace'] = traceback.format_exc()
                     failures[name] = failure
 
         if failures:

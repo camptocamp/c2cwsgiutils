@@ -36,7 +36,8 @@ def _add_cors(request):
 @view_config(context=HTTPException, renderer="json", http_cache=0)
 def http_error(exception, request):
     LOG.warning("%s %s returned status code %s: %s",
-                request.method, request.url, exception.status_code, str(exception))
+                request.method, request.url, exception.status_code, str(exception),
+                extra={'referer': request.referer})
     if request.method != 'OPTIONS':
         request.response.status_code = exception.status_code
         _add_cors(request)
@@ -58,7 +59,8 @@ def other_error(exception, request):
 
 def _do_error(request, status, exception):
     LOG.error("%s %s returned status code %s: %s",
-              request.method, request.url, status, str(exception), exc_info=True)
+              request.method, request.url, status, str(exception),
+              extra={'referer': request.referer}, exc_info=True)
     request.response.status_code = status
     _add_cors(request)
     response = {"message": str(exception), "status": status}

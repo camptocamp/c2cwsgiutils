@@ -35,8 +35,6 @@ class _PyramidFilter(logging.Filter):
                 record.matched_route = request.matched_route.name
             record.path = request.path
             record.request_id = request.c2c_request_id
-            if request.referer is not None:
-                record.referer = request.referer
         record.level_name = record.levelname
         return True
 

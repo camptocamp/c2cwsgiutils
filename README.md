@@ -258,7 +258,7 @@ A few other environment variables can be used to tune the info sent with each re
 Developer info
 ==============
 
-You will need `docker` (>=1.12.0), `docker-compose` (>=1.10.0), twine and
+You will need `docker` (>=1.12.0), `docker-compose` (>=1.10.0) and
 `make` installed on the machine to play with this project.
 Check available versions of `docker-engine` with
 `apt-get policy docker-engine` and eventually force install the

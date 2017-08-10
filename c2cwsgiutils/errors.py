@@ -9,6 +9,8 @@ from pyramid.view import view_config
 import sqlalchemy.exc
 import traceback
 
+LIGHT_ERRORS = {400, 401}  # Errors that are to be treated as information
+
 LOG = logging.getLogger(__name__)
 
 
@@ -35,9 +37,10 @@ def _add_cors(request):
 
 @view_config(context=HTTPException, renderer="json", http_cache=0)
 def http_error(exception, request):
-    LOG.warning("%s %s returned status code %s: %s",
-                request.method, request.url, exception.status_code, str(exception),
-                extra={'referer': request.referer})
+    log = LOG.info if exception.status_code in LIGHT_ERRORS else LOG.warning
+    log("%s %s returned status code %s: %s",
+        request.method, request.url, exception.status_code, str(exception),
+        extra={'referer': request.referer})
     if request.method != 'OPTIONS':
         request.response.status_code = exception.status_code
         _add_cors(request)

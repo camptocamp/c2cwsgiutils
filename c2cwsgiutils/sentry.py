@@ -11,7 +11,7 @@ def init():
     if 'SENTRY_URL' in os.environ:
         client_info = {key[14:].lower(): value
                        for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')}
-        if 'GIT_HASH' in os.environ and 'release' not in client_info:
+        if 'GIT_HASH' in os.environ and not ('release' in client_info and client_info['release'] != 'latest'):
             client_info['release'] = os.environ['GIT_HASH']
         client_info['tags'] = {key[11:].lower(): value
                                for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}

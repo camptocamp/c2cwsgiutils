@@ -250,9 +250,10 @@ to point the the project's public DSN.
 
 A few other environment variables can be used to tune the info sent with each report:
 
-* GIT_HASH: will be used for the release
-* SENTRY_CLIENT_ENVIRONMENT: the environment (dev, int, prod, ...)
-* SENTRY_TAG_...: to add custom other tags
+* `GIT_HASH`: will be used for the release
+* `SENTRY_CLIENT_RELEASE`: If not equal to "latest", will be taken for the release instead of the GIT_HASH
+* `SENTRY_CLIENT_ENVIRONMENT`: the environment (dev, int, prod, ...)
+* `SENTRY_TAG_...`: to add other custom tags
 
 
 Developer info

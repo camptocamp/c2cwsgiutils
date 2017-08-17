@@ -37,15 +37,20 @@ def _get_packages_version():
 
 
 def main():
-    git_tag = sys.argv[1]
-    git_hash = sys.argv[2]
+    if len(sys.argv) == 2:
+        git_tag = None
+        git_hash = sys.argv[1]
+    else:
+        git_tag = sys.argv[1]
+        git_hash = sys.argv[2]
     report = {
         'main': {
             "git_hash": git_hash,
-            "git_tag": git_tag
         },
         'packages': _get_packages_version()
     }
+    if git_tag is not None:
+        report['main']['git_tag'] = git_tag
     with open('versions.json', 'w') as file:
         json.dump(report, file, indent=2)
 

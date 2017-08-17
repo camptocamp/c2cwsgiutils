@@ -17,7 +17,6 @@ else
 DOCKER_COMPOSE_VERSION := $(DOCKER_COMPOSE_VERSION_ACTUAL)
 endif
 
-GIT_TAG := $(shell git describe --tags --first-parent 2>/dev/null || echo "none")
 GIT_HASH := $(shell git rev-parse HEAD)
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
@@ -67,7 +66,7 @@ build_acceptance: build_docker
 
 .PHONY: build_test_app
 build_test_app: build_docker
-	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) --build-arg "GIT_TAG=$(GIT_TAG)" --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
+	docker build -t $(DOCKER_BASE)_test_app:$(DOCKER_TAG) --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: requirements.txt Makefile
 	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv

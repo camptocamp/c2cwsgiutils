@@ -15,11 +15,10 @@ ENV SQLALCHEMY_URL=postgresql://www-data:www-data@db:5432/test \
 # Step #2 copy the rest of the files (watch for the .dockerignore)
 COPY . /app
 
-ARG GIT_TAG
 ARG GIT_HASH
 
 RUN python ./setup.py install && \
     ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models_hello.dot && \
-    c2cwsgiutils_genversion.py $GIT_TAG $GIT_HASH && \
+    c2cwsgiutils_genversion.py $GIT_HASH && \
     flake8 c2cwsgiutils_app app_alembic

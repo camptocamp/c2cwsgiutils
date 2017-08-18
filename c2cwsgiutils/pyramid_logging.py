@@ -48,7 +48,7 @@ def _un_underscore(message):
     a lot of interesting fields with underscore. Therefore, it's a good idea to remove all those underscore
     prefixes.
     """
-    for key, value in message.items():
+    for key, value in list(message.items()):
         if key.startswith('_'):
             new_key = key[1:]
             if new_key not in message:
@@ -57,20 +57,16 @@ def _un_underscore(message):
     return message
 
 
-def new_make_message_dict(*args, **kargv):
+def _make_message_dict(*args, **kargv):
     """
     patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
     """
-    msg = orig_make_message_dict(*args, **kargv)
+    msg = cee_syslog_handler.make_message_dict(*args, **kargv)
     if msg['message'] != msg['short_message']:
         # only output full_message if it's different from short message
         msg['full_message'] = msg['message']
     del msg['message']
     return _un_underscore(msg)
-
-
-orig_make_message_dict = cee_syslog_handler.make_message_dict
-cee_syslog_handler.make_message_dict = new_make_message_dict
 
 
 class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
@@ -80,6 +76,11 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
     def __init__(self, *args):
         super().__init__(*args)
         self.addFilter(_PYRAMID_FILTER)
+
+    def format(self, record):
+        message = _make_message_dict(record, self._debugging_fields, self._extra_fields, False, None,
+                                     self._facility)
+        return ": @cee: %s" % json.dumps(message)
 
 
 class JsonLogHandler(logging.StreamHandler):
@@ -91,8 +92,8 @@ class JsonLogHandler(logging.StreamHandler):
         self.addFilter(_PYRAMID_FILTER)
 
     def format(self, record):
-        message = cee_syslog_handler.make_message_dict(record, debugging_fields=True, extra_fields=True,
-                                                       fqdn=False, localname=None, facility=None)
+        message = _make_message_dict(record, debugging_fields=True, extra_fields=True,
+                                     fqdn=False, localname=None, facility=None)
         return json.dumps(message)
 
 

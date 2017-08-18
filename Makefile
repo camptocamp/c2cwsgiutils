@@ -84,7 +84,7 @@ dist: .venv/timestamp
 	.venv/bin/python setup.py bdist_wheel
 
 .PHONY: release
-release: dist
+release: acceptance dist
 	.venv/bin/twine upload dist/*.whl
 
 run: build_test_app

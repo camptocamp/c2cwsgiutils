@@ -85,6 +85,11 @@ variable. Then, the current status of a logger can be queried with a GET on
 `{C2C_BASE_PATH}/logging/level?secret={LOG_VIEW_SECRET}&name={logger_name}` and can be changed with
 `{C2C_BASE_PATH}/logging/level?secret={LOG_VIEW_SECRET}&name={logger_name}&level={level}`
 
+In JSON formats, a `request_id` field is added. This field can come from the request headers (`X-Request-ID`,
+`X-Correlation-ID`, `Request-ID` or `X-Varnish`) or will default to a UUID. This allows to group together logs
+from a single request. You can add an additional request header as source for that by defining the
+`C2C_REQUEST_ID_HEADER` environment variable.
+
 
 Metrics
 -------

@@ -108,4 +108,6 @@ class Composition(object):
         else:
             env['DOCKER_IP'] = netifaces.ifaddresses('docker0')[netifaces.AF_INET][0]['addr']
             env['DOCKER_CB_HOST'] = 'localhost'
+        default_iface = netifaces.gateways()[netifaces.AF_INET][0][1]
+        env['TEST_IP'] = netifaces.ifaddresses(default_iface)[netifaces.AF_INET][0]['addr']
         return env

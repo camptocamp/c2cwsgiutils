@@ -1,6 +1,7 @@
-from c2cwsgiutils import services
+import logging
 from pyramid.httpexceptions import HTTPForbidden
 
+from c2cwsgiutils import services
 from c2cwsgiutils.stats import timer_context, increment_counter, set_gauge
 from c2cwsgiutils_app import models
 
@@ -12,6 +13,7 @@ error_service = services.create("error", "/error")
 
 @ping_service.get()
 def ping(request):
+    logging.getLogger(__name__+".ping").info("Ping!")
     return {'pong': True}
 
 

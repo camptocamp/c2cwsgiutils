@@ -4,12 +4,12 @@ app:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
     STATS_VIEW: 1
-    STATSD_ADDRESS: 127.0.0.1:8125
+    STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: acceptance
     LOG_VIEW_SECRET: changeme
     SQL_PROFILER_SECRET: changeme
     DEBUG_VIEW_SECRET: changeme
-    LOG_HOST: 172.17.0.1
+    LOG_HOST: ${TEST_IP}
     LOG_TYPE: 'console,logstash'
     SQL_LOG_LEVEL: DEBUG
     OTHER_LOG_LEVEL: DEBUG

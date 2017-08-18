@@ -9,6 +9,7 @@ A pyramid event handler is installed to setup this filter for the current reques
 """
 import json
 import logging
+import os
 import uuid
 
 import cee_syslog_handler
@@ -18,6 +19,9 @@ from c2cwsgiutils import _utils, _auth
 
 CONFIG_KEY = 'c2c.log_view_secret'
 ENV_KEY = 'LOG_VIEW_SECRET'
+ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish']
+if 'C2C_REQUEST_ID_HEADER' in os.environ:
+    ID_HEADERS.insert(0, os.environ['C2C_REQUEST_ID_HEADER'])
 
 LOG = logging.getLogger(__name__)
 
@@ -97,11 +101,18 @@ class JsonLogHandler(logging.StreamHandler):
         return json.dumps(message)
 
 
+def _gen_request_id(request):
+    for id_header in ID_HEADERS:
+        if id_header in request.headers:
+            return request.headers[id_header]
+    return str(uuid.uuid4())
+
+
 def install_subscriber(config):
     """
     Install the view to configure the loggers, if configured to do so.
     """
-    config.add_request_method(lambda request: str(uuid.uuid4()), 'c2c_request_id', reify=True)
+    config.add_request_method(_gen_request_id, 'c2c_request_id', reify=True)
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
                          request_method="GET")

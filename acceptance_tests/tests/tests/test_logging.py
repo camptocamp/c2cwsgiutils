@@ -44,7 +44,7 @@ class LogListener(threading.Thread):
     def __init__(self):
         super().__init__()
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._sock.bind(('0.0.0.0', 514))
+        self._sock.bind(('0.0.0.0', 514))  # nosec
         self._sock.setblocking(0)
         self._run = True
         self._condition = threading.Condition()

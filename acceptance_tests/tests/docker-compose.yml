@@ -38,20 +38,22 @@ alembic_slave:
   command: /bin/true  # will use execute with another script from the tests to actually do it
 
 db:
-  image: camptocamp/postgresql:pg9.5-latest
+  image: camptocamp/postgres:9.5
   environment:
     POSTGRES_USER: www-data
     POSTGRES_PASSWORD: www-data
     POSTGRES_DB: test
+  command: postgres -c log_line_prefix="%a "
   ports:
     - 15432:5432
 
 db_slave:
-  image: camptocamp/postgresql:pg9.5-latest
+  image: camptocamp/postgres:9.5
   environment:
     POSTGRES_USER: www-data
     POSTGRES_PASSWORD: www-data
     POSTGRES_DB: test
+  command: postgres -c log_line_prefix="%a " -c log_statement=all
   ports:
     - 25432:5432
 

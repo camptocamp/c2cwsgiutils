@@ -2,6 +2,7 @@ import logging
 from pyramid.httpexceptions import HTTPForbidden
 
 from c2cwsgiutils import services
+from c2cwsgiutils import sentry
 from c2cwsgiutils.stats import timer_context, increment_counter, set_gauge
 from c2cwsgiutils_app import models
 
@@ -34,8 +35,9 @@ def hello_put(request):
     """
     Will use the master
     """
-    hello = models.DBSession.query(models.Hello).first()
-    return {'value': hello.value}
+    with sentry.capture_exceptions():
+        hello = models.DBSession.query(models.Hello).first()
+        return {'value': hello.value}
 
 
 @hello_service.post()

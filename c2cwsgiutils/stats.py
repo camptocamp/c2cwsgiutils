@@ -88,7 +88,7 @@ class _MemoryBackend(object):
 
     @staticmethod
     def _key(key):
-        return "/".join(v.replace('/', '_') for v in key)
+        return "/".join(str(v).replace('/', '_') for v in key)
 
     def timer(self, key, duration):
         """
@@ -152,7 +152,7 @@ class StatsDBackend(object):  # pragma: nocover
         self._socket.connect(sockaddr)
 
     def _key(self, key):
-        return (self._prefix + ".".join([INVALID_KEY_CHARS.sub("_", i) for i in key]))[:450]
+        return (self._prefix + ".".join([INVALID_KEY_CHARS.sub("_", str(i)) for i in key]))[:450]
 
     def _send(self, message):
         try:

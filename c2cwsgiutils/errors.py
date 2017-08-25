@@ -9,9 +9,15 @@ from pyramid.view import view_config
 import sqlalchemy.exc
 import traceback
 
-LIGHT_ERRORS = {400, 401}  # Errors that are to be treated as information
+DEVELOPMENT = os.environ.get('DEVELOPMENT', '0')
 
 LOG = logging.getLogger(__name__)
+STATUS_LOGGER = {
+    400: LOG.info,
+    401: LOG.info,
+    500: LOG.error
+    # The rest are warnings
+}
 
 
 def _crude_add_cors(request):
@@ -37,7 +43,7 @@ def _add_cors(request):
 
 @view_config(context=HTTPException, renderer="json", http_cache=0)
 def http_error(exception, request):
-    log = LOG.info if exception.status_code in LIGHT_ERRORS else LOG.warning
+    log = STATUS_LOGGER.get(exception.status_code, LOG.warning)
     log("%s %s returned status code %s: %s",
         request.method, request.url, exception.status_code, str(exception),
         extra={'referer': request.referer})
@@ -55,20 +61,26 @@ def integrity_error(exception, request):
     return _do_error(request, 400, exception)
 
 
+@view_config(context=ConnectionResetError, renderer="json", http_cache=0)
+def client_interrupted_error(exception, request):
+    # No need to cry wolf if it's just the client that interrupted the connection
+    return _do_error(request, 500, exception, logger=LOG.info)
+
+
 @view_config(context=Exception, renderer="json", http_cache=0)
 def other_error(exception, request):
     return _do_error(request, 500, exception)
 
 
-def _do_error(request, status, exception):
-    LOG.error("%s %s returned status code %s: %s",
-              request.method, request.url, status, str(exception),
-              extra={'referer': request.referer}, exc_info=True)
+def _do_error(request, status, exception, logger=LOG.error):
+    logger("%s %s returned status code %s: %s",
+           request.method, request.url, status, str(exception),
+           extra={'referer': request.referer}, exc_info=True)
     request.response.status_code = status
     _add_cors(request)
     response = {"message": str(exception), "status": status}
 
-    if os.environ.get('DEVELOPMENT', '0') != '0':
+    if DEVELOPMENT != '0':
         trace = traceback.format_exc()
         response['stacktrace'] = trace
     return response

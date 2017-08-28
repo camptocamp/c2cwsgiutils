@@ -7,3 +7,4 @@ __pycache__
 /reports/
 /.idea/dbnavigator.xml
 /.idea/inspectionProfiles
+/docs/*/build/

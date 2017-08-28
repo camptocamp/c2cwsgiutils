@@ -1,0 +1,53 @@
+digraph g {
+    rankdir="LR";
+    graph [dpi=300];
+    node [shape=rectangle style=filled fillcolor=white];
+
+    LB -> API;
+    LB -> UI;
+    LB -> Print;
+    LB -> Sentry
+
+    API [fillcolor=yellow];
+    UI [fillcolor=yellow];
+
+    DB [fillcolor=cyan shape=cylinder];
+    Redis [fillcolor=cyan shape=cylinder];
+    Sentry [fillcolor=cyan];
+    LB [label="LB\ncache"];
+
+    subgraph cluster_Metrics {
+        label="Metrics";
+        graph [color=green];
+        node [fillcolor=green];
+
+        Statsd -> Prometheus;
+        Prometheus -> Grafana [dir=back];
+
+        Prometheus [shape=cylinder]
+    }
+
+    subgraph cluster_Logs {
+        label="Logs";
+        graph [color=green];
+        node [fillcolor=green];
+
+        Syslogd -> ElasticSearch;
+        Syslogd -> Disk;
+        ElasticSearch -> Kibana [dir=back];
+
+        Disk [shape=cylinder];
+        ElasticSearch [shape=cylinder];
+    }
+
+    API -> Statsd;
+    API -> DB;
+    API -> Redis;
+    API -> Syslogd;
+    API -> Sentry;
+    Print -> Statsd;
+    Print -> Syslogd;
+    LB -> Syslogd;
+    Sentry -> DB;
+    Sentry -> Redis;
+}

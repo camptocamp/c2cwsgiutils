@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>c2cwsgiutils introduction</title>
+    <meta charset="utf-8">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+        @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+        body { font-family: 'Droid Serif'; }
+        h1, h2, h3 {
+            font-family: 'Droid Serif';
+            font-weight: normal;
+            color: #FF680A;
+        }
+        img { width: 100%; }
+        .remark-code, .remark-inline-code {
+            font-family: 'Ubuntu Mono';
+            font-size: 20px;
+        }
+        div.remark-slide-content {
+            background-image: url("C2C-logo-RGB.svg");
+            background-size: 200px 35px;
+            background-position: 95% 15px;
+            font-size: 28px;
+        }
+        .title-slide {
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-size: 80% !important;
+        }
+        .title-slide .remark-slide-number {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<textarea id="source">
+class: title-slide
+count: false
+
+---
+class: center, middle
+
+# c2cwsgiutils introduction
+
+---
+
+# Introduction
+
+* A lot of features copy and pasted between custom projects
+* Slow to download all the usual deps
+
+---
+
+# Typical Architecture
+
+![Architecture](build/architecture.png)
+
+---
+
+# Statsd protocol
+
+A UDP protocol to send metrics:
+* Gauges
+* Counters
+* Timers
+* Histograms
+* Meters
+
+Data from:
+* Hosts
+* Docker containers
+* Postgres
+* Business services
+
+---
+
+# Structured logging
+
+* CEE allows to structure the logs using JSON
+* Allows better filtering and analysis downstream
+    * Some project generate more the 1000 logs/seconds
+
+---
+
+# c2cwsgiutils
+
+A [glue](https://github.com/camptocamp/c2cwsgiutils) between Pyramid, SQLAlchemy (PostGIS), statsd,
+syslog and others to facilitate the development of geographical REST services.
+
+Provides a base Docker image with Python 3.6 and the usual dependencies. The tag `0` is built every nights.
+
+---
+
+# Pyramid
+
+* By default, runs the Pyramid application defined in /app/production.ini
+    * Can be changed with `C2CWSGIUTILS_CONFIG`
+* Supports environment variable replacements (`%(ENV_NAME)s`) in the ini file
+* All the features can be enabled with `config.include(c2cwsgiutils.pyramid.includeme)`
+
+---
+
+# CORS/cornice
+
+If you use cornice, you can have CORS ready views like that:
+```python
+from c2cwsgiutils import services
+hello_service = services.create(
+    "hello", "/hello", cors_credentials=True)
+
+@hello_service.get()
+def hello_get(request):
+    return {'hello': True}
+```
+
+Will disable caching as well.
+
+---
+
+# Error catching
+
+Pyramid views are put in place to catch the exceptions bubling up to the WSGI server.
+
+* They are translated into a JSON message with a proper HTTP status code
+* The response is CORS compliant
+* They are logger (syslogs and Sentry)
+
+---
+
+# Logging
+
+Two new backends provided:
+
+* PyramidCeeSysLogHandler
+* JsonLogHandler
+
+The project must have a special config in it's
+[ini file](https://github.com/camptocamp/c2cwsgiutils/blob/master/acceptance_tests/app/production.ini#L37)
+
+A [special view](http://localhost:8480/api/c2c/logging/level?secret=changeme&name=c2cwsgiutils)
+to tune the logging live.
+
+???
+
+(cd acceptance_tests/tests; TEST_IP=127.0.0.1 docker-compose up)
+
+---
+
+# Sentry
+
+A [service](https://sentry.camptocamp.com/geo/saccas/) for gathering crash reports from multiple sources.
+
+* solves the browser error reporting problem with integrated un-minifying
+* better than the logs for Python or Java
+
+If configured (env vars), enabled by c2cwsgiutils.
+
+---
+
+# Request tracking
+
+Hard to reconcile logs with all those services.
+
+Now have a request_id field in the logs.
+
+* [Sentry](https://sentry.camptocamp.com/geo/schweizmobil/issues/446/events/12327/)
+* [Kibana](https://kibana-schweizmobil.bgdi.ch/goto/43672451ebee2cee2c75910f03a3b048)
+
+Can be propagated:
+
+* From Varnish (X-Varnish)
+* To the DB (must be enabled/configured)
+* To other REST APIs through a X-Request-ID (manual)
+
+---
+
+# Metrics
+
+If configured, automatically sends route, rendering and SQL stats to
+[statsd](https://grafana.camptocamp.com/dashboard/db/summary?orgId=12).
+
+You can add custom metrics:
+```python
+from c2cwsgiutils import stats
+with stats.timer_context('toto', 'tutu'):
+    do_something()
+```
+
+Can [generate](https://grafana.camptocamp.com/dashboard/db/db-table-counts?orgId=12) row counts as well
+(see c2cwsgiutils_stats_db.py)
+
+---
+
+# DB sessions
+
+Automatically use a slave or master PG.
+
+Must be configured:
+```ini
+sqlalchemy.url = %(SQLALCHEMY_URL)s
+sqlalchemy_slave.url = %(SQLALCHEMY_URL_SLAVE)s
+```
+
+And initialized in the code:
+```python
+from c2cwsgiutils.db import setup_session
+def init(config):
+    global DBSession
+    DBSession = setup_session(
+        config, 'sqlalchemy', 'sqlalchemy_slave',
+        force_slave=[
+            "POST /api/hello"
+        ])[0]
+```
+
+---
+
+# Health checks
+
+To enable [health checks](https://www.suissealpine.sac-cas.ch/api/c2c/health_check?max_level=100),
+you must add some setup in your WSGI main:
+```python
+from c2cwsgiutils.health_check import HealthCheck
+
+def custom_check(request):
+    global not_happy
+    if not_happy:
+        raise Exception("I'm not happy")
+
+health_check = HealthCheck(config)
+health_check.add_db_session_check(
+    models.DBSession, at_least_one_model=models.Hello)
+health_check.add_url_check('http://localhost/api/hello')
+health_check.add_custom_check('custom', custom_check, 2)
+health_check.add_alembic_check(
+    models.DBSession, '/app/alembic.ini', 3)
+```
+---
+
+# Gadgets
+
+* [Version information](http://localhost:8480/api/c2c/versions.json)
+* [Stack traces](http://localhost:8480/api/c2c/debug/stacks?secret=changeme)
+* [Model graphs](https://www.suissealpine.sac-cas.ch/docs/models/route.pdf)
+
+
+---
+
+# SQL profiler
+
+If enabled by configuration, a view is added to enable/disable the SQL profiler.
+
+Logs the execution plan of every new query.
+
+---
+
+# Testing
+
+* Provides py.test fixtures for:
+    * testing a composition
+    * testing a service within the composition
+* Can generate [code coverage](https://www.codacy.com/app/camptocamp/c2cwsgiutils/files?bid=4746341)
+
+</textarea>
+<script src="build/remark-latest.min.js">
+</script>
+<script>
+    var slideshow = remark.create();
+</script>
+</body>
+</html>

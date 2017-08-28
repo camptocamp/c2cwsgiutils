@@ -236,6 +236,19 @@ To enable the debugging interface, you must set the `DEBUG_VIEW_SECRET` environm
 `c2c.debug_view_secret` variable. Then you can get a dump of every threads with this URL:
 `{C2C_BASE_PATH}/debug/stacks?secret={DEBUG_VIEW_SECRET}`
 
+It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
+to have a specially tweaked `docker-compose.yml`:
+```yml
+services:
+  api:
+    environment:
+      GUNICORN_PARAMS: '-b :80 --threads 10 --timeout 60 --reload'
+  volumes:
+    - ./api/somepath:/app/somepath:ro
+```
+The GUNICORN\_PARAMS has the `--reload` parameter and your local python code is
+mounted (read only) into the container.
+
 
 ## CORS
 

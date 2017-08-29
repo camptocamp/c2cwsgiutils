@@ -6,8 +6,8 @@ coverage_setup.init()  # pragma: no cover
 
 
 def create():  # pragma: no cover
-    from c2cwsgiutils import wsgi
-    return wsgi.create_application()
+    from c2cwsgiutils import wsgi, sentry
+    return sentry.filter_wsgi_app(wsgi.create_application())
 
 
 application = create()  # pragma: no cover

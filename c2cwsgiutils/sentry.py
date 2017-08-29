@@ -1,28 +1,33 @@
 import contextlib
 import logging
 import os
-from raven import Client
+from raven import Client, middleware
 from raven.handlers.logging import SentryHandler
 from raven.conf import setup_logging
+
+from c2cwsgiutils import _utils
 
 LOG = logging.getLogger(__name__)
 client = None
 
 
-def init():
+def init(config=None):
     global client
-    if 'SENTRY_URL' in os.environ:
+    sentry_url = _utils.env_or_config(config, 'SENTRY_URL', 'c2c.sentry.url')
+    if sentry_url is not None:
         client_info = {key[14:].lower(): value
                        for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')}
-        if 'GIT_HASH' in os.environ and not ('release' in client_info and client_info['release'] != 'latest'):
-            client_info['release'] = os.environ['GIT_HASH']
+        git_hash = _utils.env_or_config(config, 'GIT_HASH', 'c2c.git_hash')
+        if git_hash is not None and not ('release' in client_info and client_info['release'] != 'latest'):
+            client_info['release'] = git_hash
         client_info['tags'] = {key[11:].lower(): value
                                for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}
-        client = Client(os.environ['SENTRY_URL'], **client_info)
+        client = Client(sentry_url, **client_info)
         handler = SentryHandler(client=client)
         handler.setLevel(logging.ERROR)
 
-        setup_logging(handler, exclude=('raven', ))
+        excludes = _utils.env_or_config(config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "raven").split(",")
+        setup_logging(handler, exclude=excludes)
         LOG.info("Configured sentry reporting with client=%s", repr(client_info))
 
 
@@ -37,3 +42,15 @@ def capture_exceptions():
             raise
     else:
         yield
+
+
+def filter_wsgi_app(application):  # pragma: no cover
+    """
+    If sentry is configured, add a Sentry filter around the application
+    """
+    global client
+    if client is not None:
+        LOG.info("Enable WSGI filter for Sentry")
+        return middleware.Sentry(application, client)
+    else:
+        return application

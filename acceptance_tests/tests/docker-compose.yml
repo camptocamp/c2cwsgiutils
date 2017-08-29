@@ -15,6 +15,8 @@ app:
     OTHER_LOG_LEVEL: DEBUG
     DEVELOPMENT: 1
     COVERAGE: 1
+    #SENTRY_URL: put DSN here
+
   links:
     - db
     - db_slave

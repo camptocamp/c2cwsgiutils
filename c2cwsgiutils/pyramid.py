@@ -11,7 +11,7 @@ def includeme(config):
 
     :param config: The pyramid Configuration
     """
-    sentry.init()
+    sentry.init(config)
     config.add_settings(handle_exceptions=False)
     config.include(pyramid_tm.includeme)
     config.include(cornice.includeme)

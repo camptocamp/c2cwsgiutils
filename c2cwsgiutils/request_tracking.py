@@ -27,7 +27,7 @@ def _add_session_id(session, _transaction, _connection):
 
 def init(config):
     global ID_HEADERS
-    ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish']
+    ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish', 'X-Amzn-Trace-Id']
     extra_header = _utils.env_or_config(config, 'C2C_REQUEST_ID_HEADER', 'c2c.request_id_header')
     if extra_header is not None:
         ID_HEADERS.insert(0, extra_header)

@@ -237,6 +237,8 @@ To enable the debugging interface, you must set the `DEBUG_VIEW_SECRET` environm
 `c2c.debug_view_secret` variable. Then you can get a dump of every threads with this URL:
 `{C2C_BASE_PATH}/debug/stacks?secret={DEBUG_VIEW_SECRET}`
 
+Gunicorn can be reloaded by calling the c2cwsgiutils\_reload script.
+
 
 ## CORS
 

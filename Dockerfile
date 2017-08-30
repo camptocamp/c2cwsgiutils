@@ -11,6 +11,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/
         libjpeg-dev \
         postgresql-client-9.5 \
         graphviz \
+        inotify-tools rsync \
         vim && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*

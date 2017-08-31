@@ -88,6 +88,9 @@ c2cwsgiutils tries to flag averything with a request ID. This field can come fro
 additional request header as source for that by defining the `C2C_REQUEST_ID_HEADER` environment variable
 (`c2c.request_id_header`).
 
+Varnish, sometimes, presents an offset between what it logs and what it has sent to the backend, you can fix
+that with the `C2C_X_VARNISH_OFFSET` variable (`c2c.x_varnish_offset`). Typically, you put -1.
+
 In JSON logging formats, a `request_id` field is automatically added.
 
 You can enable (disabled by default since it can have a cost) the flagging of the SQL requests as well by

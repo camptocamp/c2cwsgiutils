@@ -10,6 +10,7 @@ import uuid
 from c2cwsgiutils import _utils
 
 ID_HEADERS = []
+X_VARNISH_OFFSET = 0
 
 
 def _gen_request_id(request):
@@ -18,7 +19,7 @@ def _gen_request_id(request):
             value = request.headers[id_header]
             if id_header == 'X-Varnish' and value.isdigit():
                 # Varnish is weird and sends us an ID incremented by one compared to what it logs
-                value = str(int(value) - 1)
+                value = str(int(value) + X_VARNISH_OFFSET)
             return value
     return str(uuid.uuid4())
 
@@ -30,7 +31,8 @@ def _add_session_id(session, _transaction, _connection):
 
 
 def init(config):
-    global ID_HEADERS
+    global ID_HEADERS, X_VARNISH_OFFSET
+    X_VARNISH_OFFSET = int(_utils.env_or_config(config, "C2C_X_VARNISH_OFFSET", 'c2c.x_varnish_offset', "0"))
     ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish', 'X-Amzn-Trace-Id']
     extra_header = _utils.env_or_config(config, 'C2C_REQUEST_ID_HEADER', 'c2c.request_id_header')
     if extra_header is not None:

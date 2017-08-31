@@ -40,6 +40,7 @@ def _parse_args():
 
 class Reporter(object):
     def __init__(self, args):
+        self._error = False
         if args.statsd_address:
             self.statsd = stats.StatsDBackend(args.statsd_address, args.statsd_prefix)
         else:
@@ -65,10 +66,14 @@ class Reporter(object):
         if self.prometheus is not None:
             self.prometheus.commit()
 
-
-def error(self, metric):
+    def error(self, metric):
         if self.statsd is not None:
             self.statsd.counter(['error'] + metric, 1)
+        self._error = True
+
+    def report_error(self):
+        if self._error:
+            exit(1)
 
 
 def do_table(session, schema, table, reporter):
@@ -113,6 +118,7 @@ def main():
 
     reporter.commit()
     transaction.abort()
+    reporter.report_error()
 
 
 if __name__ == '__main__':

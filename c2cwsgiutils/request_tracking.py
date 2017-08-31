@@ -15,7 +15,11 @@ ID_HEADERS = []
 def _gen_request_id(request):
     for id_header in ID_HEADERS:
         if id_header in request.headers:
-            return request.headers[id_header]
+            value = request.headers[id_header]
+            if id_header == 'X-Varnish' and value.isdigit():
+                # Varnish is weird and sends us an ID incremented by one compared to what it logs
+                value = str(int(value) - 1)
+            return value
     return str(uuid.uuid4())
 
 

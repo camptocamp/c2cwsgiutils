@@ -114,3 +114,14 @@ def test_cee_logs_request_id(app_connection):
         assert len(messages) == 1
         message = messages[0]
         assert message['request_id'] == '42 is the answer'
+
+
+def test_cee_logs_x_varnish(app_connection):
+    with LogListener() as listener:
+        app_connection.get_json("ping", headers={'X-Varnish': '43'})
+        messages = listener.get_messages(
+            filter_fun=lambda message: message.get('facility') == 'c2cwsgiutils_app.services.ping')
+        print("Got messages: " + repr(messages))
+        assert len(messages) == 1
+        message = messages[0]
+        assert message['request_id'] == '42'

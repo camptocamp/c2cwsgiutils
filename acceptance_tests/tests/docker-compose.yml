@@ -1,6 +1,6 @@
 app:
   image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
-  environment:
+  environment: &app_env
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
     STATS_VIEW: 1
@@ -63,5 +63,6 @@ db_slave:
 run_test:
   image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
   command: 'true'
+  environment: *app_env
   links:
     - db

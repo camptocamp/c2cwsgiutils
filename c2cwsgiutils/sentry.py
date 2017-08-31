@@ -34,6 +34,12 @@ def init(config=None):
 
 @contextlib.contextmanager
 def capture_exceptions():
+    """
+    Will send exceptions raised withing the context to Sentry.
+
+    You don't need to use that for exception terminating the process (those not catched). Sentry does that
+    already.
+    """
     global client
     if client is not None:
         try:

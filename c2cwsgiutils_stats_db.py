@@ -11,7 +11,7 @@ import sys
 import transaction
 from zope.sqlalchemy import ZopeTransactionExtension
 
-from c2cwsgiutils import stats
+from c2cwsgiutils import stats, sentry
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 
 logging.basicConfig(level=logging.INFO,
@@ -40,7 +40,7 @@ def _parse_args():
 
 class Reporter(object):
     def __init__(self, args):
-        self._error = False
+        self._error = None
         if args.statsd_address:
             self.statsd = stats.StatsDBackend(args.statsd_address, args.statsd_prefix)
         else:
@@ -66,14 +66,15 @@ class Reporter(object):
         if self.prometheus is not None:
             self.prometheus.commit()
 
-    def error(self, metric):
+    def error(self, metric, e):
         if self.statsd is not None:
             self.statsd.counter(['error'] + metric, 1)
-        self._error = True
+        if self._error is None:
+            self._error = e
 
     def report_error(self):
-        if self._error:
-            exit(1)
+        if self._error is not None:
+            raise self._error
 
 
 def do_table(session, schema, table, reporter):
@@ -95,8 +96,8 @@ def main():
         engine = sqlalchemy.create_engine(args.db)
         session = sqlalchemy.orm.scoped_session(
             sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=engine))()
-    except Exception:
-        reporter.error(['connection'])
+    except Exception as e:
+        reporter.error(['connection'], e)
         raise
 
     tables = session.execute("""
@@ -106,15 +107,15 @@ def main():
     for schema, table in tables:
         try:
             do_table(session, schema, table, reporter)
-        except Exception:
-            reporter.error([schema, table])
+        except Exception as e:
+            reporter.error([schema, table], e)
 
     if args.extra:
         for pos, extra in enumerate(args.extra):
             try:
                 do_extra(session, extra, reporter)
-            except Exception:
-                reporter.error(['extra', str(pos + 1)])
+            except Exception as e:
+                reporter.error(['extra', str(pos + 1)], e)
 
     reporter.commit()
     transaction.abort()
@@ -122,4 +123,5 @@ def main():
 
 
 if __name__ == '__main__':
+    sentry.init()
     main()

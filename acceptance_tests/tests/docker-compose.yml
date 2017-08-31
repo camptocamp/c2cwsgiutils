@@ -15,7 +15,7 @@ app:
     OTHER_LOG_LEVEL: DEBUG
     DEVELOPMENT: 1
     COVERAGE: 1
-    #SENTRY_URL: put DSN here
+    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
 
   links:
     - db

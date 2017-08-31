@@ -22,6 +22,7 @@ def init(config=None):
             client_info['release'] = git_hash
         client_info['tags'] = {key[11:].lower(): value
                                for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}
+        client_info['ignore_exceptions'] = client_info.get('ignore_exceptions', 'SystemExit').split(",")
         client = Client(sentry_url, **client_info)
         handler = SentryHandler(client=client)
         handler.setLevel(logging.ERROR)

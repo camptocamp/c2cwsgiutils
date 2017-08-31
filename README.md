@@ -205,7 +205,7 @@ looking like that (in case of error):
 ```json
 {
     "status": 500,
-    "successes": ["db_engine_sqlalchemy", "db_engine_sqlalchemy_slave", "http://localhost/api/hello", 
+    "successes": ["db_engine_sqlalchemy", "db_engine_sqlalchemy_slave", "http://localhost/api/hello",
                   "alembic_app_alembic.ini"],
     "failures": {
         "custom": {
@@ -276,6 +276,7 @@ A few other environment variables can be used to tune the info sent with each re
 * `GIT_HASH` (`c2c.git_hash`): will be used for the release
 * `SENTRY_CLIENT_RELEASE`: If not equal to "latest", will be taken for the release instead of the GIT_HASH
 * `SENTRY_CLIENT_ENVIRONMENT`: the environment (dev, int, prod, ...)
+* `SENTRY_CLIENT_IGNORE_EXCEPTIONS`: list (coma separated) of exceptions to ignore (defaults to SystemExit)
 * `SENTRY_TAG_...`: to add other custom tags
 
 

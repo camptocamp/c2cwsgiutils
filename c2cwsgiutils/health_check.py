@@ -106,7 +106,7 @@ class HealthCheck:
         :param level: the level of the health check
         """
         def check(request):
-            response = requests.get(url, timeout=timeout)
+            response = requests.get(url, timeout=timeout, headers={'X-Request-ID': request.c2c_request_id})
             response.raise_for_status()
             check_cb(request, response)
         if name is None:

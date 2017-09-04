@@ -25,7 +25,7 @@ def init(config=None):
         client_info['ignore_exceptions'] = client_info.get('ignore_exceptions', 'SystemExit').split(",")
         client = Client(sentry_url, **client_info)
         handler = SentryHandler(client=client)
-        handler.setLevel(logging.ERROR)
+        handler.setLevel(_utils.env_or_config(config, 'SENTRY_LEVEL', 'c2c.sentry_level', 'ERROR').upper())
 
         excludes = _utils.env_or_config(config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "raven").split(",")
         setup_logging(handler, exclude=excludes)

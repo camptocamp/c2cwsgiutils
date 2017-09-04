@@ -278,6 +278,7 @@ A few other environment variables can be used to tune the info sent with each re
 * `SENTRY_CLIENT_ENVIRONMENT`: the environment (dev, int, prod, ...)
 * `SENTRY_CLIENT_IGNORE_EXCEPTIONS`: list (coma separated) of exceptions to ignore (defaults to SystemExit)
 * `SENTRY_TAG_...`: to add other custom tags
+* `SENTRY_LEVEL`: starting from what logging level to send events to Sentry (defaults to ERROR)
 
 
 # Developer info

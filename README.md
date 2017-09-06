@@ -269,6 +269,25 @@ def hello_get(request):
 ```
 
 
+# Exception handling
+
+By default, c2cwsgiutils will install exception handling views that will catch any exception raised by the
+application views and will transform it into a JSON response with a HTTP status corresponding to the error.
+
+You can disable this by setting `C2C_DISABLE_EXCEPTION_HANDLING` (`c2c.disable_exception_handling`) to "1".
+
+If you want to use pyramid_debugtoolbar, you need to disable exception handling and configure it like that:
+```
+pyramid.includes =
+    pyramid_debugtoolbar
+debugtoolbar.enabled = true
+debugtoolbar.hosts = 0.0.0.0/0
+debugtoolbar.intercept_exc = debug
+debugtoolbar.show_on_exc_only = true
+c2c.disable_exception_handling = 1
+```
+
+
 ## Sentry integration
 
 The stacktraces can be sent to a sentry.io service for collection. To enable it, you must set the `SENTRY_URL`

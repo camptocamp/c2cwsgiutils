@@ -5,11 +5,12 @@ from cornice import cors
 import logging
 import os
 from pyramid.httpexceptions import HTTPException
-from pyramid.view import view_config
 import sqlalchemy.exc
 import traceback
 
-DEVELOPMENT = os.environ.get('DEVELOPMENT', '0')
+from c2cwsgiutils import _utils
+
+DEVELOPMENT = os.environ.get('DEVELOPMENT', '0') != '0'
 
 LOG = logging.getLogger(__name__)
 STATUS_LOGGER = {
@@ -41,8 +42,21 @@ def _add_cors(request):
     _crude_add_cors(request)
 
 
-@view_config(context=HTTPException, renderer="json", http_cache=0)
-def http_error(exception, request):
+def _do_error(request, status, exception, logger=LOG.error):
+    logger("%s %s returned status code %s: %s",
+           request.method, request.url, status, str(exception),
+           extra={'referer': request.referer}, exc_info=True)
+    request.response.status_code = status
+    _add_cors(request)
+    response = {"message": str(exception), "status": status}
+
+    if DEVELOPMENT != '0':
+        trace = traceback.format_exc()
+        response['stacktrace'] = trace
+    return response
+
+
+def _http_error(exception, request):
     log = STATUS_LOGGER.get(exception.status_code, LOG.warning)
     log("%s %s returned status code %s: %s",
         request.method, request.url, exception.status_code, str(exception),
@@ -56,31 +70,24 @@ def http_error(exception, request):
         request.response.status_code = 200
 
 
-@view_config(context=sqlalchemy.exc.IntegrityError, renderer="json", http_cache=0)
-def integrity_error(exception, request):
+def _integrity_error(exception, request):
     return _do_error(request, 400, exception)
 
 
-@view_config(context=ConnectionResetError, renderer="json", http_cache=0)
-def client_interrupted_error(exception, request):
+def _client_interrupted_error(exception, request):
     # No need to cry wolf if it's just the client that interrupted the connection
     return _do_error(request, 500, exception, logger=LOG.info)
 
 
-@view_config(context=Exception, renderer="json", http_cache=0)
-def other_error(exception, request):
+def _other_error(exception, request):
     return _do_error(request, 500, exception)
 
 
-def _do_error(request, status, exception, logger=LOG.error):
-    logger("%s %s returned status code %s: %s",
-           request.method, request.url, status, str(exception),
-           extra={'referer': request.referer}, exc_info=True)
-    request.response.status_code = status
-    _add_cors(request)
-    response = {"message": str(exception), "status": status}
-
-    if DEVELOPMENT != '0':
-        trace = traceback.format_exc()
-        response['stacktrace'] = trace
-    return response
+def init(config):
+    if _utils.env_or_config(config, 'C2C_DISABLE_EXCEPTION_HANDLING',
+                            'c2c.disable_exception_handling', '0') == '0':
+        common_options = {'renderer': 'json', 'http_cache': 0}
+        config.add_view(view=_http_error, context=HTTPException, **common_options)
+        config.add_view(view=_integrity_error, context=sqlalchemy.exc.IntegrityError, **common_options)
+        config.add_view(view=_client_interrupted_error, context=ConnectionResetError, **common_options)
+        config.add_view(view=_other_error, context=Exception, **common_options)

@@ -14,7 +14,7 @@ client = None
 def init(config=None):
     global client
     sentry_url = _utils.env_or_config(config, 'SENTRY_URL', 'c2c.sentry.url')
-    if sentry_url is not None:  # pragma: no cover
+    if sentry_url is not None:
         client_info = {key[14:].lower(): value
                        for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')}
         git_hash = _utils.env_or_config(config, 'GIT_HASH', 'c2c.git_hash')
@@ -51,7 +51,7 @@ def capture_exceptions():
         yield
 
 
-def filter_wsgi_app(application):  # pragma: no cover
+def filter_wsgi_app(application):
     """
     If sentry is configured, add a Sentry filter around the application
     """

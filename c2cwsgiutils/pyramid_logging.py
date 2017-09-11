@@ -72,8 +72,8 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
     """
     A CEE (JSON format) log handler with additional information about the current request.
     """
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, *args, **kargv):
+        super().__init__(*args, **kargv)
         self.addFilter(_PYRAMID_FILTER)
 
     def format(self, record):

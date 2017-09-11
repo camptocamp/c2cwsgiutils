@@ -25,12 +25,13 @@ def init(config=None):
                                    for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}
             client_info['ignore_exceptions'] = client_info.get('ignore_exceptions', 'SystemExit').split(",")
             client = Client(sentry_url, **client_info)
+            LOG.info("Configured sentry reporting with client=%s", repr(client_info))
         handler = SentryHandler(client=client)
         handler.setLevel(_utils.env_or_config(config, 'SENTRY_LEVEL', 'c2c.sentry_level', 'ERROR').upper())
 
         excludes = _utils.env_or_config(config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "raven").split(",")
-        setup_logging(handler, exclude=excludes)
-        LOG.info("Configured sentry reporting with client=%s", repr(client_info))
+        if setup_logging(handler, exclude=excludes):
+            LOG.info("Configured sentry logging hook")
 
 
 @contextlib.contextmanager

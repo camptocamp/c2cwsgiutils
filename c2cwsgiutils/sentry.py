@@ -15,15 +15,16 @@ def init(config=None):
     global client
     sentry_url = _utils.env_or_config(config, 'SENTRY_URL', 'c2c.sentry.url')
     if sentry_url is not None:
-        client_info = {key[14:].lower(): value
-                       for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')}
-        git_hash = _utils.env_or_config(config, 'GIT_HASH', 'c2c.git_hash')
-        if git_hash is not None and not ('release' in client_info and client_info['release'] != 'latest'):
-            client_info['release'] = git_hash
-        client_info['tags'] = {key[11:].lower(): value
-                               for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}
-        client_info['ignore_exceptions'] = client_info.get('ignore_exceptions', 'SystemExit').split(",")
-        client = Client(sentry_url, **client_info)
+        if client is None:
+            client_info = {key[14:].lower(): value
+                           for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')}
+            git_hash = _utils.env_or_config(config, 'GIT_HASH', 'c2c.git_hash')
+            if git_hash is not None and not ('release' in client_info and client_info['release'] != 'latest'):
+                client_info['release'] = git_hash
+            client_info['tags'] = {key[11:].lower(): value
+                                   for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}
+            client_info['ignore_exceptions'] = client_info.get('ignore_exceptions', 'SystemExit').split(",")
+            client = Client(sentry_url, **client_info)
         handler = SentryHandler(client=client)
         handler.setLevel(_utils.env_or_config(config, 'SENTRY_LEVEL', 'c2c.sentry_level', 'ERROR').upper())
 

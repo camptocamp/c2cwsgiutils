@@ -132,7 +132,8 @@ class _MemoryBackend(object):
         return {"timers": timers, "gauges": gauges, "counters": counters}
 
 
-INVALID_KEY_CHARS = re.compile(r"[:|\.]")
+# https://github.com/prometheus/statsd_exporter/blob/master/mapper.go#L29
+INVALID_KEY_CHARS = re.compile(r"[^a-zA-Z0-9_]")
 
 
 class StatsDBackend(object):  # pragma: nocover
@@ -151,8 +152,14 @@ class StatsDBackend(object):  # pragma: nocover
         self._socket.setblocking(0)
         self._socket.connect(sockaddr)
 
+    @staticmethod
+    def _key_entry(key_entry):
+        if key_entry[0].isdigit():
+            key_entry = '_' + key_entry
+        return INVALID_KEY_CHARS.sub("_", str(key_entry))
+
     def _key(self, key):
-        return (self._prefix + ".".join([INVALID_KEY_CHARS.sub("_", str(i)) for i in key]))[:450]
+        return (self._prefix + ".".join(map(StatsDBackend._key_entry, key)))[:450]
 
     def _send(self, message):
         try:

@@ -154,8 +154,6 @@ class StatsDBackend(object):  # pragma: nocover
 
     @staticmethod
     def _key_entry(key_entry):
-        if key_entry[0].isdigit():
-            key_entry = '_' + key_entry
         return INVALID_KEY_CHARS.sub("_", str(key_entry))
 
     def _key(self, key):

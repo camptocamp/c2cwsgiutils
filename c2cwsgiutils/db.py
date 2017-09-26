@@ -19,7 +19,7 @@ tweens = Tweens()
 def setup_session(config, master_prefix, slave_prefix=None, force_master=None, force_slave=None):
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
-    DB connection.
+    DB connection. Uses prefixed entries in the application's settings.
 
     The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
     all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
@@ -35,7 +35,74 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
     :param force_slave: The method/paths that needs to use the slave
     :return: The SQLAlchemy session, the R/W engine and the R/O engine
     """
-    def db_chooser_tween_factory(handler, registry):
+    if slave_prefix is None:
+        slave_prefix = master_prefix
+    settings = config.registry.settings
+    rw_engine = sqlalchemy.engine_from_config(settings, master_prefix + ".")
+    rw_engine.c2c_name = master_prefix
+    db_session = sqlalchemy.orm.scoped_session(
+        sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
+
+    # Setup a slave DB connection and add a tween to use it.
+    if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
+        LOG.info("Using a slave DB for reading")
+        ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
+        ro_engine.c2c_name = slave_prefix
+        tween_name = master_prefix.replace('.', '_')
+        _add_tween(config, tween_name, db_session, force_master, force_slave)
+    else:
+        ro_engine = rw_engine
+
+    db_session.c2c_rw_bind = rw_engine
+    db_session.c2c_ro_bind = ro_engine
+    return db_session, rw_engine, ro_engine
+
+
+def create_session(config, name, url, slave_url=None, force_master=None, force_slave=None, **engine_config):
+    """
+    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
+    DB connection.
+
+    The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
+    all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
+    Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
+    path includes the route_prefix.
+
+    :param config: The pyramid Configuration object. If None, only master is used
+    :param url: The URL for the master DB
+    :param slave_url: The URL for the slave DB
+    :param force_master: The method/paths that needs to use the master
+    :param force_slave: The method/paths that needs to use the slave
+    :param engine_config: The rest of the parameters are passed as is to the sqlalchemy.create_engine function
+    :return: The SQLAlchemy session
+    """
+    if slave_url is None:
+        slave_url = url
+
+    rw_engine = sqlalchemy.create_engine(url, **engine_config)
+    db_session = sqlalchemy.orm.scoped_session(
+        sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
+
+    # Setup a slave DB connection and add a tween to use it.
+    if url != slave_url and config is not None:
+        LOG.info("Using a slave DB for reading")
+        ro_engine = sqlalchemy.create_engine(slave_url, **engine_config)
+        _add_tween(config, name, db_session, force_master, force_slave)
+        rw_engine.c2c_name = name + "_master"
+        ro_engine.c2c_name = name + "_slave"
+    else:
+        rw_engine.c2c_name = name
+        ro_engine = rw_engine
+
+    db_session.c2c_rw_bind = rw_engine
+    db_session.c2c_ro_bind = ro_engine
+    return db_session
+
+
+def _add_tween(config, name, db_session, force_master, force_slave):
+    global tweens
+
+    def db_chooser_tween_factory(handler, _registry):
         """
         Tween factory to route to a slave DB for read-only queries.
         Must be put over the pyramid_tm tween and share_config must have a "slave" engine
@@ -51,11 +118,11 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
             has_force_master = any(r.match(method_path) for r in master_paths)
             if not has_force_master and (request.method in ("GET", "OPTIONS") or
                                          any(r.match(method_path) for r in slave_paths)):
-                LOG.debug("Using %s database for: %s", slave_prefix, method_path)
-                session.bind = ro_engine
+                LOG.debug("Using %s database for: %s", db_session.c2c_ro_bind.c2c_name, method_path)
+                session.bind = db_session.c2c_ro_bind
             else:
-                LOG.debug("Using %s database for: %s", master_prefix, method_path)
-                session.bind = rw_engine
+                LOG.debug("Using %s database for: %s", db_session.c2c_rw_bind.c2c_name, method_path)
+                session.bind = db_session.c2c_rw_bind
 
             try:
                 return handler(request)
@@ -63,26 +130,5 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
                 session.bind = old
 
         return db_chooser_tween
-
-    if slave_prefix is None:
-        slave_prefix = master_prefix
-    settings = config.registry.settings
-    rw_engine = sqlalchemy.engine_from_config(settings, master_prefix + ".")
-
-    # Setup a slave DB connection and add a tween to use it.
-    if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
-        LOG.info("Using a slave DB for reading")
-        ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
-        tween_name = master_prefix.replace('.', '_')
-        tweens.__setattr__(tween_name, db_chooser_tween_factory)
-        config.add_tween('c2cwsgiutils.db.tweens.' + tween_name, over="pyramid_tm.tm_tween_factory")
-    else:
-        ro_engine = rw_engine
-
-    db_session = sqlalchemy.orm.scoped_session(
-        sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
-    db_session.c2c_rw_bind = rw_engine
-    db_session.c2c_ro_bind = ro_engine
-    rw_engine.c2c_name = master_prefix
-    ro_engine.c2c_name = slave_prefix
-    return db_session, rw_engine, ro_engine
+    tweens.__setattr__(name, db_chooser_tween_factory)
+    config.add_tween('c2cwsgiutils.db.tweens.' + name, over="pyramid_tm.tm_tween_factory")

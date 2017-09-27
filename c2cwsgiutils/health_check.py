@@ -5,6 +5,7 @@ To use it, create an instance of this class in your application initialization a
 methods add_db_check()
 """
 import configparser
+import copy
 import logging
 import os
 from pyramid.httpexceptions import HTTPNotFound
@@ -94,11 +95,14 @@ class HealthCheck:
 
         self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_'), check, level))
 
-    def add_url_check(self, url, name=None, check_cb=lambda request, response: None, timeout=3, level=1):
+    def add_url_check(self, url, params=None, headers=None, name=None,
+                      check_cb=lambda request, response: None, timeout=3, level=1):
         """
         Check that a GET on an URL returns 2xx
 
-        :param url: the URL to query
+        :param url: the URL to query or a function taking the request and returning it
+        :param params: the parameters or a function taking the request and returning them
+        :param headers: the headers or a function taking the request and returning them
         :param name: the name of the check (defaults to url)
         :param check_cb: an optional CB to do additional checks on the response (takes the request and the \
                          response as parameters)
@@ -106,11 +110,18 @@ class HealthCheck:
         :param level: the level of the health check
         """
         def check(request):
-            response = requests.get(url, timeout=timeout, headers={'X-Request-ID': request.c2c_request_id})
+            the_url = _maybe_function(url, request)
+            the_params = _maybe_function(params, request)
+            the_headers = copy.deepcopy(_maybe_function(headers, request) if headers is not None else {})
+            the_headers.update({
+                'X-Request-ID': request.c2c_request_id
+            })
+
+            response = requests.get(the_url, timeout=timeout, params=the_params, headers=the_headers)
             response.raise_for_status()
             check_cb(request, response)
         if name is None:
-            name = url
+            name = str(url)
         self._checks.append((name, check, level))
 
     def add_custom_check(self, name, check_cb, level=1):
@@ -163,3 +174,7 @@ class HealthCheck:
             if result is None:
                 raise HTTPNotFound(model.__name__ + " record not found")
         return query
+
+
+def _maybe_function(what, request):
+    return what(request) if callable(what) else what

@@ -7,7 +7,7 @@ def test_ok(app_connection):
     assert response == {
         'status': 200,
         'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
-                      'alembic_app_alembic.ini'],
+                      'fun_url',  'alembic_app_alembic.ini'],
         'failures': {}
     }
 
@@ -18,7 +18,7 @@ def test_failure(app_connection):
     assert response == {
         'status': 500,
         'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
-                      'alembic_app_alembic.ini'],
+                      'fun_url', 'alembic_app_alembic.ini'],
         'failures': {
             'fail': {
                 'message': 'failing check',

@@ -45,7 +45,7 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
 
     # Setup a slave DB connection and add a tween to use it.
     if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
-        LOG.info("Using a slave DB for reading")
+        LOG.info("Using a slave DB for reading %s", master_prefix)
         ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
         ro_engine.c2c_name = slave_prefix
         tween_name = master_prefix.replace('.', '_')
@@ -85,7 +85,7 @@ def create_session(config, name, url, slave_url=None, force_master=None, force_s
 
     # Setup a slave DB connection and add a tween to use it.
     if url != slave_url and config is not None:
-        LOG.info("Using a slave DB for reading")
+        LOG.info("Using a slave DB for reading %s", name)
         ro_engine = sqlalchemy.create_engine(slave_url, **engine_config)
         _add_tween(config, name, db_session, force_master, force_slave)
         rw_engine.c2c_name = name + "_master"

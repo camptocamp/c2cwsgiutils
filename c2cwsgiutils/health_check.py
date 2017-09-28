@@ -138,8 +138,11 @@ class HealthCheck:
         max_level = int(request.params.get('max_level', '1'))
         successes = []
         failures = {}
+        checks = None
+        if 'checks' in request.params:
+            checks = request.params['checks'].split(',')
         for name, check, level in self._checks:
-            if level <= max_level:
+            if level <= max_level and (checks is None or name in checks):
                 try:
                     check(request)
                     successes.append(name)

@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM camptocamp/python-gis:3.6
 LABEL maintainer "info@camptocamp.org"
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/postgres.list && \

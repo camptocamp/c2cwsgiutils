@@ -86,9 +86,7 @@ class LogListener(threading.Thread):
                 return []  # timeout
             result = self._messages
             self._messages = []
-            result = list(filter(filter_fun, result))
-            if result:
-                return result
+            return list(filter(filter_fun, result))
 
 
 def test_cee_logs(app_connection):

@@ -238,8 +238,10 @@ command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) 
 ## Debugging
 
 To enable the debugging interface, you must set the `DEBUG_VIEW_SECRET` environment variable or the
-`c2c.debug_view_secret` variable. Then you can get a dump of every threads with this URL:
-`{C2C_BASE_PATH}/debug/stacks?secret={DEBUG_VIEW_SECRET}`
+`c2c.debug_view_secret` variable. Then you can have dumps of a few things:
+
+* every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={DEBUG_VIEW_SECRET}`
+* memory usage: `{C2C_BASE_PATH}/debug/memory?secret={DEBUG_VIEW_SECRET}&limit=30`
 
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
 to have a specially tweaked `docker-compose.yml`:

@@ -5,8 +5,10 @@ cornice==2.4.0
 coverage==4.4.1
 flake8==3.4.1
 gunicorn==19.7.1
+junit2html==7
 lxml==4.0.0
 netifaces==0.10.6
+objgraph==3.1.0
 psycopg2==2.7.3.1
 pyramid==1.9.1
 pyramid_tm==2.2

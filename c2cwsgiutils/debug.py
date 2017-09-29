@@ -1,4 +1,5 @@
 import logging
+import objgraph
 import threading
 import traceback
 import sys
@@ -24,9 +25,24 @@ def _dump_stacks(request):
     return "\n".join(code)
 
 
+def _dump_memory(request):
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
+    limit = int(request.params.get('limit', '30'))
+    nb_collected = objgraph.gc.collect()
+    return {
+        'nb_collected': nb_collected,
+        'most_common_types': objgraph.most_common_types(limit=limit, shortnames=False),
+        'leaking_objects': objgraph.most_common_types(limit=limit, shortnames=False,
+                                                      objects=objgraph.get_leaking_objects())
+    }
+
+
 def init(config):
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         config.add_route("c2c_debug_stacks", _utils.get_base_path(config) + r"/debug/stacks",
                          request_method="GET")
         config.add_view(_dump_stacks, route_name="c2c_debug_stacks", renderer="string", http_cache=0)
+        config.add_route("c2c_debug_memory", _utils.get_base_path(config) + r"/debug/memory",
+                         request_method="GET")
+        config.add_view(_dump_memory, route_name="c2c_debug_memory", renderer="json", http_cache=0)
         LOG.info("Enabled the /debug/stacks API")

@@ -32,7 +32,8 @@ acceptance: build_acceptance build_test_app
 	rm -rf reports/coverage/api reports/acceptance.xml
 	mkdir -p reports/coverage/api
 	#run the tests
-	docker run -e DOCKER_TAG=$(DOCKER_TAG) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) py.test -vv --color=yes --junitxml /reports/acceptance.xml $(PYTEST_OPTS) tests; \
+	docker run -e DOCKER_TAG=$(DOCKER_TAG) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID $(DOCKER_BASE)_acceptance:$(DOCKER_TAG) \
+	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance.xml $(PYTEST_OPTS) tests; junit2html /reports/acceptance.xml /reports/acceptance.html"; \
 	status=$$?; \
 	#copy the reports locally \
 	docker cp c2cwsgiutils_acceptance_$(DOCKER_TAG)_$$PPID:/reports ./; \

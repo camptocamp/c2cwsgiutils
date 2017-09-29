@@ -288,6 +288,12 @@ c2c.disable_exception_handling = 1
 ```
 
 
+# JSON pretty print
+
+The standard JSON renderer is replaced by a version that indents the rendered JSON if the `?c2c_pretty`
+parameter is present in the request.
+
+
 ## Sentry integration
 
 The stacktraces can be sent to a sentry.io service for collection. To enable it, you must set the `SENTRY_URL`

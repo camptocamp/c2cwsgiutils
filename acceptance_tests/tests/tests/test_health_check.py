@@ -12,6 +12,16 @@ def test_ok(app_connection):
     }
 
 
+def test_filter(app_connection):
+    response = app_connection.get_json("c2c/health_check", params={'checks': 'db_engine_sqlalchemy,fun_url'})
+    print('response=' + json.dumps(response))
+    assert response == {
+        'status': 200,
+        'successes': ['db_engine_sqlalchemy', 'fun_url'],
+        'failures': {}
+    }
+
+
 def test_failure(app_connection):
     response = app_connection.get_json("c2c/health_check", params={'max_level': '2'}, expected_status=500)
     print('response=' + json.dumps(response))

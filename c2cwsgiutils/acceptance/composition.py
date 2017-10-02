@@ -39,7 +39,7 @@ class Composition(object):
 
             _try(lambda:
                  subprocess.check_call(['docker-compose', '--file', composition,
-                                        '--project-name', project_name, 'rm', '-f', '--all'], env=env,
+                                        '--project-name', project_name, 'rm', '-f'], env=env,
                                        stderr=subprocess.STDOUT), fail=False)
 
             _try(lambda:

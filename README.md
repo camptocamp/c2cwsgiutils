@@ -292,8 +292,9 @@ c2c.disable_exception_handling = 1
 
 # JSON pretty print
 
-The standard JSON renderer is replaced by a version that indents the rendered JSON if the `?c2c_pretty`
-parameter is present in the request.
+The standard JSON renderer is replaced by a version that pretty prints the rendered JSON. While this adds
+significant amount of whitespace, the difference in bytes transmitted on the network is negligible thanks
+to gzip compression.
 
 
 ## Sentry integration

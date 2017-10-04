@@ -12,7 +12,7 @@ objgraph==3.1.0
 psycopg2==2.7.3.1
 pyramid==1.9.1
 pyramid_tm==2.2
-pytest==3.2.2
+pytest==3.2.3
 raven==6.2.1
 requests==2.18.4
 SQLAlchemy==1.1.14

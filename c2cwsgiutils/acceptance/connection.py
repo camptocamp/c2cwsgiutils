@@ -42,7 +42,7 @@ class Connection:
             self._check_cors(cors, r)
             return r.json()
 
-    def get_xml(self, url, schema=None, expected_status=200, headers=None, params=None, cors=True,
+    def get_xml(self, url, schema=None, expected_status=200, params=None, headers=None, cors=True,
                 cache_allowed=False):
         """
         get the given URL (relative to the root of API).
@@ -59,53 +59,56 @@ class Connection:
                 xml_schema.assertValid(doc)
             return doc
 
-    def post_json(self, url, data=None, json=None, expected_status=200, headers=None, cors=True,
+    def post_json(self, url, data=None, json=None, expected_status=200, params=None, headers=None, cors=True,
                   cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, data=data, json=json,
+        with self.session.post(self.base_url + url, data=data, json=json, params=params,
                                headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
             return r.json()
 
-    def post_files(self, url, data=None, files=None, expected_status=200, headers=None, cors=True,
-                   cache_allowed=False):
+    def post_files(self, url, data=None, files=None, expected_status=200, params=None, headers=None,
+                   cors=True, cache_allowed=False):
         """
         POST files to the the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, data=data, files=files,
+        with self.session.post(self.base_url + url, data=data, files=files, params=params,
                                headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
             return r.json()
 
-    def post(self, url, data=None, expected_status=200, headers=None, cors=True, cache_allowed=False):
+    def post(self, url, data=None, expected_status=200, params=None, headers=None, cors=True,
+             cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
         with self.session.post(self.base_url + url, headers=self._merge_headers(headers, cors),
-                               data=data) as r:
+                               data=data, params=params) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
             return r.text
 
-    def put_json(self, url, json=None, expected_status=200, headers=None, cors=True, cache_allowed=False):
+    def put_json(self, url, json=None, expected_status=200, params=None, headers=None, cors=True,
+                 cache_allowed=False):
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.put(self.base_url + url, json=json,
+        with self.session.put(self.base_url + url, json=json, params=params,
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
             return r.json()
 
-    def delete(self, url, expected_status=204, headers=None, cors=True, cache_allowed=False):
+    def delete(self, url, expected_status=204, params=None, headers=None, cors=True, cache_allowed=False):
         """
         DELETE the given URL (relative to the root of API).
         """
-        with self.session.delete(self.base_url + url, headers=self._merge_headers(headers, cors)) as r:
+        with self.session.delete(self.base_url + url, headers=self._merge_headers(headers, cors),
+                                 params=params) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
             return r

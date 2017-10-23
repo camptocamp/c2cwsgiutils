@@ -19,6 +19,6 @@ def create_application(configfile=None):
     fileConfig(configfile, defaults=os.environ)
     try:
         return get_app(configfile, 'main', options=os.environ)
-    except:
+    except Exception:
         logging.getLogger(__name__).exception("Failed starting the application")
         raise

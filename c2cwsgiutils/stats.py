@@ -67,10 +67,10 @@ class _Timer(object):
     """
     def __init__(self, key):
         self._key = key
-        self._start = time.time()
+        self._start = time.monotonic()
 
     def stop(self, key_final=None):
-        duration = time.time() - self._start
+        duration = time.monotonic() - self._start
         if key_final is not None:
             self._key = key_final
         for backend in BACKENDS.values():

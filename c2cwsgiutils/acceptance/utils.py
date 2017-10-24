@@ -30,7 +30,7 @@ def wait_url(url, timeout=DEFAULT_TIMEOUT):
 
 
 def retry_timeout(what, timeout=DEFAULT_TIMEOUT, interval=0.5):
-    timeout = time.time() + timeout
+    timeout = time.monotonic() + timeout
     while True:
         try:
             ret = what()
@@ -38,7 +38,7 @@ def retry_timeout(what, timeout=DEFAULT_TIMEOUT, interval=0.5):
                 return ret
         except Exception as e:
             LOG.info("  Failed: " + str(e))
-        if time.time() > timeout:
+        if time.monotonic() > timeout:
             assert False, "Timeout"
         time.sleep(interval)
 

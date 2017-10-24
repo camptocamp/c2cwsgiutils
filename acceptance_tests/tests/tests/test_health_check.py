@@ -8,8 +8,12 @@ def test_ok(app_connection):
         'status': 200,
         'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
                       'fun_url',  'alembic_app_alembic.ini'],
-        'failures': {}
+        'failures': {},
+        'timings': response['timings']
     }
+    assert response['timings'].keys() == {
+        'db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+        'fun_url',  'alembic_app_alembic.ini'}
 
 
 def test_filter(app_connection):
@@ -18,8 +22,10 @@ def test_filter(app_connection):
     assert response == {
         'status': 200,
         'successes': ['db_engine_sqlalchemy', 'fun_url'],
-        'failures': {}
+        'failures': {},
+        'timings': response['timings']
     }
+    assert response['timings'].keys() == {'db_engine_sqlalchemy', 'fun_url'}
 
 
 def test_failure(app_connection):
@@ -34,8 +40,12 @@ def test_failure(app_connection):
                 'message': 'failing check',
                 'stacktrace': response['failures']['fail']['stacktrace']
             }
-        }
+        },
+        'timings': response['timings']
     }
+    assert response['timings'].keys() == {
+        'db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+        'fun_url', 'alembic_app_alembic.ini', 'fail'}
 
 
 def test_ping(app_connection):
@@ -44,5 +54,6 @@ def test_ping(app_connection):
     assert response == {
         'status': 200,
         'successes': [],
-        'failures': {}
+        'failures': {},
+        'timings': {}
     }

@@ -12,6 +12,7 @@ from pyramid.httpexceptions import HTTPNotFound
 import re
 import requests
 import subprocess
+import time
 import traceback
 
 from c2cwsgiutils import stats, _utils
@@ -138,11 +139,13 @@ class HealthCheck:
         max_level = int(request.params.get('max_level', '1'))
         successes = []
         failures = {}
+        timings = {}
         checks = None
         if 'checks' in request.params:
             checks = request.params['checks'].split(',')
         for name, check, level in self._checks:
             if level <= max_level and (checks is None or name in checks):
+                start = time.monotonic()
                 try:
                     check(request)
                     successes.append(name)
@@ -152,11 +155,17 @@ class HealthCheck:
                     if os.environ.get('DEVELOPMENT', '0') != '0':
                         failure['stacktrace'] = traceback.format_exc()
                     failures[name] = failure
+                timings[name] = time.monotonic() - start
 
         if failures:
             request.response.status = 500
 
-        return {'status': 500 if failures else 200, 'failures': failures, 'successes': successes}
+        return {
+            'status': 500 if failures else 200,
+            'failures': failures,
+            'successes': successes,
+            'timings': timings
+        }
 
     @staticmethod
     def _create_db_engine_check(session, bind, query_cb):

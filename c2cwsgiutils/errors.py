@@ -7,6 +7,7 @@ import os
 from pyramid.httpexceptions import HTTPException
 import sqlalchemy.exc
 import traceback
+from webob.request import DisconnectionError
 
 from c2cwsgiutils import _utils
 
@@ -89,5 +90,10 @@ def init(config):
         common_options = {'renderer': 'json', 'http_cache': 0}
         config.add_view(view=_http_error, context=HTTPException, **common_options)
         config.add_view(view=_integrity_error, context=sqlalchemy.exc.IntegrityError, **common_options)
+
+        # We don't want to cry wolf if the user interrupted the uplad of the body
         config.add_view(view=_client_interrupted_error, context=ConnectionResetError, **common_options)
+        config.add_view(view=_client_interrupted_error, context=DisconnectionError, **common_options)
+
         config.add_view(view=_other_error, context=Exception, **common_options)
+        LOG.info('Installed the error catching views')

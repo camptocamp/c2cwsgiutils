@@ -46,7 +46,7 @@ def capture_exceptions():
     if client is not None:
         try:
             yield
-        except:
+        except Exception:
             client.captureException()
             raise
     else:

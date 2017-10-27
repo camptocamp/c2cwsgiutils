@@ -1,10 +1,9 @@
 # Camptocamp WSGI utilities
 
-master: [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/)
-[![Requirements master](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=master)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=master)
-
-release_0: [![Build release_0](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_0)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_0/)
-[![Requirements release_0](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_0)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_0)
+| branch  | CI  | requirements  |
+|---|---|---|
+| master | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/) | [![Requirements master](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=master)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=master)
+| release_0 | [![Build release_0](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_0)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_0/) | [![Requirements release_0](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_0)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_0) |
 
 This is a python 3 library providing common tools for Camptocamp WSGI
 applications:

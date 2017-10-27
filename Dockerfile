@@ -20,7 +20,9 @@ RUN pip install --no-cache-dir -r /c2cwsgiutils/requirements.txt
 COPY . /c2cwsgiutils/
 RUN flake8 /c2cwsgiutils && \
     pip install --no-cache-dir -e /c2cwsgiutils && \
-    (cd /c2cwsgiutils/ && pytest -vv --color=yes tests && rm -r tests)
+    (cd /c2cwsgiutils/ && pytest -vv --color=yes tests && rm -r tests) && \
+    python -m compileall -q && \
+    python -m compileall -q /c2cwsgiutils
 
 ENV LOG_TYPE=console \
     LOG_HOST=localhost \

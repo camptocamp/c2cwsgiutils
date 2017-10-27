@@ -1,6 +1,7 @@
 import logging
 import objgraph
 import threading
+import time
 import traceback
 import sys
 
@@ -37,12 +38,26 @@ def _dump_memory(request):
     }
 
 
+def _sleep(request):
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
+    timeout = float(request.params['time'])
+    time.sleep(timeout)
+    request.response.status_code = 204
+    return request.response
+
+
 def init(config):
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         config.add_route("c2c_debug_stacks", _utils.get_base_path(config) + r"/debug/stacks",
                          request_method="GET")
         config.add_view(_dump_stacks, route_name="c2c_debug_stacks", renderer="string", http_cache=0)
+
         config.add_route("c2c_debug_memory", _utils.get_base_path(config) + r"/debug/memory",
                          request_method="GET")
         config.add_view(_dump_memory, route_name="c2c_debug_memory", renderer="json", http_cache=0)
+
+        config.add_route("c2c_debug_sleep", _utils.get_base_path(config) + r"/debug/sleep",
+                         request_method="GET")
+        config.add_view(_sleep, route_name="c2c_debug_sleep", renderer="json", http_cache=0)
+
         LOG.info("Enabled the /debug/stacks API")

@@ -1,4 +1,5 @@
 import json
+import time
 
 
 def test_stacks(app_connection):
@@ -18,3 +19,10 @@ def test_no_auth(app_connection):
 def test_memory(app_connection):
     memory = app_connection.get_json('c2c/debug/memory', params={'secret': 'changeme'})
     print("memory=" + json.dumps(memory, indent=4))
+
+
+def test_sleep(app_connection):
+    start_time = time.monotonic()
+    app_connection.get('c2c/debug/sleep', params={'secret': 'changeme', 'time': '0.1'},
+                       expected_status=204)
+    assert time.monotonic() - start_time > 0.1

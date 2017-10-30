@@ -26,3 +26,10 @@ def test_sleep(app_connection):
     app_connection.get('c2c/debug/sleep', params={'secret': 'changeme', 'time': '0.1'},
                        expected_status=204)
     assert time.monotonic() - start_time > 0.1
+
+
+def test_headers(app_connection):
+    response = app_connection.get_json('c2c/debug/headers', params={'secret': 'changeme'},
+                                       headers={'X-Toto': '42'})
+    print("response=" + json.dumps(response, indent=4))
+    assert response['X-Toto'] == '42'

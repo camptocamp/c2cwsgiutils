@@ -46,6 +46,11 @@ def _sleep(request):
     return request.response
 
 
+def _headers(request):
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
+    return dict(request.headers)
+
+
 def init(config):
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         config.add_route("c2c_debug_stacks", _utils.get_base_path(config) + r"/debug/stacks",
@@ -59,5 +64,9 @@ def init(config):
         config.add_route("c2c_debug_sleep", _utils.get_base_path(config) + r"/debug/sleep",
                          request_method="GET")
         config.add_view(_sleep, route_name="c2c_debug_sleep", renderer="json", http_cache=0)
+
+        config.add_route("c2c_debug_headers", _utils.get_base_path(config) + r"/debug/headers",
+                         request_method="GET")
+        config.add_view(_headers, route_name="c2c_debug_headers", renderer="json", http_cache=0)
 
         LOG.info("Enabled the /debug/stacks API")

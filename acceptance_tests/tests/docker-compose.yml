@@ -40,7 +40,7 @@ alembic_slave:
   command: /bin/true  # will use execute with another script from the tests to actually do it
 
 db:
-  image: camptocamp/postgres:9.5
+  image: camptocamp/postgres:9.6
   environment:
     POSTGRES_USER: www-data
     POSTGRES_PASSWORD: www-data
@@ -50,7 +50,7 @@ db:
     - 15432:5432
 
 db_slave:
-  image: camptocamp/postgres:9.5
+  image: camptocamp/postgres:9.6
   environment:
     POSTGRES_USER: www-data
     POSTGRES_PASSWORD: www-data

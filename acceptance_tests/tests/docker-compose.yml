@@ -16,10 +16,11 @@ app:
     DEVELOPMENT: 1
     COVERAGE: 1
     SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
-
+    C2C_REDIS_URL: redis://redis:6379
   links:
     - db
     - db_slave
+    - redis
   ports:
     - 8480:80
 
@@ -66,3 +67,9 @@ run_test:
   environment: *app_env
   links:
     - db
+
+redis:
+  image: redis:3
+  mem_limit: 64m
+  ports:
+    - 16379:6379

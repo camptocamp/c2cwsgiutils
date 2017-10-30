@@ -3,13 +3,20 @@ import time
 
 
 def test_stacks(app_connection):
-    stacks = app_connection.get('c2c/debug/stacks', params={'secret': 'changeme'})
-    assert 'c2cwsgiutils/debug' in stacks
+    stacks = app_connection.get_json('c2c/debug/stacks', params={'secret': 'changeme'})
+    _check_stacks(stacks)
+
+
+def _check_stacks(stacks):
+    assert len(stacks) == 5
+    print("stacks=" + json.dumps(stacks, indent=4))
+    for proc_stacks in stacks:
+        assert 'c2cwsgiutils/debug' in json.dumps(proc_stacks)
 
 
 def test_header_auth(app_connection):
-    stacks = app_connection.get('c2c/debug/stacks', headers={'X-API-Key': 'changeme'})
-    assert 'c2cwsgiutils/debug' in stacks
+    stacks = app_connection.get_json('c2c/debug/stacks', headers={'X-API-Key': 'changeme'})
+    _check_stacks(stacks)
 
 
 def test_no_auth(app_connection):
@@ -19,6 +26,7 @@ def test_no_auth(app_connection):
 def test_memory(app_connection):
     memory = app_connection.get_json('c2c/debug/memory', params={'secret': 'changeme'})
     print("memory=" + json.dumps(memory, indent=4))
+    assert len(memory) == 5
 
 
 def test_sleep(app_connection):

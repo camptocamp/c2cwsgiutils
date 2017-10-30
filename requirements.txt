@@ -8,7 +8,7 @@ gunicorn==19.7.1
 junit2html==7
 lxml==4.1.0
 netifaces==0.10.6
-objgraph==3.1.0
+objgraph==3.1.1
 psycopg2==2.7.3.2
 pyramid==1.9.1
 pyramid_tm==2.2

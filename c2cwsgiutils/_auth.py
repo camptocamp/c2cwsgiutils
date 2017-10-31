@@ -1,9 +1,10 @@
 from pyramid.httpexceptions import HTTPForbidden
+import pyramid.request
 
 from c2cwsgiutils._utils import env_or_settings
 
 
-def auth_view(request, env_name, config_name):
+def auth_view(request: pyramid.request.Request, env_name: str, config_name: str) -> None:
     secret = request.params.get('secret')
     if secret is None:
         secret = request.headers.get('X-API-Key')

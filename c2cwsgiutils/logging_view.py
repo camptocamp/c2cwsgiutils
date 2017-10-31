@@ -1,4 +1,8 @@
 import logging
+import pyramid.config
+import pyramid.request
+from typing import Mapping, Any
+
 from c2cwsgiutils import _utils, _auth, _broadcast
 
 LOG = logging.getLogger(__name__)
@@ -6,7 +10,7 @@ CONFIG_KEY = 'c2c.log_view_secret'
 ENV_KEY = 'LOG_VIEW_SECRET'
 
 
-def install_subscriber(config):
+def install_subscriber(config: pyramid.config.Configurator) -> None:
     """
     Install the view to configure the loggers, if configured to do so.
     """
@@ -19,7 +23,7 @@ def install_subscriber(config):
         LOG.info("Enabled the /logging/change_level API")
 
 
-def _logging_change_level(request):
+def _logging_change_level(request: pyramid.request.Request) -> Mapping[str, Any]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     name = request.params['name']
     level = request.params.get('level')

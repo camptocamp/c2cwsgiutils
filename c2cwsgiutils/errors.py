@@ -4,9 +4,12 @@ Install exception views to have nice JSON error pages.
 from cornice import cors
 import logging
 import os
+import pyramid.config
+import pyramid.request
 from pyramid.httpexceptions import HTTPException
 import sqlalchemy.exc
 import traceback
+from typing import Any, Callable
 from webob.request import DisconnectionError
 
 from c2cwsgiutils import _utils
@@ -22,8 +25,7 @@ STATUS_LOGGER = {
 }
 
 
-def _crude_add_cors(request):
-
+def _crude_add_cors(request: pyramid.request.Request) -> None:
     response = request.response
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = \
@@ -32,7 +34,7 @@ def _crude_add_cors(request):
     response.headers['Access-Control-Max-Age'] = "86400"
 
 
-def _add_cors(request):
+def _add_cors(request: pyramid.request.Request) -> None:
     services = request.registry.cornice_services
     if request.matched_route is not None:
         pattern = request.matched_route.pattern
@@ -43,7 +45,8 @@ def _add_cors(request):
     _crude_add_cors(request)
 
 
-def _do_error(request, status, exception, logger=LOG.error):
+def _do_error(request: pyramid.request.Request, status: int, exception: Exception,
+              logger: Callable=LOG.error) -> pyramid.response.Response:
     logger("%s %s returned status code %s: %s",
            request.method, request.url, status, str(exception),
            extra={'referer': request.referer}, exc_info=True)
@@ -57,7 +60,7 @@ def _do_error(request, status, exception, logger=LOG.error):
     return response
 
 
-def _http_error(exception, request):
+def _http_error(exception: HTTPException, request: pyramid.request.Request) -> Any:
     log = STATUS_LOGGER.get(exception.status_code, LOG.warning)
     log("%s %s returned status code %s: %s",
         request.method, request.url, exception.status_code, str(exception),
@@ -71,20 +74,21 @@ def _http_error(exception, request):
         request.response.status_code = 200
 
 
-def _integrity_error(exception, request):
+def _integrity_error(exception: Exception, request: pyramid.request.Request) -> pyramid.response.Response:
     return _do_error(request, 400, exception)
 
 
-def _client_interrupted_error(exception, request):
+def _client_interrupted_error(exception: Exception,
+                              request: pyramid.request.Request) -> pyramid.response.Response:
     # No need to cry wolf if it's just the client that interrupted the connection
     return _do_error(request, 500, exception, logger=LOG.info)
 
 
-def _other_error(exception, request):
+def _other_error(exception: Exception, request: pyramid.request.Request) -> pyramid.response.Response:
     return _do_error(request, 500, exception)
 
 
-def init(config):
+def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, 'C2C_DISABLE_EXCEPTION_HANDLING',
                             'c2c.disable_exception_handling', '0') == '0':
         common_options = {'renderer': 'json', 'http_cache': 0}

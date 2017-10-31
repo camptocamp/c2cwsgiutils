@@ -1,8 +1,12 @@
 import logging
 import objgraph
+import pyramid.config
+import pyramid.request
+import pyramid.response
 import threading
 import time
 import traceback
+from typing import Dict, Mapping, List, Any
 import sys
 
 from c2cwsgiutils import _utils, _auth, _broadcast
@@ -13,12 +17,14 @@ ENV_KEY = 'DEBUG_VIEW_SECRET'
 LOG = logging.getLogger(__name__)
 
 
-def _dump_stacks(request):
+def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, List[Mapping[str, Any]]]]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
-    return _broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
+    result = _broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
+    assert result is not None
+    return result
 
 
-def _dump_stacks_impl():
+def _dump_stacks_impl() -> Dict[str, List[Dict[str, Any]]]:
     id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
     threads = {}
     for threadId, stack in sys._current_frames().items():  # pylint: disable=W0212
@@ -36,13 +42,15 @@ def _dump_stacks_impl():
     return threads
 
 
-def _dump_memory(request):
+def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     limit = int(request.params.get('limit', '30'))
-    return _broadcast.broadcast('c2c_dump_memory', params={'limit': limit}, expect_answers=True)
+    result = _broadcast.broadcast('c2c_dump_memory', params={'limit': limit}, expect_answers=True)
+    assert result is not None
+    return result
 
 
-def _dump_memory_impl(limit):
+def _dump_memory_impl(limit: int) -> Mapping[str, Any]:
     nb_collected = objgraph.gc.collect()
     return {
         'nb_collected': nb_collected,
@@ -52,7 +60,7 @@ def _dump_memory_impl(limit):
     }
 
 
-def _sleep(request):
+def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     timeout = float(request.params['time'])
     time.sleep(timeout)
@@ -60,12 +68,12 @@ def _sleep(request):
     return request.response
 
 
-def _headers(request):
+def _headers(request: pyramid.request.Request) -> Mapping[str, str]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     return dict(request.headers)
 
 
-def init(config):
+def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         _broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
         _broadcast.subscribe('c2c_dump_stacks', _dump_stacks_impl)

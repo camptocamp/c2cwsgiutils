@@ -1,9 +1,11 @@
 import logging
 import netifaces
 import os
+import _pytest.fixtures
 import subprocess
 import sys
 import time
+from typing import Callable, Any, Optional, List, Mapping
 
 from c2cwsgiutils.acceptance import utils
 
@@ -14,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG,
 logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.WARN)
 
 
-def _try(what, fail=True, times=5, delay=10):
+def _try(what: Callable[[], Any], fail: bool=True, times: int=5, delay: float=10) -> Any:
     for i in range(times):
         try:
             return what()
@@ -26,7 +28,8 @@ def _try(what, fail=True, times=5, delay=10):
 
 
 class Composition(object):
-    def __init__(self, request, project_name, composition, coverage_paths=None):
+    def __init__(self, request: _pytest.fixtures.FixtureRequest, project_name: str, composition: str,
+                 coverage_paths: Optional[List[str]]=None) -> None:
         self.project_name = project_name
         self.composition = composition
         self.coverage_paths = coverage_paths
@@ -60,7 +63,7 @@ class Composition(object):
         if os.environ.get("docker_stop", "1") == "1":
             request.addfinalizer(self.stop_all)
 
-    def stop_all(self):
+    def stop_all(self) -> None:
         _try(lambda:
              subprocess.check_call(['docker-compose', '--file', self.composition,
                                    '--project-name', self.project_name, 'stop'], env=Composition._get_env(),
@@ -71,30 +74,30 @@ class Composition(object):
             for path in self.coverage_paths:
                 subprocess.check_call(['docker', 'cp', path, target_dir], stderr=subprocess.STDOUT)
 
-    def stop(self, container):
+    def stop(self, container: str) -> None:
         _try(lambda:
              subprocess.check_call(['docker', '--log-level=warn',
                                    'stop', '%s_%s_1' % (self.project_name, container)],
                                    stderr=subprocess.STDOUT))
 
-    def restart(self, container):
+    def restart(self, container: str) -> None:
         _try(lambda:
              subprocess.check_call(['docker', '--log-level=warn',
                                    'restart', '%s_%s_1' % (self.project_name, container)],
                                    stderr=subprocess.STDOUT))
 
-    def run(self, container, *command, **kwargs):
+    def run(self, container: str, *command: str, **kwargs: Any) -> None:
         subprocess.check_call(['docker-compose', '--file', self.composition,
                                '--project-name', self.project_name, 'run', '--rm', container] + list(command),
                               env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs)
 
-    def exec(self, container, *command, **kwargs):
+    def exec(self, container: str, *command: str, **kwargs: Any) -> None:
         subprocess.check_call(['docker-compose', '--file', self.composition,
                                '--project-name', self.project_name, 'exec', '-T', container] + list(command),
                               env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs)
 
     @staticmethod
-    def _get_env():
+    def _get_env() -> Mapping[str, str]:
         """
         Make sure the DOCKER_TAG environment variable, used in the docker-compose.yml file
         is correctly set when we call docker-compose.

@@ -22,18 +22,22 @@ dockerBuild {
     }
     stage('Test') {
         checkout scm
-        try {
-            lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
-                sh 'make -j2 acceptance'
+        parallel 'acceptance': {
+            try {
+                lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
+                    sh 'make -j2 acceptance'
+                }
+            } finally {
+                junit keepLongStdio: true, testResults: 'reports/*.xml'
+                withCredentials([[$class          : 'UsernamePasswordMultiBinding',
+                                  credentialsId   : 'C2cwsgiutilsCodacityToken',
+                                  usernameVariable: 'CODACY_PROJECT_USER',
+                                  passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
+                    sh 'make send_coverage'
+                }
             }
-        } finally {
-            junit keepLongStdio: true, testResults: 'reports/*.xml'
-            withCredentials([[$class          : 'UsernamePasswordMultiBinding',
-                              credentialsId   : 'C2cwsgiutilsCodacityToken',
-                              usernameVariable: 'CODACY_PROJECT_USER',
-                              passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
-                sh 'make send_coverage'
-            }
+        }, 'mypy': {
+            sh 'make mypy'
         }
     }
 

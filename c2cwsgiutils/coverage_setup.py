@@ -5,7 +5,7 @@ import os
 LOG = logging.getLogger(__name__)
 
 
-def init():
+def init() -> None:
     """
     Maybe setup code coverage.
     """

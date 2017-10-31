@@ -7,11 +7,11 @@ Install a filter on the logging handler to add some info about requests:
 
 A pyramid event handler is installed to setup this filter for the current request.
 """
+import cee_syslog_handler
 import json
 import logging
-
-import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
+from typing import Any, MutableMapping, Mapping, IO
 
 LOG = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class _PyramidFilter(logging.Filter):
     """
     A logging filter that adds request information to CEE logs.
     """
-    def filter(self, record):
+    def filter(self, record: Any) -> bool:
         request = get_current_request()
         if request is not None:
             record.client_addr = request.client_addr
@@ -36,7 +36,7 @@ class _PyramidFilter(logging.Filter):
 _PYRAMID_FILTER = _PyramidFilter()
 
 
-def _un_underscore(message):
+def _un_underscore(message: MutableMapping[str, Any]) -> Mapping[str, Any]:
     """
     Elasticsearch is not indexing the fields starting with underscore and cee_syslog_handler is starting
     a lot of interesting fields with underscore. Therefore, it's a good idea to remove all those underscore
@@ -51,7 +51,7 @@ def _un_underscore(message):
     return message
 
 
-def _make_message_dict(*args, **kargv):
+def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
     """
     patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
     """
@@ -67,11 +67,11 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
     """
     A CEE (JSON format) log handler with additional information about the current request.
     """
-    def __init__(self, *args, **kargv):
+    def __init__(self, *args: Any, **kargv: Any) -> None:
         super().__init__(*args, **kargv)
         self.addFilter(_PYRAMID_FILTER)
 
-    def format(self, record):
+    def format(self, record: Any) -> str:
         message = _make_message_dict(record, self._debugging_fields, self._extra_fields, False, None,
                                      self._facility)
         return ": @cee: %s" % json.dumps(message)
@@ -81,11 +81,11 @@ class JsonLogHandler(logging.StreamHandler):
     """
     Log to stdout in JSON.
     """
-    def __init__(self, stream=None):
+    def __init__(self, stream: IO=None) -> None:
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
 
-    def format(self, record):
+    def format(self, record: Any) -> str:
         message = _make_message_dict(record, debugging_fields=True, extra_fields=True,
                                      fqdn=False, localname=None, facility=None)
         return json.dumps(message)

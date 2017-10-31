@@ -5,20 +5,17 @@
 | master | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/) | [![Requirements master](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=master)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=master)
 | release_0 | [![Build release_0](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_0)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_0/) | [![Requirements release_0](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_0)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_0) |
 
-This is a python 3 library providing common tools for Camptocamp WSGI
+This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
 applications:
 
 * Provide a small framework for gathering performance statistics about
   a web application (statsd protocol)
 * Allow to use a master/slave PostgresQL configuration
 * Logging handler for CEE/UDP logs
-  * An optional (enabled by setting the LOG_VIEW_SECRET env var) view (/logging/level)
-    to change runtime the log levels
-* SQL profiler to debug DB performance problems, disabled by default. You must enable it by setting the
-  SQL_PROFILER_SECRET env var and using the view (/sql_profiler) to switch it ON and OFF. Warning,
-  it will slow down everything.
-* A view to get the version information about the application and the installed packages (/versions.json)
-* A framework for implementing a health_check service (/health_check)
+  * An optional view to change runtime the log levels
+* SQL profiler to debug DB performance problems, disabled by default. Warning, it will slow down everything.
+* A view to get the version information about the application and the installed packages
+* A framework for implementing a health_check service
 * Error handlers to send JSON messages to the client in case of error
 * A cornice service drop in replacement for setting up CORS
 
@@ -42,6 +39,9 @@ With pip:
 ```
 pip install c2cwsgiutils
 ```
+
+Or (preferred) as a base Docker image:
+[camptocamp/c2cwsgiutils:0](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
 
 
 ## General config
@@ -262,6 +262,27 @@ services:
 ```
 The GUNICORN\_PARAMS has the `--reload` parameter and your local python code is
 mounted (read only) into the container.
+
+
+### Broadcast
+
+Some c2cwsgiutils APIs effect or query the state of the WSGI server. Since only one process out of the 5
+(by default) time the number of servers gets a query, only this one will be affected. To avoid that, you
+can configure c2cwsgiutils to use Redis pub/sub to broadcast those requests and collect the answers.
+
+The impacted APIs are:
+
+* `{C2C_BASE_PATH}/debug/stacks`
+* `{C2C_BASE_PATH}/debug/memory`
+* `{C2C_BASE_PATH}/logging/level`
+
+The configuration parameters are:
+
+* `C2C_REDIS_URL` (`c2c.redis_url`): The URL to the Redis instance to use
+* `C2C_BROADCAST_PREFIX` (`c2c.broadcast_prefix`): The prefix to add to the channels being used (must be
+  different for 2 different services)
+
+If not configured, only the process receiving the request is impacted.
 
 
 ## CORS

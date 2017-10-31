@@ -13,11 +13,6 @@ import logging
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import _utils, _auth
-
-CONFIG_KEY = 'c2c.log_view_secret'
-ENV_KEY = 'LOG_VIEW_SECRET'
-
 LOG = logging.getLogger(__name__)
 
 
@@ -94,26 +89,3 @@ class JsonLogHandler(logging.StreamHandler):
         message = _make_message_dict(record, debugging_fields=True, extra_fields=True,
                                      fqdn=False, localname=None, facility=None)
         return json.dumps(message)
-
-
-def install_subscriber(config):
-    """
-    Install the view to configure the loggers, if configured to do so.
-    """
-    if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
-        config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
-                         request_method="GET")
-        config.add_view(_logging_change_level, route_name="c2c_logging_level", renderer="json", http_cache=0)
-        LOG.info("Enabled the /logging/change_level API")
-
-
-def _logging_change_level(request):
-    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
-    name = request.params['name']
-    level = request.params.get('level')
-    logger = logging.getLogger(name)
-    if level is not None:
-        LOG.critical("Logging of %s changed from %s to %s", name, logging.getLevelName(logger.level), level)
-        logger.setLevel(level)
-    return {'status': 200, 'name': name, 'level': logging.getLevelName(logger.level),
-            'effective_level': logging.getLevelName(logger.getEffectiveLevel())}

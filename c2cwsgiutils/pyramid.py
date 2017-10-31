@@ -1,8 +1,8 @@
 import cornice
 import pyramid_tm
 
-from c2cwsgiutils import stats_pyramid, pyramid_logging, sql_profiler, version, debug, sentry,\
-    request_tracking, errors, pretty_json
+from c2cwsgiutils import stats_pyramid, logging_view, sql_profiler, version, debug, sentry,\
+    request_tracking, errors, pretty_json, _broadcast
 
 
 def includeme(config):
@@ -16,9 +16,10 @@ def includeme(config):
     config.include(pyramid_tm.includeme)
     config.include(cornice.includeme)
     pretty_json.init(config)
+    _broadcast.init(config)
     stats_pyramid.init(config)
     request_tracking.init(config)
-    pyramid_logging.install_subscriber(config)
+    logging_view.install_subscriber(config)
     sql_profiler.init(config)
     version.init(config)
     debug.init(config)

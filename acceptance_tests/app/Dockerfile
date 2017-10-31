@@ -17,7 +17,7 @@ COPY . /app
 
 ARG GIT_HASH
 
-RUN pip install --no-cache-dir -e . && \
+RUN pip install --no-cache-dir -r requirements.txt -e . && \
     ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models_hello.dot && \
     c2cwsgiutils_genversion.py $GIT_HASH && \

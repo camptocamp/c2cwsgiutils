@@ -18,7 +18,7 @@ import sqlalchemy.engine
 import subprocess
 import time
 import traceback
-from typing import Optional, Callable, Mapping, List, Tuple, Any  # noqa
+from typing import Optional, Callable, Mapping, List, Tuple, Any
 
 from c2cwsgiutils import stats, _utils
 

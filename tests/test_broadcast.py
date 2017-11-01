@@ -14,7 +14,7 @@ def test_local():
         def cb2(data):
             cb_calls[1] += 1
 
-        assert _broadcast.broadcast("test1", {'data': 1}, expect_answers=True) == []
+        assert _broadcast.broadcast("test1", {'data': 1}, expect_answers=True) == []  # pylint: disable=W0212
         assert cb_calls == [0, 0]
 
         _broadcast.subscribe("test1", cb1)
@@ -31,4 +31,4 @@ def test_local():
         assert cb_calls == [2, 1]
 
     finally:
-        _broadcast._broadcaster = None
+        _broadcast._broadcaster = None  # pylint: disable=W0212

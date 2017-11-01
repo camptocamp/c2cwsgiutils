@@ -32,7 +32,7 @@ acceptance: build_acceptance build_test_app
 	mkdir -p reports/coverage/api
 	#run the tests
 	docker run -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
-	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance$(PYTHON_VERSION).xml $(PYTEST_OPTS) tests; junit2html /reports/acceptance$(PYTHON_VERSION).xml /reports/acceptance$(PYTHON_VERSION).html"; \
+	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance$(PYTHON_VERSION).xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance$(PYTHON_VERSION).xml /reports/acceptance$(PYTHON_VERSION).html; exit \$$status"; \
 	status=$$?; \
 	#copy the reports locally \
 	docker cp c2cwsgiutils_acceptance_$$PPID:/reports ./; \

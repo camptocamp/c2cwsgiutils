@@ -3,7 +3,7 @@ Implement parts of the Prometheus Pushgateway protocol, as defined here:
 https://github.com/prometheus/pushgateway
 """
 import requests
-from typing import Mapping, MutableMapping, Any, Optional  # noqa
+from typing import Mapping, MutableMapping, Any, Optional  # noqa  # pylint: disable=unused-import
 
 
 class PushgatewayGroupPublisher(object):

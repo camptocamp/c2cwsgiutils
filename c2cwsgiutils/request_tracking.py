@@ -7,7 +7,7 @@ from pyramid.threadlocal import get_current_request
 import pyramid.request
 import sqlalchemy.event
 from sqlalchemy.orm import Session
-from typing import List, Any  # noqa
+from typing import List, Any  # noqa  # pylint: disable=unused-import
 import uuid
 
 from c2cwsgiutils import _utils

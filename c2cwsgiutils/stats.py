@@ -10,7 +10,8 @@ import re
 import socket
 import time
 import threading
-from typing import MutableMapping, Mapping, Tuple, Sequence, Generator, Any, Optional  # noqa
+from typing import Mapping, Sequence, Generator, Any, Optional
+from typing import MutableMapping, Tuple  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils import _utils
 
@@ -18,7 +19,7 @@ BACKENDS = {}  # type: MutableMapping[str, _BaseBackend]
 LOG = logging.getLogger(__name__)
 
 
-class _Timer(object):
+class Timer(object):
     """
     Allow to measure the duration of some activity
     """
@@ -48,7 +49,7 @@ def timer_context(key: Sequence[Any]) -> Generator[None, None, None]:
     measure.stop()
 
 
-def timer(key: Optional[Sequence[Any]]=None) -> _Timer:
+def timer(key: Optional[Sequence[Any]]=None) -> Timer:
     """
     Create a timer for the given key. The key can be omitted, but then need to be specified
     when stop is called.
@@ -57,7 +58,7 @@ def timer(key: Optional[Sequence[Any]]=None) -> _Timer:
     :return: An instance of _Timer
     """
     assert key is None or isinstance(key, list)
-    return _Timer(key)
+    return Timer(key)
 
 
 def set_gauge(key: Sequence[Any], value: float) -> None:
@@ -84,16 +85,19 @@ def increment_counter(key: Sequence[Any], increment: int=1) -> None:
 
 class _BaseBackend(metaclass=ABCMeta):
     @abstractmethod
-    def timer(self, key: Sequence[Any], duration: float) -> None: pass
+    def timer(self, key: Sequence[Any], duration: float) -> None:
+        pass
 
     @abstractmethod
-    def gauge(self, key: Sequence[Any], value: float) -> None: pass
+    def gauge(self, key: Sequence[Any], value: float) -> None:
+        pass
 
     @abstractmethod
-    def counter(self, key: Sequence[Any], increment: int) -> None: pass
+    def counter(self, key: Sequence[Any], increment: int) -> None:
+        pass
 
 
-class _MemoryBackend(_BaseBackend):
+class MemoryBackend(_BaseBackend):
     def __init__(self) -> None:
         self._timers = {}  # type: MutableMapping[str, Tuple[int, float, float, float]]
         self._gauges = {}  # type: MutableMapping[str, float]
@@ -205,7 +209,7 @@ def init_backends(settings: Mapping[str, str]) -> None:
     :param settings: The Pyramid config
     """
     if _utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
-        BACKENDS['memory'] = _MemoryBackend()
+        BACKENDS['memory'] = MemoryBackend()
 
     statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover

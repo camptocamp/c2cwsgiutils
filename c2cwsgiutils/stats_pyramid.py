@@ -28,7 +28,7 @@ def _add_server_metric(request: pyramid.request.Request, name: str, duration: Op
         request.response.headers['Server-Timing'] += ', ' + metric
 
 
-def _create_finished_cb(kind: str, measure: stats._Timer) -> Callable:  # pragma: nocover
+def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma: nocover
     def finished_cb(request: pyramid.request.Request) -> None:
         if request.exception is not None:
             if isinstance(request.exception, HTTPException):
@@ -129,7 +129,7 @@ def init(config: pyramid.config.Configurator) -> None:
         if 'memory' in stats.BACKENDS:  # pragma: nocover
             config.add_route("c2c_read_stats_json", _utils.get_base_path(config) + r"/stats.json",
                              request_method="GET")
-            memory_backend = cast(stats._MemoryBackend, stats.BACKENDS['memory'])
+            memory_backend = cast(stats.MemoryBackend, stats.BACKENDS['memory'])
             config.add_view(memory_backend.get_stats, route_name="c2c_read_stats_json",
                             renderer="json", http_cache=0)
         init_pyramid_spy(config)

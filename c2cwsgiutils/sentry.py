@@ -5,7 +5,7 @@ import pyramid.config
 from raven import Client, middleware
 from raven.handlers.logging import SentryHandler
 from raven.conf import setup_logging
-from typing import MutableMapping, Any, Generator, Optional, Callable  # noqa
+from typing import MutableMapping, Any, Generator, Optional, Callable  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils import _utils
 

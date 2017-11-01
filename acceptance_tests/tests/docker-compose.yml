@@ -1,5 +1,5 @@
 app:
-  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  image: camptocamp/c2cwsgiutils_test_app:latest
   environment: &app_env
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
@@ -25,7 +25,7 @@ app:
     - 8480:80
 
 alembic_master:
-  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  image: camptocamp/c2cwsgiutils_test_app:latest
   environment:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
   links:
@@ -33,7 +33,7 @@ alembic_master:
   command: /bin/true  # will use execute with another script from the tests to actually do it
 
 alembic_slave:
-  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  image: camptocamp/c2cwsgiutils_test_app:latest
   environment:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
   links:
@@ -62,7 +62,7 @@ db_slave:
 
 
 run_test:
-  image: camptocamp/c2cwsgiutils_test_app:${DOCKER_TAG}
+  image: camptocamp/c2cwsgiutils_test_app:latest
   command: 'true'
   environment: *app_env
   links:

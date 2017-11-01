@@ -7,7 +7,7 @@ from typing import Optional, Callable
 
 from c2cwsgiutils import _utils
 from c2cwsgiutils._broadcast import redis, local
-from c2cwsgiutils._broadcast import interface  # noqa
+from c2cwsgiutils._broadcast import interface  # noqa  # pylint: disable=unused-import
 
 LOG = logging.getLogger(__name__)
 REDIS_ENV_KEY = "C2C_REDIS_URL"

@@ -32,7 +32,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def subscribe(self, channel: str, callback: Callable) -> None:
         def wrapper(message: Mapping[str, Any]) -> None:
             LOG.debug('Received a broadcast on %s: %s', message['channel'], repr(message['data']))
-            data = json.loads(message['data'])
+            data = json.loads(message['data'].decode('utf-8'))
             try:
                 response = callback(**data['params'])
             except Exception as e:
@@ -65,7 +65,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         def callback(message: Mapping[str, Any]) -> None:
             LOG.debug('Received a broadcast answer on %s', message['channel'])
             with cond:
-                answers.append(json.loads(message['data']))
+                answers.append(json.loads(message['data'].decode('utf-8')))
                 cond.notify()
 
         answer_channel = self._get_channel(channel) + \

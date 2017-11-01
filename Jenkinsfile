@@ -9,6 +9,8 @@ def getMajorRelease() {
 }
 def majorRelease = getMajorRelease()
 
+env.IN_CI = '1'
+
 // We don't want to publish the same branch twice at the same time.
 dockerBuild {
     stage('Update docker') {
@@ -16,28 +18,34 @@ dockerBuild {
         sh 'make pull'
         sh 'git clean -f -d'
     }
-    stage('Build') {
-        checkout scm
-        sh 'make -j2 build'
-    }
-    stage('Test') {
-        checkout scm
-        parallel 'acceptance': {
-            try {
-                lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
-                    sh 'make -j2 acceptance'
+    for (python_version in ['3.5', '']) {
+        env.PYTHON_VERSION = python_version
+
+        stage("Build ${python_version}") {
+            checkout scm
+            sh 'make -j2 build'
+        }
+        stage("Test ${python_version}") {
+            checkout scm
+            parallel 'acceptance': {
+                try {
+                    lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
+                        sh 'make -j2 acceptance'
+                    }
+                } finally {
+                    if (python_version == '') {
+                        junit keepLongStdio: true, testResults: 'reports/*.xml'
+                        withCredentials([[$class          : 'UsernamePasswordMultiBinding',
+                                          credentialsId   : 'C2cwsgiutilsCodacityToken',
+                                          usernameVariable: 'CODACY_PROJECT_USER',
+                                          passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
+                            sh 'make send_coverage'
+                        }
+                    }
                 }
-            } finally {
-                junit keepLongStdio: true, testResults: 'reports/*.xml'
-                withCredentials([[$class          : 'UsernamePasswordMultiBinding',
-                                  credentialsId   : 'C2cwsgiutilsCodacityToken',
-                                  usernameVariable: 'CODACY_PROJECT_USER',
-                                  passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
-                    sh 'make send_coverage'
-                }
+            }, 'mypy': {
+                sh 'make mypy'
             }
-        }, 'mypy': {
-            sh 'make mypy'
         }
     }
 

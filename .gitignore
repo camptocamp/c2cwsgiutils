@@ -8,3 +8,5 @@ __pycache__
 /.idea/dbnavigator.xml
 /.idea/inspectionProfiles
 /docs/*/build/
+/Dockerfile.3.5
+/.mypy_cache

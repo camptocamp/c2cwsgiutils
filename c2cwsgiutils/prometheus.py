@@ -25,7 +25,9 @@ class PushgatewayGroupPublisher(object):
             self._to_send += '# TYPE %s %s\n' % (metric_name, metric_type)
         self._to_send += metric_name
         if metric_labels is not None:
-            self._to_send += '{' + ', '.join('%s="%s"' % (k, v) for k, v in metric_labels.items()) + '}'
+            self._to_send += '{' +\
+                             ', '.join('%s="%s"' % (k, v) for k, v in sorted(metric_labels.items())) +\
+                             '}'
         self._to_send += ' %s\n' % metric_value
 
     def commit(self) -> None:

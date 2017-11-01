@@ -2,6 +2,7 @@
 Broadcast messages to all the processes of Gunicorn in every containers.
 """
 import logging
+import pyramid.config
 from typing import Optional, Callable
 
 from c2cwsgiutils import _utils
@@ -14,10 +15,10 @@ REDIS_CONFIG_KEY = "c2c.redis_url"
 BROADCAST_ENV_KEY = "C2C_BROADCAST_PREFIX"
 BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 
-_broadcaster = None  # type: interface.BaseBroadcaster
+_broadcaster = None  # type: Optional[interface.BaseBroadcaster]
 
 
-def init(config) -> None:
+def init(config: pyramid.config.Configurator) -> None:
     """
     Initialize the broacaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """

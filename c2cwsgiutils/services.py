@@ -1,7 +1,8 @@
 from cornice import Service
+from typing import Any
 
 
-def create(name, path, *args, **kwargs):
+def create(name: str, path: str, *args: Any, **kwargs: Any) -> Service:
     """
     Create a cornice service with all the default configuration.
     """

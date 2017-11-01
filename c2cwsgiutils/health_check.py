@@ -8,12 +8,17 @@ import configparser
 import copy
 import logging
 import os
+import pyramid.config
 from pyramid.httpexceptions import HTTPNotFound
+import pyramid.request
 import re
 import requests
+import sqlalchemy.orm
+import sqlalchemy.engine
 import subprocess
 import time
 import traceback
+from typing import Optional, Callable, Mapping, List, Tuple, Any  # noqa
 
 from c2cwsgiutils import stats, _utils
 
@@ -21,12 +26,12 @@ LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r'^([a-f0-9]+) \(head\)\n$')
 
 
-def _get_bindings(session):
+def _get_bindings(session: Any) -> List[sqlalchemy.engine.Engine]:
     return [session.c2c_rw_bind, session.c2c_ro_bind] if session.c2c_rw_bind != session.c2c_ro_bind\
         else [session.c2c_rw_bind]
 
 
-def _get_alembic_version(alembic_ini_path):
+def _get_alembic_version(alembic_ini_path: str) -> str:
     # Go to the directory holding the config file and add '.' to the PYTHONPATH variable to support Alembic
     # migration scripts using common modules
     env = dict(os.environ)
@@ -42,14 +47,16 @@ def _get_alembic_version(alembic_ini_path):
     return out_match.group(1)
 
 
-class HealthCheck:
-    def __init__(self, config):
+class HealthCheck(object):
+    def __init__(self, config: pyramid.config.Configurator) -> None:
         config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
                          request_method="GET")
         config.add_view(self._view, route_name="c2c_health_check", renderer="json", http_cache=0)
-        self._checks = []
+        self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], None], int]]
 
-    def add_db_session_check(self, session, query_cb=None, at_least_one_model=None, level=1):
+    def add_db_session_check(self, session: sqlalchemy.orm.Session,
+                             query_cb: Optional[Callable[[sqlalchemy.orm.Session], None]]=None,
+                             at_least_one_model: Optional[object]=None, level: int=1) -> None:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
 
@@ -61,9 +68,10 @@ class HealthCheck:
         if query_cb is None:
             query_cb = self._at_least_one(at_least_one_model)
         for binding in _get_bindings(session):
-            self._checks.append(self._create_db_engine_check(session, binding, query_cb) + (level,))
+            name, cb = self._create_db_engine_check(session, binding, query_cb)
+            self._checks.append((name, cb, level))
 
-    def add_alembic_check(self, session, alembic_ini_path, level=2):
+    def add_alembic_check(self, session: sqlalchemy.orm.Session, alembic_ini_path: str, level: int=2) -> None:
         """
         Check the DB version against the HEAD version of Alembic.
 
@@ -72,7 +80,7 @@ class HealthCheck:
         :param alembic_ini_path: Path to the Alembic INI file.
         :param level: the level of the health check
         """
-        def check(_request):
+        def check(_request: Any) -> None:
             for binding in _get_bindings(session):
                 prev_bind = session.bind
                 try:
@@ -96,8 +104,11 @@ class HealthCheck:
 
         self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_'), check, level))
 
-    def add_url_check(self, url, params=None, headers=None, name=None,
-                      check_cb=lambda request, response: None, timeout=3, level=1):
+    def add_url_check(
+            self, url: str, params: Optional[Mapping]=None, headers: Optional[Mapping]=None,
+            name: Optional[str]=None,
+            check_cb: Callable[[pyramid.request.Request, requests.Response], None]=lambda request,
+            response: None, timeout: float=3, level: int=1) -> None:
         """
         Check that a GET on an URL returns 2xx
 
@@ -110,7 +121,7 @@ class HealthCheck:
         :param timeout: the timeout
         :param level: the level of the health check
         """
-        def check(request):
+        def check(request: pyramid.request.Request) -> None:
             the_url = _maybe_function(url, request)
             the_params = _maybe_function(params, request)
             the_headers = copy.deepcopy(_maybe_function(headers, request) if headers is not None else {})
@@ -125,7 +136,8 @@ class HealthCheck:
             name = str(url)
         self._checks.append((name, check, level))
 
-    def add_custom_check(self, name, check_cb, level=1):
+    def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], None],
+                         level: int=1) -> None:
         """
         Add a custom check
 
@@ -135,7 +147,7 @@ class HealthCheck:
         """
         self._checks.append((name, check_cb, level))
 
-    def _view(self, request):
+    def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
         max_level = int(request.params.get('max_level', '1'))
         successes = []
         failures = {}
@@ -168,8 +180,12 @@ class HealthCheck:
         }
 
     @staticmethod
-    def _create_db_engine_check(session, bind, query_cb):
-        def check(request):
+    def _create_db_engine_check(
+            session: sqlalchemy.orm.Session,
+            bind: sqlalchemy.engine.Engine,
+            query_cb: Callable[[sqlalchemy.orm.Session], None]
+    ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
+        def check(_request: pyramid.request.Request) -> None:
             prev_bind = session.bind
             try:
                 session.bind = bind
@@ -180,13 +196,13 @@ class HealthCheck:
         return 'db_engine_' + bind.c2c_name, check
 
     @staticmethod
-    def _at_least_one(model):
-        def query(session):
+    def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.Session], None]:
+        def query(session: sqlalchemy.orm.Session) -> None:
             result = session.query(model).first()
             if result is None:
                 raise HTTPNotFound(model.__name__ + " record not found")
         return query
 
 
-def _maybe_function(what, request):
+def _maybe_function(what: Any, request: pyramid.request.Request) -> Any:
     return what(request) if callable(what) else what

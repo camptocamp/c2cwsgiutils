@@ -1,6 +1,7 @@
 import logging
 import json
 import os
+import pyramid.config
 
 from c2cwsgiutils import _utils
 
@@ -8,7 +9,7 @@ VERSIONS_PATH = '/app/versions.json'
 LOG = logging.getLogger(__name__)
 
 
-def init(config):
+def init(config: pyramid.config.Configurator) -> None:
     if os.path.isfile(VERSIONS_PATH):
         with open(VERSIONS_PATH) as file:
             versions = json.load(file)

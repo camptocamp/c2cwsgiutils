@@ -22,7 +22,7 @@ THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
 .PHONY: all
-all: acceptance
+all: mypy acceptance
 
 .PHONY: build
 build: build_acceptance build_test_app
@@ -71,7 +71,7 @@ build_test_app: build_docker
 
 .venv/timestamp: requirements.txt Makefile
 	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv
-	.venv/bin/pip install -r requirements.txt twine==1.9.1
+	.venv/bin/pip install --upgrade -r requirements.txt twine==1.9.1
 	touch $@
 
 .PHONY: pull
@@ -85,8 +85,17 @@ dist: .venv/timestamp
 	.venv/bin/python setup.py bdist_wheel
 
 .PHONY: release
-release: acceptance dist
+release: mypy acceptance dist
 	.venv/bin/twine upload dist/*.whl
 
+.PHONY: run
 run: build_test_app
 	DOCKER_TAG=$(DOCKER_TAG) docker-compose -f acceptance_tests/tests/docker-compose.yml up
+
+.PHONY: mypy
+mypy: build_docker
+	docker run --rm $(DOCKER_BASE):$(DOCKER_TAG) mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs /c2cwsgiutils/c2cwsgiutils
+
+.PHONY: mypy_local
+mypy_local: .venv/timestamp
+	.venv/bin/mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs c2cwsgiutils

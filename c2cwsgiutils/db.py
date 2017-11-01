@@ -2,8 +2,11 @@
 SQLalchemy models.
 """
 import logging
+import pyramid.config
+import pyramid.request
 import re
 import sqlalchemy.orm
+from typing import Optional, Iterable, Tuple, Any, Callable
 from zope.sqlalchemy import ZopeTransactionExtension
 
 LOG = logging.getLogger(__name__)
@@ -16,7 +19,9 @@ class Tweens(object):
 tweens = Tweens()
 
 
-def setup_session(config, master_prefix, slave_prefix=None, force_master=None, force_slave=None):
+def setup_session(config: pyramid.config.Configurator, master_prefix: str, slave_prefix: Optional[str]=None,
+                  force_master: Optional[Iterable[str]]=None, force_slave: Optional[Iterable[str]]=None) \
+        -> Tuple[sqlalchemy.orm.Session, sqlalchemy.engine.Engine, sqlalchemy.engine.Engine]:
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection. Uses prefixed entries in the application's settings.
@@ -58,7 +63,10 @@ def setup_session(config, master_prefix, slave_prefix=None, force_master=None, f
     return db_session, rw_engine, ro_engine
 
 
-def create_session(config, name, url, slave_url=None, force_master=None, force_slave=None, **engine_config):
+def create_session(config: pyramid.config.Configurator, name: str, url: str, slave_url: Optional[str]=None,
+                   force_master: Optional[Iterable[str]]=None, force_slave: Optional[Iterable[str]]=None,
+                   **engine_config: Any) \
+        -> sqlalchemy.orm.Session:
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection.
@@ -99,22 +107,23 @@ def create_session(config, name, url, slave_url=None, force_master=None, force_s
     return db_session
 
 
-def _add_tween(config, name, db_session, force_master, force_slave):
+def _add_tween(config: pyramid.config.Configurator, name: str, db_session: sqlalchemy.orm.Session,
+               force_master: Optional[Iterable[str]], force_slave: Optional[Iterable[str]]) -> None:
     global tweens
 
-    def db_chooser_tween_factory(handler, _registry):
+    master_paths = list(map(re.compile, force_master)) if force_master is not None else []  # type: ignore
+    slave_paths = list(map(re.compile, force_slave)) if force_slave is not None else []  # type: ignore
+
+    def db_chooser_tween_factory(handler: Callable, _registry: Any) -> Callable:
         """
         Tween factory to route to a slave DB for read-only queries.
         Must be put over the pyramid_tm tween and share_config must have a "slave" engine
         configured.
         """
-        master_paths = list(map(re.compile, force_master)) if force_master else []
-        slave_paths = list(map(re.compile, force_slave)) if force_slave else []
-
-        def db_chooser_tween(request):
+        def db_chooser_tween(request: pyramid.request.Request) -> Any:
             session = db_session()
             old = session.bind
-            method_path = "%s %s" % (request.method, request.path)
+            method_path = "%s %s" % (request.method, request.path)  # type: Any
             has_force_master = any(r.match(method_path) for r in master_paths)
             if not has_force_master and (request.method in ("GET", "OPTIONS") or
                                          any(r.match(method_path) for r in slave_paths)):

@@ -3,6 +3,7 @@ import json
 import random
 import string
 import threading
+from typing import Callable, Optional, Mapping, Any
 import time
 
 from c2cwsgiutils._broadcast import utils, interface
@@ -14,7 +15,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     """
     Implement broadcasting messages using Redis
     """
-    def __init__(self, redis_url, broadcast_prefix):
+    def __init__(self, redis_url: str, broadcast_prefix: str) -> None:
         self._broadcast_prefix = broadcast_prefix
         import redis
         self._connection = redis.StrictRedis.from_url(redis_url)
@@ -25,11 +26,11 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         self._thread = self._pub_sub.run_in_thread(sleep_time=1, daemon=True)
         self._thread.name = "c2c_broadcast_listener"
 
-    def _get_channel(self, channel):
+    def _get_channel(self, channel: str) -> str:
         return self._broadcast_prefix + channel
 
-    def subscribe(self, channel, callback):
-        def wrapper(message):
+    def subscribe(self, channel: str, callback: Callable) -> None:
+        def wrapper(message: Mapping[str, Any]) -> None:
             LOG.debug('Received a broadcast on %s: %s', message['channel'], repr(message['data']))
             data = json.loads(message['data'])
             try:
@@ -44,51 +45,58 @@ class RedisBroadcaster(interface.BaseBroadcaster):
 
         self._pub_sub.subscribe(**{self._get_channel(channel): wrapper})
 
-    def unsubscribe(self, channel):
+    def unsubscribe(self, channel: str) -> None:
         self._pub_sub.unsubscribe(self._get_channel(channel))
 
-    def broadcast(self, channel, params, expect_answers, timeout):
-        answer_channel = None
-        cond = None
-        answers = []
-        actual_channel = self._get_channel(channel)
-        assert self._thread.is_alive()
-        message = {'params': params}
-
+    def broadcast(self, channel: str, params: Optional[Mapping[str, Any]], expect_answers: bool,
+                  timeout: float) -> Optional[list]:
         if expect_answers:
-            cond = threading.Condition()
+            return self._broadcast_with_answer(channel, params, timeout)
+        else:
+            self._broadcast(channel, {'params': params})
+            return None
 
-            def callback(message):
-                LOG.debug('Received a broadcast answer on %s', message['channel'])
-                with cond:
-                    answers.append(json.loads(message['data']))
-                    cond.notify()
+    def _broadcast_with_answer(self, channel: str, params: Optional[Mapping[str, Any]],
+                               timeout: float) -> list:
+        cond = threading.Condition()
+        answers = []
+        assert self._thread.is_alive()
 
-            answer_channel = actual_channel + \
-                ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-            LOG.debug('Subscribing for broadcast answers on %s', answer_channel)
-            self._pub_sub.subscribe(**{answer_channel: callback})
-            message['answer_channel'] = answer_channel
+        def callback(message: Mapping[str, Any]) -> None:
+            LOG.debug('Received a broadcast answer on %s', message['channel'])
+            with cond:
+                answers.append(json.loads(message['data']))
+                cond.notify()
+
+        answer_channel = self._get_channel(channel) + \
+            ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+        LOG.debug('Subscribing for broadcast answers on %s', answer_channel)
+        self._pub_sub.subscribe(**{answer_channel: callback})
+        message = {
+            'params': params,
+            'answer_channel': answer_channel
+        }
 
         try:
-            LOG.debug("Sending a broadcast on %s", actual_channel)
-            nb_received = self._connection.publish(actual_channel, json.dumps(message))
-            LOG.debug('Broadcast on %s sent to %d listeners', actual_channel, nb_received)
+            nb_received = self._broadcast(channel, message)
 
-            if expect_answers:
-                timeout_time = time.monotonic() + timeout
-                with cond:
-                    while len(answers) < nb_received:
-                        to_wait = timeout_time - time.monotonic()
-                        if to_wait <= 0.0:
-                            LOG.warning("timeout waiting for answers on %s", answer_channel)
-                            while len(answers) < nb_received:
-                                answers.append(None)
-                            return answers
-                        cond.wait(to_wait)
-                return answers
-            else:
-                return None
+            timeout_time = time.monotonic() + timeout
+            with cond:
+                while len(answers) < nb_received:
+                    to_wait = timeout_time - time.monotonic()
+                    if to_wait <= 0.0:
+                        LOG.warning("timeout waiting for answers on %s", answer_channel)
+                        while len(answers) < nb_received:
+                            answers.append(None)
+                        return answers
+                    cond.wait(to_wait)
+            return answers
         finally:
-            if answer_channel is not None:
-                self._pub_sub.unsubscribe(answer_channel)
+            self._pub_sub.unsubscribe(answer_channel)
+
+    def _broadcast(self, channel: str, message: Mapping[str, Any]) -> int:
+        actual_channel = self._get_channel(channel)
+        LOG.debug("Sending a broadcast on %s", actual_channel)
+        nb_received = self._connection.publish(actual_channel, json.dumps(message))
+        LOG.debug('Broadcast on %s sent to %d listeners', actual_channel, nb_received)
+        return nb_received

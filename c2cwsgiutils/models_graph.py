@@ -1,9 +1,10 @@
 import inspect
 import sqlalchemy as sa
 import sys
+from typing import Any, Set, List
 
 
-def generate_model_graph(module):
+def generate_model_graph(module: Any) -> None:
     if len(sys.argv) == 1:
         base_name = 'Base'
     elif len(sys.argv) == 2:
@@ -15,7 +16,7 @@ def generate_model_graph(module):
     _generate_model_graph(module, getattr(module, base_name))
 
 
-def _generate_model_graph(module, base):
+def _generate_model_graph(module: Any, base: Any) -> None:
     print("""
     digraph {
         rankdir=BT;
@@ -35,7 +36,7 @@ def _generate_model_graph(module, base):
     print("}")
 
 
-def _print_node(symbol, interesting):
+def _print_node(symbol: Any, interesting: Set[Any]) -> None:
     print('%s [label="%s", shape=box];' % (symbol.__name__, _get_table_desc(symbol)))
     for parent in symbol.__bases__:
         if parent != object:
@@ -45,17 +46,17 @@ def _print_node(symbol, interesting):
             print("%s -> %s;" % (symbol.__name__, parent.__name__))
 
 
-def _is_interesting(what, base):
+def _is_interesting(what: Any, base: type) -> bool:
     return inspect.isclass(what) and issubclass(what, base)
 
 
-def _get_table_desc(symbol):
+def _get_table_desc(symbol: Any) -> str:
     cols = [symbol.__name__, ""] + _get_local_cols(symbol)
 
     return "\\n".join(cols)
 
 
-def _get_all_cols(symbol):
+def _get_all_cols(symbol: Any) -> List[str]:
     cols = []
 
     for member_name in symbol.__dict__:
@@ -74,7 +75,7 @@ def _get_all_cols(symbol):
     return cols
 
 
-def _get_local_cols(symbol):
+def _get_local_cols(symbol: Any) -> List[str]:
     result = set(_get_all_cols(symbol))
     for parent in symbol.__bases__:
         result -= set(_get_all_cols(parent))

@@ -3,10 +3,13 @@ A view (URL=/sql_provider) allowing to enabled/disable a SQL spy that runs an "E
 every SELECT query going through SQLAlchemy.
 """
 import logging
+import pyramid.config
+import pyramid.request
 import re
 import sqlalchemy.event
 import sqlalchemy.engine
 from threading import Lock
+from typing import Any, Mapping
 
 from c2cwsgiutils import _utils, _auth
 
@@ -17,11 +20,12 @@ repository = None
 
 
 class _Repository(set):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._lock = Lock()
 
-    def profile(self, conn, _cursor, statement, parameters, _context, _executemany):
+    def profile(self, conn: sqlalchemy.engine.Connection, _cursor: Any, statement: str, parameters: Any,
+                _context: Any, _executemany: Any) -> None:
         if statement.startswith("SELECT ") and LOG.isEnabledFor(logging.INFO):
             do_it = False
             with self._lock:
@@ -40,7 +44,7 @@ class _Repository(set):
                     pass
 
 
-def _sql_profiler_view(request):
+def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
     global repository
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     if 'enable' in request.params:
@@ -59,7 +63,7 @@ def _sql_profiler_view(request):
     return {'status': 200, 'enabled': repository is not None}
 
 
-def _beautify_sql(statement):
+def _beautify_sql(statement: str) -> str:
     statement = re.sub(r'SELECT [^\n]*\n', 'SELECT ...\n', statement)
     statement = re.sub(r' ((?:LEFT )?(?:OUTER )?JOIN )', r'\n\1', statement)
     statement = re.sub(r' ON ', r'\n  ON ', statement)
@@ -68,11 +72,11 @@ def _beautify_sql(statement):
     return statement
 
 
-def _indent(statement, indent='  '):
+def _indent(statement: str, indent: str='  ') -> str:
     return indent + ("\n" + indent).join(statement.split('\n'))
 
 
-def init(config):
+def init(config: pyramid.config.Configurator) -> None:
     """
     Install a pyramid  event handler that adds the request information
     """

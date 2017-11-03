@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '0.30.0'
+VERSION = '1.0.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = open(os.path.join(HERE, 'requirements.txt')).read().splitlines()
 
@@ -17,6 +17,7 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Intended Audience :: Information Technology",
         "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: GIS",

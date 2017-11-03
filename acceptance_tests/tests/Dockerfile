@@ -11,8 +11,8 @@ ENV DOCKER_RUN=1 \
 
 # Install all Debian dependencies except nodejs which requires https transport
 COPY  dockerproject.org.asc /acceptance_tests/
-RUN echo "deb http://apt.dockerproject.org/repo debian-jessie main" >> /etc/apt/sources.list && \
-    echo 'deb http://http.debian.net/debian jessie-backports main' >> /etc/apt/sources.list && \
+RUN echo "deb http://apt.dockerproject.org/repo debian-stretch main" >> /etc/apt/sources.list && \
+    echo 'deb http://http.debian.net/debian stretch-backports main' >> /etc/apt/sources.list && \
     apt-key adv --import /acceptance_tests/dockerproject.org.asc && \
     apt-get update && \
     apt-get install -y --no-install-recommends docker-engine=${DOCKER_VERSION}*  && \

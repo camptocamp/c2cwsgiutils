@@ -3,7 +3,8 @@
 | branch  | CI  | requirements  |
 |---|---|---|
 | master | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/) | [![Requirements master](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=master)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=master)
-| release_0 | [![Build release_0](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_0)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_0/) | [![Requirements release_0](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_0)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_0) |
+| release_1 | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_1)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_1/) | [![Requirements release_1](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_1)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_1) |
+| release_0 (deprecated) | [![Build release_0](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_0)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_0/) | [![Requirements release_0](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_0)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_0) |
 
 This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
 applications:
@@ -41,7 +42,7 @@ pip install c2cwsgiutils
 ```
 
 Or (preferred) as a base Docker image:
-[camptocamp/c2cwsgiutils:0](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
+[camptocamp/c2cwsgiutils:1](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
 
 
 ## General config

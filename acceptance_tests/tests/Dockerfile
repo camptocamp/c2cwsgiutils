@@ -16,12 +16,12 @@ RUN DEBIAN_VERSION=`grep VERSION= /etc/os-release | sed 's/.*(\(.*\)).\+/\1/'` &
     echo "deb http://http.debian.net/debian ${DEBIAN_VERSION}-backports main" >> /etc/apt/sources.list && \
     apt-key adv --import /acceptance_tests/dockerproject.org.asc && \
     apt-get update && \
-    apt-get install -y --no-install-recommends docker-engine=${DOCKER_VERSION}*  && \
+    apt-get install -y --no-install-recommends docker-engine="${DOCKER_VERSION}*"  && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 
 # Install matching docker-compose version
-RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose && \
+RUN curl -L https://github.com/docker/compose/releases/download/"${DOCKER_COMPOSE_VERSION}"/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose && \
     chmod a+x /usr/bin/docker-compose
 
 COPY . ./

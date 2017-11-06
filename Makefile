@@ -93,7 +93,7 @@ run: build_test_app
 
 .PHONY: mypy
 mypy: build_docker$(PYTHON_VERSION)
-	docker run --rm $(DOCKER_BASE):latest mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs /c2cwsgiutils/c2cwsgiutils
+	docker run --rm $(DOCKER_BASE):latest mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs /opt/c2cwsgiutils/c2cwsgiutils
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp

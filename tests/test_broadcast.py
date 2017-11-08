@@ -3,7 +3,7 @@ from c2cwsgiutils import _broadcast
 
 
 def test_local():
-    _broadcast._broadcaster = local.LocalBroadcaster()
+    _broadcast._broadcaster = local.LocalBroadcaster()  # pylint: disable=W0212
     try:
         cb_calls = [0, 0]
 

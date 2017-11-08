@@ -47,7 +47,7 @@ acceptance: build_acceptance build_test_app
 	status=$$status$$?; \
 	#fix code path in the cobertura XML file \
 	sed -ie 's%>/app/c2cwsgiutils_app<%>$(THIS_DIR)/acceptance_tests/app/c2cwsgiutils_app<%' reports/coverage/api/coverage.xml; \
-	sed -ie 's%filename="/c2cwsgiutils/c2cwsgiutils/%filename="c2cwsgiutils/%' reports/coverage/api/coverage.xml; \
+	sed -ie 's%filename="/opt/c2cwsgiutils/c2cwsgiutils/%filename="c2cwsgiutils/%' reports/coverage/api/coverage.xml; \
 	sed -ie 's%</sources>%<source>$(THIS_DIR)/c2cwsgiutils</source></sources>%' reports/coverage/api/coverage.xml; \
 	docker rm c2cwsgiutils_acceptance_reports_$$PPID; \
 	exit $$status$$?

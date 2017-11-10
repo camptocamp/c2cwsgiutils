@@ -1,6 +1,7 @@
 *
 !c2cwsgiutils
 !c2cwsgiutils_*
+!install_docker.sh
 !LICENSE.txt
 !README.md
 !requirements.txt

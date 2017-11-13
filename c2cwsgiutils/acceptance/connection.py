@@ -17,7 +17,7 @@ class Connection:
         """
         get the given URL (relative to the root of API).
         """
-        with self.session.get(self.base_url + url, params=params,  # type: ignore
+        with self.session.get(self.base_url + url, params=params,
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
@@ -29,7 +29,7 @@ class Connection:
         """
         get the given URL (relative to the root of API).
         """
-        with self.session.get(self.base_url + url, params=params,  # type: ignore
+        with self.session.get(self.base_url + url, params=params,
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
@@ -40,7 +40,7 @@ class Connection:
         """
         get the given URL (relative to the root of API).
         """
-        with self.session.get(self.base_url + url, params=params,  # type: ignore
+        with self.session.get(self.base_url + url, params=params,
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
@@ -52,7 +52,7 @@ class Connection:
         """
         get the given URL (relative to the root of API).
         """
-        with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors),  # type: ignore
+        with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors),
                               params=params, stream=True) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
@@ -70,7 +70,7 @@ class Connection:
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, data=data, json=json, params=params,   # type: ignore
+        with self.session.post(self.base_url + url, data=data, json=json, params=params,
                                headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
@@ -82,7 +82,7 @@ class Connection:
         """
         POST files to the the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, data=data, files=files, params=params,  # type: ignore
+        with self.session.post(self.base_url + url, data=data, files=files, params=params,
                                headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
@@ -93,7 +93,7 @@ class Connection:
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url,  # type: ignore
+        with self.session.post(self.base_url + url,
                                headers=self._merge_headers(headers, cors),
                                data=data, params=params) as r:
             check_response(r, expected_status, cache_allowed)
@@ -105,7 +105,7 @@ class Connection:
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.put(self.base_url + url, json=json, params=params,  # type: ignore
+        with self.session.put(self.base_url + url, json=json, params=params,
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
@@ -117,7 +117,7 @@ class Connection:
         """
         DELETE the given URL (relative to the root of API).
         """
-        with self.session.delete(self.base_url + url,  # type: ignore
+        with self.session.delete(self.base_url + url,
                                  headers=self._merge_headers(headers, cors), params=params) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)

@@ -6,7 +6,7 @@ import pyramid.config
 import pyramid.request
 import re
 import sqlalchemy.orm
-from typing import Optional, Iterable, Tuple, Any, Callable
+from typing import Optional, Iterable, Tuple, Any, Callable, Pattern  # noqa  # pylint: disable=unused-import
 from zope.sqlalchemy import ZopeTransactionExtension
 
 LOG = logging.getLogger(__name__)
@@ -111,8 +111,10 @@ def _add_tween(config: pyramid.config.Configurator, name: str, db_session: sqlal
                force_master: Optional[Iterable[str]], force_slave: Optional[Iterable[str]]) -> None:
     global tweens
 
-    master_paths = list(map(re.compile, force_master)) if force_master is not None else []  # type: ignore
-    slave_paths = list(map(re.compile, force_slave)) if force_slave is not None else []  # type: ignore
+    master_paths = list(map(re.compile, force_master)) if force_master is not None \
+        else []  # type: Iterable[Pattern]
+    slave_paths = list(map(re.compile, force_slave)) if force_slave is not None \
+        else []  # type: Iterable[Pattern]
 
     def db_chooser_tween_factory(handler: Callable, _registry: Any) -> Callable:
         """

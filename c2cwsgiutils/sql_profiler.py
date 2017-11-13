@@ -11,7 +11,7 @@ import sqlalchemy.engine
 from threading import Lock
 from typing import Any, Mapping
 
-from c2cwsgiutils import _utils, _auth
+from c2cwsgiutils import _utils, _auth, _broadcast
 
 ENV_KEY = 'SQL_PROFILER_SECRET'
 CONFIG_KEY = 'c2c.sql_profiler_secret'
@@ -47,20 +47,26 @@ class _Repository(set):
 def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
     global repository
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
-    if 'enable' in request.params:
-        if request.params['enable'] == '1':
-            if repository is None:
-                LOG.warning("Enabling the SQL profiler")
-                repository = _Repository()
-                sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute",
-                                        repository.profile)
-        else:
-            if repository is not None:
-                LOG.warning("Disabling the SQL profiler")
-                sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute",
-                                        repository.profile)
-                repository = None
+    enable = request.params.get('enable')
+    if enable is not None:
+        _broadcast.broadcast('c2c_sql_profiler', params={'enable': enable}, expect_answers=True)
     return {'status': 200, 'enabled': repository is not None}
+
+
+def _setup_profiler(enable: bool) -> None:
+    global repository
+    if enable == '1':
+        if repository is None:
+            LOG.warning("Enabling the SQL profiler")
+            repository = _Repository()
+            sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute",
+                                    repository.profile)
+    else:
+        if repository is not None:
+            LOG.warning("Disabling the SQL profiler")
+            sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute",
+                                    repository.profile)
+            repository = None
 
 
 def _beautify_sql(statement: str) -> str:
@@ -81,6 +87,8 @@ def init(config: pyramid.config.Configurator) -> None:
     Install a pyramid  event handler that adds the request information
     """
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
+        _broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
+
         config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
                          request_method="GET")
         config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="json", http_cache=0)

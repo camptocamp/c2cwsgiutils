@@ -276,6 +276,7 @@ The impacted APIs are:
 * `{C2C_BASE_PATH}/debug/stacks`
 * `{C2C_BASE_PATH}/debug/memory`
 * `{C2C_BASE_PATH}/logging/level`
+* `{C2C_BASE_PATH}/sql_profiler`
 
 The configuration parameters are:
 

@@ -80,7 +80,7 @@ class LogListener(threading.Thread):
 
     def get_messages(self, filter_fun=lambda message: True):
         with self._condition:
-            while not self._messages:
+            if not self._messages:
                 self._condition.wait(10)
             if len(self._messages) == 0:
                 return []  # timeout

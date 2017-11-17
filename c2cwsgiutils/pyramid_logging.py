@@ -11,6 +11,7 @@ import cee_syslog_handler
 import json
 import logging
 from pyramid.threadlocal import get_current_request
+import socket
 from typing import Any, MutableMapping, Mapping, IO
 
 LOG = logging.getLogger(__name__)
@@ -72,8 +73,8 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
         self.addFilter(_PYRAMID_FILTER)
 
     def format(self, record: Any) -> str:
-        message = _make_message_dict(record, self._debugging_fields, self._extra_fields, False, None,
-                                     self._facility)
+        message = _make_message_dict(record, self._fqdn, self._debugging_fields, self._extra_fields,
+                                     self._facility, self._static_fields)
         return ": @cee: %s" % json.dumps(message)
 
 
@@ -84,8 +85,9 @@ class JsonLogHandler(logging.StreamHandler):
     def __init__(self, stream: IO=None) -> None:
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
+        self._fqdn = socket.getfqdn()
 
     def format(self, record: Any) -> str:
-        message = _make_message_dict(record, debugging_fields=True, extra_fields=True,
-                                     fqdn=False, localname=None, facility=None)
+        message = _make_message_dict(record,  self._fqdn, debugging_fields=True, extra_fields=True,
+                                     facility=None, static_fields={})
         return json.dumps(message)

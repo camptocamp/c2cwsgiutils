@@ -51,7 +51,7 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
 
 
 def _dump_memory_impl(limit: int) -> Mapping[str, Any]:
-    nb_collected = objgraph.gc.collect()
+    nb_collected = [objgraph.gc.collect(generation) for generation in range(3)]
     return {
         'nb_collected': nb_collected,
         'most_common_types': objgraph.most_common_types(limit=limit, shortnames=False),

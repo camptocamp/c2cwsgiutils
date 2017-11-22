@@ -3,4 +3,4 @@ from pyramid.renderers import JSON
 
 
 def init(config: pyramid.config.Configurator) -> None:
-    config.add_renderer('json', JSON(indent=4))
+    config.add_renderer('json', JSON(indent=4, sort_keys=True))

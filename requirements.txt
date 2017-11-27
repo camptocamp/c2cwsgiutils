@@ -9,7 +9,7 @@ junit2html==010  # rq.filter: !=009, !=008
 lxml==4.1.1
 mypy==0.550
 netifaces==0.10.6
-objgraph==3.1.1
+objgraph==3.1.2
 psycopg2==2.7.3.2
 pyramid==1.9.1
 pyramid_tm==2.2

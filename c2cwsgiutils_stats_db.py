@@ -52,13 +52,13 @@ class Reporter(object):
         else:
             self.prometheus = None
 
-    def do_report(self, metric, count):
-        LOG.info("%s -> %d", ".".join(metric), count)
+    def do_report(self, metric, value, kind='count'):
+        LOG.info("%s.%s -> %d", kind, ".".join(metric), value)
         if self.statsd is not None:
-            self.statsd.gauge(metric, count)
+            self.statsd.gauge([kind] + metric, value)
         if self.prometheus is not None:
 
-            self.prometheus.add('database_table_count', count, metric_labels={
+            self.prometheus.add('database_table_' + kind, value, metric_labels={
                 'metric': ".".join(v.replace('.', '_') for v in metric)
             })
 
@@ -81,12 +81,20 @@ def do_table(session, schema, table, reporter):
     count, = session.execute("""
     SELECT count(*) FROM {schema}.{table}
     """.format(schema=schema, table=table)).fetchone()
-    reporter.do_report([schema, table], count)
+    reporter.do_report([schema, table], count, kind='count')
+
+    size, = session.execute("""
+    SELECT pg_total_relation_size(c.oid) AS total_bytes
+    FROM pg_class c
+    LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE relkind = 'r' AND nspname=:schema AND relname=:table
+    """, params={'schema': schema, 'table': table}).fetchone()
+    reporter.do_report([schema, table], size, kind='size')
 
 
 def do_extra(session, extra, reporter):
     for metric, count in session.execute(extra):
-        reporter.do_report(str(metric).split("."), count)
+        reporter.do_report(str(metric).split("."), count, kind='count')
 
 
 def main():

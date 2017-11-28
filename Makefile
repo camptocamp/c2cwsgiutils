@@ -20,6 +20,8 @@ GIT_HASH := $(shell git rev-parse HEAD)
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
+DOCKER_TTY := $(shell [ -t 0 ] && echo -ti)
+
 .PHONY: all
 all: mypy acceptance
 
@@ -31,8 +33,8 @@ acceptance: build_acceptance build_test_app
 	rm -rf reports/coverage/api reports/acceptance$(PYTHON_VERSION).xml
 	mkdir -p reports/coverage/api
 	#run the tests
-	docker run -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
-	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance$(PYTHON_VERSION).xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance$(PYTHON_VERSION).xml /reports/acceptance$(PYTHON_VERSION).html; exit \$$status"; \
+	docker run $(DOCKER_TTY) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
+	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance$(PYTHON_VERSION).xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance$(PYTHON_VERSION).xml /reports/acceptance$(PYTHON_VERSION).html; exit \$$status\$$?"; \
 	status=$$?; \
 	#copy the reports locally \
 	docker cp c2cwsgiutils_acceptance_$$PPID:/reports ./; \

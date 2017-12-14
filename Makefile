@@ -71,7 +71,7 @@ build_test_app: build_docker$(PYTHON_VERSION)
 	docker build -t $(DOCKER_BASE)_test_app:latest --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: requirements.txt Makefile
-	/usr/bin/virtualenv --python=/usr/bin/python3.5 .venv
+	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
 	.venv/bin/pip install --upgrade -r requirements.txt twine==1.9.1
 	touch $@
 

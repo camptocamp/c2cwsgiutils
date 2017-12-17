@@ -5,9 +5,9 @@ cornice==3.0.0
 coverage==4.4.2
 flake8==3.5.0
 gunicorn==19.7.1
-junit2html==007  # rq.filter: !=008, !=009, !=010, !=012
+junit2html==013  # rq.filter: !=008, !=009, !=010, !=012
 lxml==4.1.1
-mypy==0.550
+mypy==0.560
 netifaces==0.10.6
 objgraph==3.1.2
 psycopg2==2.7.3.2

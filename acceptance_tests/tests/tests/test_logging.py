@@ -4,6 +4,8 @@ import select
 import socket
 import threading
 
+from c2cwsgiutils.acceptance import retry
+
 LOG = logging.getLogger(__name__)
 
 
@@ -89,6 +91,7 @@ class LogListener(threading.Thread):
             return list(filter(filter_fun, result))
 
 
+@retry(Exception)
 def test_cee_logs(app_connection):
     with LogListener() as listener:
         app_connection.get_json("ping")
@@ -103,6 +106,7 @@ def test_cee_logs(app_connection):
         assert 'request_id' in message
 
 
+@retry(Exception)
 def test_cee_logs_request_id(app_connection):
     with LogListener() as listener:
         app_connection.get_json("ping", headers={'X-Request-ID': '42 is the answer'})

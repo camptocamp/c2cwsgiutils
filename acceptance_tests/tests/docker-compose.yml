@@ -17,6 +17,8 @@ app:
     COVERAGE: 1
     SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
     C2C_REDIS_URL: redis://redis:6379
+    PYTHONMALLOC: debug
+    GUNICORN_PARAMS: -b :80 --worker-class gthread --threads 10 --workers 1
   links:
     - db
     - db_slave

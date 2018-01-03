@@ -8,7 +8,7 @@ def test_stacks(app_connection):
 
 
 def _check_stacks(stacks):
-    assert len(stacks) == 5
+    assert len(stacks) == 1
     print("stacks=" + json.dumps(stacks, indent=4))
     for proc_stacks in stacks:
         assert 'c2cwsgiutils/debug' in json.dumps(proc_stacks)
@@ -26,7 +26,7 @@ def test_no_auth(app_connection):
 def test_memory(app_connection):
     memory = app_connection.get_json('c2c/debug/memory', params={'secret': 'changeme'})
     print("memory=" + json.dumps(memory, indent=4))
-    assert len(memory) == 5
+    assert len(memory) == 1
 
 
 def test_sleep(app_connection):

@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '1.3.0'
+VERSION = '1.4.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = open(os.path.join(HERE, 'requirements.txt')).read().splitlines()
 

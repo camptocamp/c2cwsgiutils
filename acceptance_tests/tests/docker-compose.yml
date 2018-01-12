@@ -71,7 +71,7 @@ run_test:
     - db
 
 redis:
-  image: redis:3
+  image: redis:4
   mem_limit: 64m
   ports:
     - 16379:6379

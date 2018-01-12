@@ -201,6 +201,7 @@ def custom_check(request):
     global not_happy
     if not_happy:
         raise Exception("I'm not happy")
+    return "happy"
 
 health_check = HealthCheck(config)
 health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
@@ -221,7 +222,11 @@ looking like that (in case of error):
         "custom": {
             "message": "I'm not happy"
         }
-    }
+    },
+    "timings": {
+        "custom": 0.005
+    },
+    "results": {}
 }
 ```
 

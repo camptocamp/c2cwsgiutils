@@ -52,10 +52,10 @@ class HealthCheck(object):
         config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
                          request_method="GET")
         config.add_view(self._view, route_name="c2c_health_check", renderer="json", http_cache=0)
-        self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], None], int]]
+        self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]]
 
     def add_db_session_check(self, session: sqlalchemy.orm.Session,
-                             query_cb: Optional[Callable[[sqlalchemy.orm.Session], None]]=None,
+                             query_cb: Optional[Callable[[sqlalchemy.orm.Session], Any]]=None,
                              at_least_one_model: Optional[object]=None, level: int=1) -> None:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
@@ -80,7 +80,7 @@ class HealthCheck(object):
         :param alembic_ini_path: Path to the Alembic INI file.
         :param level: the level of the health check
         """
-        def check(_request: Any) -> None:
+        def check(_request: Any) -> str:
             for binding in _get_bindings(session):
                 prev_bind = session.bind
                 try:
@@ -94,6 +94,7 @@ class HealthCheck(object):
                             raise Exception("Invalid alembic version: %s != %s" % (actual_version, version))
                 finally:
                     session.bind = prev_bind
+            return version
 
         config = configparser.ConfigParser()
         config.read(alembic_ini_path)
@@ -107,7 +108,7 @@ class HealthCheck(object):
     def add_url_check(
             self, url: str, params: Optional[Mapping]=None, headers: Optional[Mapping]=None,
             name: Optional[str]=None,
-            check_cb: Callable[[pyramid.request.Request, requests.Response], None]=lambda request,
+            check_cb: Callable[[pyramid.request.Request, requests.Response], Any]=lambda request,
             response: None, timeout: float=3, level: int=1) -> None:
         """
         Check that a GET on an URL returns 2xx
@@ -121,7 +122,7 @@ class HealthCheck(object):
         :param timeout: the timeout
         :param level: the level of the health check
         """
-        def check(request: pyramid.request.Request) -> None:
+        def check(request: pyramid.request.Request) -> Any:
             the_url = _maybe_function(url, request)
             the_params = _maybe_function(params, request)
             the_headers = copy.deepcopy(_maybe_function(headers, request) if headers is not None else {})
@@ -131,15 +132,18 @@ class HealthCheck(object):
 
             response = requests.get(the_url, timeout=timeout, params=the_params, headers=the_headers)
             response.raise_for_status()
-            check_cb(request, response)
+            return check_cb(request, response)
         if name is None:
             name = str(url)
         self._checks.append((name, check, level))
 
-    def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], None],
+    def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], Any],
                          level: int=1) -> None:
         """
-        Add a custom check
+        Add a custom check.
+
+        In case of success the callback can return a result (must be serializable to JSON) that will show up
+        in the response. In case of failure it must raise an exception.
 
         :param name: the name of the check
         :param check_cb: the callback to call (takes the request as parameter)
@@ -152,6 +156,7 @@ class HealthCheck(object):
         successes = []
         failures = {}
         timings = {}
+        results = {}
         checks = None
         if 'checks' in request.params:
             checks = request.params['checks'].split(',')
@@ -159,8 +164,10 @@ class HealthCheck(object):
             if level <= max_level and (checks is None or name in checks):
                 start = time.monotonic()
                 try:
-                    check(request)
+                    result = check(request)
                     successes.append(name)
+                    if result is not None:
+                        results[name] = result
                 except Exception as e:
                     LOG.warning("Health check %s failed", name, exc_info=True)
                     failure = {'message': str(e)}
@@ -176,7 +183,8 @@ class HealthCheck(object):
             'status': 500 if failures else 200,
             'failures': failures,
             'successes': successes,
-            'timings': timings
+            'timings': timings,
+            'results': results
         }
 
     @staticmethod
@@ -190,13 +198,13 @@ class HealthCheck(object):
             try:
                 session.bind = bind
                 with stats.timer_context(['sql', 'manual', 'health_check',  'db', bind.c2c_name]):
-                    query_cb(session)
+                    return query_cb(session)
             finally:
                 session.bind = prev_bind
         return 'db_engine_' + bind.c2c_name, check
 
     @staticmethod
-    def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.Session], None]:
+    def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.Session], Any]:
         def query(session: sqlalchemy.orm.Session) -> None:
             result = session.query(model).first()
             if result is None:

@@ -1,6 +1,7 @@
 """
 Generate statsd metrics for pyramid and SQLAlchemy events.
 """
+import pyparsing
 import pyramid.config
 import pyramid.events
 import pyramid.request
@@ -67,6 +68,12 @@ def _before_rendered_callback(event: pyramid.events.BeforeRender) -> None:  # pr
         request.add_finished_callback(_create_finished_cb("render", measure))
 
 
+# parser to take a whole parenthesis expression until the matching end parenthesis and get the remaining.
+EAT_PARENTESIS = \
+    pyparsing.nestedExpr('(', ')', content=pyparsing.Word(pyparsing.printables, excludeChars="()")) + \
+    pyparsing.ZeroOrMore(pyparsing.Word(pyparsing.printables + ' \t'))
+
+
 def _simplify_sql(sql: str) -> str:
     """
     Simplify SQL statements to make them easier on the eye and shorter for the stats.
@@ -76,7 +83,11 @@ def _simplify_sql(sql: str) -> str:
     sql = re.sub(r"SELECT .*? FROM", "SELECT FROM", sql)
     sql = re.sub(r"INSERT INTO (.*?) \(.*", r"INSERT INTO \1", sql)
     sql = re.sub(r"SET .*? WHERE", "SET WHERE", sql)
-    sql = re.sub(r"IN \((?:%\(\w+\)\w(?:, *)?)+\)", "IN (?)", sql)
+    for in_ in reversed(list(re.compile(r" IN \(").finditer(sql))):
+        before = sql[0:in_.start()]
+        content = sql[in_.end() - 1:]
+        parsed = EAT_PARENTESIS.parseString(content)
+        sql = before + ' IN (?)' + (' ' + parsed[1] if len(parsed) > 1 else '')
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 

@@ -17,6 +17,6 @@ pyramid_tm==2.2
 pytest==3.3.2
 raven==6.4.0
 requests==2.18.4
-SQLAlchemy==1.2.0
+SQLAlchemy==1.2.1
 zope.interface==4.4.3
 zope.sqlalchemy==0.7.7

@@ -10,10 +10,17 @@ from c2cwsgiutils_app import models
 ping_service = services.create("ping", "/ping")
 hello_service = services.create("hello", "/hello", cors_credentials=True)
 error_service = services.create("error", "/error")
+leaked_objects = []
+
+
+class LeakedObject(object):
+    pass
 
 
 @ping_service.get()
 def ping(request):
+    global leaked_objects
+    leaked_objects.append(LeakedObject())  # a memory leak to test debug/memory_diff
     logging.getLogger(__name__+".ping").info("Ping!")
     return {'pong': True}
 

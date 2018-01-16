@@ -41,3 +41,10 @@ def test_headers(app_connection):
                                        headers={'X-Toto': '42'})
     print("response=" + json.dumps(response, indent=4))
     assert response['X-Toto'] == '42'
+
+
+def test_memory_diff(app_connection):
+    response = app_connection.get_json('c2c/debug/memory_diff/api/ping', params={'secret': 'changeme'})
+    print("response=" + json.dumps(response, indent=4))
+    leaked = {v[0]: v[2] for v in response}
+    assert leaked['LeakedObject'] == 1

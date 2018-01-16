@@ -253,6 +253,7 @@ To enable the debugging interface, you must set the `DEBUG_VIEW_SECRET` environm
 
 * every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={DEBUG_VIEW_SECRET}`
 * memory usage: `{C2C_BASE_PATH}/debug/memory?secret={DEBUG_VIEW_SECRET}&limit=30`
+* memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff/{path}?secret={DEBUG_VIEW_SECRET}&limit=30`
 * sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={DEBUG_VIEW_SECRET}&time=60.2`
 * see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={DEBUG_VIEW_SECRET}`
 

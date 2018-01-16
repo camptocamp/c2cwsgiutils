@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '1.4.1'
+VERSION = '1.5.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = [
     pkg.split('==')[0]

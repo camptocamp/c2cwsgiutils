@@ -1,6 +1,8 @@
+import gc
 import logging
 import objgraph
 import pyramid.config
+from pyramid.httpexceptions import HTTPException
 import pyramid.request
 import pyramid.response
 import threading
@@ -50,8 +52,38 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     return result
 
 
+def _dump_memory_diff(request: pyramid.request.Request) -> List:
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
+    limit = int(request.params.get('limit', '30'))
+    path = '/' + '/'.join(request.matchdict['path'])
+    LOG.debug("checking memory growth for %s", path)
+
+    peak_stats = {}  # type: Dict
+    for i in range(3):
+        gc.collect(i)
+    objgraph.growth(limit=limit, peak_stats=peak_stats)
+
+    try:
+        sub_request = request.copy()
+        sub_request.path_info = path
+
+        response = request.invoke_subrequest(sub_request)
+        LOG.debug("response was %d", response.status_code)
+
+        del response
+        del sub_request
+    except HTTPException as ex:
+        LOG.debug("response was %s", str(ex))
+
+    for i in range(3):
+        gc.collect(i)
+    growth = objgraph.growth(limit=limit, peak_stats=peak_stats)
+
+    return growth
+
+
 def _dump_memory_impl(limit: int) -> Mapping[str, Any]:
-    nb_collected = [objgraph.gc.collect(generation) for generation in range(3)]
+    nb_collected = [gc.collect(generation) for generation in range(3)]
     return {
         'nb_collected': nb_collected,
         'most_common_types': objgraph.most_common_types(limit=limit, shortnames=False),
@@ -85,6 +117,10 @@ def init(config: pyramid.config.Configurator) -> None:
         config.add_route("c2c_debug_memory", _utils.get_base_path(config) + r"/debug/memory",
                          request_method="GET")
         config.add_view(_dump_memory, route_name="c2c_debug_memory", renderer="json", http_cache=0)
+
+        config.add_route("c2c_debug_memory_diff", _utils.get_base_path(config) + r"/debug/memory_diff/*path",
+                         request_method="GET")
+        config.add_view(_dump_memory_diff, route_name="c2c_debug_memory_diff", renderer="json", http_cache=0)
 
         config.add_route("c2c_debug_sleep", _utils.get_base_path(config) + r"/debug/sleep",
                          request_method="GET")

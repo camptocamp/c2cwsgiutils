@@ -1,6 +1,7 @@
 from pyramid.httpexceptions import HTTPForbidden
 import pyramid.request
 
+# noinspection PyProtectedMember
 from c2cwsgiutils._utils import env_or_settings
 
 

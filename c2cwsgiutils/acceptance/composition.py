@@ -18,6 +18,7 @@ logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.W
 
 def _try(what: Callable[[], Any], fail: bool=True, times: int=5, delay: float=10) -> Any:
     for i in range(times):
+        # noinspection PyBroadException
         try:
             return what()
         except Exception:

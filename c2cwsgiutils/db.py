@@ -77,6 +77,7 @@ def create_session(config: pyramid.config.Configurator, name: str, url: str, sla
     path includes the route_prefix.
 
     :param config: The pyramid Configuration object. If None, only master is used
+    :param name: The name of the check
     :param url: The URL for the master DB
     :param slave_url: The URL for the slave DB
     :param force_master: The method/paths that needs to use the master

@@ -1,5 +1,6 @@
 from typing import MutableMapping, Callable, Optional  # noqa  # pylint: disable=unused-import
 
+# noinspection PyProtectedMember
 from c2cwsgiutils._broadcast import utils, interface
 
 

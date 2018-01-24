@@ -62,10 +62,10 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         answers = []
         assert self._thread.is_alive()
 
-        def callback(message: Mapping[str, Any]) -> None:
-            LOG.debug('Received a broadcast answer on %s', message['channel'])
+        def callback(msg: Mapping[str, Any]) -> None:
+            LOG.debug('Received a broadcast answer on %s', msg['channel'])
             with cond:
-                answers.append(json.loads(message['data'].decode('utf-8')))
+                answers.append(json.loads(msg['data'].decode('utf-8')))
                 cond.notify()
 
         answer_channel = self._get_channel(channel) + \

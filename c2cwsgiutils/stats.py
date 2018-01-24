@@ -179,6 +179,7 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         return (self._prefix + ".".join(map(StatsDBackend._key_entry, key)))[:450]
 
     def _send(self, message: str) -> None:
+        # noinspection PyBroadException
         try:
             self._socket.send(message.encode('utf-8'))
         except Exception:

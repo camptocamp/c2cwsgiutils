@@ -14,7 +14,7 @@ psycopg2==2.7.3.2
 pyparsing==2.2.0
 pyramid==1.9.1
 pyramid_tm==2.2
-pytest==3.3.2
+pytest==3.4.0
 raven==6.5.0
 requests==2.18.4
 SQLAlchemy==1.2.2

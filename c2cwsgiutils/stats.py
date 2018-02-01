@@ -215,4 +215,7 @@ def init_backends(settings: Mapping[str, str]) -> None:
     statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
         statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
-        BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix)
+        try:
+            BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix)
+        except Exception:
+            LOG.error("Failed configuring the statsd backend. Will continue without it.", exc_info=True)

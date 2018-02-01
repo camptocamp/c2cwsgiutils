@@ -7,5 +7,7 @@ __pycache__
 /reports/
 /.idea/dbnavigator.xml
 /.idea/inspectionProfiles
+/.idea/checkstyle-idea.xml
+/.idea/codeStyles/
 /docs/*/build/
 /.mypy_cache

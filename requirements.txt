@@ -2,7 +2,7 @@ alembic==0.9.7
 cee-syslog-handler==0.5.0
 codacy-coverage==1.3.10
 cornice==3.0.0
-coverage==4.4.2
+coverage==4.5
 flake8==3.5.0
 gunicorn==19.7.1
 junit2html==018  # rq.filter: !=008, !=009, !=010, !=012

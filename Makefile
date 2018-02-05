@@ -91,7 +91,7 @@ release: mypy acceptance dist
 
 .PHONY: run
 run: build_test_app
-	docker-compose -f acceptance_tests/tests/docker-compose.yml up
+	TEST_IP=172.17.0.1 docker-compose -f acceptance_tests/tests/docker-compose.yml up
 
 .PHONY: mypy
 mypy: build_docker$(PYTHON_VERSION)

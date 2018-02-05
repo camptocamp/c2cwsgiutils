@@ -107,11 +107,8 @@ the PostgreSQL logs by setting `log_line_prefix` to something like `"%a "` (don'
 
 Then, in your application, it is recommended to transmit the request ID to the external REST APIs. Use
 the `X-Request-ID` HTTP header, for example. The value of the request ID is accessible through an added
-`c2c_request_id` attribute on the Pyramid Request objects. For example:
-
-```python
-requests.get('http://example.com/toto', headers={'X-Request-ID': request.c2c_request_id})
-```
+`c2c_request_id` attribute on the Pyramid Request objects. The `requests` module is patched to automatically
+add this header.
 
 
 ## Metrics

@@ -1,5 +1,6 @@
 import logging
 from pyramid.httpexceptions import HTTPForbidden
+import requests
 
 from c2cwsgiutils import services
 from c2cwsgiutils import sentry
@@ -10,6 +11,7 @@ from c2cwsgiutils_app import models
 ping_service = services.create("ping", "/ping")
 hello_service = services.create("hello", "/hello", cors_credentials=True)
 error_service = services.create("error", "/error")
+tracking_service = services.create("tracking", "/tracking/{depth:[01]}")
 leaked_objects = []
 
 
@@ -66,3 +68,12 @@ def error(request):
     else:
         raise Exception('boom')
     return {'status': 200}
+
+
+@tracking_service.get()
+def tracking(request):
+    depth = int(request.matchdict.get('depth'))
+    result = {'request_id': request.c2c_request_id}
+    if depth > 0:
+        result['sub'] = requests.get('http://localhost/api/tracking/%d' % (depth - 1)).json()
+    return result

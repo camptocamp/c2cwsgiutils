@@ -32,7 +32,7 @@ class Composition(object):
     def __init__(self, request: _pytest.fixtures.FixtureRequest, project_name: str, composition: str,
                  coverage_paths: Optional[List[str]]=None) -> None:
         self.project_name = project_name
-        self.composition = composition
+        self.composition_file = composition
         self.coverage_paths = coverage_paths
         env = Composition._get_env()
         if os.environ.get("docker_start", "1") == "1":
@@ -66,7 +66,7 @@ class Composition(object):
 
     def stop_all(self) -> None:
         _try(lambda:
-             subprocess.check_call(['docker-compose', '--file', self.composition,
+             subprocess.check_call(['docker-compose', '--file', self.composition_file,
                                    '--project-name', self.project_name, 'stop'], env=Composition._get_env(),
                                    stderr=subprocess.STDOUT))
         if self.coverage_paths:
@@ -88,12 +88,12 @@ class Composition(object):
                                    stderr=subprocess.STDOUT))
 
     def run(self, container: str, *command: str, **kwargs: Any) -> None:
-        subprocess.check_call(['docker-compose', '--file', self.composition,
+        subprocess.check_call(['docker-compose', '--file', self.composition_file,
                                '--project-name', self.project_name, 'run', '--rm', container] + list(command),
                               env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs)
 
     def exec(self, container: str, *command: str, **kwargs: Any) -> None:
-        subprocess.check_call(['docker-compose', '--file', self.composition,
+        subprocess.check_call(['docker-compose', '--file', self.composition_file,
                                '--project-name', self.project_name, 'exec', '-T', container] + list(command),
                               env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs)
 

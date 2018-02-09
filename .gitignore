@@ -11,3 +11,4 @@ __pycache__
 /.idea/codeStyles/
 /docs/*/build/
 /.mypy_cache
+/.scannerwork

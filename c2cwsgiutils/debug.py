@@ -29,7 +29,7 @@ def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, List[Map
 def _dump_stacks_impl() -> Dict[str, List[Dict[str, Any]]]:
     id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
     threads = {}
-    for threadId, stack in sys._current_frames().items():  # pylint: disable=W0212
+    for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
         frames = []
         for filename, lineno, name, line in traceback.extract_stack(stack):  # type: ignore
             cur = {
@@ -40,7 +40,7 @@ def _dump_stacks_impl() -> Dict[str, List[Dict[str, Any]]]:
             if line:
                 cur['code'] = line.strip()
             frames.append(cur)
-        threads["%s(%d)" % (id2name.get(threadId, ""), threadId)] = frames
+        threads["%s(%d)" % (id2name.get(thread_id, ""), thread_id)] = frames
     return threads
 
 

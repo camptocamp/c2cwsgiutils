@@ -83,31 +83,36 @@ dockerBuild {
     }
 
     if (env.BRANCH_NAME == 'master') {
-        parallel "publish latest on docker hub": {
-            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
-                              usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
-                docker.image('camptocamp/c2cwsgiutils:latest').push()
-                sh 'rm -rf ~/.docker*'
+        stage("Publish master") {
+            checkout scm
+            parallel "docker hub push": {
+                withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
+                                  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                    docker.image('camptocamp/c2cwsgiutils:latest').push()
+                    sh 'rm -rf ~/.docker*'
+                }
+            }, 'sonarcloud': {
+                sh 'make sonarcloud'
             }
-        }, 'sonarcloud': {
-            sh 'make sonarcloud'
         }
     }
 
     if (majorRelease != '') {
-        parallel "publish major ${majorRelease} on docker hub" {
+        stage("Publish ${majorRelease}") {
             checkout scm
             setCronTrigger('H H(0-8) * * *')
-            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
-                              usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
-                sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}"
-                docker.image("camptocamp/c2cwsgiutils:${majorRelease}").push()
-                sh 'rm -rf ~/.docker*'
+            parallel "docker hub push" {
+                withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
+                                  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                    sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}"
+                    docker.image("camptocamp/c2cwsgiutils:${majorRelease}").push()
+                    sh 'rm -rf ~/.docker*'
+                }
+            }, 'sonarcloud': {
+                sh 'make sonarcloud'
             }
-        }, 'sonarcloud': {
-            sh 'make sonarcloud'
         }
     }
 }

@@ -50,7 +50,8 @@ acceptance: build_acceptance build_test_app
 	#fix code path in the cobertura XML file \
 	sed -ie 's%>/app/c2cwsgiutils_app<%>$(THIS_DIR)/acceptance_tests/app/c2cwsgiutils_app<%' reports/coverage/api/coverage.xml; \
 	sed -ie 's%filename="/opt/c2cwsgiutils/c2cwsgiutils/%filename="c2cwsgiutils/%' reports/coverage/api/coverage.xml; \
-	sed -ie 's%</sources>%<source>$(THIS_DIR)/c2cwsgiutils</source></sources>%' reports/coverage/api/coverage.xml; \
+	sed -ie 's%</sources>%<source>$(THIS_DIR)</source></sources>%' reports/coverage/api/coverage.xml; \
+	sed -ie 's%file="tests/%file="acceptance_tests/tests/tests/%' reports/acceptance.xml; \
 	docker rm c2cwsgiutils_acceptance_reports_$$PPID; \
 	exit $$status$$?
 
@@ -106,3 +107,14 @@ build_docker3.5:
 
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache
+
+.venv/sonar-scanner/bin/sonar-scanner:
+	mkdir -p .venv
+	curl -L "https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip" > .venv/sonar.zip
+	unzip -d .venv .venv/sonar.zip
+	rm .venv/sonar.zip
+	cd .venv && ln -s sonar-scanner-* sonar-scanner
+
+.PHONY: sonarcloud
+sonarcloud: .venv/sonar-scanner/bin/sonar-scanner
+	.venv/sonar-scanner/bin/sonar-scanner

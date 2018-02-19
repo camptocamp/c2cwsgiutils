@@ -83,18 +83,20 @@ dockerBuild {
     }
 
     if (env.BRANCH_NAME == 'master') {
-        stage("publish latest on docker hub") {
+        parallel "publish latest on docker hub": {
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 docker.image('camptocamp/c2cwsgiutils:latest').push()
                 sh 'rm -rf ~/.docker*'
             }
+        }, 'sonarcloud': {
+            sh 'make sonarcloud'
         }
     }
 
     if (majorRelease != '') {
-        stage("publish major ${majorRelease} on docker hub") {
+        parallel "publish major ${majorRelease} on docker hub" {
             checkout scm
             setCronTrigger('H H(0-8) * * *')
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
@@ -104,6 +106,8 @@ dockerBuild {
                 docker.image("camptocamp/c2cwsgiutils:${majorRelease}").push()
                 sh 'rm -rf ~/.docker*'
             }
+        }, 'sonarcloud': {
+            sh 'make sonarcloud'
         }
     }
 }

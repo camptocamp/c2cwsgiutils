@@ -62,6 +62,7 @@ def _get_all_cols(symbol: Any) -> List[str]:
     for member_name in symbol.__dict__:
         member = getattr(symbol, member_name)
         if member_name in ('__table__', 'metadata'):
+            # Those are not fields
             pass
         elif isinstance(member, sa.sql.schema.SchemaItem):
             cols.append(member_name + ('[null]' if member.nullable else ''))

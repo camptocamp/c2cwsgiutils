@@ -129,7 +129,15 @@ You can manually measure the time spent on something like that:
 
 ```python
 from c2cwsgiutils import stats
-with stats.timer_context('toto', 'tutu'):
+with stats.timer_context(['toto', 'tutu']):
+    do_something()
+```
+
+It will only add a timer event in case of success. If you want to measure both success and failures, do that:
+
+```python
+from c2cwsgiutils import stats
+with stats.outcome_timer_context(['toto', 'tutu']):
     do_something()
 ```
 

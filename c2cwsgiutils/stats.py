@@ -10,7 +10,7 @@ import re
 import socket
 import time
 import threading
-from typing import Mapping, Sequence, Generator, Any, Optional
+from typing import Mapping, Sequence, List, Generator, Any, Optional
 from typing import MutableMapping, Tuple  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils import _utils
@@ -47,6 +47,24 @@ def timer_context(key: Sequence[Any]) -> Generator[None, None, None]:
     measure = timer(key)
     yield
     measure.stop()
+
+
+@contextlib.contextmanager
+def outcome_timer_context(key: List[Any]) -> Generator[None, None, None]:
+    """
+    Add a duration measurement to the stats using the duration the context took to run
+
+    The given key is prepended with 'success' or 'failure' according to the context's outcome.
+
+    :param key: The path of the key, given as a list.
+    """
+    measure = timer()
+    try:
+        yield
+        measure.stop(key + ['success'])
+    except Exception:
+        measure.stop(key + ['failure'])
+        raise
 
 
 def timer(key: Optional[Sequence[Any]]=None) -> Timer:

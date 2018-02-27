@@ -117,4 +117,4 @@ clean:
 
 .PHONY: sonarcloud
 sonarcloud: .venv/sonar-scanner/bin/sonar-scanner
-	.venv/sonar-scanner/bin/sonar-scanner
+	.venv/sonar-scanner/bin/sonar-scanner || true

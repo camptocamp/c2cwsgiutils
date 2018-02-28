@@ -13,7 +13,7 @@ class Connection:
         self.origin = origin
 
     def get(self, url: str, expected_status: int=200, params: Mapping[str, str]=None,
-            headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> str:
+            headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Optional[str]:
         """
         get the given URL (relative to the root of API).
         """
@@ -21,7 +21,7 @@ class Connection:
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
-            return r.text
+            return None if r.status_code == 204 else r.text
 
     def get_raw(self, url: str, expected_status: int=200, params: Mapping[str, str]=None,
                 headers: Mapping[str, str]=None, cors: bool=True,
@@ -44,7 +44,7 @@ class Connection:
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
-            return r.json()
+            return None if r.status_code == 204 else r.json()
 
     def get_xml(self, url: str, schema: Optional[str]=None, expected_status: int=200,
                 params: Mapping[str, str]=None, headers: Mapping[str, str]=None, cors: bool=True,
@@ -74,7 +74,7 @@ class Connection:
                                headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed=cache_allowed)
             self._check_cors(cors, r)
-            return r.json()
+            return None if r.status_code == 204 else r.json()
 
     def post_files(self, url: str, data: Any=None, files: Optional[Mapping[str, Any]]=None,
                    expected_status: int=200, params: Mapping[str, str]=None, headers: Mapping[str, str]=None,
@@ -86,10 +86,10 @@ class Connection:
                                headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
-            return r.json()
+            return None if r.status_code == 204 else r.json()
 
     def post(self, url: str, data: Any=None, expected_status: int=200, params: Mapping[str, str]=None,
-             headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> str:
+             headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Optional[str]:
         """
         POST the given URL (relative to the root of API).
         """
@@ -98,7 +98,7 @@ class Connection:
                                data=data, params=params) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
-            return r.text
+            return None if r.status_code == 204 else r.text
 
     def put_json(self, url: str, json: Any=None, expected_status: int=200, params: Mapping[str, str]=None,
                  headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Any:
@@ -109,7 +109,7 @@ class Connection:
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)
-            return r.json()
+            return None if r.status_code == 204 else r.json()
 
     def delete(self, url: str, expected_status: int=204, params: Mapping[str, str]=None,
                headers: Mapping[str, str]=None, cors: bool=True,

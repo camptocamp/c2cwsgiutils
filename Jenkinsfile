@@ -102,7 +102,7 @@ dockerBuild {
         stage("Publish ${majorRelease}") {
             checkout scm
             setCronTrigger('H H(0-8) * * *')
-            parallel "docker hub push" {
+            parallel "docker hub push": {
                 withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                                   usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh 'docker login -u "$USERNAME" -p "$PASSWORD"'

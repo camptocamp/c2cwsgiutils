@@ -6,7 +6,8 @@ import pyramid.config
 import pyramid.request
 import re
 import sqlalchemy.orm
-from typing import Optional, Iterable, Tuple, Any, Callable, Pattern  # noqa  # pylint: disable=unused-import
+from typing import Pattern  # noqa  # pylint: disable=unused-import
+from typing import Optional, Iterable, Tuple, Any, Callable, Union
 from zope.sqlalchemy import ZopeTransactionExtension
 
 LOG = logging.getLogger(__name__)
@@ -19,9 +20,17 @@ class Tweens(object):
 tweens = Tweens()
 
 
-def setup_session(config: pyramid.config.Configurator, master_prefix: str, slave_prefix: Optional[str]=None,
-                  force_master: Optional[Iterable[str]]=None, force_slave: Optional[Iterable[str]]=None) \
-        -> Tuple[sqlalchemy.orm.Session, sqlalchemy.engine.Engine, sqlalchemy.engine.Engine]:
+def setup_session(
+    config: pyramid.config.Configurator,
+    master_prefix: str,
+    slave_prefix: Optional[str]=None,
+    force_master: Optional[Iterable[str]]=None,
+    force_slave: Optional[Iterable[str]]=None
+) -> Tuple[
+    Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
+    sqlalchemy.engine.Engine,
+    sqlalchemy.engine.Engine
+]:
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection. Uses prefixed entries in the application's settings.
@@ -66,7 +75,7 @@ def setup_session(config: pyramid.config.Configurator, master_prefix: str, slave
 def create_session(config: pyramid.config.Configurator, name: str, url: str, slave_url: Optional[str]=None,
                    force_master: Optional[Iterable[str]]=None, force_slave: Optional[Iterable[str]]=None,
                    **engine_config: Any) \
-        -> sqlalchemy.orm.Session:
+        -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection.
@@ -108,8 +117,13 @@ def create_session(config: pyramid.config.Configurator, name: str, url: str, sla
     return db_session
 
 
-def _add_tween(config: pyramid.config.Configurator, name: str, db_session: sqlalchemy.orm.Session,
-               force_master: Optional[Iterable[str]], force_slave: Optional[Iterable[str]]) -> None:
+def _add_tween(
+    config: pyramid.config.Configurator,
+    name: str,
+    db_session: Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
+    force_master: Optional[Iterable[str]],
+    force_slave: Optional[Iterable[str]]
+) -> None:
     global tweens
 
     master_paths = list(map(re.compile, force_master)) if force_master is not None \

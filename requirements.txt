@@ -15,6 +15,7 @@ pyparsing==2.2.0
 pyramid==1.9.1
 pyramid_tm==2.2
 pytest==3.4.2
+pytest-cov==2.5.1
 raven==6.6.0
 requests==2.18.4
 SQLAlchemy==1.2.5

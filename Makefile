@@ -32,6 +32,8 @@ build: build_acceptance build_test_app
 acceptance: build_acceptance build_test_app
 	rm -rf reports/coverage/api reports/acceptance$(PYTHON_VERSION).xml
 	mkdir -p reports/coverage/api
+	#get the UT reports
+	docker run --rm $(DOCKER_BASE):latest cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
 	#run the tests
 	docker run $(DOCKER_TTY) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
 	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance$(PYTHON_VERSION).xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance$(PYTHON_VERSION).xml /reports/acceptance$(PYTHON_VERSION).html; exit \$$status\$$?"; \

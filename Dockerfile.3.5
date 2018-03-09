@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \
     pip install --no-cache-dir -e /opt/c2cwsgiutils && \
-    (cd /opt/c2cwsgiutils/ && pytest -vv --color=yes tests && rm -r tests) && \
+    (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
     python -m compileall -q && \
     python -m compileall -q /opt/c2cwsgiutils
 

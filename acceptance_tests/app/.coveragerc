@@ -1,0 +1,10 @@
+[run]
+source=
+    /opt/c2cwsgiutils/c2cwsgiutils
+    /app/c2cwsgiutils_app
+branch=True
+omit=
+    /opt/c2cwsgiutils/c2cwsgiutils/acceptance/*
+    /opt/c2cwsgiutils/c2cwsgiutils/models_graph.py
+    /opt/c2cwsgiutils/c2cwsgiutils/coverage_setup.py
+    /opt/c2cwsgiutils/c2cwsgiutils/wsgi_app.py

@@ -100,12 +100,13 @@ class Connection:
             self._check_cors(cors, r)
             return None if r.status_code == 204 else r.text
 
-    def put_json(self, url: str, json: Any=None, expected_status: int=200, params: Mapping[str, str]=None,
-                 headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Any:
+    def put_json(self, url: str, json: Any=None, data: Any=None, expected_status: int=200,
+                 params: Mapping[str, str]=None, headers: Mapping[str, str]=None, cors: bool=True,
+                 cache_allowed: bool=False) -> Any:
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.put(self.base_url + url, json=json, params=params,
+        with self.session.put(self.base_url + url, json=json, data=data, params=params,
                               headers=self._merge_headers(headers, cors)) as r:
             check_response(r, expected_status, cache_allowed)
             self._check_cors(cors, r)

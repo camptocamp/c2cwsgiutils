@@ -8,6 +8,7 @@ RUN apt-get update && \
         libproj-dev \
         libjpeg-dev \
         postgresql-client-9.6 \
+        graphviz-dev \
         graphviz \
         vim && \
     apt-get clean && \
@@ -17,6 +18,7 @@ RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt
 
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \
+    echo "from pickle import *" > /usr/local/lib/python3.6/cPickle.py && \
     pip install --no-cache-dir -e /opt/c2cwsgiutils && \
     (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
     python -m compileall -q && \

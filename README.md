@@ -159,6 +159,17 @@ prepended to it. The results are sent to the `c2cwsgiutils.sql_profiler` logger.
 Don't enable that on a busy production system. It will kill your performances.
 
 
+## Profiler
+
+If you set the `C2C_PROFILER_PATH` environment variable, you'll enable a profiler that will be available at
+the given path. Due to limitations in the library used, the path must be at the root of the application (it
+cannot contain slashes). You can also define the `C2C_PROFILER_MODULES`, a space separated list of Python
+packages to have a pie chart of how much time is spent in the given packages.
+
+The profiler, even if configured, is actually disabled when the application starts. To enable it you must
+visit its page.
+
+
 ## DB sessions
 
 The `c2cwsgiutils.db.setup_session` allows you to setup a DB session that has two engines for accessing a

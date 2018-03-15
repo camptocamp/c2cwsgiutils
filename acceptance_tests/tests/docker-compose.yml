@@ -19,6 +19,8 @@ app:
     C2C_REDIS_URL: redis://redis:6379
     PYTHONMALLOC: debug
     GUNICORN_PARAMS: -b :80 --worker-class gthread --threads 10 --workers 1
+    C2C_PROFILER_PATH: /api_profiler
+    C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
   links:
     - db
     - db_slave

@@ -1,7 +1,6 @@
 """
 Generate statsd metrics for pyramid and SQLAlchemy events.
 """
-import pyparsing
 import pyramid.config
 import pyramid.events
 import pyramid.request
@@ -68,10 +67,36 @@ def _before_rendered_callback(event: pyramid.events.BeforeRender) -> None:  # pr
         request.add_finished_callback(_create_finished_cb("render", measure))
 
 
-# parser to take a whole parenthesis expression until the matching end parenthesis and get the remaining.
-EAT_PARENTESIS = \
-    pyparsing.nestedExpr('(', ')', content=pyparsing.Word(pyparsing.printables, excludeChars="()")) + \
-    pyparsing.ZeroOrMore(pyparsing.Word(pyparsing.printables + ' \t'))
+def _jump_string(content: str, pos: int) -> int:
+    quote_char = content[pos]
+    pos += 1
+    while pos < len(content):
+        cur = content[pos]
+        if cur == quote_char:
+            if pos + 1 < len(content) and content[pos + 1] == quote_char:
+                pos += 1
+            else:
+                return pos
+        pos += 1
+    return pos
+
+
+def _eat_parenthesis(content: str) -> str:
+    depth = 0
+    pos = 0
+    while pos < len(content):
+        cur = content[pos]
+        if cur == '(':
+            depth += 1
+        elif cur == ')':
+            depth -= 1
+            if depth == 0:
+                pos += 1
+                break
+        elif cur in ('"', "'"):
+            pos = _jump_string(content, pos)
+        pos += 1
+    return content[pos:]
 
 
 def _simplify_sql(sql: str) -> str:
@@ -85,9 +110,8 @@ def _simplify_sql(sql: str) -> str:
     sql = re.sub(r"SET .*? WHERE", "SET WHERE", sql)
     for in_ in reversed(list(re.compile(r" IN \(").finditer(sql))):
         before = sql[0:in_.start()]
-        content = sql[in_.end() - 1:]
-        parsed = EAT_PARENTESIS.parseString(content)
-        sql = before + ' IN (?)' + (' ' + parsed[1] if len(parsed) > 1 else '')
+        after = _eat_parenthesis(sql[in_.end() - 1:])
+        sql = before + ' IN (?)' + after
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 

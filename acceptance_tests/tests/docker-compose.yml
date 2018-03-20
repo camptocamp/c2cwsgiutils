@@ -18,7 +18,7 @@ app:
     SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
     C2C_REDIS_URL: redis://redis:6379
     PYTHONMALLOC: debug
-    GUNICORN_PARAMS: -b :80 --worker-class gthread --threads 10 --workers 1
+    GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
     C2C_PROFILER_PATH: /api_profiler
     C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
   links:
@@ -26,7 +26,7 @@ app:
     - db_slave
     - redis
   ports:
-    - 8480:80
+    - 8480:8080
 
 alembic_master:
   image: camptocamp/c2cwsgiutils_test_app:latest

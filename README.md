@@ -221,7 +221,7 @@ def custom_check(request):
 
 health_check = HealthCheck(config)
 health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
-health_check.add_url_check('http://localhost/api/hello')
+health_check.add_url_check('http://localhost:8080/api/hello')
 health_check.add_custom_check('custom', custom_check, 2)
 health_check.add_alembic_check(models.DBSession, '/app/alembic.ini', 3)
 ```

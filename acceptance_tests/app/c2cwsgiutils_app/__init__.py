@@ -20,8 +20,8 @@ def main(_, **settings):
     config.scan("c2cwsgiutils_app.services")
     health_check = HealthCheck(config)
     health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
-    health_check.add_url_check('http://localhost/api/hello')
-    health_check.add_url_check(name="fun_url", url=lambda _request: 'http://localhost/api/hello')
+    health_check.add_url_check('http://localhost:8080/api/hello')
+    health_check.add_url_check(name="fun_url", url=lambda _request: 'http://localhost:8080/api/hello')
     health_check.add_custom_check('fail', _failure, 2)
     health_check.add_alembic_check(models.DBSession, '/app/alembic.ini', 1)
 

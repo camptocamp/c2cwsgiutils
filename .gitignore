@@ -5,10 +5,12 @@ __pycache__
 /c2cwsgiutils.egg-info/
 /dist/
 /reports/
-/.idea/dbnavigator.xml
-/.idea/inspectionProfiles
 /.idea/checkstyle-idea.xml
 /.idea/codeStyles/
+/.idea/dbnavigator.xml
+/.idea/inspectionProfiles
+/.idea/misc.xml
+/.idea/sonarlint
 /docs/*/build/
 /.mypy_cache
 /.scannerwork

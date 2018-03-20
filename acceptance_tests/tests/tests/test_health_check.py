@@ -6,7 +6,7 @@ def test_ok(app_connection):
     print('response=' + json.dumps(response))
     assert response == {
         'status': 200,
-        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost:8080/api/hello',
                       'fun_url',  'alembic_app_alembic.ini'],
         'failures': {},
         'timings': response['timings'],
@@ -15,7 +15,7 @@ def test_ok(app_connection):
         }
     }
     assert response['timings'].keys() == {
-        'db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+        'db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost:8080/api/hello',
         'fun_url',  'alembic_app_alembic.ini'}
 
 
@@ -37,7 +37,7 @@ def test_failure(app_connection):
     print('response=' + json.dumps(response))
     assert response == {
         'status': 500,
-        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+        'successes': ['db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost:8080/api/hello',
                       'fun_url', 'alembic_app_alembic.ini'],
         'failures': {
             'fail': {
@@ -51,7 +51,7 @@ def test_failure(app_connection):
         }
     }
     assert response['timings'].keys() == {
-        'db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost/api/hello',
+        'db_engine_sqlalchemy', 'db_engine_sqlalchemy_slave', 'http://localhost:8080/api/hello',
         'fun_url', 'alembic_app_alembic.ini', 'fail'}
 
 

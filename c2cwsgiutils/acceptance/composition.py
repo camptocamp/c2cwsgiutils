@@ -43,7 +43,7 @@ class Composition(object):
 
             _try(lambda:
                  subprocess.check_call(['docker-compose', '--file', composition,
-                                        '--project-name', project_name, 'rm', '-f'], env=env,
+                                        '--project-name', project_name, 'rm', '-f', '-v'], env=env,
                                        stderr=subprocess.STDOUT), fail=False)
 
             _try(lambda:
@@ -65,15 +65,21 @@ class Composition(object):
             request.addfinalizer(self.stop_all)
 
     def stop_all(self) -> None:
+        env = Composition._get_env()
         _try(lambda:
              subprocess.check_call(['docker-compose', '--file', self.composition_file,
-                                   '--project-name', self.project_name, 'stop'], env=Composition._get_env(),
+                                   '--project-name', self.project_name, 'stop'], env=env,
                                    stderr=subprocess.STDOUT))
         if self.coverage_paths:
             target_dir = "/reports/"
             os.makedirs(target_dir, exist_ok=True)
             for path in self.coverage_paths:
                 subprocess.check_call(['docker', 'cp', path, target_dir], stderr=subprocess.STDOUT)
+
+        _try(lambda:
+             subprocess.check_call(['docker-compose', '--file', self.composition_file,
+                                    '--project-name', self.project_name, 'rm', '-f', '-v'], env=env,
+                                   stderr=subprocess.STDOUT), fail=False)
 
     def stop(self, container: str) -> None:
         _try(lambda:

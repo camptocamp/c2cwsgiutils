@@ -109,14 +109,3 @@ build_docker3.5:
 
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache
-
-.venv/sonar-scanner/bin/sonar-scanner:
-	mkdir -p .venv
-	curl -L "https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip" > .venv/sonar.zip
-	unzip -d .venv .venv/sonar.zip
-	rm .venv/sonar.zip
-	cd .venv && ln -s sonar-scanner-* sonar-scanner
-
-.PHONY: sonarcloud
-sonarcloud: .venv/sonar-scanner/bin/sonar-scanner
-	.venv/sonar-scanner/bin/sonar-scanner || true

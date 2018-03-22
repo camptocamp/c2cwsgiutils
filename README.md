@@ -246,6 +246,13 @@ looking like that (in case of error):
 }
 ```
 
+The levels are:
+
+* 0: Don't add checks at this level. This max_level is used for doing a simple ping.
+* 1: Checks for anything vital for the usefulness of the service (DB, redis, ...). This is the max_level set
+     by default and used by load balancers to determine if the service is alive.
+* \>=2: Use those at your convenience. Pingdom and CO are usually setup at max_level=100. So stay below.
+
 Look at the documentation of the `c2cwsgiutils.health_check.HealthCheck` class for more information.
 
 

@@ -7,7 +7,7 @@ flake8==3.5.0
 gunicorn==19.7.1
 junit2html==020
 linesman==0.3.2
-lxml==4.2.0
+lxml==4.2.1
 mypy==0.570
 netifaces==0.10.6
 objgraph==3.4.0

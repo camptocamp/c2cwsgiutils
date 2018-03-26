@@ -18,12 +18,12 @@ COPY . /app
 
 ARG GIT_HASH
 
-RUN pip install --no-cache-dir -r requirements.txt -e . && \
+RUN pip3 install --no-cache-dir -r requirements.txt -e . && \
     ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models_hello.dot && \
     c2cwsgiutils_genversion.py $GIT_HASH && \
     flake8 c2cwsgiutils_app app_alembic && \
-    python -m compileall -q .
+    python3 -m compileall -q .
 
 # www-data
 USER 33

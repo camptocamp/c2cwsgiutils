@@ -155,10 +155,10 @@ class HealthCheck(object):
 
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
         max_level = int(request.params.get('max_level', '1'))
-        successes = []
-        failures = {}
-        timings = {}
-        results = {}
+        results = {
+            'failures': {},
+            'successes': {},
+        }  # type: dict
         checks = None
         if 'checks' in request.params:
             checks = request.params['checks'].split(',')
@@ -167,27 +167,25 @@ class HealthCheck(object):
                 start = time.monotonic()
                 try:
                     result = check(request)
-                    successes.append(name)
+                    results['successes'][name] = {
+                        'timing': time.monotonic() - start
+                    }
                     if result is not None:
-                        results[name] = result
+                        results['successes'][name]['result'] = result
                 except Exception as e:
                     LOG.warning("Health check %s failed", name, exc_info=True)
-                    failure = {'message': str(e)}
+                    failure = {
+                        'message': str(e),
+                        'timing': time.monotonic() - start
+                    }
                     if os.environ.get('DEVELOPMENT', '0') != '0':
                         failure['stacktrace'] = traceback.format_exc()
-                    failures[name] = failure
-                timings[name] = time.monotonic() - start
+                    results['failures'][name] = failure
 
-        if failures:
+        if results['failures']:
             request.response.status = 500
 
-        return {
-            'status': 500 if failures else 200,
-            'failures': failures,
-            'successes': successes,
-            'timings': timings,
-            'results': results
-        }
+        return results
 
     @staticmethod
     def _create_db_engine_check(

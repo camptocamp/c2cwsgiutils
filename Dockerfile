@@ -1,4 +1,4 @@
-FROM camptocamp/python-gis:3.6-stretch
+FROM camptocamp/python-gis:3.6-ubuntu18.04
 LABEL maintainer "info@camptocamp.org"
 
 RUN apt-get update && \
@@ -7,7 +7,8 @@ RUN apt-get update && \
         libgeos-dev \
         libproj-dev \
         libjpeg-dev \
-        postgresql-client-9.6 \
+        postgresql-client-10 \
+        git \
         graphviz-dev \
         graphviz \
         vim && \
@@ -18,11 +19,11 @@ RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt
 
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \
-    echo "from pickle import *" > /usr/local/lib/python3.6/cPickle.py && \
-    pip install --no-cache-dir -e /opt/c2cwsgiutils && \
+    echo "from pickle import *" > /usr/lib/python3.6/cPickle.py && \
+    pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
     (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
-    python -m compileall -q && \
-    python -m compileall -q /opt/c2cwsgiutils
+    python3 -m compileall -q && \
+    python3 -m compileall -q /opt/c2cwsgiutils
 
 ENV LOG_TYPE=console \
     LOG_HOST=localhost \

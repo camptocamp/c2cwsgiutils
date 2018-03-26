@@ -1,10 +1,9 @@
 *
 !.coveragerc
 !c2cwsgiutils
-!c2cwsgiutils_*
+!c2cwsgiutils_*.py
+!c2cwsgiutils_run
 !install_docker.sh
-!LICENSE.txt
-!README.md
 !requirements.txt
 !setup.py
 !setup.cfg

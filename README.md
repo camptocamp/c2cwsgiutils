@@ -234,17 +234,18 @@ looking like that (in case of error):
 ```json
 {
     "status": 500,
-    "successes": ["db_engine_sqlalchemy", "db_engine_sqlalchemy_slave", "http://localhost/api/hello",
-                  "alembic_app_alembic.ini"],
+    "successes": {
+        "db_engine_sqlalchemy": {"timing": 0.002},
+        "db_engine_sqlalchemy_slave": {"timing": 0.003},
+        "http://localhost/api/hello": {"timing": 0.010},
+        "alembic_app_alembic.ini": {"timing": 0.005, "result": "4a8c1bb4e775"}
+    },
     "failures": {
         "custom": {
-            "message": "I'm not happy"
+            "message": "I'm not happy",
+            "timing": 0.001
         }
-    },
-    "timings": {
-        "custom": 0.005
-    },
-    "results": {}
+    }
 }
 ```
 

@@ -2,18 +2,26 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '1.11.0'
+VERSION = '2.0.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = [
     pkg.split('==')[0]
     for pkg in open(os.path.join(HERE, 'requirements.txt')).read().splitlines()
 ]
 
+
+def long_description():
+    try:
+        return open('README.md').read()
+    except FileNotFoundError:
+        return ""
+
+
 setup(
     name='c2cwsgiutils',
     version=VERSION,
     description="Common utilities for Camptocamp WSGI applications",
-    long_description=open('README.md').read(),
+    long_description=long_description(),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Plugins",

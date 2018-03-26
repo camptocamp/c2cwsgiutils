@@ -1,11 +1,16 @@
 #!/bin/bash
 # Script used when building acceptance test images to install the docker tools needed to run them.
-set -e
+set -ex
 
 DEBIAN_VERSION=$(grep VERSION= /etc/os-release | sed 's/.*(\(.*\)).\+/\1/')
 
 apt-get update
 apt-get install -y --no-install-recommends apt-transport-https
+
+if [[ "${DEBIAN_VERSION}" == "Bionic Beaver" ]]
+then
+    DEBIAN_VERSION=stretch
+fi
 
 if [[ "${DOCKER_VERSION}" == *-ce ]]
 then

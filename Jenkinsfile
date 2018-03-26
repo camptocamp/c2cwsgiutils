@@ -4,7 +4,7 @@ import static com.camptocamp.utils.*
 
 @NonCPS
 def getMajorRelease() {
-    def majorReleaseMatcher = (env.BRANCH_NAME =~ /^release_(\d+)$/)
+    def majorReleaseMatcher = (env.BRANCH_NAME =~ /^release_(\d+(?:_\w+)?)$/)
     majorReleaseMatcher.matches() ? majorReleaseMatcher[0][1] : ''
 }
 def majorRelease = getMajorRelease()

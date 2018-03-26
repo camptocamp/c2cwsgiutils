@@ -1,9 +1,16 @@
+from enum import Enum
 import re
 from lxml import etree  # nosec
 import requests
 from typing import Mapping, Any, Optional
 
 COLON_SPLIT_RE = re.compile(r'\s*,\s*')
+
+
+class CacheAllowed(Enum):
+    NO = 0
+    YES = 1
+    DONT_CARE = 2
 
 
 class Connection:
@@ -13,7 +20,8 @@ class Connection:
         self.origin = origin
 
     def get(self, url: str, expected_status: int=200, params: Mapping[str, str]=None,
-            headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Optional[str]:
+            headers: Mapping[str, str]=None, cors: bool=True,
+            cache_allowed: CacheAllowed=CacheAllowed.NO) -> Optional[str]:
         """
         get the given URL (relative to the root of API).
         """
@@ -25,7 +33,7 @@ class Connection:
 
     def get_raw(self, url: str, expected_status: int=200, params: Mapping[str, str]=None,
                 headers: Mapping[str, str]=None, cors: bool=True,
-                cache_allowed: bool=False)-> requests.Response:
+                cache_allowed: CacheAllowed=CacheAllowed.NO)-> requests.Response:
         """
         get the given URL (relative to the root of API).
         """
@@ -36,7 +44,8 @@ class Connection:
             return r
 
     def get_json(self, url: str, expected_status: int=200, params: Mapping[str, str]=None,
-                 headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Any:
+                 headers: Mapping[str, str]=None, cors: bool=True,
+                 cache_allowed: CacheAllowed=CacheAllowed.NO) -> Any:
         """
         get the given URL (relative to the root of API).
         """
@@ -48,7 +57,7 @@ class Connection:
 
     def get_xml(self, url: str, schema: Optional[str]=None, expected_status: int=200,
                 params: Mapping[str, str]=None, headers: Mapping[str, str]=None, cors: bool=True,
-                cache_allowed: bool=False) -> Any:
+                cache_allowed: CacheAllowed=CacheAllowed.NO) -> Any:
         """
         get the given URL (relative to the root of API).
         """
@@ -66,7 +75,7 @@ class Connection:
 
     def post_json(self, url: str, data: Any=None, json: Any=None, expected_status: int=200,
                   params: Mapping[str, str]=None, headers: Mapping[str, str]=None, cors: bool=True,
-                  cache_allowed: bool=False) -> Any:
+                  cache_allowed: CacheAllowed=CacheAllowed.NO) -> Any:
         """
         POST the given URL (relative to the root of API).
         """
@@ -78,7 +87,8 @@ class Connection:
 
     def post_files(self, url: str, data: Any=None, files: Optional[Mapping[str, Any]]=None,
                    expected_status: int=200, params: Mapping[str, str]=None, headers: Mapping[str, str]=None,
-                   cors: bool=True, cache_allowed: bool=False) -> Any:
+                   cors: bool=True,
+                   cache_allowed: CacheAllowed=CacheAllowed.NO) -> Any:
         """
         POST files to the the given URL (relative to the root of API).
         """
@@ -89,7 +99,8 @@ class Connection:
             return None if r.status_code == 204 else r.json()
 
     def post(self, url: str, data: Any=None, expected_status: int=200, params: Mapping[str, str]=None,
-             headers: Mapping[str, str]=None, cors: bool=True, cache_allowed: bool=False) -> Optional[str]:
+             headers: Mapping[str, str]=None, cors: bool=True,
+             cache_allowed: CacheAllowed=CacheAllowed.NO) -> Optional[str]:
         """
         POST the given URL (relative to the root of API).
         """
@@ -102,7 +113,7 @@ class Connection:
 
     def put_json(self, url: str, json: Any=None, data: Any=None, expected_status: int=200,
                  params: Mapping[str, str]=None, headers: Mapping[str, str]=None, cors: bool=True,
-                 cache_allowed: bool=False) -> Any:
+                 cache_allowed: CacheAllowed=CacheAllowed.NO) -> Any:
         """
         POST the given URL (relative to the root of API).
         """
@@ -114,7 +125,7 @@ class Connection:
 
     def delete(self, url: str, expected_status: int=204, params: Mapping[str, str]=None,
                headers: Mapping[str, str]=None, cors: bool=True,
-               cache_allowed: bool=False) -> requests.Response:
+               cache_allowed: CacheAllowed=CacheAllowed.NO) -> requests.Response:
         """
         DELETE the given URL (relative to the root of API).
         """
@@ -146,14 +157,22 @@ class Connection:
         return merged
 
 
-def check_response(r: requests.Response, expected_status: int=200, cache_allowed: bool=True) -> None:
+def check_response(r: requests.Response, expected_status: int=200,
+                   cache_allowed: CacheAllowed=CacheAllowed.DONT_CARE) -> None:
     if isinstance(expected_status, tuple):
         assert r.status_code in expected_status, "status=%d\n%s" % (r.status_code, r.text)
     else:
         assert r.status_code == expected_status, "status=%d\n%s" % (r.status_code, r.text)
 
-    if not cache_allowed:
+    if isinstance(cache_allowed, bool):
+        # for backward compatibility
+        cache_allowed = CacheAllowed.DONT_CARE if cache_allowed is True else CacheAllowed.NO
+
+    if cache_allowed == CacheAllowed.NO:
         # Cache is the root of all evil. Must never be enabled
         assert 'Cache-Control' in r.headers
         cache_control = COLON_SPLIT_RE.split(r.headers['Cache-Control'])
         assert 'no-cache' in cache_control
+    elif cache_allowed == CacheAllowed.YES:
+        assert 'Cache-Control' in r.headers
+        assert 'max-age' in r.headers['Cache-Control']

@@ -169,6 +169,8 @@ packages to have a pie chart of how much time is spent in the given packages.
 The profiler, even if configured, is actually disabled when the application starts. To enable it you must
 visit its page.
 
+If you want to use this feature, you must have the `linesman` package installed.
+
 
 ## DB sessions
 

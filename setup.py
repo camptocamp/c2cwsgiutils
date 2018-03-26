@@ -34,6 +34,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=INSTALL_REQUIRES,
+    extra_requires={
+        'profiler': ['linesman'],
+        'broadcast': ['redis']
+    },
     entry_points={
         'console_scripts': [
         ]

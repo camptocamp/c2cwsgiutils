@@ -166,6 +166,6 @@ def init(config: pyramid.config.Configurator) -> None:
                              request_method="GET")
             memory_backend = cast(stats.MemoryBackend, stats.BACKENDS['memory'])
             config.add_view(memory_backend.get_stats, route_name="c2c_read_stats_json",
-                            renderer="json", http_cache=0)
+                            renderer="fast_json", http_cache=0)
         init_pyramid_spy(config)
         init_db_spy()

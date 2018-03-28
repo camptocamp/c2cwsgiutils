@@ -91,5 +91,5 @@ def init(config: pyramid.config.Configurator) -> None:
 
         config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
                          request_method="GET")
-        config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="json", http_cache=0)
+        config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="fast_json", http_cache=0)
         LOG.info("Enabled the /sql_profiler API")

@@ -19,5 +19,6 @@ pytest-cov==2.5.1
 raven==6.6.0
 requests==2.18.4
 SQLAlchemy==1.2.5
+ujson==1.35
 zope.interface==4.4.3
 zope.sqlalchemy==1.0

@@ -112,22 +112,23 @@ def init(config: pyramid.config.Configurator) -> None:
 
         config.add_route("c2c_debug_stacks", _utils.get_base_path(config) + r"/debug/stacks",
                          request_method="GET")
-        config.add_view(_dump_stacks, route_name="c2c_debug_stacks", renderer="json", http_cache=0)
+        config.add_view(_dump_stacks, route_name="c2c_debug_stacks", renderer="fast_json", http_cache=0)
 
         config.add_route("c2c_debug_memory", _utils.get_base_path(config) + r"/debug/memory",
                          request_method="GET")
-        config.add_view(_dump_memory, route_name="c2c_debug_memory", renderer="json", http_cache=0)
+        config.add_view(_dump_memory, route_name="c2c_debug_memory", renderer="fast_json", http_cache=0)
 
         config.add_route("c2c_debug_memory_diff", _utils.get_base_path(config) + r"/debug/memory_diff/*path",
                          request_method="GET")
-        config.add_view(_dump_memory_diff, route_name="c2c_debug_memory_diff", renderer="json", http_cache=0)
+        config.add_view(_dump_memory_diff, route_name="c2c_debug_memory_diff", renderer="fast_json",
+                        http_cache=0)
 
         config.add_route("c2c_debug_sleep", _utils.get_base_path(config) + r"/debug/sleep",
                          request_method="GET")
-        config.add_view(_sleep, route_name="c2c_debug_sleep", renderer="json", http_cache=0)
+        config.add_view(_sleep, route_name="c2c_debug_sleep", renderer="fast_json", http_cache=0)
 
         config.add_route("c2c_debug_headers", _utils.get_base_path(config) + r"/debug/headers",
                          request_method="GET")
-        config.add_view(_headers, route_name="c2c_debug_headers", renderer="json", http_cache=0)
+        config.add_view(_headers, route_name="c2c_debug_headers", renderer="fast_json", http_cache=0)
 
         LOG.info("Enabled the /debug/stacks API")

@@ -353,9 +353,17 @@ c2c.disable_exception_handling = 1
 
 # JSON pretty print
 
-The standard JSON renderer is replaced by a version that pretty prints the rendered JSON. While this adds
-significant amount of whitespace, the difference in bytes transmitted on the network is negligible thanks
-to gzip compression.
+Two JSON renderers are available:
+
+* `json`: the normal JSON renderer (default)
+* `fast_json`: a faster JSON renderer
+is tuned differently.
+
+Both pretty prints the rendered JSON. While this adds significant amount of whitespace, the difference in
+bytes transmitted on the network is negligible thanks to gzip compression.
+
+The `fast_json` renderer is using ujson which is faster, but doesn't offer the ability to change the rendering
+of some types (the `default` parameter of json.dumps). This will interact badly with `papyrus` and such.
 
 
 ## Sentry integration

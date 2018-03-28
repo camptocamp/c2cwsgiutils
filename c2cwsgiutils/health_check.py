@@ -51,7 +51,7 @@ class HealthCheck(object):
     def __init__(self, config: pyramid.config.Configurator) -> None:
         config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
                          request_method="GET")
-        config.add_view(self._view, route_name="c2c_health_check", renderer="json", http_cache=0)
+        config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]]
 
     def add_db_session_check(self, session: sqlalchemy.orm.Session,

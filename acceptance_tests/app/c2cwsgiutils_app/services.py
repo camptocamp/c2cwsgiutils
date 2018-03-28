@@ -9,7 +9,7 @@ from c2cwsgiutils_app import models
 
 
 ping_service = services.create("ping", "/ping")
-hello_service = services.create("hello", "/hello", cors_credentials=True)
+hello_service = services.create("hello", "/hello", cors_credentials=True, renderer='fast_json')
 error_service = services.create("error", "/error")
 tracking_service = services.create("tracking", "/tracking/{depth:[01]}")
 empty_service = services.create("empty", "/empty")

@@ -19,7 +19,8 @@ def install_subscriber(config: pyramid.config.Configurator) -> None:
 
         config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
                          request_method="GET")
-        config.add_view(_logging_change_level, route_name="c2c_logging_level", renderer="json", http_cache=0)
+        config.add_view(_logging_change_level, route_name="c2c_logging_level", renderer="fast_json",
+                        http_cache=0)
         LOG.info("Enabled the /logging/change_level API")
 
 

@@ -5,7 +5,7 @@ import ujson
 
 
 def fast_dumps(v: Any, **_kargv: Any) -> str:
-    return ujson.dumps(v, ensure_ascii=False, indent=2, sort_keys=True)
+    return ujson.dumps(v, ensure_ascii=False, indent=2, sort_keys=True, escape_forward_slashes=False)
 
 
 def init(config: pyramid.config.Configurator) -> None:

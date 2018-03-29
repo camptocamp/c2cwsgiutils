@@ -1,10 +1,11 @@
+import boltons.iterutils
 import logging
 import netifaces
 import os
 import pytest
 import requests
 import time
-from typing import Callable, Any
+from typing import Callable, Any, Tuple
 
 LOG = logging.getLogger(__name__)
 
@@ -45,3 +46,18 @@ def retry_timeout(what: Callable[[], Any], timeout: float=DEFAULT_TIMEOUT, inter
 
 
 skipIfCI = pytest.mark.skipif(os.environ.get('IN_CI', "0") == "1", reason="Not running on CI")
+
+
+def approx(struct: Any, **kwargs: Any) -> Any:
+    """
+    Make float values in deep structures approximative. See pytest.approx
+    """
+    if isinstance(struct, float):
+        return pytest.approx(struct, **kwargs)
+
+    def visit(_path: list, key: Any, value: Any) -> Tuple[Any, Any]:
+        if isinstance(value, float):
+            value = pytest.approx(value, **kwargs)
+        return key, value
+
+    return boltons.iterutils.remap(struct, visit)

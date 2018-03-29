@@ -16,11 +16,12 @@ from c2cwsgiutils import stats, _utils
 
 def _add_server_metric(request: pyramid.request.Request, name: str, duration: Optional[float]=None,
                        description: Optional[str]=None) -> None:
+    # format: <name>;dur=<duration>;desc=<description>
     metric = name
     if duration is not None:
-        metric += '=' + str(duration * 1000)
+        metric += ';dur=' + str(round(duration * 1000))
     if description is not None:
-        metric += ';' + description
+        metric += ';desc=' + description
 
     if 'Server-Timing' not in request.response.headers:
         request.response.headers['Server-Timing'] = metric
@@ -45,7 +46,7 @@ def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma:
                 _add_server_metric(request, 'route', description=name)
         key = [kind, request.method, name, str(status)]
         duration = measure.stop(key)
-        _add_server_metric(request, kind + '_duration', duration=duration)
+        _add_server_metric(request, kind, duration=duration)
     return finished_cb
 
 

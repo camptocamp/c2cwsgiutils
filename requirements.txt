@@ -17,7 +17,7 @@ pyramid==1.9.1
 pyramid_tm==2.2
 pytest==3.5.0
 pytest-cov==2.5.1
-raven==6.6.0
+raven==6.7.0
 requests==2.18.4
 SQLAlchemy==1.2.6
 ujson==1.35

@@ -38,6 +38,8 @@ def retry_timeout(what: Callable[[], Any], timeout: float=DEFAULT_TIMEOUT, inter
             ret = what()
             if ret:
                 return ret
+        except NameError:
+            raise
         except Exception as e:
             LOG.info("  Failed: " + str(e))
         if time.monotonic() > timeout:

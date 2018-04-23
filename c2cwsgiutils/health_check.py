@@ -18,7 +18,7 @@ import sqlalchemy.engine
 import subprocess
 import time
 import traceback
-from typing import Optional, Callable, Mapping, List, Tuple, Any
+from typing import Optional, Callable, Mapping, List, Tuple, Any, Union
 
 from c2cwsgiutils import stats, _utils
 
@@ -106,7 +106,9 @@ class HealthCheck(object):
         self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_'), check, level))
 
     def add_url_check(
-            self, url: str, params: Optional[Mapping]=None, headers: Optional[Mapping]=None,
+            self, url: Union[str, Callable[[pyramid.request.Request], str]],
+            params: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None]=None,
+            headers: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None]=None,
             name: Optional[str]=None,
             check_cb: Callable[[pyramid.request.Request, requests.Response], Any]=lambda request,
             response: None, timeout: float=3, level: int=1) -> None:

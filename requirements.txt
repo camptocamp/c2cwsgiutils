@@ -15,7 +15,7 @@ psycopg2-binary==2.7.4
 pyparsing==2.2.0
 pyramid==1.9.2
 pyramid_tm==2.2
-pytest==3.5.0
+pytest==3.5.1
 pytest-cov==2.5.1
 raven==6.7.0
 requests==2.18.4

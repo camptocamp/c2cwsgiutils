@@ -26,6 +26,7 @@ RUN flake8 /opt/c2cwsgiutils && \
     python3 -m compileall -q /opt/c2cwsgiutils
 
 ENV TERM=linux \
+    LANG=C.UTF-8 \
     LOG_TYPE=console \
     LOG_HOST=localhost \
     LOG_PORT=514 \

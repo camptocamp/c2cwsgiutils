@@ -84,7 +84,16 @@ def _client_interrupted_error(exception: Exception,
     return _do_error(request, 500, exception, logger=LOG.info)
 
 
+def _boto_client_error(exception: Any, request: pyramid.request.Request) -> pyramid.response.Response:
+    status_code = exception.response['Error']['Code']
+    log = STATUS_LOGGER.get(status_code, LOG.warning)
+    return _do_error(request, status_code, exception, logger=log)
+
+
 def _other_error(exception: Exception, request: pyramid.request.Request) -> pyramid.response.Response:
+    if exception.__class__.__module__ == 'botocore.exceptions' and \
+            exception.__class__.__name__ == 'ClientError':
+        return _boto_client_error(exception, request)
     return _do_error(request, 500, exception)
 
 

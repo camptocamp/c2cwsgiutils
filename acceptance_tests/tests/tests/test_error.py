@@ -11,9 +11,15 @@ def test_http_error(app_connection):
 
 
 def test_commit_time_db(app_connection):
-    error = app_connection.get_json('error', params={'db': '1'}, expected_status=400)
+    error = app_connection.get_json('error', params={'db': 'dup'}, expected_status=400)
     assert error['status'] == 400
     assert 'duplicate key' in error['message']
+
+
+def test_db_data_error(app_connection):
+    error = app_connection.get_json('error', params={'db': 'data'}, expected_status=400)
+    assert error['status'] == 400
+    assert 'invalid input syntax for integer' in error['message']
 
 
 def test_other(app_connection):

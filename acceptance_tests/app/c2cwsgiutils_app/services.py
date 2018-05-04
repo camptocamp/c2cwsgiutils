@@ -63,9 +63,11 @@ def error(request):
     code = int(request.params.get('code', '500'))
     if code == 403:
         raise HTTPForbidden('bam')
-    elif request.params.get('db', '0') == '1':
+    elif request.params.get('db', '0') == 'dup':
         for _ in range(2):
             models.DBSession.add(models.Hello(value='toto'))
+    elif request.params.get('db', '0') == 'data':
+        models.DBSession.add(models.Hello(id='abcd', value='toto'))
     else:
         raise Exception('boom')
     return {'status': 200}

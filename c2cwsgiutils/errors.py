@@ -94,6 +94,7 @@ def _other_error(exception: Exception, request: pyramid.request.Request) -> pyra
     if exception.__class__.__module__ == 'botocore.exceptions' and \
             exception.__class__.__name__ == 'ClientError':
         return _boto_client_error(exception, request)
+    LOG.debug("Actual exception: %s.%s", exception.__class__.__module__, exception.__class__.__name__)
     return _do_error(request, 500, exception)
 
 
@@ -103,6 +104,7 @@ def init(config: pyramid.config.Configurator) -> None:
         common_options = {'renderer': 'json', 'http_cache': 0}
         config.add_view(view=_http_error, context=HTTPException, **common_options)
         config.add_view(view=_integrity_error, context=sqlalchemy.exc.IntegrityError, **common_options)
+        config.add_view(view=_integrity_error, context=sqlalchemy.exc.DataError, **common_options)
 
         # We don't want to cry wolf if the user interrupted the uplad of the body
         config.add_view(view=_client_interrupted_error, context=ConnectionResetError, **common_options)

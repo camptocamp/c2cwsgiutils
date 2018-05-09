@@ -12,9 +12,11 @@ import traceback
 from typing import Any, Callable
 from webob.request import DisconnectionError
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import _utils, _auth
 
 DEVELOPMENT = os.environ.get('DEVELOPMENT', '0') != '0'
+CONFIG_KEY = 'c2c.error_details_secret'
+ENV_KEY = 'ERROR_DETAILS_SECRET'
 
 LOG = logging.getLogger(__name__)
 STATUS_LOGGER = {
@@ -46,15 +48,22 @@ def _add_cors(request: pyramid.request.Request) -> None:
 
 
 def _do_error(request: pyramid.request.Request, status: int, exception: Exception,
-              logger: Callable=LOG.error) -> pyramid.response.Response:
-    logger("%s %s returned status code %s: %s",
-           request.method, request.url, status, str(exception),
-           extra={'referer': request.referer}, exc_info=True)
+              logger: Callable=LOG.error,
+              reduce_info_sent: Callable[[Exception], None] = lambda e: None) -> pyramid.response.Response:
+    logger("%s %s returned status code %s",
+           request.method, request.url, status,
+           extra={'referer': request.referer}, exc_info=exception)
+
     request.response.status_code = status
     _add_cors(request)
+
+    include_dev_details = _include_dev_details(request)
+    if not include_dev_details:
+        reduce_info_sent(exception)
+
     response = {"message": str(exception), "status": status}
 
-    if DEVELOPMENT != '0':
+    if include_dev_details:
         trace = traceback.format_exc()
         response['stacktrace'] = trace
     return response
@@ -74,8 +83,17 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
         request.response.status_code = 200
 
 
-def _integrity_error(exception: Exception, request: pyramid.request.Request) -> pyramid.response.Response:
-    return _do_error(request, 400, exception)
+def _include_dev_details(request: pyramid.request.Request) -> bool:
+    return DEVELOPMENT or _auth.is_auth(request, ENV_KEY, CONFIG_KEY)
+
+
+def _integrity_error(exception: sqlalchemy.exc.StatementError,
+                     request: pyramid.request.Request) -> pyramid.response.Response:
+    def reduce_info_sent(e: sqlalchemy.exc.StatementError) -> None:
+        # remove details (SQL statement and links to SQLAlchemy) from the error
+        e.statement = None
+        e.code = None
+    return _do_error(request, 400, exception, reduce_info_sent=reduce_info_sent)
 
 
 def _client_interrupted_error(exception: Exception,

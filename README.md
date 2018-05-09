@@ -339,6 +339,10 @@ application views and will transform it into a JSON response with a HTTP status 
 
 You can disable this by setting `C2C_DISABLE_EXCEPTION_HANDLING` (`c2c.disable_exception_handling`) to "1".
 
+In development mode (`DEVELOPMENT=1`), all the details (SQL statement, stacktrace, ...) are sent to the
+client. In production mode, you can still get them by sending the secret defined in `ERROR_DETAILS_SECRET`
+(`c2c.error_details_secret`) in the query.
+
 If you want to use pyramid_debugtoolbar, you need to disable exception handling and configure it like that:
 ```
 pyramid.includes =

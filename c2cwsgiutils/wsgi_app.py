@@ -7,8 +7,14 @@ coverage_setup.init()  # pragma: no cover
 
 
 def create() -> Callable:  # pragma: no cover
-    from c2cwsgiutils import wsgi, sentry, profiler
-    return sentry.filter_wsgi_app(profiler.filter_wsgi_app(wsgi.create_application()))
+    # first import and initialize the wsgi application in order to have the logs setup before importing
+    # anything else
+    from c2cwsgiutils import wsgi
+    main_app = wsgi.create_application()
+
+    # then, we can setup a few filters
+    from c2cwsgiutils import sentry, profiler
+    return sentry.filter_wsgi_app(profiler.filter_wsgi_app(main_app))
 
 
 application = create()  # pragma: no cover

@@ -63,7 +63,11 @@ def filter_wsgi_app(application: Callable) -> Callable:
     """
     global client
     if client is not None:
-        LOG.info("Enable WSGI filter for Sentry")
-        return middleware.Sentry(application, client)
+        try:
+            LOG.info("Enable WSGI filter for Sentry")
+            return middleware.Sentry(application, client)
+        except Exception:
+            LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
+            return application
     else:
         return application

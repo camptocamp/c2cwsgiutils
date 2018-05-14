@@ -10,11 +10,15 @@ _MODULES = os.environ.get("C2C_PROFILER_MODULES", "")
 
 def filter_wsgi_app(application: Callable) -> Callable:
     if _PATH != "":
-        import linesman.middleware
-        LOG.info("Enable WSGI filter for the profiler on %s", _PATH)
-        linesman.middleware.ENABLED_FLAG_FILE = os.path.join(gettempdir(), 'linesman-enabled')
-        return linesman.middleware.ProfilingMiddleware(
-            app=application, profiler_path=_PATH, chart_packages=_MODULES,
-            filename=os.path.join(gettempdir(), 'linesman-graph-sessions.db'))
+        try:
+            import linesman.middleware
+            LOG.info("Enable WSGI filter for the profiler on %s", _PATH)
+            linesman.middleware.ENABLED_FLAG_FILE = os.path.join(gettempdir(), 'linesman-enabled')
+            return linesman.middleware.ProfilingMiddleware(
+                app=application, profiler_path=_PATH, chart_packages=_MODULES,
+                filename=os.path.join(gettempdir(), 'linesman-graph-sessions.db'))
+        except Exception:
+            LOG.error("Failed enabling the profiler. Continuing without it.", exc_info=True)
+            return application
     else:
         return application

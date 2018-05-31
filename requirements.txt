@@ -17,7 +17,7 @@ pyramid_tm==2.2
 pytest==3.6.0
 pytest-cov==2.5.1
 python-dateutil<2.7.0
-raven==6.8.0
+raven==6.9.0
 requests==2.18.4
 SQLAlchemy==1.2.8
 ujson==1.35

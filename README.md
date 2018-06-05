@@ -281,6 +281,7 @@ To enable the debugging interface, you must set the `DEBUG_VIEW_SECRET` environm
 * memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff/{path}?secret={DEBUG_VIEW_SECRET}&limit=30`
 * sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={DEBUG_VIEW_SECRET}&time=60.2`
 * see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={DEBUG_VIEW_SECRET}`
+* return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={DEBUG_VIEW_SECRET}&status=500`
 
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
 to have a specially tweaked `docker-compose.yml`:

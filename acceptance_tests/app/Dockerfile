@@ -18,7 +18,7 @@ COPY . /app
 
 ARG GIT_HASH
 
-RUN pip3 install --no-cache-dir -r requirements.txt -e . && \
+RUN pip3 install --no-cache-dir -e . && \
     ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models_hello.dot && \
     c2cwsgiutils_genversion.py $GIT_HASH && \

@@ -2,7 +2,7 @@ import gc
 import logging
 import objgraph
 import pyramid.config
-from pyramid.httpexceptions import HTTPException
+from pyramid.httpexceptions import HTTPException, exception_response
 import pyramid.request
 import pyramid.response
 import threading
@@ -105,6 +105,11 @@ def _headers(request: pyramid.request.Request) -> Mapping[str, str]:
     return dict(request.headers)
 
 
+def _error(request: pyramid.request.Request) -> Any:
+    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
+    raise exception_response(request.params['status'], detail="Test")
+
+
 def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
         _broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
@@ -130,5 +135,9 @@ def init(config: pyramid.config.Configurator) -> None:
         config.add_route("c2c_debug_headers", _utils.get_base_path(config) + r"/debug/headers",
                          request_method="GET")
         config.add_view(_headers, route_name="c2c_debug_headers", renderer="fast_json", http_cache=0)
+
+        config.add_route("c2c_debug_error", _utils.get_base_path(config) + r"/debug/error",
+                         request_method="GET")
+        config.add_view(_error, route_name="c2c_debug_error", renderer="fast_json", http_cache=0)
 
         LOG.info("Enabled the /debug/stacks API")

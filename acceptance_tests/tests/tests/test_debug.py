@@ -48,3 +48,8 @@ def test_memory_diff(app_connection):
     print("response=" + json.dumps(response, indent=4))
     leaked = {v[0]: v[2] for v in response}
     assert leaked['LeakedObject'] == 1
+
+
+def test_error(app_connection):
+    app_connection.get_json('c2c/debug/error', params={'secret': 'changeme', 'status': '500'},
+                            expected_status=500)

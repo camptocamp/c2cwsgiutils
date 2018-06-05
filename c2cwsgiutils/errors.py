@@ -103,7 +103,7 @@ def _client_interrupted_error(exception: Exception,
 
 
 def _boto_client_error(exception: Any, request: pyramid.request.Request) -> pyramid.response.Response:
-    status_code = exception.response['Error']['Code']
+    status_code = int(exception.response['Error']['Code'])
     log = STATUS_LOGGER.get(status_code, LOG.warning)
     return _do_error(request, status_code, exception, logger=log)
 

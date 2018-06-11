@@ -11,7 +11,7 @@ import traceback
 from typing import Dict, Mapping, List, Any
 import sys
 
-from c2cwsgiutils import _utils, _auth, _broadcast
+from c2cwsgiutils import _utils, _auth, broadcast
 
 CONFIG_KEY = 'c2c.debug_view_secret'
 ENV_KEY = 'DEBUG_VIEW_SECRET'
@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 
 def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, List[Mapping[str, Any]]]]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
-    result = _broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
+    result = broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
     assert result is not None
     return result
 
@@ -47,7 +47,7 @@ def _dump_stacks_impl() -> Dict[str, List[Dict[str, Any]]]:
 def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     limit = int(request.params.get('limit', '30'))
-    result = _broadcast.broadcast('c2c_dump_memory', params={'limit': limit}, expect_answers=True)
+    result = broadcast.broadcast('c2c_dump_memory', params={'limit': limit}, expect_answers=True)
     assert result is not None
     return result
 
@@ -112,8 +112,8 @@ def _error(request: pyramid.request.Request) -> Any:
 
 def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
-        _broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
-        _broadcast.subscribe('c2c_dump_stacks', _dump_stacks_impl)
+        broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
+        broadcast.subscribe('c2c_dump_stacks', _dump_stacks_impl)
 
         config.add_route("c2c_debug_stacks", _utils.get_base_path(config) + r"/debug/stacks",
                          request_method="GET")

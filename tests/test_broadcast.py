@@ -32,3 +32,27 @@ def test_local():
 
     finally:
         broadcast._broadcaster = None
+
+
+def test_decorator():
+    broadcast._broadcaster = local.LocalBroadcaster()
+    try:
+        cb_calls = [0, 0]
+
+        @broadcast.decorator(expect_answers=True)
+        def cb1(value):
+            cb_calls[0] += 1
+            return value + 1
+
+        @broadcast.decorator()
+        def cb2():
+            cb_calls[1] += 1
+
+        assert cb1(value=12) == [13]
+        assert cb_calls == [1, 0]
+
+        assert cb2() is None
+        assert cb_calls == [1, 1]
+
+    finally:
+        broadcast._broadcaster = None

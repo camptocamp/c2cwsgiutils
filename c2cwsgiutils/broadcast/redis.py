@@ -6,7 +6,7 @@ import threading
 from typing import Callable, Optional, Mapping, Any
 import time
 
-from c2cwsgiutils._broadcast import utils, interface
+from c2cwsgiutils.broadcast import utils, interface
 
 LOG = logging.getLogger(__name__)
 

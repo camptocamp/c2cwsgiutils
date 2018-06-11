@@ -1,13 +1,14 @@
 """
 Broadcast messages to all the processes of Gunicorn in every containers.
 """
+import functools
 import logging
 import pyramid.config
-from typing import Optional, Callable
+from typing import Optional, Callable, Any
 
 from c2cwsgiutils import _utils
-from c2cwsgiutils._broadcast import redis, local
-from c2cwsgiutils._broadcast import interface  # noqa  # pylint: disable=unused-import
+from c2cwsgiutils.broadcast import redis, local
+from c2cwsgiutils.broadcast import interface  # noqa  # pylint: disable=unused-import
 
 LOG = logging.getLogger(__name__)
 REDIS_ENV_KEY = "C2C_REDIS_URL"
@@ -68,3 +69,25 @@ def broadcast(channel: str, params: Optional[dict]=None, expect_answers: bool=Fa
     global _broadcaster
     assert _broadcaster is not None
     return _broadcaster.broadcast(channel, params if params is not None else {}, expect_answers, timeout)
+
+
+def decorator(channel: Optional[str]=None, expect_answers: bool=False, timeout: float=10) -> Callable:
+    """
+    The decorated function will be called through the broadcast functionality. If expect_answers is set to
+    True, the returned value will be a list of all the answers.
+
+    This works only if the module using this decorator is imported after the broadcast system is setup.
+    """
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(**kwargs: Any) -> Any:
+            return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
+
+        if channel is None:
+            _channel = 'c2c_decorated_' + str(id(func))
+        else:
+            _channel = channel
+        subscribe(_channel, func)
+
+        return wrapper
+    return decorator

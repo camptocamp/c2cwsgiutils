@@ -11,7 +11,7 @@ import sqlalchemy.engine
 from threading import Lock
 from typing import Any, Mapping
 
-from c2cwsgiutils import _utils, _auth, _broadcast
+from c2cwsgiutils import _utils, _auth, broadcast
 
 ENV_KEY = 'SQL_PROFILER_SECRET'
 CONFIG_KEY = 'c2c.sql_profiler_secret'
@@ -49,7 +49,7 @@ def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
     enable = request.params.get('enable')
     if enable is not None:
-        _broadcast.broadcast('c2c_sql_profiler', params={'enable': enable}, expect_answers=True)
+        broadcast.broadcast('c2c_sql_profiler', params={'enable': enable}, expect_answers=True)
     return {'status': 200, 'enabled': repository is not None}
 
 
@@ -87,7 +87,7 @@ def init(config: pyramid.config.Configurator) -> None:
     Install a pyramid  event handler that adds the request information
     """
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
-        _broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
+        broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
 
         config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
                          request_method="GET")

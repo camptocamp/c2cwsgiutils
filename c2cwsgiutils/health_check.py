@@ -31,7 +31,7 @@ def _get_bindings(session: Any) -> List[sqlalchemy.engine.Engine]:
         else [session.c2c_rw_bind]
 
 
-def _get_alembic_version(alembic_ini_path: str) -> str:
+def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     # Go to the directory holding the config file and add '.' to the PYTHONPATH variable to support Alembic
     # migration scripts using common modules
     env = dict(os.environ)
@@ -39,7 +39,7 @@ def _get_alembic_version(alembic_ini_path: str) -> str:
     pythonpath = (pythonpath + ':' if pythonpath else '') + '.'
     env['PYTHONPATH'] = pythonpath
 
-    out = subprocess.check_output(['alembic', '-c', alembic_ini_path, 'heads'],
+    out = subprocess.check_output(['alembic', '--config', alembic_ini_path, '--name', name, 'heads'],
                                   cwd=os.path.dirname(alembic_ini_path), env=env).decode('utf-8')
     out_match = ALEMBIC_HEAD_RE.match(out)
     if not out_match:
@@ -71,14 +71,19 @@ class HealthCheck(object):
             name, cb = self._create_db_engine_check(session, binding, query_cb)
             self._checks.append((name, cb, level))
 
-    def add_alembic_check(self, session: sqlalchemy.orm.Session, alembic_ini_path: str, level: int=2) -> None:
+    def add_alembic_check(self, session: sqlalchemy.orm.Session, alembic_ini_path: str, level: int=2,
+                          name: str='alembic', version_schema: Optional[str]=None,
+                          version_table: Optional[str]=None) -> None:
         """
         Check the DB version against the HEAD version of Alembic.
 
         :param session: A DB session created by c2cwsgiutils.db.setup_session() giving access to the DB \
                         managed by Alembic
-        :param alembic_ini_path: Path to the Alembic INI file.
+        :param alembic_ini_path: Path to the Alembic INI file
         :param level: the level of the health check
+        :param name: the name of the configuration section in the Alembic INI file
+        :param version_schema: override the schema where the version table is
+        :param version_table: override the table name for the version
         """
         def check(_request: Any) -> str:
             for binding in _get_bindings(session):
@@ -88,7 +93,8 @@ class HealthCheck(object):
                     with stats.timer_context(['sql', 'manual', 'health_check',  'alembic', alembic_ini_path,
                                               binding.c2c_name]):
                         actual_version, = session.execute(
-                            "SELECT version_num FROM {schema}.{table}".format(schema=schema, table=table)
+                            "SELECT version_num FROM {schema}.{table}".format(schema=version_schema,
+                                                                              table=version_table)
                         ).fetchone()
                         if actual_version != version:
                             raise Exception("Invalid alembic version: %s != %s" % (actual_version, version))
@@ -98,12 +104,17 @@ class HealthCheck(object):
 
         config = configparser.ConfigParser()
         config.read(alembic_ini_path)
-        schema = config['alembic'].get('version_table_schema', 'public')
-        table = config['alembic'].get('version_table', 'alembic_version')
 
-        version = _get_alembic_version(alembic_ini_path)
+        if version_schema is None:
+            version_schema = config.get(name, 'version_table_schema', fallback='public')
 
-        self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_'), check, level))
+        if version_table is None:
+            version_table = config.get(name, 'version_table', fallback='alembic_version')
+
+        version = _get_alembic_version(alembic_ini_path, name)
+
+        self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_') + '_' + name, check,
+                             level))
 
     def add_url_check(
             self, url: Union[str, Callable[[pyramid.request.Request], str]],

@@ -19,7 +19,7 @@ def test_ok(app_connection):
             'db_engine_sqlalchemy_slave': {},
             'http://localhost:8080/api/hello': {},
             'fun_url': {},
-            'alembic_app_alembic.ini': {'result': '4a8c1bb4e775'}
+            'alembic_app_alembic.ini_alembic': {'result': '4a8c1bb4e775'}
         },
         'failures': {},
     }
@@ -46,7 +46,7 @@ def test_failure(app_connection):
             'db_engine_sqlalchemy_slave': {},
             'http://localhost:8080/api/hello': {},
             'fun_url': {},
-            'alembic_app_alembic.ini': {'result': '4a8c1bb4e775'}
+            'alembic_app_alembic.ini_alembic': {'result': '4a8c1bb4e775'}
         },
         'failures': {
             'fail': {

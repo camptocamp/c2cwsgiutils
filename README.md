@@ -237,7 +237,7 @@ looking like that (in case of error):
         "db_engine_sqlalchemy": {"timing": 0.002},
         "db_engine_sqlalchemy_slave": {"timing": 0.003},
         "http://localhost/api/hello": {"timing": 0.010},
-        "alembic_app_alembic.ini": {"timing": 0.005, "result": "4a8c1bb4e775"}
+        "alembic_app_alembic.ini_alembic": {"timing": 0.005, "result": "4a8c1bb4e775"}
     },
     "failures": {
         "custom": {

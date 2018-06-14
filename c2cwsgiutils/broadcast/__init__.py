@@ -33,7 +33,7 @@ def init(config: pyramid.config.Configurator) -> None:
                 _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
                 LOG.info("Broadcast service setup using redis: %s", redis_url)
                 return
-            except ImportError:
+            except ImportError:  # pragma: no cover
                 LOG.warning("Cannot import redis for setting up broadcast capabilities")
         _broadcaster = local.LocalBroadcaster()
         LOG.info("Broadcast service setup using local implementation")

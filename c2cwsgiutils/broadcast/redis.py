@@ -3,7 +3,7 @@ import json
 import random
 import string
 import threading
-from typing import Callable, Optional, Mapping, Any
+from typing import Callable, Optional, Mapping, Any  # noqa  # pylint: disable=unused-import
 import time
 
 from c2cwsgiutils.broadcast import utils, interface
@@ -35,7 +35,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             data = json.loads(message['data'].decode('utf-8'))
             try:
                 response = callback(**data['params'])
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 LOG.error("Failed handling a broadcast message", exc_info=True)
                 response = dict(status=500, message=str(e))
             answer_channel = data.get('answer_channel')
@@ -48,7 +48,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def unsubscribe(self, channel: str) -> None:
         self._pub_sub.unsubscribe(self._get_channel(channel))
 
-    def broadcast(self, channel: str, params: Optional[Mapping[str, Any]], expect_answers: bool,
+    def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
                   timeout: float) -> Optional[list]:
         if expect_answers:
             return self._broadcast_with_answer(channel, params, timeout)
@@ -84,7 +84,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             with cond:
                 while len(answers) < nb_received:
                     to_wait = timeout_time - time.monotonic()
-                    if to_wait <= 0.0:
+                    if to_wait <= 0.0:  # pragma: no cover
                         LOG.warning("timeout waiting for answers on %s", answer_channel)
                         while len(answers) < nb_received:
                             answers.append(None)

@@ -20,7 +20,7 @@ def test_local(local_broadcaster):
         cb_calls[0] += 1
         return data + 1
 
-    def cb2(data):
+    def cb2():
         cb_calls[1] += 1
 
     assert broadcast.broadcast("test1", {'data': 1}, expect_answers=True) == []
@@ -33,10 +33,14 @@ def test_local(local_broadcaster):
     assert broadcast.broadcast("test1", {'data': 1}) is None
     assert cb_calls == [1, 0]
 
-    assert broadcast.broadcast("test2", {'data': 1}) is None
+    assert broadcast.broadcast("test2") is None
     assert cb_calls == [1, 1]
 
     assert broadcast.broadcast("test1", {'data': 12}, expect_answers=True) == [13]
+    assert cb_calls == [2, 1]
+
+    broadcast.unsubscribe("test1")
+    assert broadcast.broadcast("test1", {'data': 1}, expect_answers=True) == []
     assert cb_calls == [2, 1]
 
 
@@ -48,7 +52,7 @@ def test_decorator(local_broadcaster):
         cb_calls[0] += 1
         return value + 1
 
-    @broadcast.decorator()
+    @broadcast.decorator(channel="test3")
     def cb2():
         cb_calls[1] += 1
 

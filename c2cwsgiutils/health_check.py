@@ -38,9 +38,10 @@ def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     pythonpath = os.environ.get('PYTHONPATH', '')
     pythonpath = (pythonpath + ':' if pythonpath else '') + '.'
     env['PYTHONPATH'] = pythonpath
+    dirname = os.path.abspath(os.path.dirname(alembic_ini_path))
 
     out = subprocess.check_output(['alembic', '--config', alembic_ini_path, '--name', name, 'heads'],
-                                  cwd=os.path.dirname(alembic_ini_path), env=env).decode('utf-8')
+                                  cwd=dirname, env=env).decode('utf-8')
     out_match = ALEMBIC_HEAD_RE.match(out)
     if not out_match:
         raise Exception("Cannot get the alembic HEAD version from: " + out)

@@ -1,4 +1,4 @@
-
+from c2cwsgiutils import broadcast
 import c2cwsgiutils.pyramid
 from c2cwsgiutils.health_check import HealthCheck
 from pyramid.config import Configurator
@@ -11,10 +11,22 @@ def _failure(_request):
     raise HTTPInternalServerError('failing check')
 
 
+@broadcast.decorator(expect_answers=True)
+def broadcast_view():
+    return 42
+
+
 def main(_, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     config = Configurator(settings=settings, route_prefix='/api')
+
+    # Initialise the broadcast view before c2cwsgiutils is initialised. This allows to test the
+    # reconfiguration on the fly of the broadcast framework
+    config.add_route("broadcast", r"/broadcast", request_method="GET")
+    config.add_view(lambda request: broadcast_view(), route_name="broadcast", renderer="fast_json",
+                    http_cache=0)
+
     config.include(c2cwsgiutils.pyramid.includeme)
     models.init(config)
     config.scan("c2cwsgiutils_app.services")

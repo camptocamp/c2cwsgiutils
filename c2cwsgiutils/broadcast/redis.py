@@ -6,7 +6,7 @@ import threading
 from typing import Callable, Optional, Mapping, Any  # noqa  # pylint: disable=unused-import
 import time
 
-from c2cwsgiutils.broadcast import utils, interface
+from c2cwsgiutils.broadcast import utils, interface, local
 
 LOG = logging.getLogger(__name__)
 
@@ -43,9 +43,11 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 LOG.debug("Sending broadcast answer on %s", answer_channel)
                 self._connection.publish(answer_channel, json.dumps(utils.add_host_info(response)))
 
+        LOG.debug("Subscribing %s.%s to %s", callback.__module__, callback.__name__, channel)
         self._pub_sub.subscribe(**{self._get_channel(channel): wrapper})
 
     def unsubscribe(self, channel: str) -> None:
+        LOG.debug("Unsubscribing from %s")
         self._pub_sub.unsubscribe(self._get_channel(channel))
 
     def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
@@ -100,3 +102,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         nb_received = self._connection.publish(actual_channel, json.dumps(message))
         LOG.debug('Broadcast on %s sent to %d listeners', actual_channel, nb_received)
         return nb_received
+
+    def copy_local_subscriptions(self, prev_broadcaster: local.LocalBroadcaster) -> None:
+        for channel, callback in prev_broadcaster.get_subscribers().items():
+            self.subscribe(channel, callback)

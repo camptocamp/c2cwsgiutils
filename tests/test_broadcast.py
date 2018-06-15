@@ -61,3 +61,19 @@ def test_decorator(local_broadcaster):
 
     assert cb2() is None
     assert cb_calls == [1, 1]
+
+
+def test_fallback():
+    cb_calls = [0]
+
+    def cb1(value):
+        cb_calls[0] += 1
+        return value + 1
+
+    try:
+        broadcast.subscribe("test1", cb1)
+
+        assert broadcast.broadcast("test1", {'value': 12}, expect_answers=True) == [13]
+        assert cb_calls == [1]
+    finally:
+        broadcast._broadcaster = None  # pylint: disable=W0212

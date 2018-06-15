@@ -21,22 +21,33 @@ _broadcaster = None  # type: Optional[interface.BaseBroadcaster]
 
 def init(config: pyramid.config.Configurator) -> None:
     """
-    Initialize the broacaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
+    Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """
     global _broadcaster
+    redis_url = _utils.env_or_config(config, REDIS_ENV_KEY, REDIS_CONFIG_KEY, None)
+    broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY,
+                                            "broadcast_api_")
     if _broadcaster is None:
-        redis_url = _utils.env_or_config(config, REDIS_ENV_KEY, REDIS_CONFIG_KEY, None)
         if redis_url is not None:
-            broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY,
-                                                    "broadcast_api_")
-            try:
-                _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
-                LOG.info("Broadcast service setup using redis: %s", redis_url)
-                return
-            except ImportError:  # pragma: no cover
-                LOG.warning("Cannot import redis for setting up broadcast capabilities")
+            _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
+            LOG.info("Broadcast service setup using redis: %s", redis_url)
+        else:
+            _broadcaster = local.LocalBroadcaster()
+            LOG.info("Broadcast service setup using local implementation")
+    elif isinstance(_broadcaster, local.LocalBroadcaster) and redis_url is not None:
+        LOG.info("Switching from a local broadcaster to a redis broadcaster")
+        prev_broadcaster = _broadcaster
+        _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
+        _broadcaster.copy_local_subscriptions(prev_broadcaster)
+
+
+def _get(need_init: bool=False) -> interface.BaseBroadcaster:
+    global _broadcaster
+    if _broadcaster is None:
+        if need_init:
+            LOG.error("Broadcast functionality used before it is setup")
         _broadcaster = local.LocalBroadcaster()
-        LOG.info("Broadcast service setup using local implementation")
+    return _broadcaster
 
 
 def subscribe(channel: str, callback: Callable) -> None:
@@ -46,18 +57,14 @@ def subscribe(channel: str, callback: Callable) -> None:
 
     A channel can be subscribed only once.
     """
-    global _broadcaster
-    assert _broadcaster is not None
-    _broadcaster.subscribe(channel, callback)
+    _get().subscribe(channel, callback)
 
 
 def unsubscribe(channel: str) -> None:
     """
     Unsubscribe from a channel.
     """
-    global _broadcaster
-    assert _broadcaster is not None
-    _broadcaster.unsubscribe(channel)
+    _get().unsubscribe(channel)
 
 
 def broadcast(channel: str, params: Optional[dict]=None, expect_answers: bool=False,
@@ -66,17 +73,14 @@ def broadcast(channel: str, params: Optional[dict]=None, expect_answers: bool=Fa
     Broadcast a message to the given channel. If answers are expected, it will wait up to "timeout" seconds
     to get all the answers.
     """
-    global _broadcaster
-    assert _broadcaster is not None
-    return _broadcaster.broadcast(channel, params if params is not None else {}, expect_answers, timeout)
+    return _get(need_init=True).broadcast(channel, params if params is not None else {},
+                                          expect_answers, timeout)
 
 
 def decorator(channel: Optional[str]=None, expect_answers: bool=False, timeout: float=10) -> Callable:
     """
     The decorated function will be called through the broadcast functionality. If expect_answers is set to
     True, the returned value will be a list of all the answers.
-
-    This works only if the module using this decorator is imported after the broadcast system is setup.
     """
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)

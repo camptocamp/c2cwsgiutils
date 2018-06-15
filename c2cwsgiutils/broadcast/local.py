@@ -22,3 +22,6 @@ class LocalBroadcaster(interface.BaseBroadcaster):
         subscriber = self._subscribers.get(channel, None)
         answers = [utils.add_host_info(subscriber(**params))] if subscriber is not None else []
         return answers if expect_answers else None
+
+    def get_subscribers(self) -> Mapping[str, Callable]:
+        return self._subscribers

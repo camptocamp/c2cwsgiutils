@@ -413,7 +413,6 @@ Make sure you are strict with the version numbers:
 To make a release:
 
 * Change the the version in [setup.py](setup.py).
-* run `make release` to publish to PYPI.
 * Commit and push to master.
 * Tag the GIT commit.
 * Rebase the `release_${MAJOR_VERSION}` branch to this commit and push the `release_${MAJOR_VERSION}` and

@@ -75,22 +75,13 @@ build_test_app: build_docker$(PYTHON_VERSION)
 
 .venv/timestamp: requirements.txt Makefile
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
-	.venv/bin/pip install --upgrade -r requirements.txt twine==1.9.1
+	.venv/bin/pip install --upgrade -r requirements.txt
 	touch $@
 
 .PHONY: pull
 pull:
 	for image in `find -name "Dockerfile*" | xargs grep --no-filename FROM | awk '{print $$2}' | sort -u | grep -v c2cwsgiutils`; do docker pull $$image; done
 	for image in `find -name "docker-compose*.yml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do docker pull $$image; done
-
-.PHONY: dist
-dist: .venv/timestamp
-	rm -rf build dist
-	.venv/bin/python setup.py bdist_wheel
-
-.PHONY: release
-release: mypy acceptance dist
-	.venv/bin/twine upload dist/*.whl
 
 .PHONY: run
 run: build_test_app

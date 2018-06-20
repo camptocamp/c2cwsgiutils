@@ -67,7 +67,7 @@ dockerBuild {
 
 
             stage("publish ${CURRENT_TAG} on pypi") {
-                withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'pypi_pvalsecchi/',
+                withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'pypi_pvalsecchi',
                                   usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh "docker run -e USERNAME -e PASSWORD --rm camptocamp/c2cwsgiutils:latest /opt/c2cwsgiutils/release.sh ${CURRENT_TAG}"
                 }

@@ -22,6 +22,7 @@ setup(
     version=VERSION,
     description="Common utilities for Camptocamp WSGI applications",
     long_description=long_description(),
+    long_description_content_type='text/markdown',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Plugins",

@@ -6,6 +6,7 @@
 !release.sh
 !docker-requirements.txt
 !install_docker.sh
+!README.md
 !requirements.txt
 !setup.py
 !setup.cfg

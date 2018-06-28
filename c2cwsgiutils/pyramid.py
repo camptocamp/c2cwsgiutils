@@ -3,7 +3,7 @@ import pyramid.config
 import pyramid_tm
 
 from c2cwsgiutils import stats_pyramid, logging_view, sql_profiler, version, debug, sentry,\
-    request_tracking, errors, pretty_json, broadcast
+    request_tracking, errors, pretty_json, broadcast, index
 
 
 def includeme(config: pyramid.config.Configurator) -> None:
@@ -25,3 +25,4 @@ def includeme(config: pyramid.config.Configurator) -> None:
     version.init(config)
     debug.init(config)
     errors.init(config)
+    index.init(config)

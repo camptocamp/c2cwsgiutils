@@ -107,7 +107,7 @@ def _headers(request: pyramid.request.Request) -> Mapping[str, str]:
 
 def _error(request: pyramid.request.Request) -> Any:
     _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
-    raise exception_response(request.params['status'], detail="Test")
+    raise exception_response(int(request.params['status']), detail="Test")
 
 
 def init(config: pyramid.config.Configurator) -> None:
@@ -140,4 +140,4 @@ def init(config: pyramid.config.Configurator) -> None:
                          request_method="GET")
         config.add_view(_error, route_name="c2c_debug_error", renderer="fast_json", http_cache=0)
 
-        LOG.info("Enabled the /debug/stacks API")
+        LOG.info("Enabled the /debug/... API")

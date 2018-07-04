@@ -3,7 +3,7 @@ Private utilities.
 """
 import os
 import pyramid.config
-from typing import Mapping, Any
+from typing import Mapping, Any, Optional
 
 
 def get_base_path(config: pyramid.config.Configurator) -> str:
@@ -21,3 +21,9 @@ def env_or_settings(settings: Mapping[str, str], env_name: str, settings_name: s
     if env_name in os.environ:
         return os.environ[env_name]
     return settings.get(settings_name, default)
+
+
+def config_bool(value: Optional[str]) -> bool:
+    if value is None:
+        return False
+    return value.lower() in ('true', 't', 'yes', '1')

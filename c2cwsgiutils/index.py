@@ -171,5 +171,7 @@ def _health_check(request: pyramid.request.Request) -> str:
 
 
 def init(config: pyramid.config.Configurator) -> None:
-    config.add_route("c2c_index", _utils.get_base_path(config), request_method="GET")
-    config.add_view(_index, route_name="c2c_index", http_cache=0)
+    base_path = _utils.get_base_path(config)
+    if base_path != '':
+        config.add_route("c2c_index", base_path, request_method="GET")
+        config.add_view(_index, route_name="c2c_index", http_cache=0)

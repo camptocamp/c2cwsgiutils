@@ -6,9 +6,12 @@ app:
     STATS_VIEW: 1
     STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: acceptance
-    LOG_VIEW_SECRET: changeme
-    SQL_PROFILER_SECRET: changeme
-    DEBUG_VIEW_SECRET: changeme
+    C2C_SECRET: changeme
+    C2C_LOG_VIEW_ENABLED: 1
+    C2C_SQL_PROFILER_ENABLED: 1
+    C2C_DEBUG_VIEW_ENABLED: 1
+    C2C_PROFILER_PATH: /api_profiler
+    C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
     LOG_HOST: ${TEST_IP}
     LOG_TYPE: 'console,logstash'
     SQL_LOG_LEVEL: DEBUG
@@ -19,8 +22,6 @@ app:
     C2C_REDIS_URL: redis://redis:6379
     PYTHONMALLOC: debug
     GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
-    C2C_PROFILER_PATH: /api_profiler
-    C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
   links:
     - db
     - db_slave

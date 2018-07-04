@@ -37,6 +37,21 @@ def test_filter(app_connection):
     }
 
 
+def test_empty_filter(app_connection):
+    response = app_connection.get_json("c2c/health_check", params={'checks': ''})
+    print('response=' + json.dumps(response))
+    assert _remove_timings(response) == {
+        'successes': {
+            'db_engine_sqlalchemy': {},
+            'db_engine_sqlalchemy_slave': {},
+            'http://localhost:8080/api/hello': {},
+            'fun_url': {},
+            'alembic_app_alembic.ini_alembic': {'result': '4a8c1bb4e775'}
+        },
+        'failures': {},
+    }
+
+
 def test_failure(app_connection):
     response = app_connection.get_json("c2c/health_check", params={'max_level': '2'}, expected_status=500)
     print('response=' + json.dumps(response))

@@ -173,7 +173,8 @@ class HealthCheck(object):
         }  # type: dict
         checks = None
         if 'checks' in request.params:
-            checks = request.params['checks'].split(',')
+            if request.params['checks'] != '':
+                checks = request.params['checks'].split(',')
         for name, check, level in self._checks:
             if level <= max_level and (checks is None or name in checks):
                 start = time.monotonic()

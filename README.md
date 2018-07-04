@@ -86,7 +86,7 @@ Two new logging backends are provided:
 Look at the logging configuration part of
 [acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for a usage example.
 
-You can enable a view to configure the logging level on a live system using the `LOG_VIEW_ENABLED` environment
+You can enable a view to configure the logging level on a live system using the `C2C_LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on
 `{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}` and can be changed with
 `{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}&level={level}`
@@ -151,7 +151,7 @@ row counts.
 
 ## SQL profiler
 
-The SQL profiler must be configured with the `SQL_PROFILER_ENABLED` environment variable. That enables a view
+The SQL profiler must be configured with the `C2C_SQL_PROFILER_ENABLED` environment variable. That enables a view
 to query the status of the profiler (`{C2C_BASE_PATH}/sql_profiler?secret={C2C_SECRET}`) or to
 enable/disable it (`{C2C_BASE_PATH}/sql_profiler?secret={C2C_SECRET}&enable={1|0}`).
 
@@ -276,7 +276,7 @@ command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) 
 
 ## Debugging
 
-To enable the debugging interface, you must set the `DEBUG_VIEW_ENABLED` environment variable. Then you can
+To enable the debugging interface, you must set the `C2C_DEBUG_VIEW_ENABLED` environment variable. Then you can
 have dumps of a few things:
 
 * every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={C2C_SECRET}`

@@ -55,6 +55,9 @@ named `C2C_BASE_PATH` or in the `production.ini` file with a property named `c2c
 A few REST APIs are added and can be seen with this URL (only enabled if C2C_BASE_PATH is not empty):
 `{C2C_BASE_PATH}`.
 
+Some APIs are protected by a secret. This secret is specified in the `C2C_SECRET` variable or `c2c.secret`
+property. It is either passed as the `secret` query parameter or the `X-API-Key` header.
+
 
 ## Pyramid
 
@@ -83,13 +86,10 @@ Two new logging backends are provided:
 Look at the logging configuration part of
 [acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for a usage example.
 
-You can enable a view to configure the logging level on a live system using the `LOG_VIEW_SECRET` environment
+You can enable a view to configure the logging level on a live system using the `LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on
-`{C2C_BASE_PATH}/logging/level?secret={LOG_VIEW_SECRET}&name={logger_name}` and can be changed with
-`{C2C_BASE_PATH}/logging/level?secret={LOG_VIEW_SECRET}&name={logger_name}&level={level}`
-
-Like all the other views expecting a `secret` parameter, you can pass the secret through the `X-API-Key`
-header.
+`{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}` and can be changed with
+`{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}&level={level}`
 
 
 ### Request tracking
@@ -151,9 +151,9 @@ row counts.
 
 ## SQL profiler
 
-The SQL profiler must be configured with the `SQL_PROFILER_SECRET` environment variable. That enables a view
-to query the status of the profiler (`{C2C_BASE_PATH}/sql_profiler?secret={SQL_PROFILER_SECRET}`) or to
-enable/disable it (`{C2C_BASE_PATH}/sql_profiler?secret={SQL_PROFILER_SECRET}&enable={1|0}`).
+The SQL profiler must be configured with the `SQL_PROFILER_ENABLED` environment variable. That enables a view
+to query the status of the profiler (`{C2C_BASE_PATH}/sql_profiler?secret={C2C_SECRET}`) or to
+enable/disable it (`{C2C_BASE_PATH}/sql_profiler?secret={C2C_SECRET}&enable={1|0}`).
 
 If enabled, for each `SELECT` query sent by SQLAlchemy, another query it done with `EXPLAIN ANALYZE`
 prepended to it. The results are sent to the `c2cwsgiutils.sql_profiler` logger.
@@ -276,15 +276,15 @@ command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) 
 
 ## Debugging
 
-To enable the debugging interface, you must set the `DEBUG_VIEW_SECRET` environment variable or the
-`c2c.debug_view_secret` variable. Then you can have dumps of a few things:
+To enable the debugging interface, you must set the `DEBUG_VIEW_ENABLED` environment variable. Then you can
+have dumps of a few things:
 
-* every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={DEBUG_VIEW_SECRET}`
-* memory usage: `{C2C_BASE_PATH}/debug/memory?secret={DEBUG_VIEW_SECRET}&limit=30`
-* memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff/{path}?secret={DEBUG_VIEW_SECRET}&limit=30`
-* sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={DEBUG_VIEW_SECRET}&time=60.2`
-* see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={DEBUG_VIEW_SECRET}`
-* return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={DEBUG_VIEW_SECRET}&status=500`
+* every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={C2C_SECRET}`
+* memory usage: `{C2C_BASE_PATH}/debug/memory?secret={C2C_SECRET}&limit=30`
+* memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff/{path}?secret={C2C_SECRET}&limit=30`
+* sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={C2C_SECRET}&time=60.2`
+* see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={C2C_SECRET}`
+* return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={C2C_SECRET}&status=500`
 
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
 to have a specially tweaked `docker-compose.yml`:
@@ -344,8 +344,7 @@ application views and will transform it into a JSON response with a HTTP status 
 You can disable this by setting `C2C_DISABLE_EXCEPTION_HANDLING` (`c2c.disable_exception_handling`) to "1".
 
 In development mode (`DEVELOPMENT=1`), all the details (SQL statement, stacktrace, ...) are sent to the
-client. In production mode, you can still get them by sending the secret defined in `ERROR_DETAILS_SECRET`
-(`c2c.error_details_secret`) in the query.
+client. In production mode, you can still get them by sending the secret defined in `C2C_SECRET` in the query.
 
 If you want to use pyramid_debugtoolbar, you need to disable exception handling and configure it like that:
 ```

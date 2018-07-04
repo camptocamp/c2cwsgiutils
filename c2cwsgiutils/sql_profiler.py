@@ -13,8 +13,10 @@ from typing import Any, Mapping
 
 from c2cwsgiutils import _utils, _auth, broadcast
 
-ENV_KEY = 'SQL_PROFILER_SECRET'
-CONFIG_KEY = 'c2c.sql_profiler_secret'
+DEPRECATED_ENV_KEY = 'SQL_PROFILER_SECRET'
+DEPRECATED_CONFIG_KEY = 'c2c.sql_profiler_secret'
+ENV_KEY = 'C2C_SQL_PROFILER_ENABLED'
+CONFIG_KEY = 'c2c.sql_profiler_enabled'
 LOG = logging.getLogger(__name__)
 repository = None
 
@@ -46,16 +48,16 @@ class _Repository(set):
 
 def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
     global repository
-    _auth.auth_view(request, ENV_KEY, CONFIG_KEY)
+    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     enable = request.params.get('enable')
     if enable is not None:
         broadcast.broadcast('c2c_sql_profiler', params={'enable': enable}, expect_answers=True)
     return {'status': 200, 'enabled': repository is not None}
 
 
-def _setup_profiler(enable: bool) -> None:
+def _setup_profiler(enable: str) -> None:
     global repository
-    if enable == '1':
+    if _utils.config_bool(enable):
         if repository is None:
             LOG.warning("Enabling the SQL profiler")
             repository = _Repository()
@@ -86,7 +88,8 @@ def init(config: pyramid.config.Configurator) -> None:
     """
     Install a pyramid  event handler that adds the request information
     """
-    if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, False):
+    if _utils.env_or_config(config, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY, False) or \
+            _auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
 
         config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",

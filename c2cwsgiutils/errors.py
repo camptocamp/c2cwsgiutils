@@ -15,8 +15,8 @@ from webob.request import DisconnectionError
 from c2cwsgiutils import _utils, _auth
 
 DEVELOPMENT = os.environ.get('DEVELOPMENT', '0') != '0'
-CONFIG_KEY = 'c2c.error_details_secret'
-ENV_KEY = 'ERROR_DETAILS_SECRET'
+DEPRECATED_CONFIG_KEY = 'c2c.error_details_secret'
+DEPRECATED_ENV_KEY = 'ERROR_DETAILS_SECRET'
 
 LOG = logging.getLogger(__name__)
 STATUS_LOGGER = {
@@ -84,7 +84,7 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
 
 
 def _include_dev_details(request: pyramid.request.Request) -> bool:
-    return DEVELOPMENT or _auth.is_auth(request, ENV_KEY, CONFIG_KEY)
+    return DEVELOPMENT or _auth.is_auth(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
 
 
 def _integrity_error(exception: sqlalchemy.exc.StatementError,

@@ -43,11 +43,23 @@ def test_headers(app_connection):
     assert response['X-Toto'] == '42'
 
 
-def test_memory_diff(app_connection):
-    response = app_connection.get_json('c2c/debug/memory_diff/api/ping', params={'secret': 'changeme'})
+def _check_leak_there(response):
     print("response=" + json.dumps(response, indent=4))
     leaked = {v[0]: v[2] for v in response}
     assert leaked['LeakedObject'] == 1
+
+
+def test_memory_diff(app_connection):
+    response = app_connection.get_json('c2c/debug/memory_diff', params={
+        'secret': 'changeme',
+        'path': '/api/ping?toto=tutu'
+    })
+    _check_leak_there(response)
+
+
+def test_memory_diff_deprecated(app_connection):
+    response = app_connection.get_json('c2c/debug/memory_diff/api/ping', params={'secret': 'changeme'})
+    _check_leak_there(response)
 
 
 def test_error(app_connection):

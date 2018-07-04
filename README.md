@@ -281,7 +281,7 @@ have dumps of a few things:
 
 * every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={C2C_SECRET}`
 * memory usage: `{C2C_BASE_PATH}/debug/memory?secret={C2C_SECRET}&limit=30`
-* memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff/{path}?secret={C2C_SECRET}&limit=30`
+* memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff?path={path_info}&secret={C2C_SECRET}&limit=30`
 * sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={C2C_SECRET}&time=60.2`
 * see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={C2C_SECRET}`
 * return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={C2C_SECRET}&status=500`

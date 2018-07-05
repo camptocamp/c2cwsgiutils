@@ -80,7 +80,8 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List:
     peak_stats = {}  # type: Dict
     for i in range(3):
         gc.collect(i)
-    objgraph.growth(limit=limit, peak_stats=peak_stats)
+
+    objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)
 
     response = None
     try:
@@ -94,7 +95,8 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List:
 
     for i in range(3):
         gc.collect(i)
-    growth = objgraph.growth(limit=limit, peak_stats=peak_stats)
+
+    growth = objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)
 
     return growth
 

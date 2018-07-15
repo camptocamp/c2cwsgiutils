@@ -8,7 +8,7 @@ flake8==3.5.0
 gunicorn==19.9.0
 junit2html==021
 lxml==4.2.3
-mypy==0.610
+mypy==0.620
 netifaces==0.10.7
 objgraph==3.4.0
 psycopg2-binary==2.7.5
@@ -19,7 +19,7 @@ pytest-cov==2.5.1
 python-dateutil<2.7.0
 raven==6.9.0
 requests==2.19.1
-SQLAlchemy==1.2.9
+SQLAlchemy==1.2.10
 ujson==1.35
 yamllint==1.11.1
 zope.interface==4.5.0

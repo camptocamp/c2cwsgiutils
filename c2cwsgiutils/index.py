@@ -131,7 +131,7 @@ def _debug(request: pyramid.request.Request, secret: str) -> str:
               </form></li>
           <li><form action="{sleep_url}" target="_blank">
                 <input type="submit" value="Sleep">
-                time: <input type="text" name="path" value="1">
+                time: <input type="text" name="time" value="1">
                 <input type="hidden" name="secret" value="{secret_attr}">
               </form></li>
           <li><a href="{dump_headers_url}?secret={secret_url}" target="_blank">HTTP headers</a></li>

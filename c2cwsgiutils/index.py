@@ -175,3 +175,5 @@ def init(config: pyramid.config.Configurator) -> None:
     if base_path != '':
         config.add_route("c2c_index", base_path, request_method="GET")
         config.add_view(_index, route_name="c2c_index", http_cache=0)
+        config.add_route("c2c_index_slash", base_path + "/", request_method="GET")
+        config.add_view(_index, route_name="c2c_index_slash", http_cache=0)

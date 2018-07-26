@@ -131,7 +131,7 @@ def _debug(request: pyramid.request.Request, secret: str) -> str:
               </form></li>
           <li><form action="{sleep_url}" target="_blank">
                 <input type="submit" value="Sleep">
-                time: <input type="text" name="path" value="1">
+                time: <input type="text" name="time" value="1">
                 <input type="hidden" name="secret" value="{secret_attr}">
               </form></li>
           <li><a href="{dump_headers_url}?secret={secret_url}" target="_blank">HTTP headers</a></li>
@@ -175,3 +175,5 @@ def init(config: pyramid.config.Configurator) -> None:
     if base_path != '':
         config.add_route("c2c_index", base_path, request_method="GET")
         config.add_view(_index, route_name="c2c_index", http_cache=0)
+        config.add_route("c2c_index_slash", base_path + "/", request_method="GET")
+        config.add_view(_index, route_name="c2c_index_slash", http_cache=0)

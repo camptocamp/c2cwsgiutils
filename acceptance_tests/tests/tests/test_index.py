@@ -18,3 +18,8 @@ def test_https(app_connection):
                                  headers={'X-Forwarded-Proto': 'https'})
     assert 'https://' + utils.DOCKER_GATEWAY + ':8480/api/' in content
     assert 'http://' + utils.DOCKER_GATEWAY + ':8480/api/' not in content
+
+
+def test_with_slash(app_connection):
+    content = app_connection.get('c2c/')
+    assert "Health checks" in content

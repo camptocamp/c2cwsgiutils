@@ -59,7 +59,7 @@ class HealthCheck(object):
                          request_method="GET")
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]]
-        redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_ENV_KEY)
+        redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
         if redis_url is not None:
             self.add_redis_check(redis_url, level=2)
 

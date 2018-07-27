@@ -16,15 +16,16 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     Implement broadcasting messages using Redis
     """
     def __init__(self, redis_url: str, broadcast_prefix: str) -> None:
-        self._broadcast_prefix = broadcast_prefix
         import redis
+        from c2cwsgiutils import redis_utils
+        self._broadcast_prefix = broadcast_prefix
         self._connection = redis.StrictRedis.from_url(redis_url)
         self._pub_sub = self._connection.pubsub(ignore_subscribe_messages=True)
 
         # need to be subscribed to something for the thread to stay alive
         self._pub_sub.subscribe(**{self._get_channel('c2c_dummy'): lambda message: None})
-        self._thread = self._pub_sub.run_in_thread(sleep_time=1, daemon=True)
-        self._thread.name = "c2c_broadcast_listener"
+        self._thread = redis_utils.PubSubWorkerThread(self._pub_sub, name="c2c_broadcast_listener")
+        self._thread.start()
 
     def _get_channel(self, channel: str) -> str:
         return self._broadcast_prefix + channel

@@ -8,7 +8,7 @@ import pyramid.response
 import threading
 import time
 import traceback
-from typing import Dict, Mapping, List, Any
+from typing import Dict, Mapping, List, Any, Callable
 import sys
 
 from c2cwsgiutils import _utils, _auth, broadcast
@@ -129,39 +129,24 @@ def _error(request: pyramid.request.Request) -> Any:
     raise exception_response(int(request.params['status']), detail="Test")
 
 
+def _add_view(config: pyramid.config.Configurator, name: str, path: str, view: Callable) -> None:
+    config.add_route("c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path,
+                     request_method="GET")
+    config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)
+
+
 def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY, False) or \
             _auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
         broadcast.subscribe('c2c_dump_stacks', _dump_stacks_impl)
 
-        config.add_route("c2c_debug_stacks", _utils.get_base_path(config) + r"/debug/stacks",
-                         request_method="GET")
-        config.add_view(_dump_stacks, route_name="c2c_debug_stacks", renderer="fast_json", http_cache=0)
-
-        config.add_route("c2c_debug_memory", _utils.get_base_path(config) + r"/debug/memory",
-                         request_method="GET")
-        config.add_view(_dump_memory, route_name="c2c_debug_memory", renderer="fast_json", http_cache=0)
-
-        config.add_route("c2c_debug_memory_diff", _utils.get_base_path(config) + r"/debug/memory_diff",
-                         request_method="GET")
-        config.add_view(_dump_memory_diff, route_name="c2c_debug_memory_diff", renderer="fast_json",
-                        http_cache=0)
-        config.add_route("c2c_debug_memory_diff_deprecated",
-                         _utils.get_base_path(config) + r"/debug/memory_diff/*path", request_method="GET")
-        config.add_view(_dump_memory_diff, route_name="c2c_debug_memory_diff_deprecated",
-                        renderer="fast_json", http_cache=0)
-
-        config.add_route("c2c_debug_sleep", _utils.get_base_path(config) + r"/debug/sleep",
-                         request_method="GET")
-        config.add_view(_sleep, route_name="c2c_debug_sleep", renderer="fast_json", http_cache=0)
-
-        config.add_route("c2c_debug_headers", _utils.get_base_path(config) + r"/debug/headers",
-                         request_method="GET")
-        config.add_view(_headers, route_name="c2c_debug_headers", renderer="fast_json", http_cache=0)
-
-        config.add_route("c2c_debug_error", _utils.get_base_path(config) + r"/debug/error",
-                         request_method="GET")
-        config.add_view(_error, route_name="c2c_debug_error", renderer="fast_json", http_cache=0)
+        _add_view(config, "stacks", "stacks", _dump_stacks)
+        _add_view(config, "memory", "memory", _dump_memory)
+        _add_view(config, "memory_diff", "memory_diff", _dump_memory_diff)
+        _add_view(config, "memory_diff_deprecated", "memory_diff/*path", _dump_memory_diff)
+        _add_view(config, "sleep", "sleep", _sleep)
+        _add_view(config, "headers", "headers", _headers)
+        _add_view(config, "error", "error", _error)
 
         LOG.info("Enabled the /debug/... API")

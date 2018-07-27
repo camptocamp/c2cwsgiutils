@@ -28,5 +28,5 @@ def auth_view(request: pyramid.request.Request, env_name: str, config_name: str)
 
 
 def is_enabled(config: pyramid.config.Configurator, env_name: str, config_name: str) -> bool:
-    return config_bool(env_or_config(config, env_name, config_name, None)) and \
+    return config_bool(env_or_config(config, env_name, config_name)) and \
            env_or_config(config, SECRET_ENV, SECRET_PROP, '') != ''

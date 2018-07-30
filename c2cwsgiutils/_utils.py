@@ -16,8 +16,8 @@ def env_or_config(config: pyramid.config.Configurator, env_name: str, config_nam
                            env_name, config_name, default)
 
 
-def env_or_settings(settings: Mapping[str, str], env_name: str, settings_name: str,
-                    default: Any) -> str:
+def env_or_settings(settings: Mapping[str, Any], env_name: str, settings_name: str,
+                    default: Any=None) -> str:
     if env_name in os.environ:
         return os.environ[env_name]
     return settings.get(settings_name, default)

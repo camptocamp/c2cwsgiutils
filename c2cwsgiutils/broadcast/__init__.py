@@ -24,7 +24,7 @@ def init(config: pyramid.config.Configurator) -> None:
     Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """
     global _broadcaster
-    redis_url = _utils.env_or_config(config, REDIS_ENV_KEY, REDIS_CONFIG_KEY, None)
+    redis_url = _utils.env_or_config(config, REDIS_ENV_KEY, REDIS_CONFIG_KEY)
     broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY,
                                             "broadcast_api_")
     if _broadcaster is None:

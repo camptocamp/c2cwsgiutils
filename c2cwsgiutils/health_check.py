@@ -20,7 +20,7 @@ import time
 import traceback
 from typing import Optional, Callable, Mapping, List, Tuple, Any, Union
 
-from c2cwsgiutils import stats, _utils
+from c2cwsgiutils import stats, _utils, broadcast
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r'^([a-f0-9]+) \(head\)\n$')
@@ -49,11 +49,19 @@ def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
 
 
 class HealthCheck(object):
+    """
+    Class for managing health checks.
+
+    Only one instance of this class must be created per process.
+    """
     def __init__(self, config: pyramid.config.Configurator) -> None:
         config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
                          request_method="GET")
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]]
+        redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
+        if redis_url is not None:
+            self.add_redis_check(redis_url, level=2)
 
     def add_db_session_check(self, session: sqlalchemy.orm.Session,
                              query_cb: Optional[Callable[[sqlalchemy.orm.Session], Any]]=None,
@@ -122,8 +130,9 @@ class HealthCheck(object):
             params: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None]=None,
             headers: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None]=None,
             name: Optional[str]=None,
-            check_cb: Callable[[pyramid.request.Request, requests.Response], Any]=lambda request,
-            response: None, timeout: float=3, level: int=1) -> None:
+            check_cb: Callable[[pyramid.request.Request, requests.Response],
+                               Any]=lambda request, response: None,
+            timeout: float=3, level: int=1) -> None:
         """
         Check that a GET on an URL returns 2xx
 
@@ -149,6 +158,33 @@ class HealthCheck(object):
             return check_cb(request, response)
         if name is None:
             name = str(url)
+        self._checks.append((name, check, level))
+
+    def add_redis_check(self, url: str, name: Optional[str]=None, level: int=1) -> None:
+        """
+        Check that the given redis server is reachable. One such check is automatically added if
+        the broadcaster is configured with redis.
+
+        :param url: the redis URL
+        :param name: the name of the check (defaults to url)
+        :param level: the level of the health check
+        :return:
+        """
+        import redis
+
+        def check(request: pyramid.request.Request) -> Any:
+            con = redis.StrictRedis(connection_pool=pool)
+            return {
+                'info': con.info(),
+                'dbsize': con.dbsize()
+            }
+
+        pool = redis.ConnectionPool.from_url(url, retry_on_timeout=False, socket_connect_timeout=0.5,
+                                             socket_timeout=0.5)
+        if not url.startswith("redis://"):
+            url = "redis://" + url
+        if name is None:
+            name = url
         self._checks.append((name, check, level))
 
     def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], Any],

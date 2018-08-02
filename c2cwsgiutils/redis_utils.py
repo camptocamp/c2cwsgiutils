@@ -13,7 +13,7 @@ class PubSubWorkerThread(threading.Thread):
     A clone of redis.client.PubSubWorkerThread that doesn't die when the connections are broken.
     """
     def __init__(self, pubsub: redis.client.PubSub, name: Optional[str]=None) -> None:
-        super().__init__(name=name)
+        super().__init__(name=name, daemon=True)
         self.pubsub = pubsub
         self._running = False
 

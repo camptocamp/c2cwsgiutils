@@ -11,6 +11,7 @@ RUN apt-get update && \
         git \
         graphviz-dev \
         graphviz \
+        screen \
         vim && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*

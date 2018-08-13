@@ -19,7 +19,7 @@ BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 _broadcaster = None  # type: Optional[interface.BaseBroadcaster]
 
 
-def init(config: pyramid.config.Configurator) -> None:
+def init(config: Optional[pyramid.config.Configurator]=None) -> None:
     """
     Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """

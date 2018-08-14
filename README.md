@@ -126,6 +126,9 @@ If enabled, some metrics are automatically generated:
 * {STATSD_PREFIX}.route.{verb}.{route_name}.{status}: The time to process a query (includes rendering)
 * {STATSD_PREFIX}.render.{verb}.{route_name}.{status}: The time to render a query
 * {STATSD_PREFIX}.sql.{query}: The time to execute the given SQL query (simplified and normalized)
+* {STATSD_PREFIX}.requests.{scheme}.{hostname}.{port}.{verb}: The time to execute HTTP requests to
+   outside services (only the time between the start of sending of the request and when the header is
+   back with a chunk of the body)
 
 You can manually measure the time spent on something like that:
 

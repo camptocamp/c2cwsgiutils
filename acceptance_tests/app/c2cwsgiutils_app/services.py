@@ -13,6 +13,7 @@ hello_service = services.create("hello", "/hello", cors_credentials=True)
 error_service = services.create("error", "/error")
 tracking_service = services.create("tracking", "/tracking/{depth:[01]}")
 empty_service = services.create("empty", "/empty")
+timeout_service = services.create("timeout", "timeout/{where:sql}")
 leaked_objects = []
 
 
@@ -84,5 +85,12 @@ def tracking(request):
 
 @empty_service.put()
 def empty(request):
+    request.response.status_code = 204
+    return request.response
+
+
+@timeout_service.get(match_param='where=sql')
+def timeout_sql(request):
+    models.DBSession.execute("SELECT pg_sleep(2)")
     request.response.status_code = 204
     return request.response

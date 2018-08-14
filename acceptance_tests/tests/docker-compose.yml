@@ -3,6 +3,7 @@ app:
   environment: &app_env
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
+    PGOPTIONS: '-c statement_timeout=1500'
     STATS_VIEW: 1
     STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: acceptance

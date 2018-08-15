@@ -19,6 +19,7 @@ from c2cwsgiutils import _utils, stats
 ID_HEADERS = []  # type: List[str]
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
+DEFAULT_TIMEOUT = None  # type: Optional[float]
 
 
 def _gen_request_id(request: pyramid.request.Request) -> str:
@@ -36,28 +37,39 @@ def _add_session_id(session: Session, _transaction: Any, _connection: Any) -> No
 
 def _patch_requests() -> None:
     def send_wrapper(self: requests.adapters.HTTPAdapter, request: requests.models.PreparedRequest,
-                     timeout: Optional[int]=None, **kwargs: Any) -> requests.Response:
+                     timeout: Optional[float]=None, **kwargs: Any) -> requests.Response:
         pyramid_request = get_current_request()
         header = ID_HEADERS[0]
         if pyramid_request is not None and header not in request.headers:
             request.headers[header] = pyramid_request.c2c_request_id
 
         if timeout is None:
-            LOG.warning("Doing a request without timeout to %s", request.url)
+            if DEFAULT_TIMEOUT is not None:
+                timeout = DEFAULT_TIMEOUT
+            else:
+                LOG.warning("Doing a %s request without timeout to %s", request.method, request.url)
 
-        parsed = urllib.parse.urlparse(request.url)  # type: ignore
-        with stats.timer_context(['requests', parsed.scheme, parsed.hostname, parsed.port, request.method]):
-            return _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
+        status = 999
+        timer = stats.timer()
+        try:
+            response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
+            status = response.status_code
+            return response
+        finally:
+            parsed = urllib.parse.urlparse(request.url)  # type: ignore
+            timer.stop(['requests', parsed.scheme, parsed.hostname, parsed.port, request.method, status])
 
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore
 
 
 def init(config: pyramid.config.Configurator) -> None:
-    global ID_HEADERS
+    global ID_HEADERS, DEFAULT_TIMEOUT
     ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish', 'X-Amzn-Trace-Id']
     extra_header = _utils.env_or_config(config, 'C2C_REQUEST_ID_HEADER', 'c2c.request_id_header')
     if extra_header is not None:
         ID_HEADERS.insert(0, extra_header)
+    DEFAULT_TIMEOUT = _utils.env_or_config(config, 'C2C_REQUESTS_DEFAULT_TIMEOUT',
+                                           'c2c.requests_default_timeout', type_=float)
 
     config.add_request_method(_gen_request_id, 'c2c_request_id', reify=True)
     _patch_requests()

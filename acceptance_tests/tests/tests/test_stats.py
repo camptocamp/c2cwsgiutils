@@ -31,4 +31,4 @@ def test_requests(app_connection):
 
     stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
-    assert stats['timers']['requests/http/localhost/8080/GET']['nb'] == 1
+    assert stats['timers']['requests/http/localhost/8080/GET/200']['nb'] == 1

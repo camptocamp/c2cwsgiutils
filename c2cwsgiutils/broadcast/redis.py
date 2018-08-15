@@ -19,7 +19,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         import redis
         from c2cwsgiutils import redis_utils
         self._broadcast_prefix = broadcast_prefix
-        self._connection = redis.StrictRedis.from_url(redis_url)
+        self._connection = redis.StrictRedis.from_url(redis_url, socket_timeout=3)
         self._pub_sub = self._connection.pubsub(ignore_subscribe_messages=True)
 
         # need to be subscribed to something for the thread to stay alive

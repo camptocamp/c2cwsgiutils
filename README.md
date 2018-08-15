@@ -133,6 +133,7 @@ If enabled, some metrics are automatically generated:
 * {STATSD_PREFIX}.requests.{scheme}.{hostname}.{port}.{verb}.{status}: The time to execute HTTP requests to
    outside services (only the time between the start of sending of the request and when the header is
    back with a chunk of the body)
+* {STATSD_PREFIX}.redis.{command}: The time to execute the given Redis command
 
 You can manually measure the time spent on something like that:
 

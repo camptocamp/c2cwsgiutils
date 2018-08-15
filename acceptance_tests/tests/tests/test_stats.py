@@ -32,3 +32,15 @@ def test_requests(app_connection):
     stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
     assert stats['timers']['requests/http/localhost/8080/GET/200']['nb'] == 1
+
+
+def test_redis(app_connection):
+    # reset the stats to be sure where we are at
+    app_connection.get_json('c2c/stats.json?reset=1', cors=False)
+
+    # that sends a few PUBLISH to redis
+    app_connection.get_json('c2c/debug/stacks', params={'secret': 'changeme'})
+
+    stats = app_connection.get_json('c2c/stats.json', cors=False)
+    print(stats)
+    assert stats['timers']['redis/PUBLISH']['nb'] >= 1

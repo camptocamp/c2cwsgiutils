@@ -112,6 +112,10 @@ the `X-Request-ID` HTTP header, for example. The value of the request ID is acce
 `c2c_request_id` attribute on the Pyramid Request objects. The `requests` module is patched to automatically
 add this header.
 
+The requests module is also patched to monitor requests done without timeout. In that case, you can
+configure a default timeout with the `C2C_REQUESTS_DEFAULT_TIMEOUT` environment variable
+(`c2c.requests_default_timeout`). If no timeout and no default is specified, a warning is issued.
+
 
 ## Metrics
 
@@ -126,7 +130,7 @@ If enabled, some metrics are automatically generated:
 * {STATSD_PREFIX}.route.{verb}.{route_name}.{status}: The time to process a query (includes rendering)
 * {STATSD_PREFIX}.render.{verb}.{route_name}.{status}: The time to render a query
 * {STATSD_PREFIX}.sql.{query}: The time to execute the given SQL query (simplified and normalized)
-* {STATSD_PREFIX}.requests.{scheme}.{hostname}.{port}.{verb}: The time to execute HTTP requests to
+* {STATSD_PREFIX}.requests.{scheme}.{hostname}.{port}.{verb}.{status}: The time to execute HTTP requests to
    outside services (only the time between the start of sending of the request and when the header is
    back with a chunk of the body)
 

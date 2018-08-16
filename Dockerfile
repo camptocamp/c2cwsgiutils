@@ -1,8 +1,8 @@
 FROM camptocamp/python-gis:3.6-ubuntu18.04
 LABEL maintainer "info@camptocamp.org"
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libpq-dev \
         libgeos-dev \
         libproj-dev \
@@ -11,8 +11,12 @@ RUN apt-get update && \
         git \
         graphviz-dev \
         graphviz \
+        net-tools \
+        iputils-ping \
+        tree \
         screen \
-        vim && \
+        vim \
+        vim-editorconfig && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/

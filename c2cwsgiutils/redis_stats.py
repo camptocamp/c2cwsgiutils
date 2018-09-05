@@ -13,7 +13,7 @@ def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
         return ORIG(self, *args, **options)  # type: ignore
 
 
-def init(config: pyramid.config.Configurator) -> None:
+def init(config: Optional[pyramid.config.Configurator]=None) -> None:
     global ORIG
     if _utils.env_or_config(config, 'C2C_TRACK_REDIS', 'c2c.track_redis', True, _utils.config_bool):
         try:

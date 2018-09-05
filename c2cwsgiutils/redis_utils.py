@@ -32,6 +32,9 @@ class PubSubWorkerThread(threading.Thread):
                     LOG.warning("Redis connection problem", exc_info=True)
                 last_was_ok = False
                 time.sleep(0.5)
+            except Exception:
+                LOG.warning("Unexpected error", exc_info=True)
+        LOG.info("Redis subscription worker stopped")
         pubsub.close()
         self._running = False
 

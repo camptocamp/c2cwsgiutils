@@ -44,12 +44,14 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 LOG.debug("Sending broadcast answer on %s", answer_channel)
                 self._connection.publish(answer_channel, json.dumps(utils.add_host_info(response)))
 
-        LOG.debug("Subscribing %s.%s to %s", callback.__module__, callback.__name__, channel)
-        self._pub_sub.subscribe(**{self._get_channel(channel): wrapper})
+        actual_channel = self._get_channel(channel)
+        LOG.debug("Subscribing %s.%s to %s", callback.__module__, callback.__name__, actual_channel)
+        self._pub_sub.subscribe(**{actual_channel: wrapper})
 
     def unsubscribe(self, channel: str) -> None:
         LOG.debug("Unsubscribing from %s")
-        self._pub_sub.unsubscribe(self._get_channel(channel))
+        actual_channel = self._get_channel(channel)
+        self._pub_sub.unsubscribe(actual_channel)
 
     def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
                   timeout: float) -> Optional[list]:
@@ -66,7 +68,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         assert self._thread.is_alive()
 
         def callback(msg: Mapping[str, Any]) -> None:
-            LOG.debug('Received a broadcast answer on %s', msg['channel'])
+            LOG.debug('Received a broadcast answer on %s', msg['channel'].decode('utf-8'))
             with cond:
                 answers.append(json.loads(msg['data'].decode('utf-8')))
                 cond.notify()

@@ -221,7 +221,7 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         self._send(message)
 
 
-def init_backends(settings: Mapping[str, str]) -> None:
+def init_backends(settings: Optional[Mapping[str, str]]=None) -> None:
     """
     Initialize the backends according to the configuration.
 

@@ -34,6 +34,11 @@ alembic_master:
   image: camptocamp/c2cwsgiutils_test_app:latest
   environment:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+    SQL_LOG_LEVEL: DEBUG
+    OTHER_LOG_LEVEL: DEBUG
+    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
+    STATSD_ADDRESS: ${TEST_IP}:8125
+    STATSD_PREFIX: alembic_master
   links:
     - db
   command: /bin/true  # will use execute with another script from the tests to actually do it
@@ -42,6 +47,11 @@ alembic_slave:
   image: camptocamp/c2cwsgiutils_test_app:latest
   environment:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+    SQL_LOG_LEVEL: DEBUG
+    OTHER_LOG_LEVEL: DEBUG
+    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
+    STATSD_ADDRESS: ${TEST_IP}:8125
+    STATSD_PREFIX: alembic_slave
   links:
     - db_slave:db
   command: /bin/true  # will use execute with another script from the tests to actually do it

@@ -83,6 +83,7 @@ run_test:
   environment: *app_env
   links:
     - db
+    - redis
 
 redis:
   image: redis:4

@@ -10,9 +10,12 @@ A pyramid event handler is installed to setup this filter for the current reques
 import cee_syslog_handler
 import json
 import logging
+import logging.config
+import os
 from pyramid.threadlocal import get_current_request
 import socket
-from typing import Any, MutableMapping, Mapping, IO
+import sys
+from typing import Any, MutableMapping, Mapping, IO, Optional
 
 LOG = logging.getLogger(__name__)
 
@@ -91,3 +94,17 @@ class JsonLogHandler(logging.StreamHandler):
         message = _make_message_dict(record,  self._fqdn, debugging_fields=True, extra_fields=True,
                                      facility=None, static_fields={})
         return json.dumps(message)
+
+
+def init(configfile: Optional[str]=None) -> Optional[str]:
+    logging.captureWarnings(True)
+    configfile_ = configfile if configfile is not None \
+        else os.environ.get('C2CWSGIUTILS_CONFIG', "/app/production.ini")
+    if os.path.isfile(configfile_):
+        logging.config.fileConfig(configfile_, defaults=dict(os.environ))
+        return configfile_
+    else:
+        logging.basicConfig(level=logging.DEBUG,
+                            format="%(asctime)-15s %(levelname)5s %(name)s %(message)s",
+                            stream=sys.stderr)
+        return None

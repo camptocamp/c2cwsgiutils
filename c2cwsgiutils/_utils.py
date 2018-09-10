@@ -16,11 +16,11 @@ def env_or_config(config: Optional[pyramid.config.Configurator], env_name: str, 
                            env_name, config_name, default, type_)
 
 
-def env_or_settings(settings: Mapping[str, Any], env_name: str, settings_name: str,
+def env_or_settings(settings: Optional[Mapping[str, Any]], env_name: str, settings_name: str,
                     default: Any=None, type_: Callable[[str], Any]=str) -> Any:
     if env_name in os.environ:
         return type_(os.environ[env_name])
-    if settings_name in settings:
+    if settings is not None and settings_name in settings:
         return type_(settings[settings_name])
     return default
 

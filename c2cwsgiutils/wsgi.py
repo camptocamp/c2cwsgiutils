@@ -1,8 +1,9 @@
 import os
 import logging
-from logging.config import fileConfig
 from pyramid.paster import get_app
 from typing import Optional, Any
+
+from c2cwsgiutils import pyramid_logging
 
 
 def create_application(configfile: Optional[str]=None) -> Any:
@@ -13,11 +14,8 @@ def create_application(configfile: Optional[str]=None) -> Any:
     :param configfile: The configuration file to use
     :return: The application
     """
-    logging.captureWarnings(True)
-    configfile_ = configfile if configfile is not None else \
-        os.environ.get('C2CWSGIUTILS_CONFIG', "/app/production.ini")
+    configfile_ = pyramid_logging.init(configfile)
     # Load the logging config without using pyramid to be able to use environment variables in there.
-    fileConfig(configfile_, defaults=dict(os.environ))
     try:
         return get_app(configfile_, 'main', options=os.environ)
     except Exception:

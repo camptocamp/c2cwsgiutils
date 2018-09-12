@@ -72,7 +72,8 @@ def setup_session(
     return db_session, rw_engine, ro_engine
 
 
-def create_session(config: pyramid.config.Configurator, name: str, url: str, slave_url: Optional[str]=None,
+def create_session(config: Optional[pyramid.config.Configurator], name: str, url: str,
+                   slave_url: Optional[str]=None,
                    force_master: Optional[Iterable[str]]=None, force_slave: Optional[Iterable[str]]=None,
                    **engine_config: Any) \
         -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:

@@ -30,7 +30,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
       <body>
     """
 
-    if auth:
+    if not auth:
         response.text += """
         <form>
           secret: <input type="text" name="secret">
@@ -108,11 +108,13 @@ def _logging(request: pyramid.request.Request, secret: str) -> str:
                 level: <input type="text" name="level" value="INFO">
                 {secret_input}
               </form></li>
+          <li><a href="{logging_url}{secret_query_sting}" target="_blank">List overrides</a>
         </ul>
         """.format(
             logging_url=logging_url,
             secret_input="" if secret is None else
             '<input type="hidden" name="secret" value="{}">'.format(html.escape(secret)),
+            secret_query_sting="" if secret is None else "?secret=" + quote_plus(secret),
         )
     else:
         return ""

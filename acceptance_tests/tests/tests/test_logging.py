@@ -14,7 +14,9 @@ def _query(app_connection, params, expected=None):
     all_params.update(params)
     response = app_connection.get_json('c2c/logging/level', params=all_params)
 
-    all_expected = {'status': 200, 'name': all_params['name']}
+    all_expected = {'status': 200}
+    if 'name' in all_params:
+        all_expected['name'] = all_params['name']
     all_expected.update(expected)
     assert response == all_expected
 
@@ -31,6 +33,8 @@ def test_api(app_connection):
 
     _query(app_connection, {'name': 'sqlalchemy.engine', 'level': 'DEBUG'},
            {'level': 'DEBUG', 'effective_level': 'DEBUG'})
+
+    _query(app_connection, {}, {'overrides': {'sqlalchemy.engine': 'DEBUG'}})
 
 
 def test_api_bad_secret(app_connection):

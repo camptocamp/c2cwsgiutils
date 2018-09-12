@@ -89,7 +89,8 @@ Look at the logging configuration part of
 You can enable a view to configure the logging level on a live system using the `C2C_LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on
 `{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}` and can be changed with
-`{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}&level={level}`
+`{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}&level={level}`. Overrides are stored in
+Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) is configured.
 
 
 ### Request tracking

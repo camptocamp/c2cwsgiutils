@@ -16,6 +16,8 @@ class CacheExpected(Enum):
 class Connection:
     def __init__(self, base_url: str, origin: str) -> None:
         self.base_url = base_url
+        if not self.base_url.endswith('/'):
+            self.base_url += '/'
         self.session = requests.session()
         self.origin = origin
 

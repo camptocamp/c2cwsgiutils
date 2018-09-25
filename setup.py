@@ -55,6 +55,7 @@ setup(
         'c2cwsgiutils_run',
         'c2cwsgiutils_genversion.py',
         'c2cwsgiutils_coverage_report.py',
-        'c2cwsgiutils_stats_db.py'
+        'c2cwsgiutils_stats_db.py',
+        'c2cwsgiutils_test_print.py'
     ]
 )

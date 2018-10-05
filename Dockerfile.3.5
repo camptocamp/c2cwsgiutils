@@ -14,8 +14,8 @@ RUN apt-get update && \
         vim && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
-COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/
-RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt
+COPY requirements.txt docker-requirements-light.txt docker-requirements.txt /opt/c2cwsgiutils/
+RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements-light.txt -r /opt/c2cwsgiutils/docker-requirements.txt
 
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \

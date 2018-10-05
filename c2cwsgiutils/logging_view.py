@@ -74,6 +74,8 @@ def _store_override(settings: dict, name: str, level: str) -> None:
 def _list_overrides(settings: dict) -> Generator[Tuple[str, str], None, None]:
     import redis
     redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
+    if redis_url is None:
+        return
     con = redis.StrictRedis.from_url(redis_url, socket_timeout=3, decode_responses=True)
     for key in con.scan_iter(REDIS_PREFIX + '*'):
         level = con.get(key)

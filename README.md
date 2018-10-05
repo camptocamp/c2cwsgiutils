@@ -3,6 +3,7 @@
 | branch  | CI  | requirements  | static analysis |
 |---|---|---|---|
 | master | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/) | [![Requirements master](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=master)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=master) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c47d09a059ca410cbc325f94d7993518)](https://www.codacy.com/app/camptocamp/c2cwsgiutils?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=camptocamp/c2cwsgiutils&amp;utm_campaign=Badge_Grade) |
+| release_2 | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_2)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_2/) | [![Requirements release_2](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_2)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_2) | |
 | release_1 (deprecated) | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_1)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_1/) | [![Requirements release_1](https://requires.io/github/camptocamp/c2cwsgiutils/requirements.svg?branch=release_1)](https://requires.io/github/camptocamp/c2cwsgiutils/requirements/?branch=release_1) | |
 
 This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
@@ -41,7 +42,10 @@ pip install c2cwsgiutils
 ```
 
 Or (preferred) as a base Docker image:
-[camptocamp/c2cwsgiutils:1](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
+[camptocamp/c2cwsgiutils:2](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
+
+If you need an image with a smaller foot print, use the tags prefixed with `-light`. Those are without
+gdal and without the build tools.
 
 
 ## General config

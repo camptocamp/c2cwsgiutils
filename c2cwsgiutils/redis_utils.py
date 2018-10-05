@@ -26,7 +26,9 @@ class PubSubWorkerThread(threading.Thread):
         while pubsub.subscribed:
             try:
                 pubsub.get_message(ignore_subscribe_messages=True, timeout=1)
-                last_was_ok = True
+                if not last_was_ok:
+                    LOG.info("Redis is back")
+                    last_was_ok = True
             except redis.exceptions.RedisError:
                 if last_was_ok:
                     LOG.warning("Redis connection problem", exc_info=True)

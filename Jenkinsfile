@@ -18,7 +18,7 @@ dockerBuild {
         sh 'make pull'
         sh 'git clean -f -d'
     }
-    for (python_version in ['3.5', '']) {
+    for (python_version in ['3.5', 'light', '']) {
         env.PYTHON_VERSION = python_version
 
         stage("Build ${python_version}") {
@@ -83,7 +83,9 @@ dockerBuild {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 for (String tag: tags) {
                     sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${tag}"
+                    sh "docker tag camptocamp/c2cwsgiutils:latest-light camptocamp/c2cwsgiutils:${tag}-light"
                     docker.image("camptocamp/c2cwsgiutils:${tag}").push()
+                    docker.image("camptocamp/c2cwsgiutils:${tag}-light").push()
                 }
                 sh 'rm -rf ~/.docker*'
             }
@@ -97,6 +99,7 @@ dockerBuild {
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 docker.image('camptocamp/c2cwsgiutils:latest').push()
+                docker.image('camptocamp/c2cwsgiutils:latest-light').push()
                 sh 'rm -rf ~/.docker*'
             }
         }
@@ -110,7 +113,9 @@ dockerBuild {
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}"
+                sh "docker tag camptocamp/c2cwsgiutils:latest-light camptocamp/c2cwsgiutils:${majorRelease}-light"
                 docker.image("camptocamp/c2cwsgiutils:${majorRelease}").push()
+                docker.image("camptocamp/c2cwsgiutils:${majorRelease}-light").push()
                 sh 'rm -rf ~/.docker*'
             }
         }

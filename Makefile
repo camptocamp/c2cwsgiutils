@@ -98,5 +98,9 @@ mypy_local: .venv/timestamp
 build_docker3.5:
 	docker build -t $(DOCKER_BASE):latest -f Dockerfile.3.5 .
 
+build_dockerlight:
+	docker build -t $(DOCKER_BASE):latest -f Dockerfile.light .
+	docker tag $(DOCKER_BASE):latest $(DOCKER_BASE):latest-light
+
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache

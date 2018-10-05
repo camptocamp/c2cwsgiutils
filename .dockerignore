@@ -5,6 +5,7 @@
 !c2cwsgiutils_run
 !release.sh
 !docker-requirements.txt
+!docker-requirements-light.txt
 !install_docker.sh
 !README.md
 !requirements.txt

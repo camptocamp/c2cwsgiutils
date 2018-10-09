@@ -20,6 +20,6 @@ fi
 
 python3 ./setup.py bdist_wheel
 
-pip install twine==1.11.0
+pip install twine==1.12.1 setuptools==40.4.3 wheel==0.32.1
 
 twine upload -u "${USERNAME}" -p "${PASSWORD}" dist/*.whl

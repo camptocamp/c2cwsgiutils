@@ -6,7 +6,7 @@ cornice==3.4.1
 coverage==4.5.1
 flake8==3.5.0
 gunicorn==19.9.0
-junit2html==021
+junit2html==022
 lxml==4.2.5
 mypy==0.641
 netifaces==0.10.7

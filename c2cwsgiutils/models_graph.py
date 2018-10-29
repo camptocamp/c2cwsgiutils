@@ -26,7 +26,7 @@ def _generate_model_graph(module: Any, base: Any) -> None:
         getattr(module, symbol_name)
         for symbol_name in dir(module)
         if _is_interesting(getattr(module, symbol_name), base)
-        }
+    }
 
     for symbol in list(interesting):
         symbol = getattr(module, symbol.__name__)

@@ -91,7 +91,7 @@ class JsonLogHandler(logging.StreamHandler):
         self._fqdn = socket.getfqdn()
 
     def format(self, record: Any) -> str:
-        message = _make_message_dict(record,  self._fqdn, debugging_fields=True, extra_fields=True,
+        message = _make_message_dict(record, self._fqdn, debugging_fields=True, extra_fields=True,
                                      facility=None, static_fields={})
         return json.dumps(message)
 

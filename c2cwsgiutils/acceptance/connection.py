@@ -135,7 +135,7 @@ class Connection:
         if cors:
 
             assert r.headers["Access-Control-Allow-Origin"] == \
-                   self.origin if 'Access-Control-Allow-Credentials' in r.headers else '*'
+                self.origin if 'Access-Control-Allow-Credentials' in r.headers else '*'
 
     def _merge_headers(self, headers: Optional[Mapping[str, str]], cors: bool) -> Mapping[str, str]:
         merged = dict(headers) if headers is not None else {}

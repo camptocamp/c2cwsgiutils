@@ -23,7 +23,7 @@ def _try(what: Callable[[], Any], fail: bool=True, times: int=5, delay: float=10
             return what()
         except Exception:
             LOG.warning("Exception:", exc_info=True)
-            if i+1 == times and fail:
+            if i + 1 == times and fail:
                 raise
             time.sleep(delay)
 

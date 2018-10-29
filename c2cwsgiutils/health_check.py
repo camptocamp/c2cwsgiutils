@@ -99,7 +99,7 @@ class HealthCheck(object):
                 prev_bind = session.bind
                 try:
                     session.bind = binding
-                    with stats.timer_context(['sql', 'manual', 'health_check',  'alembic', alembic_ini_path,
+                    with stats.timer_context(['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
                                               binding.c2c_name]):
                         actual_version, = session.execute(
                             "SELECT version_num FROM {schema}.{table}".format(schema=version_schema,
@@ -246,7 +246,7 @@ class HealthCheck(object):
             prev_bind = session.bind
             try:
                 session.bind = bind
-                with stats.timer_context(['sql', 'manual', 'health_check',  'db', bind.c2c_name]):
+                with stats.timer_context(['sql', 'manual', 'health_check', 'db', bind.c2c_name]):
                     return query_cb(session)
             finally:
                 session.bind = prev_bind

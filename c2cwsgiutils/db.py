@@ -11,6 +11,7 @@ from typing import Optional, Iterable, Tuple, Any, Callable, Union
 from zope.sqlalchemy import ZopeTransactionExtension
 
 LOG = logging.getLogger(__name__)
+RE_COMPILE = re.compile  # type: Callable[[str], Pattern[str]]
 
 
 class Tweens(object):
@@ -127,9 +128,9 @@ def _add_tween(
 ) -> None:
     global tweens
 
-    master_paths = list(map(re.compile, force_master)) if force_master is not None \
+    master_paths = list(map(RE_COMPILE, force_master)) if force_master is not None \
         else []  # type: Iterable[Pattern]
-    slave_paths = list(map(re.compile, force_slave)) if force_slave is not None \
+    slave_paths = list(map(RE_COMPILE, force_slave)) if force_slave is not None \
         else []  # type: Iterable[Pattern]
 
     def db_chooser_tween_factory(handler: Callable, _registry: Any) -> Callable:
@@ -143,8 +144,9 @@ def _add_tween(
             old = session.bind
             method_path = "%s %s" % (request.method, request.path)  # type: Any
             has_force_master = any(r.match(method_path) for r in master_paths)
-            if not has_force_master and (request.method in ("GET", "OPTIONS") or
-                                         any(r.match(method_path) for r in slave_paths)):
+            if not has_force_master and (
+                request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths)
+            ):
                 LOG.debug("Using %s database for: %s", db_session.c2c_ro_bind.c2c_name, method_path)
                 session.bind = db_session.c2c_ro_bind
             else:

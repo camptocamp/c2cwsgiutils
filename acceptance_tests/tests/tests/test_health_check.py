@@ -68,7 +68,14 @@ def test_failure(app_connection):
             'fail': {
                 'message': 'failing check',
                 'stacktrace': response['failures']['fail']['stacktrace']
-            }
+            },
+            'fail_json': {
+                'message': 'failing check',
+                'result': {
+                    'some': 'json'
+                },
+                'stacktrace': response['failures']['fail_json']['stacktrace']
+            },
         }
     }
 

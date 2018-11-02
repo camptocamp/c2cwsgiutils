@@ -20,7 +20,7 @@ import time
 import traceback
 from typing import Optional, Callable, Mapping, List, Tuple, Any, Union
 
-from c2cwsgiutils import stats, _utils, broadcast
+from c2cwsgiutils import stats, _utils, broadcast, version
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r'^([a-f0-9]+) \(head\)\n$')
@@ -62,6 +62,8 @@ class HealthCheck(object):
         redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
         if redis_url is not None:
             self.add_redis_check(redis_url, level=2)
+            if version.get_version() is not None:
+                self.add_version_check(level=2)
 
     def add_db_session_check(self, session: sqlalchemy.orm.Session,
                              query_cb: Optional[Callable[[sqlalchemy.orm.Session], Any]]=None,
@@ -187,6 +189,21 @@ class HealthCheck(object):
             name = url
         self._checks.append((name, check, level))
 
+    def add_version_check(self, name: str="version", level: int=2) -> None:
+        """
+        Check that the version matches accross all instances
+        :param name: the name of the check (defaults to "version")
+        :param level: the level of the health check
+        :return:
+        """
+        def check(request: pyramid.request.Request) -> Any:
+            versions = _get_all_versions()
+            assert len(versions) > 0
+            ref = versions[0]
+            assert all(v == ref for v in versions), "Non identical versions: " + ", ". join(versions)
+            return ref
+        self._checks.append((name, check, level))
+
     def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], Any],
                          level: int=1) -> None:
         """
@@ -263,3 +280,8 @@ class HealthCheck(object):
 
 def _maybe_function(what: Any, request: pyramid.request.Request) -> Any:
     return what(request) if callable(what) else what
+
+
+@broadcast.decorator(expect_answers=True)
+def _get_all_versions() -> Optional[str]:
+    return version.get_version()

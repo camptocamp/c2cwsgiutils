@@ -27,7 +27,7 @@ def main():
     if not args.verbose:
         logging.root.setLevel(logging.INFO)
     p = PrintConnection(base_url=args.url, origin=args.referer if args.referer else args.url)
-    p.wait_ready()
+    p.wait_ready(app=args.app)
     if args.app is None:
         for app in p.get_apps():
             if app != 'default':

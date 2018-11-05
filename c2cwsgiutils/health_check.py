@@ -18,12 +18,28 @@ import sqlalchemy.engine
 import subprocess
 import time
 import traceback
-from typing import Optional, Callable, Mapping, List, Tuple, Any, Union
+from typing import Optional, Callable, Mapping, List, Tuple, Any, Union, Dict  # noqa
 
 from c2cwsgiutils import stats, _utils, broadcast, version
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r'^([a-f0-9]+) \(head\)\n$')
+
+
+class JsonCheckException(Exception):
+    """
+    Checker exception used to add some structured content to a failure.
+    """
+    def __init__(self, message: str, json: Any):
+        super().__init__()
+        self.message = message
+        self.json = json
+
+    def __str__(self) -> str:
+        return self.message
+
+    def json_data(self) -> Any:
+        return self.json
 
 
 def _get_bindings(session: Any) -> List[sqlalchemy.engine.Engine]:
@@ -244,6 +260,8 @@ class HealthCheck(object):
                         'message': str(e),
                         'timing': time.monotonic() - start
                     }
+                    if isinstance(e, JsonCheckException) and e.json_data() is not None:
+                        failure['result'] = e.json_data()
                     if os.environ.get('DEVELOPMENT', '0') != '0':
                         failure['stacktrace'] = traceback.format_exc()
                     results['failures'][name] = failure

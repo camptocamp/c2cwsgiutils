@@ -22,11 +22,12 @@ class PrintConnection(connection.Connection):
         super().__init__(base_url=base_url, origin=origin)
         self.session.headers['Referer'] = origin
 
-    def wait_ready(self, timeout: int=60) -> None:
+    def wait_ready(self, timeout: int=60, app: str="default") -> None:
         """
         Wait the print instance to be ready
         """
-        utils.retry_timeout(functools.partial(self.get_capabilities, app="default"), timeout=timeout)
+        utils.retry_timeout(functools.partial(self.get_capabilities, app=app),
+                            timeout=timeout)
 
     def get_capabilities(self, app: str) -> Dict:
         return self.get_json(app + "/capabilities.json", cache_expected=connection.CacheExpected.YES)

@@ -271,6 +271,12 @@ The levels are:
      by default and used by load balancers to determine if the service is alive.
 * \>=2: Use those at your convenience. Pingdom and CO are usually setup at max_level=100. So stay below.
 
+When you instanciate the `HealthCheck` class, two checks may be automatically enabled:
+
+* If redis is configured, check that redis is reachable.
+* If redis is configured and the version information is available, check that the version matches
+  accross all instances.
+
 Look at the documentation of the `c2cwsgiutils.health_check.HealthCheck` class for more information.
 
 

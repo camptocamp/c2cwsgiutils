@@ -8,10 +8,8 @@ def test_stacks(app_connection):
 
 
 def _check_stacks(stacks):
-    assert len(stacks) == 1
     print("stacks=" + json.dumps(stacks, indent=4))
-    for proc_stacks in stacks:
-        assert 'c2cwsgiutils/debug' in json.dumps(proc_stacks)
+    assert 'c2cwsgiutils/debug' in json.dumps(stacks)
 
 
 def test_header_auth(app_connection):

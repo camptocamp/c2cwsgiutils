@@ -21,14 +21,35 @@ ENV_KEY = 'C2C_DEBUG_VIEW_ENABLED'
 LOG = logging.getLogger(__name__)
 
 
-def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, List[Mapping[str, Any]]]]:
+def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     result = broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
     assert result is not None
-    return result
+    return _beautify_stacks(result)
 
 
-def _dump_stacks_impl() -> Dict[str, List[Dict[str, Any]]]:
+def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+    """
+    Group the identical stacks together along with a list of threads sporting them
+    """
+    results = []  # type: List[Mapping[str, Any]]
+    for host_stacks in source:
+        host_id = '%s/%d' % (host_stacks['hostname'], host_stacks['pid'])
+        for thread, frames in host_stacks['threads'].items():
+            full_id = host_id + '/' + thread
+            for existing in results:
+                if existing['frames'] == frames:
+                    existing['threads'].append(full_id)
+                    break
+            else:
+                results.append({
+                    'frames': frames,
+                    'threads': [full_id]
+                })
+    return results
+
+
+def _dump_stacks_impl() -> Dict[str, Any]:
     id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
     threads = {}
     for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
@@ -43,7 +64,9 @@ def _dump_stacks_impl() -> Dict[str, List[Dict[str, Any]]]:
                 cur['code'] = line.strip()
             frames.append(cur)
         threads["%s(%d)" % (id2name.get(thread_id, ""), thread_id)] = frames
-    return threads
+    return {
+        'threads': threads
+    }
 
 
 def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:

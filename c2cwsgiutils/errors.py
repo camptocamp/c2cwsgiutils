@@ -6,7 +6,7 @@ import logging
 import os
 import pyramid.config
 import pyramid.request
-from pyramid.httpexceptions import HTTPException
+from pyramid.httpexceptions import HTTPException, HTTPError, HTTPSuccessful, HTTPRedirection
 import sqlalchemy.exc
 import traceback
 from typing import Any, Callable
@@ -70,11 +70,11 @@ def _do_error(request: pyramid.request.Request, status: int, exception: Exceptio
 
 
 def _http_error(exception: HTTPException, request: pyramid.request.Request) -> Any:
-    log = STATUS_LOGGER.get(exception.status_code, LOG.warning)
-    log("%s %s returned status code %s: %s",
-        request.method, request.url, exception.status_code, str(exception),
-        extra={'referer': request.referer})
     if request.method != 'OPTIONS':
+        log = STATUS_LOGGER.get(exception.status_code, LOG.warning)
+        log("%s %s returned status code %s: %s",
+            request.method, request.url, exception.status_code, str(exception),
+            extra={'referer': request.referer})
         request.response.status_code = exception.status_code
         _add_cors(request)
         return {"message": str(exception), "status": exception.status_code}
@@ -113,24 +113,34 @@ def _boto_client_error(exception: Any, request: pyramid.request.Request) -> pyra
 
 
 def _other_error(exception: Exception, request: pyramid.request.Request) -> pyramid.response.Response:
-    if exception.__class__.__module__ == 'botocore.exceptions' and \
-            exception.__class__.__name__ == 'ClientError':
+    exception_class = exception.__class__.__module__ + "." + exception.__class__.__name__
+    if exception_class == 'botocore.exceptions.ClientError':
         return _boto_client_error(exception, request)
+    status = 500
+    if exception_class == 'beaker.exceptions.BeakerException' and str(exception) == 'Invalid signature':
+        status = 401
     LOG.debug("Actual exception: %s.%s", exception.__class__.__module__, exception.__class__.__name__)
-    return _do_error(request, 500, exception)
+    return _do_error(request, status, exception)
+
+
+def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> pyramid.response.Response:
+    return exception
 
 
 def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, 'C2C_DISABLE_EXCEPTION_HANDLING',
                             'c2c.disable_exception_handling', '0') == '0':
+        for exception in (HTTPSuccessful, HTTPRedirection):
+            config.add_view(view=_passthrough, context=exception, http_cache=0)
         common_options = {'renderer': 'json', 'http_cache': 0}
-        config.add_view(view=_http_error, context=HTTPException, **common_options)
-        config.add_view(view=_integrity_error, context=sqlalchemy.exc.IntegrityError, **common_options)
-        config.add_view(view=_integrity_error, context=sqlalchemy.exc.DataError, **common_options)
+        config.add_view(view=_http_error, context=HTTPError, **common_options)
+
+        for exception in (sqlalchemy.exc.IntegrityError, sqlalchemy.exc.DataError):
+            config.add_view(view=_integrity_error, context=exception, **common_options)
 
         # We don't want to cry wolf if the user interrupted the uplad of the body
-        config.add_view(view=_client_interrupted_error, context=ConnectionResetError, **common_options)
-        config.add_view(view=_client_interrupted_error, context=DisconnectionError, **common_options)
+        for exception in (ConnectionResetError, DisconnectionError):
+            config.add_view(view=_client_interrupted_error, context=exception, **common_options)
 
         config.add_view(view=_other_error, context=Exception, **common_options)
         LOG.info('Installed the error catching views')

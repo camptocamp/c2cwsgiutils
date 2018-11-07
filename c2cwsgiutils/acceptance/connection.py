@@ -49,7 +49,7 @@ class Connection:
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
-            return None if r.status_code == 204 else r.json()
+            return _get_json(r)
 
     def get_xml(self, url: str, schema: Optional[str]=None, expected_status: int=200,
                 headers: Mapping[str, str]=None, cors: bool=True,
@@ -78,7 +78,7 @@ class Connection:
                                **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
-            return None if r.status_code == 204 else r.json()
+            return _get_json(r)
 
     def post_files(self, url: str, expected_status: int=200, headers: Mapping[str, str]=None,
                    cors: bool=True, cache_expected: CacheExpected=CacheExpected.NO, **kwargs: Any) -> Any:
@@ -89,7 +89,7 @@ class Connection:
                                **kwargs) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
-            return None if r.status_code == 204 else r.json()
+            return _get_json(r)
 
     def post(self, url: str, expected_status: int=200, headers: Mapping[str, str]=None, cors: bool=True,
              cache_expected: CacheExpected=CacheExpected.NO, **kwargs: Any) -> Optional[str]:
@@ -110,7 +110,7 @@ class Connection:
         with self.session.put(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
-            return None if r.status_code == 204 else r.json()
+            return _get_json(r)
 
     def delete(self, url: str, expected_status: int=204, headers: Mapping[str, str]=None, cors: bool=True,
                cache_expected: CacheExpected=CacheExpected.NO, **kwargs: Any) -> requests.Response:
@@ -160,3 +160,11 @@ def check_response(r: requests.Response, expected_status: int=200,
     elif cache_expected == CacheExpected.YES:
         assert 'Cache-Control' in r.headers
         assert 'max-age' in r.headers['Cache-Control']
+
+
+def _get_json(r: requests.Response) -> Any:
+    if r.status_code == 204:
+        return None
+    else:
+        assert r.headers['Content-Type'] == 'application/json'
+        return r.json()

@@ -18,7 +18,7 @@ pytest==3.10.0
 pytest-cov==2.6.0
 python-dateutil<2.7.0
 raven==6.9.0
-requests==2.20.0
+requests==2.20.1
 SQLAlchemy==1.2.13
 ujson==1.35
 yamllint==1.12.1

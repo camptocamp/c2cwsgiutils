@@ -55,6 +55,12 @@ def _un_underscore(message: MutableMapping[str, Any]) -> Mapping[str, Any]:
     return message
 
 
+def _rename_field(dico: MutableMapping[str, Any], source: str, dest: str) -> None:
+    if source in dico:
+        dico[dest] = dico[source]
+        del dico[source]
+
+
 def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
     """
     patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
@@ -64,6 +70,11 @@ def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
         # only output full_message if it's different from short message
         msg['full_message'] = msg['message']
     del msg['message']
+
+    # make the output more consistent with the one from java
+    _rename_field(msg, 'short_message', 'msg')
+    _rename_field(msg, 'facility', 'logger_name')
+
     return _un_underscore(msg)
 
 

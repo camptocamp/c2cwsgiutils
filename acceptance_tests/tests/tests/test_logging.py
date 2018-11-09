@@ -100,11 +100,11 @@ def test_cee_logs(app_connection):
     with LogListener() as listener:
         app_connection.get_json("ping")
         messages = listener.get_messages(
-            filter_fun=lambda message: message.get('facility') == 'c2cwsgiutils_app.services.ping')
+            filter_fun=lambda message: message.get('logger_name') == 'c2cwsgiutils_app.services.ping')
         print("Got messages: " + repr(messages))
         assert len(messages) == 1
         message = messages[0]
-        assert message['short_message'] == 'Ping!'
+        assert message['msg'] == 'Ping!'
         assert message['level'] == 6
         assert message['level_name'] == 'INFO'
         assert 'request_id' in message
@@ -115,7 +115,7 @@ def test_cee_logs_request_id(app_connection):
     with LogListener() as listener:
         app_connection.get_json("ping", headers={'X-Request-ID': '42 is the answer'})
         messages = listener.get_messages(
-            filter_fun=lambda message: message.get('facility') == 'c2cwsgiutils_app.services.ping')
+            filter_fun=lambda message: message.get('logger_name') == 'c2cwsgiutils_app.services.ping')
         print("Got messages: " + repr(messages))
         assert len(messages) == 1
         message = messages[0]

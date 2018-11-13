@@ -90,7 +90,8 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 while len(answers) < nb_received:
                     to_wait = timeout_time - time.monotonic()
                     if to_wait <= 0.0:  # pragma: no cover
-                        LOG.warning("timeout waiting for answers on %s", answer_channel)
+                        LOG.warning("timeout waiting for %d/%d answers on %s",
+                                    len(answers), nb_received, answer_channel)
                         while len(answers) < nb_received:
                             answers.append(None)
                         return answers

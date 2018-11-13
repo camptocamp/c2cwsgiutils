@@ -43,9 +43,10 @@ def _logging_change_level(request: pyramid.request.Request) -> Mapping[str, Any]
         return {'status': 200, 'overrides': dict(_list_overrides(request.registry.settings))}
 
 
-@broadcast.decorator()
-def _set_level(name: str, level: str) -> None:
+@broadcast.decorator(expect_answers=True)
+def _set_level(name: str, level: str) -> bool:
     logging.getLogger(name).setLevel(level)
+    return True
 
 
 def _restore_overrides(config: pyramid.config.Configurator) -> None:

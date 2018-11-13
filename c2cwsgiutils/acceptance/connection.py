@@ -166,5 +166,6 @@ def _get_json(r: requests.Response) -> Any:
     if r.status_code == 204:
         return None
     else:
-        assert r.headers['Content-Type'].split(";")[0] == 'application/json'
+        content_type = r.headers['Content-Type'].split(";")[0]
+        assert content_type == 'application/json' or content_type.endswith('+json')
         return r.json()

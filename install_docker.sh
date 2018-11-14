@@ -23,7 +23,7 @@ else
         DOCKER_VERSION=${DOCKER_VERSION//\.[0-9]*\.[0-9]*-ce/}
     else
         # The version number is too exotic => use a hardcoded one
-        DOCKER_VERSION=17.12.0-ce
+        DOCKER_VERSION="17.12"
     fi
     BASE_URL="https://download.docker.com/linux/debian"
     curl -fsSL "${BASE_URL}/gpg" | apt-key add -

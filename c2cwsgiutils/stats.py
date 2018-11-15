@@ -5,113 +5,135 @@ Generate statsd metrics.
 from abc import abstractmethod, ABCMeta
 import contextlib
 import logging
+import os
 import pyramid.request
 import re
 import socket
 import time
 import threading
-from typing import Mapping, Sequence, List, Generator, Any, Optional
-from typing import MutableMapping, Tuple  # noqa  # pylint: disable=unused-import
+from typing import Mapping, Sequence, List, Generator, Any, Optional, Callable
+from typing import Tuple, MutableMapping  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils import _utils
 
 BACKENDS = {}  # type: MutableMapping[str, _BaseBackend]
 LOG = logging.getLogger(__name__)
+USE_TAGS_ENV = 'STATSD_USE_TAGS'
+USE_TAGS = _utils.config_bool(os.environ.get(USE_TAGS_ENV, '0'))
+TagType = Optional[Mapping[str, Any]]
 
 
 class Timer(object):
     """
     Allow to measure the duration of some activity
     """
-    def __init__(self, key: Optional[Sequence[Any]]) -> None:
+    def __init__(self, key: Optional[Sequence[Any]], tags: TagType) -> None:
         self._key = key
+        self._tags = tags
         self._start = time.monotonic()
 
-    def stop(self, key_final: Optional[Sequence[Any]]=None) -> float:
+    def stop(self, key_final: Optional[Sequence[Any]]=None, tags_final: TagType=None) -> float:
         duration = time.monotonic() - self._start
         if key_final is not None:
             self._key = key_final
+        if tags_final is not None:
+            self._tags = tags_final
         assert self._key is not None
         for backend in BACKENDS.values():
-            backend.timer(self._key, duration)
+            backend.timer(self._key, duration, self._tags)
         return duration
 
 
 @contextlib.contextmanager
-def timer_context(key: Sequence[Any]) -> Generator[None, None, None]:
+def timer_context(key: Sequence[Any], tags: TagType=None) -> Generator[None, None, None]:
     """
     Add a duration measurement to the stats using the duration the context took to run
 
     :param key: The path of the key, given as a list.
+    :param tags: Some tags to attach to the metric.
     """
-    measure = timer(key)
+    measure = timer(key, tags)
     yield
     measure.stop()
 
 
 @contextlib.contextmanager
-def outcome_timer_context(key: List[Any]) -> Generator[None, None, None]:
+def outcome_timer_context(key: List[Any], tags: TagType=None) -> Generator[None, None, None]:
     """
     Add a duration measurement to the stats using the duration the context took to run
 
     The given key is prepended with 'success' or 'failure' according to the context's outcome.
 
     :param key: The path of the key, given as a list.
+    :param tags: Some tags to attach to the metric.
     """
     measure = timer()
     try:
         yield
-        measure.stop(key + ['success'])
+        if USE_TAGS:
+            opt_tags = dict(tags) if tags is not None else {}
+            opt_tags['success'] = 1
+            measure.stop(key, opt_tags)
+        else:
+            measure.stop(key + ['success'], tags)
     except Exception:
-        measure.stop(key + ['failure'])
+        if USE_TAGS:
+            opt_tags = dict(tags) if tags is not None else {}
+            opt_tags['success'] = 0
+            measure.stop(key, opt_tags)
+        else:
+            measure.stop(key + ['failure'], tags)
         raise
 
 
-def timer(key: Optional[Sequence[Any]]=None) -> Timer:
+def timer(key: Optional[Sequence[Any]]=None, tags: TagType=None) -> Timer:
     """
     Create a timer for the given key. The key can be omitted, but then need to be specified
     when stop is called.
 
     :param key: The path of the key, given as a list.
+    :param tags: Some tags to attach to the metric.
     :return: An instance of _Timer
     """
     assert key is None or isinstance(key, list)
-    return Timer(key)
+    return Timer(key, tags)
 
 
-def set_gauge(key: Sequence[Any], value: float) -> None:
+def set_gauge(key: Sequence[Any], value: float, tags: TagType=None) -> None:
     """
     Set a gauge value
 
     :param key: The path of the key, given as a list.
     :param value: The new value of the gauge
+    :param tags: Some tags to attach to the metric.
     """
     for backend in BACKENDS.values():
-        backend.gauge(key, value)
+        backend.gauge(key, value, tags)
 
 
-def increment_counter(key: Sequence[Any], increment: int=1) -> None:
+def increment_counter(key: Sequence[Any], increment: int=1, tags: TagType=None) -> None:
     """
     Increment a counter value
 
     :param key: The path of the key, given as a list.
     :param increment: The increment
+    :param tags: Some tags to attach to the metric.
     """
     for backend in BACKENDS.values():
-        backend.counter(key, increment)
+        backend.counter(key, increment, tags)
 
 
 class _BaseBackend(metaclass=ABCMeta):
     @abstractmethod
-    def timer(self, key: Sequence[Any], duration: float) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType) -> None:
         pass
 
     @abstractmethod
-    def gauge(self, key: Sequence[Any], value: float) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType) -> None:
         pass
 
     @abstractmethod
-    def counter(self, key: Sequence[Any], increment: int) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType) -> None:
         pass
 
 
@@ -124,14 +146,20 @@ class MemoryBackend(_BaseBackend):
         LOG.info("Starting a MemoryBackend for stats")
 
     @staticmethod
-    def _key(key: Sequence[Any]) -> str:
-        return "/".join(str(v).replace('/', '_') for v in key)
+    def _key_entry(key: str) -> str:
+        return str(key).replace('/', '_')
 
-    def timer(self, key: Sequence[Any], duration: float) -> None:
+    @staticmethod
+    def _key(key: Sequence[Any], tags: TagType) -> str:
+        result = "/".join(MemoryBackend._key_entry(v) for v in key)
+        result += _format_tags(tags, prefix="/", tag_sep="/", kv_sep="=", formatter=MemoryBackend._key_entry)
+        return result
+
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType) -> None:
         """
         Add a duration measurement to the stats.
         """
-        the_key = self._key(key)
+        the_key = self._key(key, tags)
         with self._stats_lock:
             cur = self._timers.get(the_key, None)
             if cur is None:
@@ -140,11 +168,11 @@ class MemoryBackend(_BaseBackend):
                 self._timers[the_key] = (cur[0] + 1, cur[1] + duration, min(cur[2], duration),
                                          max(cur[3], duration))
 
-    def gauge(self, key: Sequence[Any], value: float) -> None:
-        self._gauges[self._key(key)] = value
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType) -> None:
+        self._gauges[self._key(key, tags)] = value
 
-    def counter(self, key: Sequence[Any], increment: int) -> None:
-        the_key = self._key(key)
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType) -> None:
+        the_key = self._key(key, tags)
         with self._stats_lock:
             self._counters[the_key] = self._counters.get(the_key, 0) + increment
 
@@ -196,29 +224,31 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
     def _key(self, key: Sequence[Any]) -> str:
         return (self._prefix + ".".join(map(StatsDBackend._key_entry, key)))[:450]
 
-    def _send(self, message: str) -> None:
+    def _send(self, message: str, tags: TagType) -> None:
+        message += _format_tags(tags, prefix="|#", tag_sep=",", kv_sep=":",
+                                formatter=StatsDBackend._key_entry)
         # noinspection PyBroadException
         try:
             self._socket.send(message.encode('utf-8'))
         except Exception:
             pass  # Ignore errors (must survive if stats cannot be sent)
 
-    def timer(self, key: Sequence[Any], duration: float) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType) -> None:
         the_key = self._key(key)
         ms_duration = int(round(duration * 1000.0))
         ms_duration = max(ms_duration, 1)  # collectd would ignore events with zero durations
         message = "%s:%s|ms" % (the_key, ms_duration)
-        self._send(message)
+        self._send(message, tags)
 
-    def gauge(self, key: Sequence[Any], value: float) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType) -> None:
         the_key = self._key(key)
         message = "%s:%s|g" % (the_key, value)
-        self._send(message)
+        self._send(message, tags)
 
-    def counter(self, key: Sequence[Any], increment: int) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType) -> None:
         the_key = self._key(key)
         message = "%s:%s|c" % (the_key, increment)
-        self._send(message)
+        self._send(message, tags)
 
 
 def init_backends(settings: Optional[Mapping[str, str]]=None) -> None:
@@ -237,3 +267,13 @@ def init_backends(settings: Optional[Mapping[str, str]]=None) -> None:
             BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix)
         except Exception:
             LOG.error("Failed configuring the statsd backend. Will continue without it.", exc_info=True)
+
+
+def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, kv_sep: str,
+                 formatter: Callable[[str], str]) -> str:
+    if tags is not None and len(tags) > 0:
+            return prefix + tag_sep.join(
+                kv_sep.join(map(formatter, item))
+                for item in sorted(tags.items()))
+    else:
+        return ""

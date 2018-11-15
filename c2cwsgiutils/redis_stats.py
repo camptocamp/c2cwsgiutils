@@ -1,6 +1,6 @@
 import logging
 import pyramid.config
-from typing import Optional, Callable, Any  # noqa  # pylint: disable=unused-import
+from typing import Optional, Callable, Any, Dict  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils import stats, _utils
 
@@ -9,7 +9,13 @@ ORIG = None  # type: Optional[Callable]
 
 
 def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
-    with stats.timer_context(['redis', args[0]]):
+    if stats.USE_TAGS:
+        key = ['redis']
+        tags = dict(cmd=args[0])  # type: Optional[Dict]
+    else:
+        key = ['redis', args[0]]
+        tags = None
+    with stats.outcome_timer_context(key, tags):
         return ORIG(self, *args, **options)  # type: ignore
 
 

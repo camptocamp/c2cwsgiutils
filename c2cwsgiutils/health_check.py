@@ -117,8 +117,14 @@ class HealthCheck(object):
                 prev_bind = session.bind
                 try:
                     session.bind = binding
-                    with stats.timer_context(['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
-                                              binding.c2c_name]):
+                    if stats.USE_TAGS:
+                        key = ['sql', 'manual', 'health_check', 'alembic']
+                        tags = dict(conf=alembic_ini_path, con=binding.c2c_name)  # type: Optional[Dict]
+                    else:
+                        key = ['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
+                               binding.c2c_name]
+                        tags = None
+                    with stats.timer_context(key, tags):
                         actual_version, = session.execute(
                             "SELECT version_num FROM {schema}.{table}".format(schema=version_schema,
                                                                               table=version_table)
@@ -281,7 +287,13 @@ class HealthCheck(object):
             prev_bind = session.bind
             try:
                 session.bind = bind
-                with stats.timer_context(['sql', 'manual', 'health_check', 'db', bind.c2c_name]):
+                if stats.USE_TAGS:
+                    key = ['sql', 'manual', 'health_check', 'db']
+                    tags = dict(con=bind.c2c_name)  # type: Optional[Dict]
+                else:
+                    key = ['sql', 'manual', 'health_check', 'db', bind.c2c_name]
+                    tags = None
+                with stats.timer_context(key, tags):
                     return query_cb(session)
             finally:
                 session.bind = prev_bind

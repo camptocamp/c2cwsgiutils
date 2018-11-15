@@ -37,7 +37,7 @@ def hello_get(request):
     with timer_context(['sql', 'read_hello']):
         hello = models.DBSession.query(models.Hello).first()
     increment_counter(['test', 'counter'])
-    set_gauge(['test', 'gauge/s'], 42)
+    set_gauge(['test', 'gauge/s'], 42, tags={'value': 24, 'toto': 'tutu'})
     return {'value': hello.value}
 
 

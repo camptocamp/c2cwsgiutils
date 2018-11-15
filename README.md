@@ -129,6 +129,7 @@ To enable and configure the metrics framework, you can use:
 * STATS_VIEW (c2c.stats_view): if defined, will enable the stats view `{C2C_BASE_PATH}/stats.json`
 * STATSD_ADDRESS (c2c.statsd_address): if defined, send stats to the given statsd server
 * STATSD_PREFIX (c2c.statsd_prefix): prefix to add to every metric names
+* STATSD_USE_TAGS: If true, automatic metrics will use tags
 
 If enabled, some metrics are automatically generated:
 

@@ -9,7 +9,7 @@ import re
 import sqlalchemy.event
 import sqlalchemy.orm
 import sqlalchemy.engine
-from typing import cast, Optional, Callable, Any
+from typing import cast, Optional, Callable, Any, Dict  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils import stats, _utils
 
@@ -44,8 +44,13 @@ def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma:
             name = request.matched_route.name
             if kind == 'route':
                 _add_server_metric(request, 'route', description=name)
-        key = [kind, request.method, name, str(status)]
-        duration = measure.stop(key)
+        if stats.USE_TAGS:
+            key = [kind]
+            tags = dict(route=name, status=status, group=status // 100)  # type: Optional[Dict]
+        else:
+            key = [kind, request.method, name, status]
+            tags = None
+        duration = measure.stop(key, tags)
         _add_server_metric(request, kind, duration=duration)
     return finished_cb
 
@@ -117,7 +122,13 @@ def _simplify_sql(sql: str) -> str:
 
 
 def _create_sqlalchemy_timer_cb(what: str) -> Callable:
-    measure = stats.timer(["sql", what])
+    if stats.USE_TAGS and what != 'commit':
+        key = ['sql']
+        tags = dict(query=what)  # type: Optional[Dict]
+    else:
+        key = ['sql', what]
+        tags = None
+    measure = stats.timer(key, tags)
 
     def after(*_args: Any, **_kwargs: Any) -> None:
         measure.stop()

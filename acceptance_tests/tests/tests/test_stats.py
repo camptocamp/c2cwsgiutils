@@ -14,7 +14,7 @@ def test_ok(app_connection):
     assert stats['timers']['route/GET/hello/200']['nb'] == 1
     assert stats['timers']['sql/read_hello']['nb'] == 1
     assert stats['timers']['sql/SELECT FROM hello LIMIT ?']['nb'] == 1
-    assert stats['gauges']['test/gauge_s'] == 42
+    assert stats['gauges']['test/gauge_s/toto=tutu/value=24'] == 42
     assert stats['counters']['test/counter'] == 1
 
 
@@ -43,4 +43,4 @@ def test_redis(app_connection):
 
     stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
-    assert stats['timers']['redis/PUBLISH']['nb'] >= 1
+    assert stats['timers']['redis/PUBLISH/success']['nb'] >= 1

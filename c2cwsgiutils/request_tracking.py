@@ -10,7 +10,7 @@ import requests.adapters
 import requests.models
 import sqlalchemy.event
 from sqlalchemy.orm import Session
-from typing import List, Any, Optional  # noqa  # pylint: disable=unused-import
+from typing import List, Any, Optional, Dict, Sequence  # noqa  # pylint: disable=unused-import
 import uuid
 import urllib.parse
 
@@ -57,7 +57,14 @@ def _patch_requests() -> None:
             return response
         finally:
             parsed = urllib.parse.urlparse(request.url)  # type: ignore
-            timer.stop(['requests', parsed.scheme, parsed.hostname, parsed.port, request.method, status])
+            if stats.USE_TAGS:
+                key = ['requests']  # type: Sequence[Any]
+                tags = dict(scheme=parsed.scheme, host=parsed.hostname, port=parsed.port,
+                            method=request.method, status=status)  # type: Optional[Dict]
+            else:
+                key = ['requests', parsed.scheme, parsed.hostname, parsed.port, request.method, status]
+                tags = None
+            timer.stop(key, tags)
 
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore
 

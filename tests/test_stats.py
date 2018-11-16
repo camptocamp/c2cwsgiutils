@@ -32,3 +32,11 @@ def test_outcome_timer_context_failure():
 
     assert set(backend._timers.keys()) == {'toto/failure'}   # pylint: disable=W0212
     assert backend._timers['toto/failure'][0] == 1   # pylint: disable=W0212
+
+
+def test_format_tags():
+    format_tags = stats._format_tags   # pylint: disable=W0212
+    assert format_tags(None, "|", ",", "=", lambda x: x) == ""
+    assert format_tags({}, "|", ",", "=", lambda x: x) == ""
+    assert format_tags({"x": "a/b"}, "|", ",", "=", lambda x: x.replace("/", "_")) == "|x=a_b"
+    assert format_tags({"x": "a", "y/z": "b"}, "|", ",", "=", lambda x: x.replace("/", "_")) == "|x=a,y_z=b"

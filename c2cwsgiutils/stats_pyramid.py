@@ -46,7 +46,8 @@ def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma:
                 _add_server_metric(request, 'route', description=name)
         if stats.USE_TAGS:
             key = [kind]
-            tags = dict(route=name, status=status, group=status // 100)  # type: Optional[Dict]
+            tags = dict(method=request.method, route=name, status=status,
+                        group=status // 100)  # type: Optional[Dict]
         else:
             key = [kind, request.method, name, status]
             tags = None

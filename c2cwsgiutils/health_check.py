@@ -220,6 +220,7 @@ class HealthCheck(object):
         """
         def check(request: pyramid.request.Request) -> Any:
             versions = _get_all_versions()
+            versions = list(filter(lambda x: x is not None, versions))
             assert len(versions) > 0
             ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ". join(versions)

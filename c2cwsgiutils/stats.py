@@ -125,15 +125,15 @@ def increment_counter(key: Sequence[Any], increment: int=1, tags: TagType=None) 
 
 class _BaseBackend(metaclass=ABCMeta):
     @abstractmethod
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType=None) -> None:
         pass
 
     @abstractmethod
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType=None) -> None:
         pass
 
     @abstractmethod
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType=None) -> None:
         pass
 
 
@@ -155,7 +155,7 @@ class MemoryBackend(_BaseBackend):
         result += _format_tags(tags, prefix="/", tag_sep="/", kv_sep="=", formatter=MemoryBackend._key_entry)
         return result
 
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType=None) -> None:
         """
         Add a duration measurement to the stats.
         """
@@ -168,10 +168,10 @@ class MemoryBackend(_BaseBackend):
                 self._timers[the_key] = (cur[0] + 1, cur[1] + duration, min(cur[2], duration),
                                          max(cur[3], duration))
 
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType=None) -> None:
         self._gauges[self._key(key, tags)] = value
 
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType=None) -> None:
         the_key = self._key(key, tags)
         with self._stats_lock:
             self._counters[the_key] = self._counters.get(the_key, 0) + increment
@@ -233,19 +233,19 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         except Exception:
             pass  # Ignore errors (must survive if stats cannot be sent)
 
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType=None) -> None:
         the_key = self._key(key)
         ms_duration = int(round(duration * 1000.0))
         ms_duration = max(ms_duration, 1)  # collectd would ignore events with zero durations
         message = "%s:%s|ms" % (the_key, ms_duration)
         self._send(message, tags)
 
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType=None) -> None:
         the_key = self._key(key)
         message = "%s:%s|g" % (the_key, value)
         self._send(message, tags)
 
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType=None) -> None:
         the_key = self._key(key)
         message = "%s:%s|c" % (the_key, increment)
         self._send(message, tags)

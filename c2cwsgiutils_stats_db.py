@@ -49,10 +49,13 @@ class Reporter(object):
         else:
             self.prometheus = None
 
-    def do_report(self, metric, value, kind='count'):
+    def do_report(self, metric, value, kind, tags=None):
         LOG.info("%s.%s -> %d", kind, ".".join(metric), value)
         if self.statsd is not None:
-            self.statsd.gauge([kind] + metric, value)
+            if stats.USE_TAGS and tags is not None:
+                self.statsd.gauge([kind], value, tags=tags)
+            else:
+                self.statsd.gauge([kind] + metric, value)
         if self.prometheus is not None:
 
             self.prometheus.add('database_table_' + kind, value, metric_labels={
@@ -78,7 +81,7 @@ def do_table(session, schema, table, reporter):
     count, = session.execute("""
     SELECT count(*) FROM {schema}.{table}
     """.format(schema=schema, table=table)).fetchone()
-    reporter.do_report([schema, table], count, kind='count')
+    reporter.do_report([schema, table], count, kind='count', tags=dict(schema=schema, table=table))
 
     size, = session.execute("""
     SELECT pg_total_relation_size(c.oid) AS total_bytes
@@ -86,7 +89,7 @@ def do_table(session, schema, table, reporter):
     LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE relkind = 'r' AND nspname=:schema AND relname=:table
     """, params={'schema': schema, 'table': table}).fetchone()
-    reporter.do_report([schema, table], size, kind='size')
+    reporter.do_report([schema, table], size, kind='size', tags=dict(schema=schema, table=table))
 
 
 def do_extra(session, extra, reporter):

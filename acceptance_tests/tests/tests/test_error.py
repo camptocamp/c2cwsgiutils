@@ -22,6 +22,11 @@ def test_db_data_error(app_connection):
     assert 'invalid input syntax for integer' in error['message']
 
 
+def test_401(app_connection):
+    error = app_connection.get_raw("error", params={'code': 401}, expected_status=401)
+    assert error.headers['WWW-Authenticate'].startswith('Basic')
+
+
 def test_other(app_connection):
     error = app_connection.get_json('error', expected_status=500)
     assert error['status'] == 500

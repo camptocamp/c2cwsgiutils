@@ -20,8 +20,7 @@ DEPRECATED_ENV_KEY = 'ERROR_DETAILS_SECRET'
 
 LOG = logging.getLogger(__name__)
 STATUS_LOGGER = {
-    400: LOG.info,
-    401: LOG.info,
+    401: LOG.debug,
     500: LOG.error
     # The rest are warnings
 }
@@ -75,8 +74,9 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
         log("%s %s returned status code %s: %s",
             request.method, request.url, exception.status_code, str(exception),
             extra={'referer': request.referer})
-        request.response.status_code = exception.status_code
+        request.response.headers.update(exception.headers)  # forward headers
         _add_cors(request)
+        request.response.status_code = exception.status_code
         return {"message": str(exception), "status": exception.status_code}
     else:
         _crude_add_cors(request)

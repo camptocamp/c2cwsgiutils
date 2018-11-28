@@ -125,9 +125,10 @@ class HealthCheck(object):
                                binding.c2c_name]
                         tags = None
                     with stats.timer_context(key, tags):
+                        quote = session.bind.dialect.identifier_preparer.quote
                         actual_version, = session.execute(
-                            "SELECT version_num FROM {schema}.{table}".format(schema=version_schema,
-                                                                              table=version_table)
+                            "SELECT version_num FROM {schema}.{table}".  # nosec
+                            format(schema=quote(version_schema), table=quote(version_table))
                         ).fetchone()
                         if actual_version != version:
                             raise Exception("Invalid alembic version: %s != %s" % (actual_version, version))

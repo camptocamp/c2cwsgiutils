@@ -78,9 +78,10 @@ class Reporter(object):
 
 
 def do_table(session, schema, table, reporter):
+    quote = session.bind.dialect.identifier_preparer.quote
     count, = session.execute("""
     SELECT count(*) FROM {schema}.{table}
-    """.format(schema=schema, table=table)).fetchone()
+    """.format(schema=quote(schema), table=quote(table))).fetchone()  # nosec
     reporter.do_report([schema, table], count, kind='count', tags=dict(schema=schema, table=table))
 
     size, = session.execute("""

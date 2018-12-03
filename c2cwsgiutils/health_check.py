@@ -225,7 +225,7 @@ class HealthCheck(object):
             assert len(versions) > 0
             ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ". join(versions)
-            return ref
+            return dict(version=ref, count=len(versions))
         self._checks.append((name, check, level))
 
     def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], Any],

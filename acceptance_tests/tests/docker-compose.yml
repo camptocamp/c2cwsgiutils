@@ -86,7 +86,8 @@ run_test:
     - redis
 
 redis:
-  image: redis:4
+  image: redis:5
   mem_limit: 64m
+  command: redis-server --save "" --appendonly no --maxmemory 50mb --tcp-keepalive 30
   ports:
     - 16379:6379

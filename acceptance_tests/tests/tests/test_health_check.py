@@ -63,7 +63,9 @@ def test_failure(app_connection):
             'fun_url': {},
             'alembic_app_alembic.ini_alembic': {'result': '4a8c1bb4e775'},
             'redis://redis:6379': {'result': response['successes']['redis://redis:6379']['result']},
-            'version': {'result': response['successes']['version']['result']}
+            'version': {
+                'result': response['successes']['version']['result']
+            }
         },
         'failures': {
             'fail': {

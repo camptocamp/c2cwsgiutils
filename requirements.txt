@@ -8,7 +8,7 @@ flake8==3.6.0
 gunicorn==19.9.0
 junit2html==022
 lxml==4.2.5
-mypy==0.641
+mypy==0.650
 netifaces==0.10.7
 objgraph==3.4.0
 psycopg2-binary==2.7.6.1

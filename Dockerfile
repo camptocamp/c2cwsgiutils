@@ -16,9 +16,14 @@ RUN apt update && \
         tree \
         screen \
         vim \
-        vim-editorconfig && \
+        vim-editorconfig \
+        vim-addon-manager && \
     apt-get clean && \
-    rm -r /var/lib/apt/lists/*
+    rm -r /var/lib/apt/lists/* && \
+    vim-addon-manager --system-wide install editorconfig && \
+    echo 'set hlsearch  " Highlight search' > /etc/vim/vimrc.local && \
+    echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
+    echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local
 COPY requirements.txt docker-requirements-light.txt docker-requirements.txt /opt/c2cwsgiutils/
 RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements-light.txt -r /opt/c2cwsgiutils/docker-requirements.txt
 

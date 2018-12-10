@@ -11,7 +11,7 @@ import sqlalchemy.engine
 from threading import Lock
 from typing import Any, Mapping
 
-from c2cwsgiutils import _utils, _auth, broadcast
+from c2cwsgiutils import _utils, auth, broadcast
 
 DEPRECATED_ENV_KEY = 'SQL_PROFILER_SECRET'
 DEPRECATED_CONFIG_KEY = 'c2c.sql_profiler_secret'
@@ -48,7 +48,7 @@ class _Repository(set):
 
 def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
     global repository
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     enable = request.params.get('enable')
     if enable is not None:
         broadcast.broadcast('c2c_sql_profiler', params={'enable': enable}, expect_answers=True)
@@ -89,7 +89,7 @@ def init(config: pyramid.config.Configurator) -> None:
     Install a pyramid  event handler that adds the request information
     """
     if _utils.env_or_config(config, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY, False) or \
-            _auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
+            auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
 
         config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",

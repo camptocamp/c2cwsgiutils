@@ -10,17 +10,21 @@ def get_base_path(config: pyramid.config.Configurator) -> str:
     return env_or_config(config, 'C2C_BASE_PATH', 'c2c.base_path', '')
 
 
-def env_or_config(config: Optional[pyramid.config.Configurator], env_name: str, config_name: str,
-                  default: Any=None, type_: Callable[[str], Any]=str) -> Any:
-    return env_or_settings(config.get_settings() if config is not None else {},
-                           env_name, config_name, default, type_)
+def env_or_config(
+        config: Optional[pyramid.config.Configurator],
+        env_name: Optional[str]=None, config_name: Optional[str]=None,
+        default: Any=None, type_: Callable[[str], Any]=str) -> Any:
+    return env_or_settings(
+        config.get_settings() if config is not None else {}, env_name, config_name, default, type_)
 
 
-def env_or_settings(settings: Optional[Mapping[str, Any]], env_name: str, settings_name: str,
-                    default: Any=None, type_: Callable[[str], Any]=str) -> Any:
-    if env_name in os.environ:
+def env_or_settings(
+        settings: Optional[Mapping[str, Any]],
+        env_name: Optional[str]=None, settings_name: Optional[str]=None,
+        default: Any=None, type_: Callable[[str], Any]=str) -> Any:
+    if env_name is not None and env_name in os.environ:
         return type_(os.environ[env_name])
-    if settings is not None and settings_name in settings:
+    if settings is not None and settings_name is not None and settings_name in settings:
         return type_(settings[settings_name])
     return default
 

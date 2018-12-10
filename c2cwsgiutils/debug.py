@@ -11,7 +11,7 @@ import traceback
 from typing import Dict, Mapping, List, Any, Callable
 import sys
 
-from c2cwsgiutils import _utils, _auth, broadcast
+from c2cwsgiutils import _utils, auth, broadcast
 
 DEPRECATED_CONFIG_KEY = 'c2c.debug_view_secret'
 DEPRECATED_ENV_KEY = 'DEBUG_VIEW_SECRET'
@@ -22,7 +22,7 @@ LOG = logging.getLogger(__name__)
 
 
 def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     result = broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
     assert result is not None
     return _beautify_stacks(result)
@@ -70,7 +70,7 @@ def _dump_stacks_impl() -> Dict[str, Any]:
 
 
 def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     limit = int(request.params.get('limit', '30'))
     result = broadcast.broadcast('c2c_dump_memory', params={'limit': limit}, expect_answers=True)
     assert result is not None
@@ -78,7 +78,7 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
 
 
 def _dump_memory_diff(request: pyramid.request.Request) -> List:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     limit = int(request.params.get('limit', '30'))
     if 'path' in request.matchdict:
         # deprecated
@@ -135,7 +135,7 @@ def _dump_memory_impl(limit: int) -> Mapping[str, Any]:
 
 
 def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     timeout = float(request.params['time'])
     time.sleep(timeout)
     request.response.status_code = 204
@@ -143,12 +143,12 @@ def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
 
 
 def _headers(request: pyramid.request.Request) -> Mapping[str, str]:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     return dict(request.headers)
 
 
 def _error(request: pyramid.request.Request) -> Any:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     raise exception_response(int(request.params['status']), detail="Test")
 
 
@@ -160,7 +160,7 @@ def _add_view(config: pyramid.config.Configurator, name: str, path: str, view: C
 
 def init(config: pyramid.config.Configurator) -> None:
     if _utils.env_or_config(config, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY, False) or \
-            _auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
+            auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
         broadcast.subscribe('c2c_dump_stacks', _dump_stacks_impl)
 

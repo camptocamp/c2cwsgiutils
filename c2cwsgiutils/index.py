@@ -4,7 +4,7 @@ import pyramid.request
 import pyramid.response
 from typing import Optional
 from urllib.parse import quote_plus
-from c2cwsgiutils._auth import is_auth
+from c2cwsgiutils.auth import is_auth
 from c2cwsgiutils.debug import DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY
 
 from . import _utils

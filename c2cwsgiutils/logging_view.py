@@ -2,7 +2,7 @@ import logging
 import pyramid.request
 from typing import Mapping, Any, Generator, Tuple
 
-from c2cwsgiutils import _utils, _auth, broadcast
+from c2cwsgiutils import _utils, auth, broadcast
 
 LOG = logging.getLogger(__name__)
 DEPRECATED_CONFIG_KEY = 'c2c.log_view_secret'
@@ -17,7 +17,7 @@ def install_subscriber(config: pyramid.config.Configurator) -> None:
     Install the view to configure the loggers, if configured to do so.
     """
     if _utils.env_or_config(config, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY, False) or \
-            _auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
+            auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         config.add_route("c2c_logging_level", _utils.get_base_path(config) + r"/logging/level",
                          request_method="GET")
         config.add_view(_logging_change_level, route_name="c2c_logging_level", renderer="fast_json",
@@ -27,7 +27,7 @@ def install_subscriber(config: pyramid.config.Configurator) -> None:
 
 
 def _logging_change_level(request: pyramid.request.Request) -> Mapping[str, Any]:
-    _auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    auth.auth_view(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
     name = request.params.get('name')
     if name is not None:
         level = request.params.get('level')

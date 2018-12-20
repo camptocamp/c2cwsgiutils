@@ -2,12 +2,16 @@ import html
 import pyramid.config
 import pyramid.request
 import pyramid.response
-from typing import Optional
+from typing import Optional, List  # noqa  # pylint: disable=unused-import
 from urllib.parse import quote_plus
 from c2cwsgiutils.auth import is_auth
 from c2cwsgiutils.debug import DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY
 
 from . import _utils
+
+additional_title = None  # type: Optional[str]
+additional_noauth = []  # type: List[str]
+additional_auth = []  # type: List[str]
 
 
 def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
@@ -46,6 +50,18 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
         response.text += _logging(request, secret)
         response.text += _sql_profiler(request, secret)
 
+    if additional_title is not None and (auth or len(additional_noauth) > 0):
+        response.text += additional_title
+        response.text += "\n"
+
+    if auth:
+        response.text += "\n".join([e.format(
+            secret=secret,
+            secret_qs=("secret=" + secret) if secret is not None else "",
+        ) for e in additional_auth])
+        response.text += "\n"
+
+    response.text += "\n".join(additional_noauth)
     response.text += """
       </body>
     </html>

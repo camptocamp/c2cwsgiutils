@@ -19,7 +19,7 @@ pytest-cov==2.6.1
 python-dateutil<2.7.0
 raven==6.10.0
 requests==2.21.0
-SQLAlchemy==1.2.15
+SQLAlchemy==1.2.16
 ujson==1.35
 yamllint==1.13.0
 zope.interface==4.6.0

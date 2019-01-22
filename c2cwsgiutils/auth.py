@@ -1,36 +1,64 @@
+import hashlib
 from pyramid.httpexceptions import HTTPForbidden
 import pyramid.request
-from typing import Optional
+from typing import Optional, Any
 
 # noinspection PyProtectedMember
 from c2cwsgiutils._utils import env_or_settings, env_or_config, config_bool
 
+COOKIE_AGE = 7 * 24 * 3600
 SECRET_PROP = 'c2c.secret'
 SECRET_ENV = 'C2C_SECRET'
 
 
-def _get_secret(settings: dict, env_name: Optional[str]=None, config_name: Optional[str]=None) -> str:
-    secret = env_or_settings(settings, env_name, config_name) if \
-        env_name is not None or config_name is not None else None
-    if secret is None:
-        secret = env_or_settings(settings, SECRET_ENV, SECRET_PROP, False)
-    return secret
+def get_expected_secret(request: pyramid.request.Request) -> str:
+    """
+    Returns the secret expected from the client.
+    """
+    settings = request.registry.settings
+    return env_or_settings(settings, SECRET_ENV, SECRET_PROP, False)
 
 
-def is_auth(
-        request: pyramid.request.Request,
-        env_name: Optional[str]=None, config_name: Optional[str]=None) -> bool:
+def _hash_secret(secret: str) -> str:
+    return hashlib.sha256(secret.encode()).hexdigest()
+
+
+def is_auth(request: pyramid.request.Request, env_name: Any=None, config_name: Any=None) -> bool:
+    """
+    Check if the client is authenticated with the C2C_SECRET
+    """
+    expected = get_expected_secret(request)
     secret = request.params.get('secret')
     if secret is None:
         secret = request.headers.get('X-API-Key')
-    return secret == _get_secret(request.registry.settings, env_name, config_name)
+
+    if secret is not None:
+        if secret == "":
+            # logout
+            request.response.delete_cookie(SECRET_ENV)
+            return False
+        if secret != expected:
+            return False
+        # login or refresh the cookie
+        request.response.set_cookie(SECRET_ENV, _hash_secret(secret), max_age=COOKIE_AGE,
+                                    httponly=True)
+        # since this could be used from outside c2cwsgiutils views, we cannot set the path to c2c
+        return True
+
+    # secret not found in the params or the headers => try with the cookie
+
+    secret = request.cookies.get(SECRET_ENV)
+    if secret is not None:
+        if secret != _hash_secret(expected):
+            return False
+        request.response.set_cookie(SECRET_ENV, secret, max_age=COOKIE_AGE, httponly=True)
+        return True
+    return False
 
 
-def auth_view(
-        request: pyramid.request.Request,
-        env_name: Optional[str]=None, config_name: Optional[str]=None) -> None:
-    if not is_auth(request, env_name, config_name):
-        raise HTTPForbidden('Missing or invalid secret (parameter or X-API-Key header)')
+def auth_view(request: pyramid.request.Request, env_name: Any=None, config_name: Any=None) -> None:
+    if not is_auth(request):
+        raise HTTPForbidden('Missing or invalid secret (parameter, X-API-Key header or cookie)')
 
 
 def is_enabled(

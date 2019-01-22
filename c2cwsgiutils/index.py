@@ -1,11 +1,8 @@
-import html
 import pyramid.config
 import pyramid.request
 import pyramid.response
 from typing import Optional, List  # noqa  # pylint: disable=unused-import
-from urllib.parse import quote_plus
-from c2cwsgiutils.auth import is_auth
-from c2cwsgiutils.debug import DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY
+from c2cwsgiutils.auth import is_auth, get_expected_secret
 
 from . import _utils
 
@@ -22,10 +19,10 @@ def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
 
 
 def _index(request: pyramid.request.Request) -> pyramid.response.Response:
-    secret = request.params.get('secret')
-    auth = is_auth(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
-
     response = request.response
+
+    auth = is_auth(request)
+
     response.content_type = 'text/html'
     response.text = """
     <html>
@@ -34,11 +31,19 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
       <body>
     """
 
+    response.text += "<h1>Authentication</h1>"
     if not auth:
         response.text += """
         <form>
           secret: <input type="text" name="secret">
-          <input type="submit" value="OK">
+          <input type="submit" value="Login">
+        </form>
+        """
+    else:
+        response.text += """
+        <form>
+          <input type="hidden" name="secret" value="">
+          <input type="submit" value="Logout">
         </form>
         """
 
@@ -46,16 +51,18 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response.text += _stats(request)
     response.text += _versions(request)
     if auth:
-        response.text += _debug(request, secret)
-        response.text += _logging(request, secret)
-        response.text += _sql_profiler(request, secret)
+        response.text += _debug(request)
+        response.text += _logging(request)
+        response.text += _sql_profiler(request)
 
     if additional_title is not None and (auth or len(additional_noauth) > 0):
         response.text += additional_title
         response.text += "\n"
 
     if auth:
+        secret = get_expected_secret(request)
         response.text += "\n".join([e.format(
+            # TODO: remove both for v3 (issue #177)
             secret=secret,
             secret_qs=("secret=" + secret) if secret is not None else "",
         ) for e in additional_auth])
@@ -91,23 +98,22 @@ def _stats(request: pyramid.request.Request) -> str:
         return ""
 
 
-def _sql_profiler(request: pyramid.request.Request, secret: str) -> str:
+def _sql_profiler(request: pyramid.request.Request) -> str:
     sql_profiler_url = _url(request, 'c2c_sql_profiler')
     if sql_profiler_url:
         return """
         <h1>SQL profiler</h1>
-        <a href="{url}{secret_query_sting}" target="_blank">status</a>
-        <a href="{url}{secret_query_sting}enable=1" target="_blank">enable</a>
-        <a href="{url}{secret_query_sting}enable=0" target="_blank">disable</a>
+        <a href="{url}" target="_blank">status</a>
+        <a href="{url}?enable=1" target="_blank">enable</a>
+        <a href="{url}?enable=0" target="_blank">disable</a>
         """.format(
-            url=sql_profiler_url,
-            secret_query_sting="?" if secret is None else "?secret={}&".format(quote_plus(secret)),
+            url=sql_profiler_url
         )
     else:
         return ""
 
 
-def _logging(request: pyramid.request.Request, secret: str) -> str:
+def _logging(request: pyramid.request.Request) -> str:
     logging_url = _url(request, 'c2c_logging_level')
     if logging_url:
         return """
@@ -116,54 +122,45 @@ def _logging(request: pyramid.request.Request, secret: str) -> str:
           <li><form action="{logging_url}" target="_blank">
                 <input type="submit" value="Get">
                 name: <input type="text" name="name" value="c2cwsgiutils">
-                {secret_input}
               </form></li>
           <li><form action="{logging_url}" target="_blank">
                 <input type="submit" value="Set">
                 name: <input type="text" name="name" value="c2cwsgiutils">
                 level: <input type="text" name="level" value="INFO">
-                {secret_input}
               </form></li>
-          <li><a href="{logging_url}{secret_query_sting}" target="_blank">List overrides</a>
+          <li><a href="{logging_url}" target="_blank">List overrides</a>
         </ul>
         """.format(
-            logging_url=logging_url,
-            secret_input="" if secret is None else
-            '<input type="hidden" name="secret" value="{}">'.format(html.escape(secret)),
-            secret_query_sting="" if secret is None else "?secret=" + quote_plus(secret),
+            logging_url=logging_url
         )
     else:
         return ""
 
 
-def _debug(request: pyramid.request.Request, secret: str) -> str:
+def _debug(request: pyramid.request.Request) -> str:
     dump_memory_url = _url(request, 'c2c_debug_memory')
     if dump_memory_url:
         return """
         <h1>Debug</h1>
         <ul>
-          <li><a href="{dump_stack_url}{secret_query_sting}" target="_blank">Stack traces</a></li>
+          <li><a href="{dump_stack_url}" target="_blank">Stack traces</a></li>
           <li><form action="{dump_memory_url}" target="_blank">
                 <input type="submit" value="Dump memory usage">
                 limit: <input type="text" name="limit" value="30">
-                {secret_input}
               </form></li>
           <li><form action="{memory_diff_url}" target="_blank">
                 <input type="submit" value="Memory diff">
                 path: <input type="text" name="path">
                 limit: <input type="text" name="limit" value="30">
-                {secret_input}
               </form></li>
           <li><form action="{sleep_url}" target="_blank">
                 <input type="submit" value="Sleep">
                 time: <input type="text" name="time" value="1">
-                {secret_input}
               </form></li>
-          <li><a href="{dump_headers_url}{secret_query_sting}" target="_blank">HTTP headers</a></li>
+          <li><a href="{dump_headers_url}" target="_blank">HTTP headers</a></li>
           <li><form action="{error_url}" target="_blank">
                 <input type="submit" value="Generate an HTTP error">
                 status: <input type="text" name="status" value="500">
-                {secret_input}
               </form></li>
         </ul>
         """.format(
@@ -172,10 +169,7 @@ def _debug(request: pyramid.request.Request, secret: str) -> str:
             memory_diff_url=_url(request, 'c2c_debug_memory_diff'),
             sleep_url=_url(request, 'c2c_debug_sleep'),
             dump_headers_url=_url(request, 'c2c_debug_headers'),
-            error_url=_url(request, 'c2c_debug_error'),
-            secret_query_sting="" if secret is None else "?secret=" + quote_plus(secret),
-            secret_input="" if secret is None else
-            '<input type="hidden" name="secret" value="{}">'.format(html.escape(secret)),
+            error_url=_url(request, 'c2c_debug_error')
         )
     else:
         return ""

@@ -12,6 +12,11 @@ def test_with_secret(app_connection):
     assert "Health checks" in content
     assert "Debug" in content
 
+    # a cookie should keep us logged in
+    app_connection.get('c2c')
+    assert "Health checks" in content
+    assert "Debug" in content
+
 
 def test_https(app_connection):
     content = app_connection.get('c2c', params={'secret': 'changeme'},

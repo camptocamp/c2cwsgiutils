@@ -60,7 +60,8 @@ A few REST APIs are added and can be seen with this URL (only enabled if C2C_BAS
 `{C2C_BASE_PATH}`.
 
 Some APIs are protected by a secret. This secret is specified in the `C2C_SECRET` variable or `c2c.secret`
-property. It is either passed as the `secret` query parameter or the `X-API-Key` header.
+property. It is either passed as the `secret` query parameter or the `X-API-Key` header. Once
+accessed with a good secret, a cookie is stored and the secret can be omitted.
 
 
 ## Pyramid

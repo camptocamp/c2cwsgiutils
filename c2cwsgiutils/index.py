@@ -184,14 +184,22 @@ def _debug(request: pyramid.request.Request, secret: str) -> str:
 def _health_check(request: pyramid.request.Request) -> str:
     health_check_url = _url(request, 'c2c_health_check')
     if health_check_url:
-        return """
+        secret = request.params.get('secret')
+        result = """
         <h1>Health checks</h1>
         <form action="{url}" target="_blank">
           max_level: <input type="text" name="max_level" value="1">
           checks: <input type="text" name="checks" value="">
+        """.format(url=health_check_url)
+
+        if secret is not None:
+            result += '<input type="hidden" name="secret" value="%s">' % secret
+
+        result += """
           <input type="submit" value="OK">
         </form>
-        """.format(url=health_check_url)
+        """
+        return result
     else:
         return ""
 

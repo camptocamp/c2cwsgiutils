@@ -20,7 +20,7 @@ import time
 import traceback
 from typing import Optional, Callable, Mapping, List, Tuple, Any, Union, Dict  # noqa
 
-from c2cwsgiutils import stats, _utils, broadcast, version
+from c2cwsgiutils import stats, _utils, broadcast, version, auth
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r'^([a-f0-9]+) \(head\)\n$')
@@ -244,6 +244,7 @@ class HealthCheck(object):
 
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
         max_level = int(request.params.get('max_level', '1'))
+        is_auth = auth.is_auth(request)
         results = {
             'failures': {},
             'successes': {},
@@ -258,7 +259,8 @@ class HealthCheck(object):
                 try:
                     result = check(request)
                     results['successes'][name] = {
-                        'timing': time.monotonic() - start
+                        'timing': time.monotonic() - start,
+                        'level': level
                     }
                     if result is not None:
                         results['successes'][name]['result'] = result
@@ -266,11 +268,12 @@ class HealthCheck(object):
                     LOG.warning("Health check %s failed", name, exc_info=True)
                     failure = {
                         'message': str(e),
-                        'timing': time.monotonic() - start
+                        'timing': time.monotonic() - start,
+                        'level': level
                     }
                     if isinstance(e, JsonCheckException) and e.json_data() is not None:
                         failure['result'] = e.json_data()
-                    if os.environ.get('DEVELOPMENT', '0') != '0':
+                    if is_auth or os.environ.get('DEVELOPMENT', '0') != '0':
                         failure['stacktrace'] = traceback.format_exc()
                     results['failures'][name] = failure
 

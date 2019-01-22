@@ -159,7 +159,7 @@ def _debug(request: pyramid.request.Request, secret: str) -> str:
                 time: <input type="text" name="time" value="1">
                 {secret_input}
               </form></li>
-          <li><a href="{dump_headers_url}?{secret_query_sting}" target="_blank">HTTP headers</a></li>
+          <li><a href="{dump_headers_url}{secret_query_sting}" target="_blank">HTTP headers</a></li>
           <li><form action="{error_url}" target="_blank">
                 <input type="submit" value="Generate an HTTP error">
                 status: <input type="text" name="status" value="500">

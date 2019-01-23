@@ -84,7 +84,7 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
 
 
 def _include_dev_details(request: pyramid.request.Request) -> bool:
-    return DEVELOPMENT or auth.is_auth(request, DEPRECATED_ENV_KEY, DEPRECATED_CONFIG_KEY)
+    return DEVELOPMENT or auth.is_auth(request)
 
 
 def _integrity_error(exception: sqlalchemy.exc.StatementError,

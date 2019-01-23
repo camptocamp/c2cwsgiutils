@@ -35,7 +35,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     if not auth:
         response.text += """
         <form>
-          secret: <input type="text" name="secret">
+          secret: <input type="password" name="secret">
           <input type="submit" value="Login">
         </form>
         """

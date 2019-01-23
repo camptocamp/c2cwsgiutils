@@ -33,7 +33,7 @@ def is_auth(request: pyramid.request.Request, env_name: Any=None, config_name: A
         secret = request.headers.get('X-API-Key')
 
     if secret is not None:
-        if secret == "":
+        if secret == "":  # nosec
             # logout
             request.response.delete_cookie(SECRET_ENV)
             return False

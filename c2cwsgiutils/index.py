@@ -25,28 +25,36 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
 
     response.content_type = 'text/html'
     response.text = """
-    <html>
+    <!doctype html>
+    <html lang="en">
       <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+              integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+              crossorigin="anonymous">
+        <title>c2cwsgiutils tools</title>
+        <style>
+          form {
+            margin-bottom: 1rem;
+          }
+          label {
+            margin-right: 0.5rem;
+          }
+          input, button, a.btn {
+            margin-right: 1rem;
+          }
+          div.col-lg {
+            margin-top: 0.5rem;
+          }
+        </style>
       </head>
       <body>
+        <div class="container-fluid">
     """
 
-    response.text += "<h1>Authentication</h1>"
-    if not auth:
-        response.text += """
-        <form>
-          secret: <input type="password" name="secret">
-          <input type="submit" value="Login">
-        </form>
-        """
-    else:
-        response.text += """
-        <form>
-          <input type="hidden" name="secret" value="">
-          <input type="submit" value="Logout">
-        </form>
-        """
-
+    response.text += _health_check(request)
     response.text += _health_check(request)
     response.text += _stats(request)
     response.text += _versions(request)
@@ -61,15 +69,41 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
 
     if auth:
         secret = get_expected_secret(request)
-        response.text += "\n".join([e.format(
+        response.text += "\n<hr>".join([e.format(
             # TODO: remove both for v3 (issue #177)
             secret=secret,
             secret_qs=("secret=" + secret) if secret is not None else "",
         ) for e in additional_auth])
         response.text += "\n"
 
-    response.text += "\n".join(additional_noauth)
+    response.text += "\n<hr>".join(additional_noauth)
+
     response.text += """
+        <div class="row">
+          <div class="col-sm-3"><h2>Authentication</h2></div>
+          <div class="col-lg">
+    """
+    if not auth:
+        response.text += """
+        <form class="form-inline">
+          <label>secret:</label><input type="password" name="secret">
+          <button class="btn btn-primary" type="submit">Login</button>
+        </form>
+        """
+    else:
+        response.text += """
+        <form class="form-inline">
+          <input type="hidden" name="secret" value="">
+          <button class="btn btn-primary" type="submit">Logout</button>
+        </form>
+        """
+    response.text += """
+          </div>
+        </div>
+    """
+
+    response.text += """
+        </div>
       </body>
     </html>
     """
@@ -80,8 +114,11 @@ def _versions(request: pyramid.request.Request) -> str:
     versions_url = _url(request, 'c2c_versions')
     if versions_url:
         return """
-        <h1>Versions</h1>
-        <a href="{url}" target="_blank">get</a>
+        <div class="row">
+          <div class="col-lg-3"><h2>Versions</h2></div>
+          <div class="col-lg"><a class="btn btn-primary" href="{url}" target="_blank">Get</a></div>
+        </div>
+        <hr>
         """.format(url=versions_url)
     else:
         return ""
@@ -91,8 +128,11 @@ def _stats(request: pyramid.request.Request) -> str:
     stats_url = _url(request, 'c2c_read_stats_json')
     if stats_url:
         return """
-        <h1>Statistics</h1>
-        <a href="{url}" target="_blank">get</a>
+        <div class="row">
+          <div class="col-lg-3"><h2>Statistics</h2></div>
+          <div class="col-lg"><a class="btn btn-primary" href="{url}" target="_blank">Get</a></div>
+        </div>
+        <hr>
         """.format(url=stats_url)
     else:
         return ""
@@ -102,10 +142,15 @@ def _sql_profiler(request: pyramid.request.Request) -> str:
     sql_profiler_url = _url(request, 'c2c_sql_profiler')
     if sql_profiler_url:
         return """
-        <h1>SQL profiler</h1>
-        <a href="{url}" target="_blank">status</a>
-        <a href="{url}?enable=1" target="_blank">enable</a>
-        <a href="{url}?enable=0" target="_blank">disable</a>
+        <div class="row">
+          <div class="col-lg-3"><h2>SQL profiler</h2></div>
+          <div class="col-lg">
+            <a class="btn btn-primary" href="{url}" target="_blank">Status</a>
+            <a class="btn btn-primary" href="{url}?enable=1" target="_blank">Enable</a>
+            <a class="btn btn-primary" href="{url}?enable=0" target="_blank">Disable</a>
+          </div>
+        </div>
+        <hr>
         """.format(
             url=sql_profiler_url
         )
@@ -117,19 +162,22 @@ def _logging(request: pyramid.request.Request) -> str:
     logging_url = _url(request, 'c2c_logging_level')
     if logging_url:
         return """
-        <h1>Logging</h1>
-        <ul>
-          <li><form action="{logging_url}" target="_blank">
-                <input type="submit" value="Get">
-                name: <input type="text" name="name" value="c2cwsgiutils">
-              </form></li>
-          <li><form action="{logging_url}" target="_blank">
-                <input type="submit" value="Set">
-                name: <input type="text" name="name" value="c2cwsgiutils">
-                level: <input type="text" name="level" value="INFO">
-              </form></li>
-          <li><a href="{logging_url}" target="_blank">List overrides</a>
-        </ul>
+        <div class="row">
+          <div class="col-lg-3"><h2>Logging</h2></div>
+          <div class="col-lg">
+            <form class="form-inline" action="{logging_url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Get</button>
+              <label>name:</label><input type="text" name="name" value="c2cwsgiutils">
+            </form>
+            <form class="form-inline" action="{logging_url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Set</button>
+              <label>name:</label><input type="text" name="name" value="c2cwsgiutils">
+              <label>level:</label><input type="text" name="level" value="INFO">
+            </form>
+            <p><a href="{logging_url}" class="btn btn-primary" target="_blank">List overrides</a></p>
+          </div>
+        </div>
+        <hr>
         """.format(
             logging_url=logging_url
         )
@@ -141,28 +189,33 @@ def _debug(request: pyramid.request.Request) -> str:
     dump_memory_url = _url(request, 'c2c_debug_memory')
     if dump_memory_url:
         return """
-        <h1>Debug</h1>
-        <ul>
-          <li><a href="{dump_stack_url}" target="_blank">Stack traces</a></li>
-          <li><form action="{dump_memory_url}" target="_blank">
-                <input type="submit" value="Dump memory usage">
-                limit: <input type="text" name="limit" value="30">
-              </form></li>
-          <li><form action="{memory_diff_url}" target="_blank">
-                <input type="submit" value="Memory diff">
-                path: <input type="text" name="path">
-                limit: <input type="text" name="limit" value="30">
-              </form></li>
-          <li><form action="{sleep_url}" target="_blank">
-                <input type="submit" value="Sleep">
-                time: <input type="text" name="time" value="1">
-              </form></li>
-          <li><a href="{dump_headers_url}" target="_blank">HTTP headers</a></li>
-          <li><form action="{error_url}" target="_blank">
-                <input type="submit" value="Generate an HTTP error">
-                status: <input type="text" name="status" value="500">
-              </form></li>
-        </ul>
+        <div class="row">
+          <div class="col-lg-3"><h2>Debug</h2></div>
+          <div class="col-lg">
+            <p>
+              <a class="btn btn-primary" href="{dump_stack_url}" target="_blank">Stack traces</a>
+              <a class="btn btn-primary" href="{dump_headers_url}" target="_blank">HTTP headers</a>
+            </p>
+            <form class="form-inline" action="{dump_memory_url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Dump memory usage</button>
+              <label>limit:</label><input type="text" name="limit" value="30">
+            </form>
+            <form class="form-inline" action="{memory_diff_url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Memory diff</button>
+              <label>path:</label><input type="text" name="path">
+              <label>limit:</label><input type="text" name="limit" value="30">
+            </form>
+            <form class="form-inline" action="{sleep_url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Sleep</button>
+              <label>time:</label><input type="text" name="time" value="1">
+            </form>
+            <form class="form-inline" action="{error_url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Generate an HTTP error</button>
+              <label>status:</label><input type="text" name="status" value="500">
+            </form>
+          </div>
+        </div>
+        <hr>
         """.format(
             dump_stack_url=_url(request, 'c2c_debug_stacks'),
             dump_memory_url=dump_memory_url,
@@ -180,18 +233,23 @@ def _health_check(request: pyramid.request.Request) -> str:
     if health_check_url:
         secret = request.params.get('secret')
         result = """
-        <h1>Health checks</h1>
-        <form action="{url}" target="_blank">
-          max_level: <input type="text" name="max_level" value="1">
-          checks: <input type="text" name="checks" value="">
+        <div class="row">
+          <div class="col-lg-3"><h2>Health checks</h2></div>
+          <div class="col-lg">
+            <form class="form-inline" action="{url}" target="_blank">
+              <button class="btn btn-primary" type="submit">Run</button>
+              <label>max_level:</label><input type="text" name="max_level" value="1">
+              <label>checks:</label> <input type="text" name="checks" value="">
         """.format(url=health_check_url)
 
         if secret is not None:
             result += '<input type="hidden" name="secret" value="%s">' % secret
 
         result += """
-          <input type="submit" value="OK">
-        </form>
+            </form>
+          </div>
+        </div>
+        <hr>
         """
         return result
     else:

@@ -55,7 +55,6 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     """
 
     response.text += _health_check(request)
-    response.text += _health_check(request)
     response.text += _stats(request)
     response.text += _versions(request)
     if auth:

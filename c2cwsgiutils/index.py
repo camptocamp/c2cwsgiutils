@@ -166,12 +166,12 @@ def _logging(request: pyramid.request.Request) -> str:
           <div class="col-lg">
             <form class="form-inline" action="{logging_url}" target="_blank">
               <button class="btn btn-primary" type="submit">Get</button>
-              <label>name:</label><input type="text" name="name" value="c2cwsgiutils">
+              <label>name:</label><input class="form-control" type="text" name="name" value="c2cwsgiutils">
             </form>
             <form class="form-inline" action="{logging_url}" target="_blank">
               <button class="btn btn-primary" type="submit">Set</button>
-              <label>name:</label><input type="text" name="name" value="c2cwsgiutils">
-              <label>level:</label><input type="text" name="level" value="INFO">
+              <label>name:</label><input class="form-control" type="text" name="name" value="c2cwsgiutils">
+              <label>level:</label><input class="form-control" type="text" name="level" value="INFO">
             </form>
             <p><a href="{logging_url}" class="btn btn-primary" target="_blank">List overrides</a></p>
           </div>
@@ -197,20 +197,20 @@ def _debug(request: pyramid.request.Request) -> str:
             </p>
             <form class="form-inline" action="{dump_memory_url}" target="_blank">
               <button class="btn btn-primary" type="submit">Dump memory usage</button>
-              <label>limit:</label><input type="text" name="limit" value="30">
+              <label>limit:</label><input class="form-control" type="text" name="limit" value="30">
             </form>
             <form class="form-inline" action="{memory_diff_url}" target="_blank">
               <button class="btn btn-primary" type="submit">Memory diff</button>
-              <label>path:</label><input type="text" name="path">
-              <label>limit:</label><input type="text" name="limit" value="30">
+              <label>path:</label><input class="form-control" type="text" name="path">
+              <label>limit:</label><input class="form-control" type="text" name="limit" value="30">
             </form>
             <form class="form-inline" action="{sleep_url}" target="_blank">
               <button class="btn btn-primary" type="submit">Sleep</button>
-              <label>time:</label><input type="text" name="time" value="1">
+              <label>time:</label><input class="form-control" type="text" name="time" value="1">
             </form>
             <form class="form-inline" action="{error_url}" target="_blank">
               <button class="btn btn-primary" type="submit">Generate an HTTP error</button>
-              <label>status:</label><input type="text" name="status" value="500">
+              <label>status:</label><input class="form-control" type="text" name="status" value="500">
             </form>
           </div>
         </div>
@@ -237,8 +237,8 @@ def _health_check(request: pyramid.request.Request) -> str:
           <div class="col-lg">
             <form class="form-inline" action="{url}" target="_blank">
               <button class="btn btn-primary" type="submit">Run</button>
-              <label>max_level:</label><input type="text" name="max_level" value="1">
-              <label>checks:</label> <input type="text" name="checks" value="">
+              <label>max_level:</label><input class="form-control" type="text" name="max_level" value="1">
+              <label>checks:</label> <input class="form-control" type="text" name="checks" value="">
         """.format(url=health_check_url)
 
         if secret is not None:

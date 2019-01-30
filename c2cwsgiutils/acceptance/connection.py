@@ -32,7 +32,7 @@ class Connection:
             return None if r.status_code == 204 else r.text
 
     def get_raw(self, url: str, expected_status: int=200, headers: Mapping[str, str]=None, cors: bool=True,
-                cache_expected: CacheExpected=CacheExpected.NO, **kwargs: Any)-> requests.Response:
+                cache_expected: CacheExpected=CacheExpected.NO, **kwargs: Any) -> requests.Response:
         """
         get the given URL (relative to the root of API).
         """

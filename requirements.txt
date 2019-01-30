@@ -16,7 +16,6 @@ pyramid==1.10.1
 pyramid-tm==2.2.1
 pytest==4.1.1
 pytest-cov==2.6.1
-python-dateutil<2.7.0
 raven==6.10.0
 requests==2.21.0
 SQLAlchemy==1.2.17

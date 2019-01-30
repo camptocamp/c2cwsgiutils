@@ -272,8 +272,8 @@ def init_backends(settings: Optional[Mapping[str, str]]=None) -> None:
 def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, kv_sep: str,
                  formatter: Callable[[str], str]) -> str:
     if tags is not None and len(tags) > 0:
-            return prefix + tag_sep.join(
-                kv_sep.join(map(formatter, item))
-                for item in sorted(tags.items()))
+        return prefix + tag_sep.join(
+            kv_sep.join(map(formatter, item))
+            for item in sorted(tags.items()))
     else:
         return ""

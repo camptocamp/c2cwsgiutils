@@ -8,6 +8,7 @@ class LocalBroadcaster(interface.BaseBroadcaster):
     """
     Fake implementation of broadcasting messages (will just answer locally)
     """
+
     def __init__(self) -> None:
         self._subscribers = {}  # type: MutableMapping[str, Callable]
 

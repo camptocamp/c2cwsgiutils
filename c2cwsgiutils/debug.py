@@ -1,15 +1,14 @@
 import gc
 import logging
-import objgraph
-import pyramid.config
-from pyramid.httpexceptions import HTTPException, exception_response
-import pyramid.request
-import pyramid.response
+import sys
 import threading
 import time
 import traceback
 from typing import Dict, Mapping, List, Any, Callable
-import sys
+
+import objgraph
+import pyramid.response
+from pyramid.httpexceptions import HTTPException, exception_response
 
 from c2cwsgiutils import _utils, auth, broadcast
 

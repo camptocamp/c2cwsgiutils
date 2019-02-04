@@ -1,11 +1,12 @@
-import boltons.iterutils
 import logging
 import netifaces
 import os
-import pytest
-import requests
 import time
 from typing import Callable, Any, Tuple
+
+import boltons.iterutils
+import pytest
+import requests
 
 LOG = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ DOCKER_GATEWAY = netifaces.gateways()[netifaces.AF_INET][0][0] if in_docker() el
 DEFAULT_TIMEOUT = 60
 
 
-def wait_url(url: str, timeout: float=DEFAULT_TIMEOUT) -> None:
+def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
     def what() -> bool:
         LOG.info("Trying to connect to " + url + "... ")
         r = requests.get(url)
@@ -31,7 +32,7 @@ def wait_url(url: str, timeout: float=DEFAULT_TIMEOUT) -> None:
     retry_timeout(what, timeout=timeout)
 
 
-def retry_timeout(what: Callable[[], Any], timeout: float=DEFAULT_TIMEOUT, interval: float=0.5) -> Any:
+def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, interval: float = 0.5) -> Any:
     timeout = time.monotonic() + timeout
     while True:
         try:

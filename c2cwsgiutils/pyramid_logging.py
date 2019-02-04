@@ -7,15 +7,16 @@ Install a filter on the logging handler to add some info about requests:
 
 A pyramid event handler is installed to setup this filter for the current request.
 """
-import cee_syslog_handler
 import json
 import logging
 import logging.config
 import os
-from pyramid.threadlocal import get_current_request
 import socket
 import sys
 from typing import Any, MutableMapping, Mapping, IO, Optional
+
+import cee_syslog_handler
+from pyramid.threadlocal import get_current_request
 
 LOG = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class _PyramidFilter(logging.Filter):
     """
     A logging filter that adds request information to CEE logs.
     """
+
     def filter(self, record: Any) -> bool:
         request = get_current_request()
         if request is not None:
@@ -82,6 +84,7 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
     """
     A CEE (JSON format) log handler with additional information about the current request.
     """
+
     def __init__(self, *args: Any, **kargv: Any) -> None:
         super().__init__(*args, **kargv)
         self.addFilter(_PYRAMID_FILTER)
@@ -96,7 +99,8 @@ class JsonLogHandler(logging.StreamHandler):
     """
     Log to stdout in JSON.
     """
-    def __init__(self, stream: IO=None) -> None:
+
+    def __init__(self, stream: IO = None) -> None:
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
         self._fqdn = socket.getfqdn()
@@ -107,7 +111,7 @@ class JsonLogHandler(logging.StreamHandler):
         return json.dumps(message)
 
 
-def init(configfile: Optional[str]=None) -> Optional[str]:
+def init(configfile: Optional[str] = None) -> Optional[str]:
     logging.captureWarnings(True)
     configfile_ = configfile if configfile is not None \
         else os.environ.get('C2CWSGIUTILS_CONFIG', "/app/production.ini")

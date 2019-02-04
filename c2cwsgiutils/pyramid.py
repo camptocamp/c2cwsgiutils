@@ -2,7 +2,7 @@ import cornice
 import pyramid.config
 import pyramid_tm
 
-from c2cwsgiutils import stats_pyramid, logging_view, sql_profiler, version, debug, sentry,\
+from c2cwsgiutils import stats_pyramid, logging_view, sql_profiler, version, debug, sentry, \
     request_tracking, errors, pretty_json, broadcast, index, redis_stats
 
 

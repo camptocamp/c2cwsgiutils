@@ -3,12 +3,13 @@ Broadcast messages to all the processes of Gunicorn in every containers.
 """
 import functools
 import logging
-import pyramid.config
 from typing import Optional, Callable, Any
 
+import pyramid.config
+
 from c2cwsgiutils import _utils
-from c2cwsgiutils.broadcast import redis, local
 from c2cwsgiutils.broadcast import interface  # noqa  # pylint: disable=unused-import
+from c2cwsgiutils.broadcast import redis, local
 
 LOG = logging.getLogger(__name__)
 REDIS_ENV_KEY = "C2C_REDIS_URL"
@@ -19,7 +20,7 @@ BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 _broadcaster = None  # type: Optional[interface.BaseBroadcaster]
 
 
-def init(config: Optional[pyramid.config.Configurator]=None) -> None:
+def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
     Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """
@@ -41,7 +42,7 @@ def init(config: Optional[pyramid.config.Configurator]=None) -> None:
         _broadcaster.copy_local_subscriptions(prev_broadcaster)
 
 
-def _get(need_init: bool=False) -> interface.BaseBroadcaster:
+def _get(need_init: bool = False) -> interface.BaseBroadcaster:
     global _broadcaster
     if _broadcaster is None:
         if need_init:
@@ -67,8 +68,8 @@ def unsubscribe(channel: str) -> None:
     _get().unsubscribe(channel)
 
 
-def broadcast(channel: str, params: Optional[dict]=None, expect_answers: bool=False,
-              timeout: float=10) -> Optional[list]:
+def broadcast(channel: str, params: Optional[dict] = None, expect_answers: bool = False,
+              timeout: float = 10) -> Optional[list]:
     """
     Broadcast a message to the given channel. If answers are expected, it will wait up to "timeout" seconds
     to get all the answers.
@@ -77,11 +78,12 @@ def broadcast(channel: str, params: Optional[dict]=None, expect_answers: bool=Fa
                                           expect_answers, timeout)
 
 
-def decorator(channel: Optional[str]=None, expect_answers: bool=False, timeout: float=10) -> Callable:
+def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10) -> Callable:
     """
     The decorated function will be called through the broadcast functionality. If expect_answers is set to
     True, the returned value will be a list of all the answers.
     """
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(**kwargs: Any) -> Any:
@@ -94,4 +96,5 @@ def decorator(channel: Optional[str]=None, expect_answers: bool=False, timeout: 
         subscribe(_channel, func)
 
         return wrapper
+
     return decorator

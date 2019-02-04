@@ -1,10 +1,10 @@
-import logging
 import json
+import logging
 import random
 import string
 import threading
-from typing import Callable, Optional, Mapping, Any  # noqa  # pylint: disable=unused-import
 import time
+from typing import Callable, Optional, Mapping, Any  # noqa  # pylint: disable=unused-import
 
 from c2cwsgiutils.broadcast import utils, interface, local
 
@@ -15,6 +15,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     """
     Implement broadcasting messages using Redis
     """
+
     def __init__(self, redis_url: str, broadcast_prefix: str) -> None:
         import redis
         from c2cwsgiutils import redis_utils

@@ -1,15 +1,15 @@
 """
 Install exception views to have nice JSON error pages.
 """
-from cornice import cors
 import logging
 import os
-import pyramid.config
-import pyramid.request
-from pyramid.httpexceptions import HTTPException, HTTPError, HTTPSuccessful, HTTPRedirection
-import sqlalchemy.exc
 import traceback
 from typing import Any, Callable
+
+import pyramid.request
+import sqlalchemy.exc
+from cornice import cors
+from pyramid.httpexceptions import HTTPException, HTTPError, HTTPSuccessful, HTTPRedirection
 from webob.request import DisconnectionError
 
 from c2cwsgiutils import _utils, auth
@@ -47,7 +47,7 @@ def _add_cors(request: pyramid.request.Request) -> None:
 
 
 def _do_error(request: pyramid.request.Request, status: int, exception: Exception,
-              logger: Callable=LOG.error,
+              logger: Callable = LOG.error,
               reduce_info_sent: Callable[[Exception], None] = lambda e: None) -> pyramid.response.Response:
     logger("%s %s returned status code %s",
            request.method, request.url, status,
@@ -93,6 +93,7 @@ def _integrity_error(exception: sqlalchemy.exc.StatementError,
         # remove details (SQL statement and links to SQLAlchemy) from the error
         e.statement = None
         e.code = None
+
     return _do_error(request, 400, exception, reduce_info_sent=reduce_info_sent)
 
 

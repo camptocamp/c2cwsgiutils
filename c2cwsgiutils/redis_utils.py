@@ -1,9 +1,10 @@
 import logging
-import redis.client  # noqa  # pylint: disable=unused-import
-import redis.exceptions
 import threading
 import time
 from typing import Optional  # noqa  # pylint: disable=unused-import
+
+import redis.client  # noqa  # pylint: disable=unused-import
+import redis.exceptions
 
 LOG = logging.getLogger(__name__)
 
@@ -12,7 +13,8 @@ class PubSubWorkerThread(threading.Thread):
     """
     A clone of redis.client.PubSubWorkerThread that doesn't die when the connections are broken.
     """
-    def __init__(self, pubsub: redis.client.PubSub, name: Optional[str]=None) -> None:
+
+    def __init__(self, pubsub: redis.client.PubSub, name: Optional[str] = None) -> None:
         super().__init__(name=name, daemon=True)
         self.pubsub = pubsub
         self._running = False

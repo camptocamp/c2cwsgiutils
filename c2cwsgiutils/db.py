@@ -2,12 +2,13 @@
 SQLalchemy models.
 """
 import logging
+import re
+from typing import Optional, Iterable, Tuple, Any, Callable, Union
+from typing import Pattern  # noqa  # pylint: disable=unused-import
+
 import pyramid.config
 import pyramid.request
-import re
 import sqlalchemy.orm
-from typing import Pattern  # noqa  # pylint: disable=unused-import
-from typing import Optional, Iterable, Tuple, Any, Callable, Union
 from zope.sqlalchemy import ZopeTransactionExtension
 
 LOG = logging.getLogger(__name__)
@@ -22,11 +23,11 @@ tweens = Tweens()
 
 
 def setup_session(
-    config: pyramid.config.Configurator,
-    master_prefix: str,
-    slave_prefix: Optional[str]=None,
-    force_master: Optional[Iterable[str]]=None,
-    force_slave: Optional[Iterable[str]]=None
+        config: pyramid.config.Configurator,
+        master_prefix: str,
+        slave_prefix: Optional[str] = None,
+        force_master: Optional[Iterable[str]] = None,
+        force_slave: Optional[Iterable[str]] = None
 ) -> Tuple[
     Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
     sqlalchemy.engine.Engine,
@@ -74,8 +75,8 @@ def setup_session(
 
 
 def create_session(config: Optional[pyramid.config.Configurator], name: str, url: str,
-                   slave_url: Optional[str]=None,
-                   force_master: Optional[Iterable[str]]=None, force_slave: Optional[Iterable[str]]=None,
+                   slave_url: Optional[str] = None,
+                   force_master: Optional[Iterable[str]] = None, force_slave: Optional[Iterable[str]] = None,
                    **engine_config: Any) \
         -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
     """
@@ -120,11 +121,11 @@ def create_session(config: Optional[pyramid.config.Configurator], name: str, url
 
 
 def _add_tween(
-    config: pyramid.config.Configurator,
-    name: str,
-    db_session: Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
-    force_master: Optional[Iterable[str]],
-    force_slave: Optional[Iterable[str]]
+        config: pyramid.config.Configurator,
+        name: str,
+        db_session: Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
+        force_master: Optional[Iterable[str]],
+        force_slave: Optional[Iterable[str]]
 ) -> None:
     global tweens
 
@@ -139,13 +140,14 @@ def _add_tween(
         Must be put over the pyramid_tm tween and share_config must have a "slave" engine
         configured.
         """
+
         def db_chooser_tween(request: pyramid.request.Request) -> Any:
             session = db_session()
             old = session.bind
             method_path = "%s %s" % (request.method, request.path)  # type: Any
             has_force_master = any(r.match(method_path) for r in master_paths)
             if not has_force_master and (
-                request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths)
+                    request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths)
             ):
                 LOG.debug("Using %s database for: %s", db_session.c2c_ro_bind.c2c_name, method_path)
                 session.bind = db_session.c2c_ro_bind
@@ -159,5 +161,6 @@ def _add_tween(
                 session.bind = old
 
         return db_chooser_tween
+
     tweens.__setattr__(name, db_chooser_tween_factory)
     config.add_tween('c2cwsgiutils.db.tweens.' + name, over="pyramid_tm.tm_tween_factory")

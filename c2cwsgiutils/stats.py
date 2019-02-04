@@ -2,17 +2,18 @@
 Generate statsd metrics.
 """
 
-from abc import abstractmethod, ABCMeta
 import contextlib
 import logging
 import os
-import pyramid.request
 import re
 import socket
-import time
 import threading
+import time
+from abc import abstractmethod, ABCMeta
 from typing import Mapping, Sequence, List, Generator, Any, Optional, Callable
 from typing import Tuple, MutableMapping  # noqa  # pylint: disable=unused-import
+
+import pyramid.request
 
 from c2cwsgiutils import _utils
 
@@ -27,12 +28,13 @@ class Timer(object):
     """
     Allow to measure the duration of some activity
     """
+
     def __init__(self, key: Optional[Sequence[Any]], tags: TagType) -> None:
         self._key = key
         self._tags = tags
         self._start = time.monotonic()
 
-    def stop(self, key_final: Optional[Sequence[Any]]=None, tags_final: TagType=None) -> float:
+    def stop(self, key_final: Optional[Sequence[Any]] = None, tags_final: TagType = None) -> float:
         duration = time.monotonic() - self._start
         if key_final is not None:
             self._key = key_final
@@ -45,7 +47,7 @@ class Timer(object):
 
 
 @contextlib.contextmanager
-def timer_context(key: Sequence[Any], tags: TagType=None) -> Generator[None, None, None]:
+def timer_context(key: Sequence[Any], tags: TagType = None) -> Generator[None, None, None]:
     """
     Add a duration measurement to the stats using the duration the context took to run
 
@@ -58,7 +60,7 @@ def timer_context(key: Sequence[Any], tags: TagType=None) -> Generator[None, Non
 
 
 @contextlib.contextmanager
-def outcome_timer_context(key: List[Any], tags: TagType=None) -> Generator[None, None, None]:
+def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[None, None, None]:
     """
     Add a duration measurement to the stats using the duration the context took to run
 
@@ -86,7 +88,7 @@ def outcome_timer_context(key: List[Any], tags: TagType=None) -> Generator[None,
         raise
 
 
-def timer(key: Optional[Sequence[Any]]=None, tags: TagType=None) -> Timer:
+def timer(key: Optional[Sequence[Any]] = None, tags: TagType = None) -> Timer:
     """
     Create a timer for the given key. The key can be omitted, but then need to be specified
     when stop is called.
@@ -99,7 +101,7 @@ def timer(key: Optional[Sequence[Any]]=None, tags: TagType=None) -> Timer:
     return Timer(key, tags)
 
 
-def set_gauge(key: Sequence[Any], value: float, tags: TagType=None) -> None:
+def set_gauge(key: Sequence[Any], value: float, tags: TagType = None) -> None:
     """
     Set a gauge value
 
@@ -111,7 +113,7 @@ def set_gauge(key: Sequence[Any], value: float, tags: TagType=None) -> None:
         backend.gauge(key, value, tags)
 
 
-def increment_counter(key: Sequence[Any], increment: int=1, tags: TagType=None) -> None:
+def increment_counter(key: Sequence[Any], increment: int = 1, tags: TagType = None) -> None:
     """
     Increment a counter value
 
@@ -125,15 +127,15 @@ def increment_counter(key: Sequence[Any], increment: int=1, tags: TagType=None) 
 
 class _BaseBackend(metaclass=ABCMeta):
     @abstractmethod
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType=None) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
         pass
 
     @abstractmethod
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType=None) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
         pass
 
     @abstractmethod
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType=None) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
         pass
 
 
@@ -155,7 +157,7 @@ class MemoryBackend(_BaseBackend):
         result += _format_tags(tags, prefix="/", tag_sep="/", kv_sep="=", formatter=MemoryBackend._key_entry)
         return result
 
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType=None) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
         """
         Add a duration measurement to the stats.
         """
@@ -168,10 +170,10 @@ class MemoryBackend(_BaseBackend):
                 self._timers[the_key] = (cur[0] + 1, cur[1] + duration, min(cur[2], duration),
                                          max(cur[3], duration))
 
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType=None) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
         self._gauges[self._key(key, tags)] = value
 
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType=None) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
         the_key = self._key(key, tags)
         with self._stats_lock:
             self._counters[the_key] = self._counters.get(the_key, 0) + increment
@@ -233,25 +235,25 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         except Exception:
             pass  # Ignore errors (must survive if stats cannot be sent)
 
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType=None) -> None:
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
         the_key = self._key(key)
         ms_duration = int(round(duration * 1000.0))
         ms_duration = max(ms_duration, 1)  # collectd would ignore events with zero durations
         message = "%s:%s|ms" % (the_key, ms_duration)
         self._send(message, tags)
 
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType=None) -> None:
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
         the_key = self._key(key)
         message = "%s:%s|g" % (the_key, value)
         self._send(message, tags)
 
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType=None) -> None:
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
         the_key = self._key(key)
         message = "%s:%s|c" % (the_key, increment)
         self._send(message, tags)
 
 
-def init_backends(settings: Optional[Mapping[str, str]]=None) -> None:
+def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
     """
     Initialize the backends according to the configuration.
 

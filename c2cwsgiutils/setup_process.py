@@ -6,7 +6,6 @@ Must be imported at the very beginning of the process' life, before any other mo
 """
 from c2cwsgiutils import pyramid_logging, coverage_setup, sentry, broadcast, stats, redis_stats, stats_pyramid
 
-
 pyramid_logging.init()
 coverage_setup.init()
 sentry.init()

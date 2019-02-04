@@ -3,13 +3,13 @@ A view (URL=/sql_provider) allowing to enabled/disable a SQL spy that runs an "E
 every SELECT query going through SQLAlchemy.
 """
 import logging
-import pyramid.config
-import pyramid.request
 import re
-import sqlalchemy.event
-import sqlalchemy.engine
 from threading import Lock
 from typing import Any, Mapping
+
+import pyramid.request
+import sqlalchemy.engine
+import sqlalchemy.event
 
 from c2cwsgiutils import _utils, auth, broadcast
 
@@ -78,7 +78,7 @@ def _beautify_sql(statement: str) -> str:
     return statement
 
 
-def _indent(statement: str, indent: str='  ') -> str:
+def _indent(statement: str, indent: str = '  ') -> str:
     return indent + ("\n" + indent).join(statement.split('\n'))
 
 

@@ -4,7 +4,7 @@ cee-syslog-handler==0.5.0
 codacy-coverage==1.3.11
 cornice==3.5.1
 coverage==4.5.2
-flake8==3.7.4
+flake8==3.7.5
 gunicorn==19.9.0
 junit2html==022
 lxml==4.3.0

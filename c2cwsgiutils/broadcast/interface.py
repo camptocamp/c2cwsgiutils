@@ -6,6 +6,7 @@ class BaseBroadcaster(object):
     """
     Interface definition for message broadcasting implementation
     """
+
     @abstractmethod
     def subscribe(self, channel: str, callback: Callable) -> None:
         pass  # pragma: no cover

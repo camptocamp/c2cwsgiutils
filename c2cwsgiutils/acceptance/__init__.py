@@ -1,13 +1,13 @@
-import time
-from functools import wraps
 import logging
+import time
 import typing
+from functools import wraps
 
 LOG = logging.getLogger(__name__)
 
 
-def retry(exception_to_check: typing.Any, tries: float=3, delay: float=0.5,
-          backoff: float=2) -> typing.Callable:
+def retry(exception_to_check: typing.Any, tries: float = 3, delay: float = 0.5,
+          backoff: float = 2) -> typing.Callable:
     """Retry calling the decorated function using an exponential backoff.
 
     http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
@@ -24,6 +24,7 @@ def retry(exception_to_check: typing.Any, tries: float=3, delay: float=0.5,
         each retry
     :type backoff: int
     """
+
     def deco_retry(f: typing.Callable) -> typing.Callable:
 
         @wraps(f)

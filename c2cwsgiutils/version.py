@@ -1,8 +1,9 @@
-import logging
 import json
+import logging
 import os
-import pyramid.config
 from typing import Optional, Any
+
+import pyramid.config
 
 from c2cwsgiutils import _utils
 

@@ -1,6 +1,7 @@
 import logging
-import pyramid.request
 from typing import Mapping, Any, Generator, Tuple
+
+import pyramid.request
 
 from c2cwsgiutils import _utils, auth, broadcast
 

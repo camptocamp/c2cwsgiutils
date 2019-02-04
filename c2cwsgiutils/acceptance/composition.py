@@ -1,11 +1,12 @@
 import logging
 import netifaces
 import os
-import _pytest.fixtures
 import subprocess
 import sys
 import time
 from typing import Callable, Any, Optional, List, Mapping
+
+import _pytest.fixtures
 
 from c2cwsgiutils.acceptance import utils
 
@@ -16,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG,
 logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.WARN)
 
 
-def _try(what: Callable[[], Any], fail: bool=True, times: int=5, delay: float=10) -> Any:
+def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: float = 10) -> Any:
     for i in range(times):
         # noinspection PyBroadException
         try:
@@ -30,7 +31,7 @@ def _try(what: Callable[[], Any], fail: bool=True, times: int=5, delay: float=10
 
 class Composition(object):
     def __init__(self, request: _pytest.fixtures.FixtureRequest, project_name: str, composition: str,
-                 coverage_paths: Optional[List[str]]=None) -> None:
+                 coverage_paths: Optional[List[str]] = None) -> None:
         self.project_name = project_name
         self.composition_file = composition
         self.coverage_paths = coverage_paths
@@ -48,17 +49,17 @@ class Composition(object):
 
             _try(lambda:
                  subprocess.check_call(['docker-compose', '--file', composition,
-                                       '--project-name', project_name, 'build'], env=env,
+                                        '--project-name', project_name, 'build'], env=env,
                                        stderr=subprocess.STDOUT), fail=False)
 
             _try(lambda:
                  subprocess.check_call(['docker-compose', '--file', composition,
-                                       '--project-name', project_name, 'up', '-d'], env=env,
+                                        '--project-name', project_name, 'up', '-d'], env=env,
                                        stderr=subprocess.STDOUT))
 
         # setup something that redirects the docker container logs to the test output
         log_watcher = subprocess.Popen(['docker-compose', '--file', composition,
-                                       '--project-name', project_name, 'logs', '--follow', '--no-color'],
+                                        '--project-name', project_name, 'logs', '--follow', '--no-color'],
                                        env=env, stderr=subprocess.STDOUT)
         request.addfinalizer(log_watcher.kill)
         if os.environ.get("docker_stop", "1") == "1":
@@ -68,7 +69,7 @@ class Composition(object):
         env = Composition._get_env()
         _try(lambda:
              subprocess.check_call(['docker-compose', '--file', self.composition_file,
-                                   '--project-name', self.project_name, 'stop'], env=env,
+                                    '--project-name', self.project_name, 'stop'], env=env,
                                    stderr=subprocess.STDOUT))
         if self.coverage_paths:
             target_dir = "/reports/"
@@ -84,13 +85,13 @@ class Composition(object):
     def stop(self, container: str) -> None:
         _try(lambda:
              subprocess.check_call(['docker', '--log-level=warn',
-                                   'stop', '%s_%s_1' % (self.project_name, container)],
+                                    'stop', '%s_%s_1' % (self.project_name, container)],
                                    stderr=subprocess.STDOUT))
 
     def restart(self, container: str) -> None:
         _try(lambda:
              subprocess.check_call(['docker', '--log-level=warn',
-                                   'restart', '%s_%s_1' % (self.project_name, container)],
+                                    'restart', '%s_%s_1' % (self.project_name, container)],
                                    stderr=subprocess.STDOUT))
 
     def run(self, container: str, *command: str, **kwargs: Any) -> None:

@@ -1,5 +1,6 @@
-from cornice import Service
 from typing import Any
+
+from cornice import Service
 
 
 def create(name: str, path: str, *args: Any, **kwargs: Any) -> Service:

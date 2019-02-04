@@ -1,8 +1,9 @@
-import logging
 import functools
 import json
-import requests
+import logging
 from typing import Dict, Optional, List
+
+import requests
 
 from c2cwsgiutils.acceptance import connection, utils
 
@@ -13,6 +14,7 @@ class PrintConnection(connection.Connection):
     """
     A Connection with specialized methods to interact with a Mapfish Print server.
     """
+
     def __init__(self, base_url: str, origin: str) -> None:
         """
         :param base_url: The base URL to the print server (including the /print)
@@ -22,7 +24,7 @@ class PrintConnection(connection.Connection):
         super().__init__(base_url=base_url, origin=origin)
         self.session.headers['Referer'] = origin
 
-    def wait_ready(self, timeout: int=60, app: str="default") -> None:
+    def wait_ready(self, timeout: int = 60, app: str = "default") -> None:
         """
         Wait the print instance to be ready
         """
@@ -40,7 +42,7 @@ class PrintConnection(connection.Connection):
             out[name] = json.loads(value)
         return out
 
-    def get_pdf(self, app: str, request: Dict, timeout: int=60) -> requests.Response:
+    def get_pdf(self, app: str, request: Dict, timeout: int = 60) -> requests.Response:
         create_report = self.post_json(app + "/report.pdf", json=request)
         LOG.debug("create_report=%s", create_report)
         ref = create_report['ref']

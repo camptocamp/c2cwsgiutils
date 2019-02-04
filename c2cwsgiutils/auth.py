@@ -1,7 +1,8 @@
 import hashlib
-from pyramid.httpexceptions import HTTPForbidden
-import pyramid.request
 from typing import Optional, Any
+
+import pyramid.request
+from pyramid.httpexceptions import HTTPForbidden
 
 # noinspection PyProtectedMember
 from c2cwsgiutils._utils import env_or_settings, env_or_config, config_bool
@@ -23,7 +24,7 @@ def _hash_secret(secret: str) -> str:
     return hashlib.sha256(secret.encode()).hexdigest()
 
 
-def is_auth(request: pyramid.request.Request, env_name: Any=None, config_name: Any=None) -> bool:
+def is_auth(request: pyramid.request.Request, env_name: Any = None, config_name: Any = None) -> bool:
     """
     Check if the client is authenticated with the C2C_SECRET
     """
@@ -56,13 +57,13 @@ def is_auth(request: pyramid.request.Request, env_name: Any=None, config_name: A
     return False
 
 
-def auth_view(request: pyramid.request.Request, env_name: Any=None, config_name: Any=None) -> None:
+def auth_view(request: pyramid.request.Request, env_name: Any = None, config_name: Any = None) -> None:
     if not is_auth(request):
         raise HTTPForbidden('Missing or invalid secret (parameter, X-API-Key header or cookie)')
 
 
 def is_enabled(
         config: pyramid.config.Configurator,
-        env_name: Optional[str]=None, config_name: Optional[str]=None) -> bool:
+        env_name: Optional[str] = None, config_name: Optional[str] = None) -> bool:
     return config_bool(env_or_config(config, env_name, config_name)) and \
-        env_or_config(config, SECRET_ENV, SECRET_PROP, '') != ''
+           env_or_config(config, SECRET_ENV, SECRET_PROP, '') != ''

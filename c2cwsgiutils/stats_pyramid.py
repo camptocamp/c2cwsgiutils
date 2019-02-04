@@ -1,21 +1,22 @@
 """
 Generate statsd metrics for pyramid and SQLAlchemy events.
 """
+import re
+from typing import cast, Optional, Callable, Any, Dict  # noqa  # pylint: disable=unused-import
+
 import pyramid.config
 import pyramid.events
 import pyramid.request
-from pyramid.httpexceptions import HTTPException
-import re
+import sqlalchemy.engine
 import sqlalchemy.event
 import sqlalchemy.orm
-import sqlalchemy.engine
-from typing import cast, Optional, Callable, Any, Dict  # noqa  # pylint: disable=unused-import
+from pyramid.httpexceptions import HTTPException
 
 from c2cwsgiutils import stats, _utils
 
 
-def _add_server_metric(request: pyramid.request.Request, name: str, duration: Optional[float]=None,
-                       description: Optional[str]=None) -> None:
+def _add_server_metric(request: pyramid.request.Request, name: str, duration: Optional[float] = None,
+                       description: Optional[str] = None) -> None:
     # format: <name>;dur=<duration>;desc=<description>
     metric = name
     if duration is not None:
@@ -53,6 +54,7 @@ def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma:
             tags = None
         duration = measure.stop(key, tags)
         _add_server_metric(request, kind, duration=duration)
+
     return finished_cb
 
 
@@ -133,6 +135,7 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable:
 
     def after(*_args: Any, **_kwargs: Any) -> None:
         measure.stop()
+
     return after
 
 

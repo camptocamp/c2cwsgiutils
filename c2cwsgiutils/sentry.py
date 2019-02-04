@@ -1,11 +1,12 @@
 import contextlib
 import logging
 import os
+from typing import MutableMapping, Any, Generator, Optional, Callable  # noqa  # pylint: disable=unused-import
+
 import pyramid.config
 from raven import Client, middleware
-from raven.handlers.logging import SentryHandler
 from raven.conf import setup_logging
-from typing import MutableMapping, Any, Generator, Optional, Callable  # noqa  # pylint: disable=unused-import
+from raven.handlers.logging import SentryHandler
 
 from c2cwsgiutils import _utils
 
@@ -13,7 +14,7 @@ LOG = logging.getLogger(__name__)
 client = None
 
 
-def init(config: Optional[pyramid.config.Configurator]=None) -> None:
+def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global client
     sentry_url = _utils.env_or_config(config, 'SENTRY_URL', 'c2c.sentry.url')
     if sentry_url is not None:

@@ -8,17 +8,18 @@ import configparser
 import copy
 import logging
 import os
-import pyramid.config
-from pyramid.httpexceptions import HTTPNotFound
-import pyramid.request
 import re
-import requests
-import sqlalchemy.orm
-import sqlalchemy.engine
 import subprocess
 import time
 import traceback
 from typing import Optional, Callable, Mapping, List, Tuple, Any, Union, Dict  # noqa
+
+import pyramid.config
+import pyramid.request
+import requests
+import sqlalchemy.engine
+import sqlalchemy.orm
+from pyramid.httpexceptions import HTTPNotFound
 
 from c2cwsgiutils import stats, _utils, broadcast, version, auth
 
@@ -30,6 +31,7 @@ class JsonCheckException(Exception):
     """
     Checker exception used to add some structured content to a failure.
     """
+
     def __init__(self, message: str, json: Any):
         super().__init__()
         self.message = message
@@ -43,7 +45,7 @@ class JsonCheckException(Exception):
 
 
 def _get_bindings(session: Any) -> List[sqlalchemy.engine.Engine]:
-    return [session.c2c_rw_bind, session.c2c_ro_bind] if session.c2c_rw_bind != session.c2c_ro_bind\
+    return [session.c2c_rw_bind, session.c2c_ro_bind] if session.c2c_rw_bind != session.c2c_ro_bind \
         else [session.c2c_rw_bind]
 
 
@@ -70,6 +72,7 @@ class HealthCheck(object):
 
     Only one instance of this class must be created per process.
     """
+
     def __init__(self, config: pyramid.config.Configurator) -> None:
         config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
                          request_method="GET")
@@ -82,8 +85,8 @@ class HealthCheck(object):
                 self.add_version_check(level=2)
 
     def add_db_session_check(self, session: sqlalchemy.orm.Session,
-                             query_cb: Optional[Callable[[sqlalchemy.orm.Session], Any]]=None,
-                             at_least_one_model: Optional[object]=None, level: int=1) -> None:
+                             query_cb: Optional[Callable[[sqlalchemy.orm.Session], Any]] = None,
+                             at_least_one_model: Optional[object] = None, level: int = 1) -> None:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
 
@@ -98,9 +101,9 @@ class HealthCheck(object):
             name, cb = self._create_db_engine_check(session, binding, query_cb)
             self._checks.append((name, cb, level))
 
-    def add_alembic_check(self, session: sqlalchemy.orm.Session, alembic_ini_path: str, level: int=2,
-                          name: str='alembic', version_schema: Optional[str]=None,
-                          version_table: Optional[str]=None) -> None:
+    def add_alembic_check(self, session: sqlalchemy.orm.Session, alembic_ini_path: str, level: int = 2,
+                          name: str = 'alembic', version_schema: Optional[str] = None,
+                          version_table: Optional[str] = None) -> None:
         """
         Check the DB version against the HEAD version of Alembic.
 
@@ -112,6 +115,7 @@ class HealthCheck(object):
         :param version_schema: override the schema where the version table is
         :param version_table: override the table name for the version
         """
+
         def check(_request: Any) -> str:
             for binding in _get_bindings(session):
                 prev_bind = session.bind
@@ -152,12 +156,12 @@ class HealthCheck(object):
 
     def add_url_check(
             self, url: Union[str, Callable[[pyramid.request.Request], str]],
-            params: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None]=None,
-            headers: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None]=None,
-            name: Optional[str]=None,
+            params: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None] = None,
+            headers: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None] = None,
+            name: Optional[str] = None,
             check_cb: Callable[[pyramid.request.Request, requests.Response],
-                               Any]=lambda request, response: None,
-            timeout: float=3, level: int=1) -> None:
+                               Any] = lambda request, response: None,
+            timeout: float = 3, level: int = 1) -> None:
         """
         Check that a GET on an URL returns 2xx
 
@@ -170,6 +174,7 @@ class HealthCheck(object):
         :param timeout: the timeout
         :param level: the level of the health check
         """
+
         def check(request: pyramid.request.Request) -> Any:
             the_url = _maybe_function(url, request)
             the_params = _maybe_function(params, request)
@@ -181,11 +186,12 @@ class HealthCheck(object):
             response = requests.get(the_url, timeout=timeout, params=the_params, headers=the_headers)
             response.raise_for_status()
             return check_cb(request, response)
+
         if name is None:
             name = str(url)
         self._checks.append((name, check, level))
 
-    def add_redis_check(self, url: str, name: Optional[str]=None, level: int=1) -> None:
+    def add_redis_check(self, url: str, name: Optional[str] = None, level: int = 1) -> None:
         """
         Check that the given redis server is reachable. One such check is automatically added if
         the broadcaster is configured with redis.
@@ -212,24 +218,26 @@ class HealthCheck(object):
             name = url
         self._checks.append((name, check, level))
 
-    def add_version_check(self, name: str="version", level: int=2) -> None:
+    def add_version_check(self, name: str = "version", level: int = 2) -> None:
         """
         Check that the version matches accross all instances
         :param name: the name of the check (defaults to "version")
         :param level: the level of the health check
         :return:
         """
+
         def check(request: pyramid.request.Request) -> Any:
             versions = _get_all_versions()
             versions = list(filter(lambda x: x is not None, versions))
             assert len(versions) > 0
             ref = versions[0]
-            assert all(v == ref for v in versions), "Non identical versions: " + ", ". join(versions)
+            assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
             return dict(version=ref, count=len(versions))
+
         self._checks.append((name, check, level))
 
     def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], Any],
-                         level: int=1) -> None:
+                         level: int = 1) -> None:
         """
         Add a custom check.
 
@@ -302,6 +310,7 @@ class HealthCheck(object):
                     return query_cb(session)
             finally:
                 session.bind = prev_bind
+
         return 'db_engine_' + bind.c2c_name, check
 
     @staticmethod
@@ -310,6 +319,7 @@ class HealthCheck(object):
             result = session.query(model).first()
             if result is None:
                 raise HTTPNotFound(model.__name__ + " record not found")
+
         return query
 
 

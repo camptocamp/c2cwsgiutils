@@ -1,7 +1,8 @@
 import inspect
-import sqlalchemy as sa
 import sys
 from typing import Any, Set, List
+
+import sqlalchemy as sa
 
 
 def generate_model_graph(module: Any) -> None:

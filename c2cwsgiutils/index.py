@@ -1,9 +1,10 @@
+from typing import Optional, List  # noqa  # pylint: disable=unused-import
+
 import pyramid.config
 import pyramid.request
 import pyramid.response
-from typing import Optional, List  # noqa  # pylint: disable=unused-import
-from c2cwsgiutils.auth import is_auth, get_expected_secret
 
+from c2cwsgiutils.auth import is_auth, get_expected_secret
 from . import _utils
 
 additional_title = None  # type: Optional[str]

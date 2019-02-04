@@ -2,8 +2,9 @@
 Private utilities.
 """
 import os
-import pyramid.config
 from typing import Mapping, Any, Optional, Callable
+
+import pyramid.config
 
 
 def get_base_path(config: pyramid.config.Configurator) -> str:
@@ -12,16 +13,16 @@ def get_base_path(config: pyramid.config.Configurator) -> str:
 
 def env_or_config(
         config: Optional[pyramid.config.Configurator],
-        env_name: Optional[str]=None, config_name: Optional[str]=None,
-        default: Any=None, type_: Callable[[str], Any]=str) -> Any:
+        env_name: Optional[str] = None, config_name: Optional[str] = None,
+        default: Any = None, type_: Callable[[str], Any] = str) -> Any:
     return env_or_settings(
         config.get_settings() if config is not None else {}, env_name, config_name, default, type_)
 
 
 def env_or_settings(
         settings: Optional[Mapping[str, Any]],
-        env_name: Optional[str]=None, settings_name: Optional[str]=None,
-        default: Any=None, type_: Callable[[str], Any]=str) -> Any:
+        env_name: Optional[str] = None, settings_name: Optional[str] = None,
+        default: Any = None, type_: Callable[[str], Any] = str) -> Any:
     if env_name is not None and env_name in os.environ:
         return type_(os.environ[env_name])
     if settings is not None and settings_name is not None and settings_name in settings:

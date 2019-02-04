@@ -1,12 +1,13 @@
-import os
 import logging
-from pyramid.paster import get_app
+import os
 from typing import Optional, Any
+
+from pyramid.paster import get_app
 
 from c2cwsgiutils import pyramid_logging
 
 
-def create_application(configfile: Optional[str]=None) -> Any:
+def create_application(configfile: Optional[str] = None) -> Any:
     """
     Create a standard WSGI application with the capabilities to use environment variables in the
     configuration file (use %(ENV_VAR)s place holders)

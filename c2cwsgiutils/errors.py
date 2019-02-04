@@ -26,8 +26,9 @@ STATUS_LOGGER = {
 }
 
 
-def _crude_add_cors(request: pyramid.request.Request) -> None:
-    response = request.response
+def _crude_add_cors(request: pyramid.request.Request, response: pyramid.response.Response = None) -> None:
+    if response is None:
+        response = request.response
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = \
         ','.join({request.headers.get('Access-Control-Request-Method', request.method)} | {'OPTIONS', 'HEAD'})
@@ -124,6 +125,7 @@ def _other_error(exception: Exception, request: pyramid.request.Request) -> pyra
 
 
 def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> pyramid.response.Response:
+    _crude_add_cors(request, exception)
     return exception
 
 

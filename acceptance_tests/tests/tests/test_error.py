@@ -40,6 +40,7 @@ def test_redirect_exception(app_connection):
 
 
 def test_no_content_exception(app_connection):
-    redirect = app_connection.get_raw('error', params={'code': 204}, expected_status=204)
-    assert 'Content-Type' not in redirect.headers, redirect.headers['Content-Type']
-    assert 'Content-Length' not in redirect.headers
+    no_content = app_connection.get_raw('error', params={'code': 204}, expected_status=204)
+    assert 'Content-Type' not in no_content.headers, no_content.headers['Content-Type']
+    assert 'Content-Length' not in no_content.headers
+    assert 'Access-Control-Allow-Origin' in no_content.headers

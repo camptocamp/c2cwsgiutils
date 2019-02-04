@@ -68,14 +68,14 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
 
     if auth:
         secret = get_expected_secret(request)
-        response.text += "\n<hr>".join([e.format(
+        response.text += "\n".join([e.format(
             # TODO: remove both for v3 (issue #177)
             secret=secret,
             secret_qs=("secret=" + secret) if secret is not None else "",
         ) for e in additional_auth])
         response.text += "\n"
 
-    response.text += "\n<hr>".join(additional_noauth)
+    response.text += "\n".join(additional_noauth)
 
     response.text += """
         <div class="row">

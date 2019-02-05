@@ -8,7 +8,7 @@ import pyramid.config
 
 
 def get_base_path(config: pyramid.config.Configurator) -> str:
-    return env_or_config(config, 'C2C_BASE_PATH', 'c2c.base_path', '')
+    return env_or_config(config, 'C2C_BASE_PATH', 'c2c.base_path', '/c2c')
 
 
 def env_or_config(

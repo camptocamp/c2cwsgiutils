@@ -56,7 +56,7 @@ In general, configuration can be done both with environment variables (taken fir
 You can configure the base URL for accessing the views provided by c2cwsgiutils with an environment variable
 named `C2C_BASE_PATH` or in the `production.ini` file with a property named `c2c.base_path`.
 
-A few REST APIs are added and can be seen with this URL (only enabled if C2C_BASE_PATH is not empty):
+A few REST APIs are added and can be seen with this URL:
 `{C2C_BASE_PATH}`.
 
 Some APIs are protected by a secret. This secret is specified in the `C2C_SECRET` variable or `c2c.secret`

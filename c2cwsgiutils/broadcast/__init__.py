@@ -17,7 +17,7 @@ REDIS_CONFIG_KEY = "c2c.redis_url"
 BROADCAST_ENV_KEY = "C2C_BROADCAST_PREFIX"
 BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 
-_broadcaster = None  # type: Optional[interface.BaseBroadcaster]
+_broadcaster: Optional[interface.BaseBroadcaster] = None
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:

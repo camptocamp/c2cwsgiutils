@@ -6,18 +6,19 @@ import pyramid.config
 from c2cwsgiutils import stats, _utils
 
 LOG = logging.getLogger(__name__)
-ORIG = None  # type: Optional[Callable]
+ORIG: Optional[Callable] = None
 
 
 def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
     if stats.USE_TAGS:
         key = ['redis']
-        tags = dict(cmd=args[0])  # type: Optional[Dict]
+        tags: Optional[Dict] = dict(cmd=args[0])
     else:
         key = ['redis', args[0]]
         tags = None
-    with stats.outcome_timer_context(key, tags):
-        return ORIG(self, *args, **options)  # type: ignore
+    if ORIG is not None:
+        with stats.outcome_timer_context(key, tags):
+            return ORIG(self, *args, **options)
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:

@@ -47,8 +47,8 @@ def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma:
                 _add_server_metric(request, 'route', description=name)
         if stats.USE_TAGS:
             key = [kind]
-            tags = dict(method=request.method, route=name, status=status,
-                        group=status // 100)  # type: Optional[Dict]
+            tags: Optional[Dict] = dict(method=request.method, route=name, status=status,
+                                        group=status // 100)
         else:
             key = [kind, request.method, name, status]
             tags = None
@@ -127,7 +127,7 @@ def _simplify_sql(sql: str) -> str:
 def _create_sqlalchemy_timer_cb(what: str) -> Callable:
     if stats.USE_TAGS and what != 'commit':
         key = ['sql']
-        tags = dict(query=what)  # type: Optional[Dict]
+        tags: Optional[Dict] = dict(query=what)
     else:
         key = ['sql', what]
         tags = None

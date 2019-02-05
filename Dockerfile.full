@@ -3,7 +3,9 @@ FROM camptocamp/c2cwsgiutils:latest
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libexpat1 libkmlconvenience1 libkmlregionator1 libkmlxsd1 \
-        libspatialite7 libopenjp2-7 libwebp6 graphviz && \
+        libspatialite7 libopenjp2-7 libwebp6 graphviz \
+        postgresql-client-10 git net-tools iputils-ping screen \
+        vim vim-editorconfig vim-addon-manager && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 

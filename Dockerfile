@@ -1,31 +1,26 @@
-FROM camptocamp/python-gis:3.6-ubuntu18.04
+FROM ubuntu:18.04
 LABEL maintainer "info@camptocamp.org"
 
+COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/
 RUN apt update && \
+    DEV_PACKAGES="libpq-dev python3-dev build-essential python3-dev" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
-        libpq-dev \
-        libgeos-dev \
-        libproj-dev \
-        libjpeg-dev \
-        postgresql-client-10 \
-        git \
-        graphviz-dev \
-        graphviz \
-        net-tools \
-        iputils-ping \
-        tree \
-        screen \
-        vim \
-        vim-editorconfig \
-        vim-addon-manager && \
+        libpq5 \
+        python3.6 \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
+        curl \
+        gnupg \
+        python3-pkgconfig \
+        $DEV_PACKAGES && \
+    ln -s pip3 /usr/bin/pip && \
+    ln -s python3 /usr/bin/python && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
-    vim-addon-manager --system-wide install editorconfig && \
-    echo 'set hlsearch  " Highlight search' > /etc/vim/vimrc.local && \
-    echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
-    echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local
-COPY requirements.txt docker-requirements-light.txt docker-requirements.txt /opt/c2cwsgiutils/
-RUN pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements-light.txt -r /opt/c2cwsgiutils/docker-requirements.txt
+    pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
+    apt --purge remove -y $DEV_PACKAGES gcc-7 && \
+    apt --purge autoremove -y
 
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \
@@ -43,6 +38,7 @@ ENV TERM=linux \
     SQL_LOG_LEVEL=WARN \
     GUNICORN_LOG_LEVEL=WARN \
     OTHER_LOG_LEVEL=WARN \
-    DEVELOPMENT=0
+    DEVELOPMENT=0 \
+    PKG_CONFIG_ALLOW_SYSTEM_LIBS=OHYESPLEASE
 
 CMD ["c2cwsgiutils_run"]

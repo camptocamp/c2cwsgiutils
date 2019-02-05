@@ -30,13 +30,13 @@ build: build_acceptance build_test_app
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app
-	rm -rf reports/coverage/api reports/acceptance$(PYTHON_VERSION).xml
+	rm -rf reports/coverage/api reports/acceptance.xml
 	mkdir -p reports/coverage/api
 	#get the UT reports
 	docker run --rm $(DOCKER_BASE):latest cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
 	#run the tests
 	docker run $(DOCKER_TTY) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
-	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance$(PYTHON_VERSION).xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance$(PYTHON_VERSION).xml /reports/acceptance$(PYTHON_VERSION).html; exit \$$status\$$?"; \
+	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance.xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance.xml /reports/acceptance.html; exit \$$status\$$?"; \
 	status=$$?; \
 	#copy the reports locally \
 	docker cp c2cwsgiutils_acceptance_$$PPID:/reports ./; \
@@ -65,12 +65,16 @@ send_coverage: build_docker
 build_docker:
 	docker build -t $(DOCKER_BASE):latest .
 
+.PHONY: build_docker_full
+build_docker_full:
+	docker build -t $(DOCKER_BASE):latest-full -f Dockerfile.full .
+
 .PHONY: build_acceptance
-build_acceptance: build_docker$(PYTHON_VERSION)
+build_acceptance: build_docker
 	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance:latest acceptance_tests/tests
 
 .PHONY: build_test_app
-build_test_app: build_docker$(PYTHON_VERSION)
+build_test_app: build_docker
 	docker build -t $(DOCKER_BASE)_test_app:latest --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: requirements.txt Makefile
@@ -88,19 +92,12 @@ run: build_test_app
 	TEST_IP=172.17.0.1 docker-compose -f acceptance_tests/tests/docker-compose.yml up
 
 .PHONY: mypy
-mypy: build_docker$(PYTHON_VERSION)
+mypy: build_docker
 	docker run --rm $(DOCKER_BASE):latest mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs /opt/c2cwsgiutils/c2cwsgiutils
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp
 	.venv/bin/mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs c2cwsgiutils
-
-build_docker3.5:
-	docker build -t $(DOCKER_BASE):latest -f Dockerfile.3.5 .
-
-build_dockerlight:
-	docker build -t $(DOCKER_BASE):latest -f Dockerfile.light .
-	docker tag $(DOCKER_BASE):latest $(DOCKER_BASE):latest-light
 
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache

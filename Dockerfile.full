@@ -1,0 +1,11 @@
+FROM camptocamp/c2cwsgiutils:latest
+
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
+        libexpat1 libkmlconvenience1 libkmlregionator1 libkmlxsd1 \
+        libspatialite7 libopenjp2-7 libwebp6 graphviz && \
+    apt-get clean && \
+    rm -r /var/lib/apt/lists/*
+
+COPY build_full.sh /opt/c2cwsgiutils/
+RUN /opt/c2cwsgiutils/build_full.sh

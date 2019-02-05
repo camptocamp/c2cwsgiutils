@@ -8,7 +8,7 @@ NB_CPUS=`grep -c ^processor /proc/cpuinfo`
 apt update
 
 # install the packages needed to build (will be removed at the end)
-BUILD_PKG="python3-dev libcurl4-openssl-dev libpq-dev libkml-dev libspatialite-dev \
+BUILD_PKG="python3.7-dev libcurl4-openssl-dev libpq-dev libkml-dev libspatialite-dev \
     libopenjp2-7-dev libspatialite-dev libwebp-dev build-essential graphviz-dev"
 DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends ${BUILD_PKG}
 

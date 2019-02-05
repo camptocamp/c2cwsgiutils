@@ -2,11 +2,12 @@ FROM ubuntu:18.04
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/
+#TODO: find a way for python 3.6 not to be installed
 RUN apt update && \
-    DEV_PACKAGES="libpq-dev python3-dev build-essential python3-dev" && \
+    DEV_PACKAGES="libpq-dev build-essential python3.7-dev" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libpq5 \
-        python3.6 \
+        python3.7 \
         python3-pip \
         python3-setuptools \
         python3-wheel \
@@ -15,7 +16,8 @@ RUN apt update && \
         python3-pkgconfig \
         $DEV_PACKAGES && \
     ln -s pip3 /usr/bin/pip && \
-    ln -s python3 /usr/bin/python && \
+    ln -s python3.7 /usr/bin/python && \
+    ln -sf python3.7 /usr/bin/python3 && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
     pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
@@ -24,7 +26,7 @@ RUN apt update && \
 
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \
-    echo "from pickle import *" > /usr/lib/python3.6/cPickle.py && \
+    echo "from pickle import *" > /usr/lib/python3.7/cPickle.py && \
     pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
     (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
     python3 -m compileall -q && \

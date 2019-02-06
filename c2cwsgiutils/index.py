@@ -5,7 +5,7 @@ import pyramid.request
 import pyramid.response
 
 from c2cwsgiutils.auth import is_auth, get_expected_secret
-from . import _utils
+from . import _utils, profiler
 
 additional_title = None  # type: Optional[str]
 additional_noauth = []  # type: List[str]
@@ -61,7 +61,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     if auth:
         response.text += _debug(request)
         response.text += _logging(request)
-        response.text += _sql_profiler(request)
+        response.text += _profiler(request)
 
     if additional_title is not None and (auth or len(additional_noauth) > 0):
         response.text += additional_title
@@ -138,22 +138,40 @@ def _stats(request: pyramid.request.Request) -> str:
         return ""
 
 
-def _sql_profiler(request: pyramid.request.Request) -> str:
+def _profiler(request: pyramid.request.Request) -> str:
     sql_profiler_url = _url(request, 'c2c_sql_profiler')
-    if sql_profiler_url:
-        return """
+    if sql_profiler_url or profiler.PATH:
+        result = """
         <div class="row">
-          <div class="col-lg-3"><h2>SQL profiler</h2></div>
+          <div class="col-lg-3"><h2>Profiler</h2></div>
           <div class="col-lg">
-            <a class="btn btn-primary" href="{url}" target="_blank">Status</a>
-            <a class="btn btn-primary" href="{url}?enable=1" target="_blank">Enable</a>
-            <a class="btn btn-primary" href="{url}?enable=0" target="_blank">Disable</a>
+        """
+
+        if sql_profiler_url:
+            result += """
+                <p>SQL:
+                <a class="btn btn-primary" href="{url}" target="_blank">Status</a>
+                <a class="btn btn-primary" href="{url}?enable=1" target="_blank">Enable</a>
+                <a class="btn btn-primary" href="{url}?enable=0" target="_blank">Disable</a></p>
+            """
+
+        if profiler.PATH:
+            result += """
+                <p>Python:
+                <a class="btn btn-primary" href="{url}" target="_blank">Profiler</a></p>
+            """.format(
+                url=profiler.PATH
+            )
+
+        result += """
           </div>
         </div>
         <hr>
         """.format(
             url=sql_profiler_url
         )
+
+        return result
     else:
         return ""
 

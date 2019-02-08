@@ -71,7 +71,7 @@ By default, it will load the application configured in `/app/production.ini`, bu
 the `C2CWSGIUTILS_CONFIG` environment variable. All the environment variables are usable in the configuration
 file using stuff like `%(ENV_NAME)s`.
 
-To enable most of the features of c2cwsgiutils, you need to add this line to you WSGI main:
+To enable most of the features of c2cwsgiutils, you need to add this line to your WSGI main:
 
 ```python
 import c2cwsgiutils.pyramid
@@ -79,6 +79,13 @@ config.include(c2cwsgiutils.pyramid.includeme)
 ```
 
 Error catching views will be put in place to return errors as JSON.
+
+A custom loader is provided to run pyramid scripts against configuration files containing environment variables:
+
+```
+proutes c2c://production.ini  # relative path
+proutes c2c:///app/production.ini  # absolute path
+```
 
 
 ## Logging

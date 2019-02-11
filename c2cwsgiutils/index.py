@@ -49,32 +49,33 @@ def link(url: Optional[str], label: str) -> str:
         return ''
 
 
-def form(url: Optional[str], *content: str) -> str:
-    if url is not None:
-        return """
-        <form class="form-inline" action="{url}" target="_blank">
-          {content}
-        </form>
-        """.format(url=url, content='\n'.join(content))
-    else:
-        return """
-        <form class="form-inline">
-          {content}
-        </form>
-        """.format(content='\n'.join(content))
+def form(url: Optional[str], *content: str, method: str = 'get', target: str = '_blank') -> str:
+    assert url is not None
+    method_attrs = ""
+    if method == 'post':
+        method_attrs = ' method="post" enctype="multipart/form-data"'
+    return """
+    <form class="form-inline" action="{url}" target="{target}"{method_attrs}>
+      {content}
+    </form>
+    """.format(url=url, content='\n'.join(content), method_attrs=method_attrs, target=target)
 
 
 def input_(name: str, label: Optional[str] = None, type_: Optional[str] = None,
            value: Union[str, int] = "") -> str:
-    if label is None:
+    if label is None and type_ != 'hidden':
         label = name
     if type_ is None:
         if isinstance(value, int):
             type_ = 'number'
         else:
             type_ = 'text'
-    return '<label>{label}:</label><input class="form-control" type="{type}" name="{name}" value="{value}">'.\
-        format(name=name, label=label, type=type_, value=value)
+    result = ''
+    if label is not None:
+        result += '<label>{label}:</label>'.format(label=label)
+    result += '<input class="form-control" type="{type}" name="{name}" value="{value}">'.\
+        format(name=name, type=type_, value=value)
+    return result
 
 
 def button(label: str) -> str:
@@ -149,10 +150,14 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response.text += "\n".join(additional_noauth)
 
     if not auth:
-        auth_text = form(None, input_('secret', type_='password'), button('Login'))
+        auth_fields = [input_('secret', type_='password'), button('Login')]
     else:
-        auth_text = form(None, input_('secret', type_='hidden'), button('Logout'))
-    response.text += section('Authentication', auth_text, sep=False)
+        auth_fields = [input_('secret', type_='hidden'), button('Logout')]
+    response.text += section(
+        'Authentication',
+        form(_url(request, 'c2c_index'), *auth_fields, method='post', target='_self'),
+        sep=False
+    )
 
     response.text += """
         </div>
@@ -243,7 +248,7 @@ def _health_check(request: pyramid.request.Request) -> str:
 def init(config: pyramid.config.Configurator) -> None:
     base_path = _utils.get_base_path(config)
     if base_path != '':
-        config.add_route("c2c_index", base_path, request_method="GET")
+        config.add_route("c2c_index", base_path, request_method=("GET", "POST"))
         config.add_view(_index, route_name="c2c_index", http_cache=0)
-        config.add_route("c2c_index_slash", base_path + "/", request_method="GET")
+        config.add_route("c2c_index_slash", base_path + "/", request_method=("GET", "POST"))
         config.add_view(_index, route_name="c2c_index_slash", http_cache=0)

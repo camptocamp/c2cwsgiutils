@@ -48,7 +48,17 @@ setup(
     },
     entry_points={
         'console_scripts': [
-        ]
+        ],
+        'plaster.loader_factory': [
+            'c2c=c2cwsgiutils.loader:Loader',
+            'c2c+ini=c2cwsgiutils.loader:Loader',
+            'c2c+egg=c2cwsgiutils.loader:Loader',
+        ],
+        'plaster.wsgi_loader_factory': [
+            'c2c=c2cwsgiutils.loader:Loader',
+            'c2c+ini=c2cwsgiutils.loader:Loader',
+            'c2c+egg=c2cwsgiutils.loader:Loader',
+        ],
     },
     scripts=[
         'c2cwsgiutils_run',

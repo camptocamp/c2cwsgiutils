@@ -29,7 +29,7 @@ def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]
     """
     Group the identical stacks together along with a list of threads sporting them
     """
-    results = []  # type: List[Mapping[str, Any]]
+    results: List[Mapping[str, Any]] = []
     for host_stacks in source:
         host_id = '%s/%d' % (host_stacks['hostname'], host_stacks['pid'])
         for thread, frames in host_stacks['threads'].items():
@@ -51,7 +51,7 @@ def _dump_stacks_impl() -> Dict[str, Any]:
     threads = {}
     for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
         frames = []
-        for filename, lineno, name, line in traceback.extract_stack(stack):  # type: ignore
+        for filename, lineno, name, line in traceback.extract_stack(stack):
             cur = {
                 'file': filename,
                 'line': lineno,
@@ -97,7 +97,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List:
 
     LOG.debug("checking memory growth for %s", path)
 
-    peak_stats = {}  # type: Dict
+    peak_stats: Dict = {}
     for i in range(3):
         gc.collect(i)
 

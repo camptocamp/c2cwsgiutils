@@ -38,7 +38,7 @@ class PushgatewayGroupPublisher(object):
 
     def _reset(self) -> None:
         self._to_send = ''
-        self._types = {}  # type: MutableMapping[str, str]
+        self._types: MutableMapping[str, str] = {}
 
     def __str__(self) -> str:
         return self._url + ' ->\n' + self._to_send

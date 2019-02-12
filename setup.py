@@ -28,8 +28,7 @@ setup(
         "Environment :: Plugins",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Intended Audience :: Information Technology",
         "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: GIS",
@@ -49,7 +48,17 @@ setup(
     },
     entry_points={
         'console_scripts': [
-        ]
+        ],
+        'plaster.loader_factory': [
+            'c2c=c2cwsgiutils.loader:Loader',
+            'c2c+ini=c2cwsgiutils.loader:Loader',
+            'c2c+egg=c2cwsgiutils.loader:Loader',
+        ],
+        'plaster.wsgi_loader_factory': [
+            'c2c=c2cwsgiutils.loader:Loader',
+            'c2c+ini=c2cwsgiutils.loader:Loader',
+            'c2c+egg=c2cwsgiutils.loader:Loader',
+        ],
     },
     scripts=[
         'c2cwsgiutils_run',

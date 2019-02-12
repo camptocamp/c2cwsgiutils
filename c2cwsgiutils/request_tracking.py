@@ -16,10 +16,10 @@ from sqlalchemy.orm import Session
 
 from c2cwsgiutils import _utils, stats
 
-ID_HEADERS = []  # type: List[str]
+ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
-DEFAULT_TIMEOUT = None  # type: Optional[float]
+DEFAULT_TIMEOUT: Optional[float] = None
 
 
 def _gen_request_id(request: pyramid.request.Request) -> str:
@@ -56,15 +56,16 @@ def _patch_requests() -> None:
             status = response.status_code
             return response
         finally:
-            parsed = urllib.parse.urlparse(request.url)  # type: ignore
-            if stats.USE_TAGS:
-                key = ['requests']  # type: Sequence[Any]
-                tags = dict(scheme=parsed.scheme, host=parsed.hostname, port=parsed.port,
-                            method=request.method, status=status)  # type: Optional[Dict]
-            else:
-                key = ['requests', parsed.scheme, parsed.hostname, parsed.port, request.method, status]
-                tags = None
-            timer.stop(key, tags)
+            if request.url is not None:
+                parsed = urllib.parse.urlparse(request.url)
+                if stats.USE_TAGS:
+                    key: Sequence[Any] = ['requests']
+                    tags: Optional[Dict] = dict(scheme=parsed.scheme, host=parsed.hostname, port=parsed.port,
+                                                method=request.method, status=status)
+                else:
+                    key = ['requests', parsed.scheme, parsed.hostname, parsed.port, request.method, status]
+                    tags = None
+                timer.stop(key, tags)
 
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore
 

@@ -10,7 +10,7 @@ class LocalBroadcaster(interface.BaseBroadcaster):
     """
 
     def __init__(self) -> None:
-        self._subscribers = {}  # type: MutableMapping[str, Callable]
+        self._subscribers: MutableMapping[str, Callable] = {}
 
     def subscribe(self, channel: str, callback: Callable) -> None:
         self._subscribers[channel] = callback

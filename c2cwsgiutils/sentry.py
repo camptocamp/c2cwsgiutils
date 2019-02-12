@@ -19,10 +19,10 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     sentry_url = _utils.env_or_config(config, 'SENTRY_URL', 'c2c.sentry.url')
     if sentry_url is not None:
         if client is None:
-            client_info = {
+            client_info: MutableMapping[str, Any] = {
                 key[14:].lower(): value
                 for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')
-            }  # type: MutableMapping[str, Any]
+            }
             git_hash = _utils.env_or_config(config, 'GIT_HASH', 'c2c.git_hash')
             if git_hash is not None and not ('release' in client_info and client_info['release'] != 'latest'):
                 client_info['release'] = git_hash

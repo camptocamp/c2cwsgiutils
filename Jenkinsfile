@@ -18,35 +18,37 @@ dockerBuild {
         sh 'make pull'
         sh 'git clean -f -d'
     }
-    for (python_version in ['3.5', 'light', '']) {
-        env.PYTHON_VERSION = python_version
 
-        stage("Build ${python_version}") {
-            checkout scm
-            sh 'make -j2 build'
-        }
-        stage("Test ${python_version}") {
-            checkout scm
-            parallel 'acceptance': {
-                try {
-                    lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
-                        sh 'make -j2 acceptance'
-                    }
-                } finally {
-                    if (python_version == '') {
-                        junit keepLongStdio: true, testResults: 'reports/*.xml'
-                        withCredentials([[$class          : 'UsernamePasswordMultiBinding',
-                                          credentialsId   : 'C2cwsgiutilsCodacityToken',
-                                          usernameVariable: 'CODACY_PROJECT_USER',
-                                          passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
-                            sh 'make send_coverage'
-                        }
-                    }
+    stage("Build latest") {
+        checkout scm
+        sh 'make -j2 build'
+    }
+    stage("Test latest") {
+        checkout scm
+        parallel 'acceptance': {
+            try {
+                lock("acceptance-${env.NODE_NAME}") {  //only one acceptance test at a time on a machine
+                    sh 'make -j2 acceptance'
                 }
-            }, 'mypy': {
-                sh 'make mypy'
+            } finally {
+                junit keepLongStdio: true, testResults: 'reports/*.xml'
+                withCredentials([[$class          : 'UsernamePasswordMultiBinding',
+                                  credentialsId   : 'C2cwsgiutilsCodacityToken',
+                                  usernameVariable: 'CODACY_PROJECT_USER',
+                                  passwordVariable: 'CODACY_PROJECT_TOKEN']]) {
+                    sh 'make send_coverage'
+                }
             }
+        }, 'mypy': {
+            sh 'make mypy'
+        }, 'build full': {
+            sh 'make build_docker_full'
         }
+    }
+
+    stage("Test install GDAL") {
+        checkout scm
+        sh 'docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh'
     }
 
     def CURRENT_TAG = sh(returnStdout: true, script: "git fetch --tags && git tag -l --points-at HEAD | tail -1").trim()
@@ -83,9 +85,7 @@ dockerBuild {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 for (String tag: tags) {
                     sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${tag}"
-                    sh "docker tag camptocamp/c2cwsgiutils:latest-light camptocamp/c2cwsgiutils:${tag}-light"
                     docker.image("camptocamp/c2cwsgiutils:${tag}").push()
-                    docker.image("camptocamp/c2cwsgiutils:${tag}-light").push()
                 }
                 sh 'rm -rf ~/.docker*'
             }
@@ -99,7 +99,22 @@ dockerBuild {
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 docker.image('camptocamp/c2cwsgiutils:latest').push()
-                docker.image('camptocamp/c2cwsgiutils:latest-light').push()
+                docker.image('camptocamp/c2cwsgiutils:latest-full').push()
+                sh 'rm -rf ~/.docker*'
+            }
+        }
+    }
+
+    if (env.BRANCH_NAME.startsWith('beta_')) {
+        stage("Publish ${env.BRANCH_NAME}") {
+            checkout scm
+            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
+                              usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${env.BRANCH_NAME}"
+                sh "docker tag camptocamp/c2cwsgiutils:latest-full camptocamp/c2cwsgiutils:${env.BRANCH_NAME}-full"
+                docker.image("camptocamp/c2cwsgiutils:${env.BRANCH_NAME}").push()
+                docker.image("camptocamp/c2cwsgiutils:${env.BRANCH_NAME}-full").push()
                 sh 'rm -rf ~/.docker*'
             }
         }
@@ -113,9 +128,9 @@ dockerBuild {
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}"
-                sh "docker tag camptocamp/c2cwsgiutils:latest-light camptocamp/c2cwsgiutils:${majorRelease}-light"
+                sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}-full"
                 docker.image("camptocamp/c2cwsgiutils:${majorRelease}").push()
-                docker.image("camptocamp/c2cwsgiutils:${majorRelease}-light").push()
+                docker.image("camptocamp/c2cwsgiutils:${majorRelease}-full").push()
                 sh 'rm -rf ~/.docker*'
             }
         }

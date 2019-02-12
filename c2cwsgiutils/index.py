@@ -4,12 +4,12 @@ import pyramid.config
 import pyramid.request
 import pyramid.response
 
-from c2cwsgiutils.auth import is_auth, get_expected_secret
+from c2cwsgiutils.auth import is_auth
 from . import _utils, profiler
 
-additional_title = None  # type: Optional[str]
-additional_noauth = []  # type: List[str]
-additional_auth = []  # type: List[str]
+additional_title: Optional[str] = None
+additional_noauth: List[str] = []
+additional_auth: List[str] = []
 
 
 def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
@@ -139,12 +139,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
         response.text += "\n"
 
     if auth:
-        secret = get_expected_secret(request)
-        response.text += "\n".join([e.format(
-            # TODO: remove both for v3 (issue #177)
-            secret=secret,
-            secret_qs=("secret=" + secret) if secret is not None else "",
-        ) for e in additional_auth])
+        response.text += "\n".join(additional_auth)
         response.text += "\n"
 
     response.text += "\n".join(additional_noauth)

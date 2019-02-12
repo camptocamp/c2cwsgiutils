@@ -17,11 +17,27 @@ import pyramid.request
 
 from c2cwsgiutils import _utils
 
-BACKENDS = {}  # type: MutableMapping[str, _BaseBackend]
 LOG = logging.getLogger(__name__)
 USE_TAGS_ENV = 'STATSD_USE_TAGS'
 USE_TAGS = _utils.config_bool(os.environ.get(USE_TAGS_ENV, '0'))
 TagType = Optional[Mapping[str, Any]]
+
+
+class _BaseBackend(metaclass=ABCMeta):
+    @abstractmethod
+    def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
+        pass
+
+    @abstractmethod
+    def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
+        pass
+
+    @abstractmethod
+    def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
+        pass
+
+
+BACKENDS: MutableMapping[str, _BaseBackend] = {}
 
 
 class Timer(object):
@@ -125,25 +141,11 @@ def increment_counter(key: Sequence[Any], increment: int = 1, tags: TagType = No
         backend.counter(key, increment, tags)
 
 
-class _BaseBackend(metaclass=ABCMeta):
-    @abstractmethod
-    def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
-        pass
-
-    @abstractmethod
-    def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
-        pass
-
-    @abstractmethod
-    def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
-        pass
-
-
 class MemoryBackend(_BaseBackend):
     def __init__(self) -> None:
-        self._timers = {}  # type: MutableMapping[str, Tuple[int, float, float, float]]
-        self._gauges = {}  # type: MutableMapping[str, float]
-        self._counters = {}  # type: MutableMapping[str, int]
+        self._timers: MutableMapping[str, Tuple[int, float, float, float]] = {}
+        self._gauges: MutableMapping[str, float] = {}
+        self._counters: MutableMapping[str, int] = {}
         self._stats_lock = threading.Lock()
         LOG.info("Starting a MemoryBackend for stats")
 

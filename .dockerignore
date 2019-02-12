@@ -1,12 +1,15 @@
 *
+!build_full.sh
 !.coveragerc
 !c2cwsgiutils
 !c2cwsgiutils_*.py
 !c2cwsgiutils_run
+!fake_python3
 !release.sh
 !docker-requirements.txt
-!docker-requirements-light.txt
+!docker-requirements-full.txt
 !install_docker.sh
+!install_gdal.sh
 !README.md
 !requirements.txt
 !setup.py

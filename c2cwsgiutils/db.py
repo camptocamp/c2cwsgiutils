@@ -12,7 +12,7 @@ import sqlalchemy.orm
 from zope.sqlalchemy import ZopeTransactionExtension
 
 LOG = logging.getLogger(__name__)
-RE_COMPILE = re.compile  # type: Callable[[str], Pattern[str]]
+RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
 
 
 class Tweens(object):
@@ -129,10 +129,10 @@ def _add_tween(
 ) -> None:
     global tweens
 
-    master_paths = list(map(RE_COMPILE, force_master)) if force_master is not None \
-        else []  # type: Iterable[Pattern]
-    slave_paths = list(map(RE_COMPILE, force_slave)) if force_slave is not None \
-        else []  # type: Iterable[Pattern]
+    master_paths: Iterable[Pattern] = list(map(RE_COMPILE, force_master)) if force_master is not None \
+        else []
+    slave_paths: Iterable[Pattern] = list(map(RE_COMPILE, force_slave)) if force_slave is not None \
+        else []
 
     def db_chooser_tween_factory(handler: Callable, _registry: Any) -> Callable:
         """
@@ -144,7 +144,7 @@ def _add_tween(
         def db_chooser_tween(request: pyramid.request.Request) -> Any:
             session = db_session()
             old = session.bind
-            method_path = "%s %s" % (request.method, request.path)  # type: Any
+            method_path: Any = "%s %s" % (request.method, request.path)
             has_force_master = any(r.match(method_path) for r in master_paths)
             if not has_force_master and (
                     request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths)

@@ -77,7 +77,7 @@ class HealthCheck(object):
         config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
                          request_method="GET")
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
-        self._checks = []  # type: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]]
+        self._checks: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
         redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
         if redis_url is not None:
             self.add_redis_check(redis_url, level=2)
@@ -123,7 +123,7 @@ class HealthCheck(object):
                     session.bind = binding
                     if stats.USE_TAGS:
                         key = ['sql', 'manual', 'health_check', 'alembic']
-                        tags = dict(conf=alembic_ini_path, con=binding.c2c_name)  # type: Optional[Dict]
+                        tags: Optional[Dict] = dict(conf=alembic_ini_path, con=binding.c2c_name)
                     else:
                         key = ['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
                                binding.c2c_name]
@@ -253,10 +253,10 @@ class HealthCheck(object):
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
         max_level = int(request.params.get('max_level', '1'))
         is_auth = auth.is_auth(request)
-        results = {
+        results: Dict[str, Dict] = {
             'failures': {},
             'successes': {},
-        }  # type: dict
+        }
         checks = None
         if 'checks' in request.params:
             if request.params['checks'] != '':
@@ -302,7 +302,7 @@ class HealthCheck(object):
                 session.bind = bind
                 if stats.USE_TAGS:
                     key = ['sql', 'manual', 'health_check', 'db']
-                    tags = dict(con=bind.c2c_name)  # type: Optional[Dict]
+                    tags: Optional[Dict] = dict(con=bind.c2c_name)
                 else:
                     key = ['sql', 'manual', 'health_check', 'db', bind.c2c_name]
                     tags = None

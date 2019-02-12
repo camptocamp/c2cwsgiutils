@@ -56,7 +56,7 @@ In general, configuration can be done both with environment variables (taken fir
 You can configure the base URL for accessing the views provided by c2cwsgiutils with an environment variable
 named `C2C_BASE_PATH` or in the `production.ini` file with a property named `c2c.base_path`.
 
-A few REST APIs are added and can be seen with this URL (only enabled if C2C_BASE_PATH is not empty):
+A few REST APIs are added and can be seen with this URL:
 `{C2C_BASE_PATH}`.
 
 Some APIs are protected by a secret. This secret is specified in the `C2C_SECRET` variable or `c2c.secret`
@@ -71,7 +71,7 @@ By default, it will load the application configured in `/app/production.ini`, bu
 the `C2CWSGIUTILS_CONFIG` environment variable. All the environment variables are usable in the configuration
 file using stuff like `%(ENV_NAME)s`.
 
-To enable most of the features of c2cwsgiutils, you need to add this line to you WSGI main:
+To enable most of the features of c2cwsgiutils, you need to add this line to your WSGI main:
 
 ```python
 import c2cwsgiutils.pyramid
@@ -79,6 +79,13 @@ config.include(c2cwsgiutils.pyramid.includeme)
 ```
 
 Error catching views will be put in place to return errors as JSON.
+
+A custom loader is provided to run pyramid scripts against configuration files containing environment variables:
+
+```
+proutes c2c://production.ini  # relative path
+proutes c2c:///app/production.ini  # absolute path
+```
 
 
 ## Logging

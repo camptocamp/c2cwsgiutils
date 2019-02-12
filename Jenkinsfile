@@ -41,12 +41,9 @@ dockerBuild {
             }
         }, 'mypy': {
             sh 'make mypy'
+        }, 'build full': {
+            sh 'make build_docker_full'
         }
-    }
-
-    stage("Build full") {
-        checkout scm
-        sh 'make -j2 build_docker_full'
     }
 
     def CURRENT_TAG = sh(returnStdout: true, script: "git fetch --tags && git tag -l --points-at HEAD | tail -1").trim()

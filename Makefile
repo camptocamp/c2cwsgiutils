@@ -66,7 +66,7 @@ build_docker:
 	docker build -t $(DOCKER_BASE):latest .
 
 .PHONY: build_docker_full
-build_docker_full:
+build_docker_full: build_docker
 	docker build -t $(DOCKER_BASE):latest-full -f Dockerfile.full .
 
 .PHONY: build_acceptance

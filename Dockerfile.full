@@ -5,8 +5,12 @@ RUN apt update && \
     DEV_PACKAGES="python3.7-dev graphviz-dev build-essential" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         graphviz postgresql-client-10 git net-tools iputils-ping screen \
-        vim vim-editorconfig vim-addon-manager \
+        vim vim-editorconfig vim-addon-manager tree \
         ${DEV_PACKAGES} && \
+    vim-addon-manager --system-wide install editorconfig && \
+    echo 'set hlsearch  " Highlight search' > /etc/vim/vimrc.local && \
+    echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
+    echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local && \
     pip install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
     apt remove --purge --yes ${DEV_PACKAGES} gcc-7 && \
     apt autoremove --purge --yes && \

@@ -20,6 +20,6 @@ raven==6.10.0
 requests==2.21.0
 SQLAlchemy==1.2.17
 ujson==1.35
-yamllint==1.14.0
+yamllint==1.15.0
 zope.interface==4.6.0
 zope.sqlalchemy==1.1

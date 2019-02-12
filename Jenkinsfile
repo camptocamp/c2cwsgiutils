@@ -46,6 +46,11 @@ dockerBuild {
         }
     }
 
+    stage("Test install GDAL") {
+        checkout scm
+        sh 'docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh'
+    }
+
     def CURRENT_TAG = sh(returnStdout: true, script: "git fetch --tags && git tag -l --points-at HEAD | tail -1").trim()
     if (CURRENT_TAG != "") {
         if (CURRENT_TAG ==~ /^\d+(?:\.\d+)*$/) {

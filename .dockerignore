@@ -9,6 +9,7 @@
 !docker-requirements.txt
 !docker-requirements-full.txt
 !install_docker.sh
+!install_gdal.sh
 !README.md
 !requirements.txt
 !setup.py

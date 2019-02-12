@@ -1,13 +1,14 @@
 FROM camptocamp/c2cwsgiutils:latest
 
 RUN apt update && \
+    cd /opt/c2cwsgiutils && \
+    DEV_PACKAGES="python3.7-dev graphviz-dev build-essential" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
-        libexpat1 libkmlconvenience1 libkmlregionator1 libkmlxsd1 \
-        libspatialite7 libopenjp2-7 libwebp6 graphviz \
-        postgresql-client-10 git net-tools iputils-ping screen \
-        vim vim-editorconfig vim-addon-manager && \
+        graphviz postgresql-client-10 git net-tools iputils-ping screen \
+        vim vim-editorconfig vim-addon-manager \
+        ${DEV_PACKAGES} && \
+    pip install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
+    apt remove --purge --yes ${DEV_PACKAGES} gcc-7 && \
+    apt autoremove --purge --yes && \
     apt-get clean && \
-    rm -r /var/lib/apt/lists/*
-
-COPY build_full.sh /opt/c2cwsgiutils/
-RUN /opt/c2cwsgiutils/build_full.sh
+    rm --force --recursive /var/lib/apt/lists/*

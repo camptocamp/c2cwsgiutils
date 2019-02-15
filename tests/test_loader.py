@@ -10,5 +10,5 @@ variable = %(VARIABLE)s
 def test_loader():
     loader = get_config_loader('c2c:///app/production.ini')
     assert 'c2cwsgiutils.loader.Loader(uri="c2c:///app/production.ini")' == repr(loader)
-    assert 'value' == loader._get_defaults()['VARIABLE']
+    assert 'value' == loader._get_defaults()['VARIABLE']  # pylint: disable=W0212
     assert 'value' == loader.get_settings('app:main')['variable']

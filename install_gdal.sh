@@ -13,7 +13,6 @@ GDAL_VERSION=$(dpkg -s gdal-bin | sed -ne 's/^Version: \([^.]*\.[^.]*\.[^.+]*\).
 CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal \
     pip install --disable-pip-version-check --no-cache-dir GDAL==${GDAL_VERSION}
 
-apt remove --purge --yes ${DEV_PACKAGES} gcc-7
-apt autoremove --purge --yes
+apt remove --purge --autoremove --yes ${DEV_PACKAGES} binutils
 apt-get clean
 rm --force --recursive /var/lib/apt/lists/*

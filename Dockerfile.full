@@ -12,6 +12,6 @@ RUN apt update && \
     echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
     echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local && \
     pip install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
-    apt remove --purge --autoremove --yes ${DEV_PACKAGES} "gcc-7*" binutils && \
+    apt remove --purge --autoremove --yes ${DEV_PACKAGES} binutils && \
     apt-get clean && \
     rm --force --recursive /var/lib/apt/lists/*

@@ -5,7 +5,7 @@ set -ex
 DEBIAN_VERSION=$(grep VERSION= /etc/os-release | sed 's/.*(\(.*\)).\+/\1/')
 
 apt-get update
-apt-get install -y --no-install-recommends apt-transport-https
+apt-get install --yes --no-install-recommends apt-transport-https
 
 if [[ "${DEBIAN_VERSION}" == "Bionic Beaver" ]]
 then
@@ -31,7 +31,7 @@ else
     PACKAGE=docker-ce
 fi
 apt-get update
-apt-get install -y --no-install-recommends ${PACKAGE}=${DOCKER_VERSION}*
+apt-get install --yes --no-install-recommends ${PACKAGE}=${DOCKER_VERSION}*
 
 curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/bin/docker-compose
 chmod a+x /usr/bin/docker-compose

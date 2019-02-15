@@ -24,7 +24,7 @@ RUN apt update && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
     pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
-    apt remove --purge --autoremove --yes $DEV_PACKAGES "gcc-7*" binutils
+    apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
 COPY . /opt/c2cwsgiutils/
 RUN flake8 /opt/c2cwsgiutils && \

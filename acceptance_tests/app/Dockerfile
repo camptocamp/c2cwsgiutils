@@ -1,4 +1,4 @@
-FROM camptocamp/c2cwsgiutils:latest
+FROM camptocamp/c2cwsgiutils:latest-full
 LABEL maintainer "info@camptocamp.org"
 
 # Doing things in two steps to avoid needing to re-install everything when we do a rebuild

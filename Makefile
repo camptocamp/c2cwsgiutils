@@ -74,7 +74,7 @@ build_acceptance: build_docker
 	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance:latest acceptance_tests/tests
 
 .PHONY: build_test_app
-build_test_app: build_docker
+build_test_app: build_docker_full
 	docker build -t $(DOCKER_BASE)_test_app:latest --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .venv/timestamp: requirements.txt Makefile

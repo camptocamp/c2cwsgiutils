@@ -139,9 +139,24 @@ def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
     return request.response
 
 
-def _headers(request: pyramid.request.Request) -> Mapping[str, str]:
+def _headers(request: pyramid.request.Request) -> Mapping[str, Any]:
     auth.auth_view(request)
-    return dict(request.headers)
+    return {
+        'headers': dict(request.headers),
+        'client_info': {
+            'client_addr': request.client_addr,
+            'host': request.host,
+            'host_port': request.host_port,
+            'http_version': request.http_version,
+            'path': request.path,
+            'path_info': request.path_info,
+            'remote_addr': request.remote_addr,
+            'remote_host': request.remote_host,
+            'scheme': request.scheme,
+            'server_name': request.server_name,
+            'server_port': request.server_port
+        }
+    }
 
 
 def _error(request: pyramid.request.Request) -> Any:

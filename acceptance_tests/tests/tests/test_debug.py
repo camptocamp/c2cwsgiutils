@@ -38,7 +38,7 @@ def test_headers(app_connection):
     response = app_connection.get_json('c2c/debug/headers', params={'secret': 'changeme'},
                                        headers={'X-Toto': '42'})
     print("response=" + json.dumps(response, indent=4))
-    assert response['X-Toto'] == '42'
+    assert response['headers']['X-Toto'] == '42'
 
 
 def _check_leak_there(response):

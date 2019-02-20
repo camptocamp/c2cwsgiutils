@@ -82,10 +82,15 @@ Error catching views will be put in place to return errors as JSON.
 
 A custom loader is provided to run pyramid scripts against configuration files containing environment variables:
 
-```
+```shell
 proutes c2c://production.ini  # relative path
 proutes c2c:///app/production.ini  # absolute path
 ```
+
+A filter is automatically installed to handle the HTTP headers set by common proxies and have correct values
+in the request object (`request.client_addr`, for example). This filter is equivalent to what the
+`PasteDeploy#prefix` (minus the prefix part) does, but supports newer headers as well (`Forwarded`).
+If you need to prefix your routes, you can use the `route_prefix` parameter of the `Configurator` constructor.
 
 
 ## Logging

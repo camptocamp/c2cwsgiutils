@@ -58,12 +58,13 @@ def _patch_requests() -> None:
         finally:
             if request.url is not None:
                 parsed = urllib.parse.urlparse(request.url)
+                port = parsed.port or (80 if parsed.scheme == 'http' else 443)
                 if stats.USE_TAGS:
                     key: Sequence[Any] = ['requests']
-                    tags: Optional[Dict] = dict(scheme=parsed.scheme, host=parsed.hostname, port=parsed.port,
+                    tags: Optional[Dict] = dict(scheme=parsed.scheme, host=parsed.hostname, port=port,
                                                 method=request.method, status=status)
                 else:
-                    key = ['requests', parsed.scheme, parsed.hostname, parsed.port, request.method, status]
+                    key = ['requests', parsed.scheme, parsed.hostname, port, request.method, status]
                     tags = None
                 timer.stop(key, tags)
 

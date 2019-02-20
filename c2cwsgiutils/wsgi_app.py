@@ -15,8 +15,8 @@ def create() -> Callable:  # pragma: no cover
     main_app = wsgi.create_application()
 
     # then, we can setup a few filters
-    from c2cwsgiutils import sentry, profiler
-    return sentry.filter_wsgi_app(profiler.filter_wsgi_app(main_app))
+    from c2cwsgiutils import sentry, profiler, client_info
+    return sentry.filter_wsgi_app(profiler.filter_wsgi_app(client_info.Filter(main_app)))
 
 
 application = create()  # pragma: no cover

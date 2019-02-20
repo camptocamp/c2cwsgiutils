@@ -41,8 +41,6 @@ dockerBuild {
             }
         }, 'mypy': {
             sh 'make mypy'
-        }, 'build full': {
-            sh 'make build_docker_full'
         }
     }
 

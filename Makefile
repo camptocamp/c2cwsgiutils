@@ -58,8 +58,8 @@ acceptance: build_acceptance build_test_app
 	exit $$status$$?
 
 .PHONY: send-coverage
-send_coverage: build_docker
-	docker run --rm -v $(THIS_DIR):$(THIS_DIR) -e CODACY_PROJECT_TOKEN=$(CODACY_PROJECT_TOKEN) $(DOCKER_BASE):latest bash -c "cd $(THIS_DIR) && python-codacy-coverage -r reports/coverage/api/coverage.xml" || true
+send_coverage: build_docker_full
+	docker run --rm -v $(THIS_DIR):$(THIS_DIR) -e CODACY_PROJECT_TOKEN=$(CODACY_PROJECT_TOKEN) $(DOCKER_BASE):latest-full bash -c "cd $(THIS_DIR) && python-codacy-coverage -r reports/coverage/api/coverage.xml" || true
 
 .PHONY: build_docker
 build_docker:

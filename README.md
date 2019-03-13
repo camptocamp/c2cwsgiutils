@@ -143,6 +143,7 @@ To enable and configure the metrics framework, you can use:
 * STATSD_ADDRESS (c2c.statsd_address): if defined, send stats to the given statsd server
 * STATSD_PREFIX (c2c.statsd_prefix): prefix to add to every metric names
 * STATSD_USE_TAGS: If true, automatic metrics will use tags
+* STATSD_TAG_{tag_name}: To set a global tag for the service
 
 If enabled, some metrics are automatically generated:
 

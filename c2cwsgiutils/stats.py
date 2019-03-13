@@ -10,15 +10,17 @@ import socket
 import threading
 import time
 from abc import abstractmethod, ABCMeta
-from typing import Mapping, Sequence, List, Generator, Any, Optional, Callable
+from typing import Mapping, Sequence, List, Generator, Any, Optional, Callable, Dict
 from typing import Tuple, MutableMapping  # noqa  # pylint: disable=unused-import
 
 import pyramid.request
 
 from c2cwsgiutils import _utils
 
+
 LOG = logging.getLogger(__name__)
 USE_TAGS_ENV = 'STATSD_USE_TAGS'
+TAG_PREFIX_ENV = 'STATSD_TAG_'
 USE_TAGS = _utils.config_bool(os.environ.get(USE_TAGS_ENV, '0'))
 TagType = Optional[Mapping[str, Any]]
 
@@ -206,8 +208,9 @@ INVALID_KEY_CHARS = re.compile(r"[^a-zA-Z0-9_]")
 
 
 class StatsDBackend(_BaseBackend):  # pragma: nocover
-    def __init__(self, address: str, prefix: str) -> None:
+    def __init__(self, address: str, prefix: str, tags: Dict[str, str] = None) -> None:
         self._prefix = prefix
+        self._tags = tags
         if self._prefix != "" and not self._prefix.endswith("."):
             self._prefix += "."
 
@@ -228,7 +231,16 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
     def _key(self, key: Sequence[Any]) -> str:
         return (self._prefix + ".".join(map(StatsDBackend._key_entry, key)))[:450]
 
+    def _merge_tags(self, tags: TagType) -> TagType:
+        if tags is None:
+            return self._tags
+        elif self._tags is None:
+            return tags
+        else:
+            return dict(self._tags).update(tags)
+
     def _send(self, message: str, tags: TagType) -> None:
+        tags = self._merge_tags(tags)
         message += _format_tags(tags, prefix="|#", tag_sep=",", kv_sep=":",
                                 formatter=StatsDBackend._key_entry)
         # noinspection PyBroadException
@@ -267,8 +279,9 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
     statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
         statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
+        statsd_tags = _get_env_tags()
         try:
-            BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix)
+            BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix, statsd_tags)
         except Exception:
             LOG.error("Failed configuring the statsd backend. Will continue without it.", exc_info=True)
 
@@ -281,3 +294,11 @@ def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, k
             for item in sorted(tags.items()))
     else:
         return ""
+
+
+def _get_env_tags() -> Dict[str, str]:
+    tags = {}
+    for name, value in os.environ.items():
+        if name.startswith(TAG_PREFIX_ENV):
+            tags[name[len(TAG_PREFIX_ENV):].lower()] = value
+    return tags

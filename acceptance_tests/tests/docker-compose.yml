@@ -7,6 +7,7 @@ app:
     STATS_VIEW: 1
     STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: acceptance
+    STATSD_TAG_XYZ: zyx
     C2C_SECRET: changeme
     C2C_LOG_VIEW_ENABLED: 1
     C2C_SQL_PROFILER_ENABLED: 1

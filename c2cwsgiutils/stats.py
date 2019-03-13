@@ -237,7 +237,9 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         elif self._tags is None:
             return tags
         else:
-            return dict(self._tags).update(tags)
+            tmp = dict(self._tags)
+            tmp.update(tags)
+            return tmp
 
     def _send(self, message: str, tags: TagType) -> None:
         tags = self._merge_tags(tags)

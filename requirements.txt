@@ -7,7 +7,7 @@ coverage==4.5.3
 flake8==3.7.7
 gunicorn==19.9.0
 junit2html==022
-lxml==4.3.2
+lxml==4.3.3
 mypy==0.670
 netifaces==0.10.9
 objgraph==3.4.0

@@ -4,6 +4,7 @@ Setup an health_check API.
 To use it, create an instance of this class in your application initialization and do a few calls to its
 methods add_db_check()
 """
+from collections import Counter
 import configparser
 import copy
 import logging
@@ -230,6 +231,10 @@ class HealthCheck(object):
             versions = _get_all_versions()
             versions = list(filter(lambda x: x is not None, versions))
             assert len(versions) > 0
+            if stats.USE_TAGS:
+                # output the versions we see on the monitoring
+                for v, count in Counter(versions).items():
+                    stats.set_gauge(['version'], count, tags=dict(version=v))
             ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
             return dict(version=ref, count=len(versions))

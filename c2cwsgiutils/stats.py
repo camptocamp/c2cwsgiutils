@@ -281,7 +281,7 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
     statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
         statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
-        statsd_tags = _get_env_tags()
+        statsd_tags = get_env_tags()
         try:
             BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix, statsd_tags)
         except Exception:
@@ -298,7 +298,7 @@ def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, k
         return ""
 
 
-def _get_env_tags() -> Dict[str, str]:
+def get_env_tags() -> Dict[str, str]:
     tags = {}
     for name, value in os.environ.items():
         if name.startswith(TAG_PREFIX_ENV):

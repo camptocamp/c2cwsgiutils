@@ -39,13 +39,15 @@ class Reporter(object):
     def __init__(self, args):
         self._error = None
         if args.statsd_address:
-            self.statsd = stats.StatsDBackend(args.statsd_address, args.statsd_prefix)
+            self.statsd = stats.StatsDBackend(args.statsd_address, args.statsd_prefix,
+                                              tags=stats.get_env_tags())
         else:
             self.statsd = None
 
         if args.prometheus_url:
             self.prometheus = PushgatewayGroupPublisher(args.prometheus_url, 'db_counts',
-                                                        instance=args.prometheus_instance)
+                                                        instance=args.prometheus_instance,
+                                                        labels=stats.get_env_tags())
         else:
             self.prometheus = None
 

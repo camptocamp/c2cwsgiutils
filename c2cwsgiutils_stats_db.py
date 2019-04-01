@@ -60,9 +60,7 @@ class Reporter(object):
                 self.statsd.gauge([kind] + metric, value)
         if self.prometheus is not None:
 
-            self.prometheus.add('database_table_' + kind, value, metric_labels={
-                'metric': ".".join(v.replace('.', '_') for v in metric)
-            })
+            self.prometheus.add('database_table_' + kind, value, metric_labels=tags)
 
     def commit(self):
         if self.prometheus is not None:
@@ -80,19 +78,59 @@ class Reporter(object):
 
 
 def do_table(session, schema, table, reporter):
-    quote = session.bind.dialect.identifier_preparer.quote
-    count, = session.execute("""
-    SELECT count(*) FROM {schema}.{table}
-    """.format(schema=quote(schema), table=quote(table))).fetchone()  # nosec
-    reporter.do_report([schema, table], count, kind='count', tags=dict(schema=schema, table=table))
+    _do_table_count(reporter, schema, session, table)
+    _do_table_size(reporter, schema, session, table)
+    _do_indexes(reporter, schema, session, table)
 
+
+def _do_indexes(reporter, schema, session, table):
+    for index_name, size_main, size_fsm, size_vm, size_init, number_of_scans, tuples_read, tuples_fetched in \
+            session.execute("""
+    SELECT
+         foo.indexname,
+         pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'main'),
+         pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'fsm'),
+         pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'vm'),
+         pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'init'),
+         foo.idx_scan AS number_of_scans,
+         foo.idx_tup_read AS tuples_read,
+         foo.idx_tup_fetch AS tuples_fetched
+    FROM pg_tables t
+    JOIN
+         (
+            SELECT psai.schemaname, c.relname AS ctablename, ipg.relname AS indexname, idx_scan, idx_tup_read,
+                   idx_tup_fetch, indexrelname FROM pg_index x
+                JOIN pg_class c ON c.oid = x.indrelid
+                JOIN pg_class ipg ON ipg.oid = x.indexrelid
+                JOIN pg_stat_all_indexes psai ON x.indexrelid = psai.indexrelid
+         ) AS foo
+         ON t.tablename = foo.ctablename AND t.schemaname=foo.schemaname
+    WHERE t.schemaname=:schema AND t.tablename=:table
+    """, params={'schema': schema, 'table': table}):
+        for fork, value in (('main', size_main), ('fsm', size_fsm), ('vm', size_vm), ('init', size_init)):
+            reporter.do_report([schema, table, index_name, fork], value, kind='index_size',
+                               tags=dict(schema=schema, table=table, index=index_name, fork=fork))
+        for action, value in (('scan', number_of_scans), ('read', tuples_read), ('fetch', tuples_fetched)):
+            reporter.do_report([schema, table, index_name, action], value, kind='index_usage',
+                               tags=dict(schema=schema, table=table, index=index_name, action=action))
+
+
+def _do_table_size(reporter, schema, session, table):
     size, = session.execute("""
-    SELECT pg_total_relation_size(c.oid) AS total_bytes
+    SELECT pg_table_size(c.oid) AS total_bytes
     FROM pg_class c
     LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE relkind = 'r' AND nspname=:schema AND relname=:table
     """, params={'schema': schema, 'table': table}).fetchone()
     reporter.do_report([schema, table], size, kind='size', tags=dict(schema=schema, table=table))
+
+
+def _do_table_count(reporter, schema, session, table):
+    quote = session.bind.dialect.identifier_preparer.quote
+    count, = session.execute("""
+    SELECT count(*) FROM {schema}.{table}
+    """.format(schema=quote(schema), table=quote(table))).fetchone()  # nosec
+    reporter.do_report([schema, table], count, kind='count', tags=dict(schema=schema, table=table))
 
 
 def do_extra(session, extra, reporter):

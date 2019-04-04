@@ -93,11 +93,11 @@ run: build_test_app
 
 .PHONY: mypy
 mypy: build_docker
-	docker run --rm $(DOCKER_BASE):latest mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs /opt/c2cwsgiutils/c2cwsgiutils
+	docker run --rm $(DOCKER_BASE):latest mypy --ignore-missing-imports --strict-optional --strict /opt/c2cwsgiutils/c2cwsgiutils
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp
-	.venv/bin/mypy --ignore-missing-imports --strict-optional --disallow-untyped-defs c2cwsgiutils
+	.venv/bin/mypy --ignore-missing-imports --strict-optional --strict c2cwsgiutils
 
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache

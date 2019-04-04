@@ -58,7 +58,7 @@ def capture_exceptions() -> Generator[None, None, None]:
         yield
 
 
-def filter_wsgi_app(application: Callable) -> Callable:
+def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     """
     If sentry is configured, add a Sentry filter around the application
     """
@@ -66,7 +66,7 @@ def filter_wsgi_app(application: Callable) -> Callable:
     if client is not None:
         try:
             LOG.info("Enable WSGI filter for Sentry")
-            return middleware.Sentry(application, client)
+            return middleware.Sentry(application, client)  # type: ignore
         except Exception:
             LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
             return application

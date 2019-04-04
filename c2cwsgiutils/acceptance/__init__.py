@@ -7,7 +7,7 @@ LOG = logging.getLogger(__name__)
 
 
 def retry(exception_to_check: typing.Any, tries: float = 3, delay: float = 0.5,
-          backoff: float = 2) -> typing.Callable:
+          backoff: float = 2) -> typing.Callable[..., typing.Any]:
     """Retry calling the decorated function using an exponential backoff.
 
     http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
@@ -25,7 +25,7 @@ def retry(exception_to_check: typing.Any, tries: float = 3, delay: float = 0.5,
     :type backoff: int
     """
 
-    def deco_retry(f: typing.Callable) -> typing.Callable:
+    def deco_retry(f: typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]:
 
         @wraps(f)
         def f_retry(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:

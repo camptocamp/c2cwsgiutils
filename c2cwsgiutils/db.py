@@ -129,12 +129,13 @@ def _add_tween(
 ) -> None:
     global tweens
 
-    master_paths: Iterable[Pattern] = list(map(RE_COMPILE, force_master)) if force_master is not None \
+    master_paths: Iterable[Pattern[str]] = list(map(RE_COMPILE, force_master)) if force_master is not None \
         else []
-    slave_paths: Iterable[Pattern] = list(map(RE_COMPILE, force_slave)) if force_slave is not None \
+    slave_paths: Iterable[Pattern[str]] = list(map(RE_COMPILE, force_slave)) if force_slave is not None \
         else []
 
-    def db_chooser_tween_factory(handler: Callable, _registry: Any) -> Callable:
+    def db_chooser_tween_factory(handler: Callable[[pyramid.request.Request], Any], _registry: Any)\
+            -> Callable[[pyramid.request.Request], Any]:
         """
         Tween factory to route to a slave DB for read-only queries.
         Must be put over the pyramid_tm tween and share_config must have a "slave" engine

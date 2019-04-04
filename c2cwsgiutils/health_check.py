@@ -116,30 +116,7 @@ class HealthCheck(object):
         :param version_schema: override the schema where the version table is
         :param version_table: override the table name for the version
         """
-
-        def check(_request: Any) -> str:
-            for binding in _get_bindings(session):
-                prev_bind = session.bind
-                try:
-                    session.bind = binding
-                    if stats.USE_TAGS:
-                        key = ['sql', 'manual', 'health_check', 'alembic']
-                        tags: Optional[Dict] = dict(conf=alembic_ini_path, con=binding.c2c_name)
-                    else:
-                        key = ['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
-                               binding.c2c_name]
-                        tags = None
-                    with stats.timer_context(key, tags):
-                        quote = session.bind.dialect.identifier_preparer.quote
-                        actual_version, = session.execute(
-                            "SELECT version_num FROM {schema}.{table}".  # nosec
-                            format(schema=quote(version_schema), table=quote(version_table))
-                        ).fetchone()
-                        if actual_version != version:
-                            raise Exception("Invalid alembic version: %s != %s" % (actual_version, version))
-                finally:
-                    session.bind = prev_bind
-            return version
+        version_ = _get_alembic_version(alembic_ini_path, name)
 
         config = configparser.ConfigParser()
         config.read(alembic_ini_path)
@@ -150,15 +127,39 @@ class HealthCheck(object):
         if version_table is None:
             version_table = config.get(name, 'version_table', fallback='alembic_version')
 
-        version = _get_alembic_version(alembic_ini_path, name)
+        def check(_request: Any) -> str:
+            for binding in _get_bindings(session):
+                prev_bind = session.bind
+                try:
+                    session.bind = binding
+                    if stats.USE_TAGS:
+                        key = ['sql', 'manual', 'health_check', 'alembic']
+                        tags: Optional[Dict[str, str]] = dict(conf=alembic_ini_path, con=binding.c2c_name)
+                    else:
+                        key = ['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
+                               binding.c2c_name]
+                        tags = None
+                    with stats.timer_context(key, tags):
+                        quote = session.bind.dialect.identifier_preparer.quote
+                        actual_version, = session.execute(
+                            "SELECT version_num FROM {schema}.{table}".  # nosec
+                            format(schema=quote(version_schema), table=quote(version_table))
+                        ).fetchone()
+                        if actual_version != version_:
+                            raise Exception("Invalid alembic version: %s != %s" % (actual_version, version_))
+                finally:
+                    session.bind = prev_bind
+            return version_
 
         self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_') + '_' + name, check,
                              level))
 
     def add_url_check(
             self, url: Union[str, Callable[[pyramid.request.Request], str]],
-            params: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None] = None,
-            headers: Union[Mapping, Callable[[pyramid.request.Request], Mapping], None] = None,
+            params: Union[Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]],
+                          None] = None,
+            headers: Union[Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]],
+                           None] = None,
             name: Optional[str] = None,
             check_cb: Callable[[pyramid.request.Request, requests.Response],
                                Any] = lambda request, response: None,
@@ -258,7 +259,7 @@ class HealthCheck(object):
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
         max_level = int(request.params.get('max_level', '1'))
         is_auth = auth.is_auth(request)
-        results: Dict[str, Dict] = {
+        results: Dict[str, Dict[str, Any]] = {
             'failures': {},
             'successes': {},
         }
@@ -307,7 +308,7 @@ class HealthCheck(object):
                 session.bind = bind
                 if stats.USE_TAGS:
                     key = ['sql', 'manual', 'health_check', 'db']
-                    tags: Optional[Dict] = dict(con=bind.c2c_name)
+                    tags: Optional[Dict[str, str]] = dict(con=bind.c2c_name)
                 else:
                     key = ['sql', 'manual', 'health_check', 'db', bind.c2c_name]
                     tags = None

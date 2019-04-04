@@ -4,7 +4,7 @@ import random
 import string
 import threading
 import time
-from typing import Callable, Optional, Mapping, Any  # noqa  # pylint: disable=unused-import
+from typing import Callable, Optional, Mapping, Any, List
 
 from c2cwsgiutils.broadcast import utils, interface, local
 
@@ -31,7 +31,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def _get_channel(self, channel: str) -> str:
         return self._broadcast_prefix + channel
 
-    def subscribe(self, channel: str, callback: Callable) -> None:
+    def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:
         def wrapper(message: Mapping[str, Any]) -> None:
             LOG.debug('Received a broadcast on %s: %s', message['channel'], repr(message['data']))
             data = json.loads(message['data'].decode('utf-8'))
@@ -55,7 +55,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         self._pub_sub.unsubscribe(actual_channel)
 
     def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
-                  timeout: float) -> Optional[list]:
+                  timeout: float) -> Optional[List[Any]]:
         if expect_answers:
             return self._broadcast_with_answer(channel, params, timeout)
         else:
@@ -63,7 +63,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             return None
 
     def _broadcast_with_answer(self, channel: str, params: Optional[Mapping[str, Any]],
-                               timeout: float) -> list:
+                               timeout: float) -> List[Any]:
         cond = threading.Condition()
         answers = []
         assert self._thread.is_alive()
@@ -106,7 +106,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         LOG.debug("Sending a broadcast on %s", actual_channel)
         nb_received = self._connection.publish(actual_channel, json.dumps(message))
         LOG.debug('Broadcast on %s sent to %d listeners', actual_channel, nb_received)
-        return nb_received
+        return nb_received  # type: ignore
 
     def copy_local_subscriptions(self, prev_broadcaster: local.LocalBroadcaster) -> None:
         for channel, callback in prev_broadcaster.get_subscribers().items():

@@ -14,7 +14,7 @@ additional_auth: List[str] = []
 
 def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
     try:
-        return request.route_url(route)
+        return request.route_url(route)  # type: ignore
     except KeyError:
         return None
 

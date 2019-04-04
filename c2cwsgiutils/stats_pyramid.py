@@ -30,7 +30,8 @@ def _add_server_metric(request: pyramid.request.Request, name: str, duration: Op
         request.response.headers['Server-Timing'] += ', ' + metric
 
 
-def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma: nocover
+def _create_finished_cb(kind: str, measure: stats.Timer)\
+        -> Callable[[pyramid.request.Request], None]:  # pragma: nocover
     def finished_cb(request: pyramid.request.Request) -> None:
         if request.exception is not None:
             if isinstance(request.exception, HTTPException):
@@ -47,8 +48,8 @@ def _create_finished_cb(kind: str, measure: stats.Timer) -> Callable:  # pragma:
                 _add_server_metric(request, 'route', description=name)
         if stats.USE_TAGS:
             key = [kind]
-            tags: Optional[Dict] = dict(method=request.method, route=name, status=status,
-                                        group=status // 100)
+            tags: Optional[Dict[str, Any]] = dict(method=request.method, route=name, status=status,
+                                                  group=status // 100)
         else:
             key = [kind, request.method, name, status]
             tags = None
@@ -124,10 +125,10 @@ def _simplify_sql(sql: str) -> str:
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 
-def _create_sqlalchemy_timer_cb(what: str) -> Callable:
+def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
     if stats.USE_TAGS and what != 'commit':
         key = ['sql']
-        tags: Optional[Dict] = dict(query=what)
+        tags: Optional[Dict[str, str]] = dict(query=what)
     else:
         key = ['sql', what]
         tags = None

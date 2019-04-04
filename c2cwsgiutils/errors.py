@@ -43,12 +43,13 @@ def _add_cors(request: pyramid.request.Request) -> None:
         service = services.get(pattern, None)
         if service is not None:
             request.info['cors_checked'] = False
-            return cors.apply_cors_post_request(service, request, request.response)
+            cors.apply_cors_post_request(service, request, request.response)
+            return
     _crude_add_cors(request)
 
 
 def _do_error(request: pyramid.request.Request, status: int, exception: Exception,
-              logger: Callable = LOG.error,
+              logger: Callable[..., None] = LOG.error,
               reduce_info_sent: Callable[[Exception], None] = lambda e: None) -> pyramid.response.Response:
     logger("%s %s returned status code %s",
            request.method, request.url, status,

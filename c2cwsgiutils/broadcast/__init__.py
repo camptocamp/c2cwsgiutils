@@ -3,7 +3,7 @@ Broadcast messages to all the processes of Gunicorn in every containers.
 """
 import functools
 import logging
-from typing import Optional, Callable, Any
+from typing import Optional, Callable, Any, Dict, List
 
 import pyramid.config
 
@@ -51,7 +51,7 @@ def _get(need_init: bool = False) -> interface.BaseBroadcaster:
     return _broadcaster
 
 
-def subscribe(channel: str, callback: Callable) -> None:
+def subscribe(channel: str, callback: Callable[..., Any]) -> None:
     """
     Subscribe to a broadcast channel with the given callback. The callback will be called with its parameters
     taken from the dict provided in the _broadcaster.broadcast "params" parameter.
@@ -68,8 +68,8 @@ def unsubscribe(channel: str) -> None:
     _get().unsubscribe(channel)
 
 
-def broadcast(channel: str, params: Optional[dict] = None, expect_answers: bool = False,
-              timeout: float = 10) -> Optional[list]:
+def broadcast(channel: str, params: Optional[Dict[str, Any]] = None, expect_answers: bool = False,
+              timeout: float = 10) -> Optional[List[Any]]:
     """
     Broadcast a message to the given channel. If answers are expected, it will wait up to "timeout" seconds
     to get all the answers.
@@ -78,13 +78,14 @@ def broadcast(channel: str, params: Optional[dict] = None, expect_answers: bool 
                                           expect_answers, timeout)
 
 
-def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10) -> Callable:
+def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10)\
+        -> Callable[..., Any]:
     """
     The decorated function will be called through the broadcast functionality. If expect_answers is set to
     True, the returned value will be a list of all the answers.
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
         def wrapper(**kwargs: Any) -> Any:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)

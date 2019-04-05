@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Optional, Any
+from typing import Optional, Dict, cast
 
 import pyramid.config
 
@@ -25,10 +25,10 @@ def init(config: pyramid.config.Configurator) -> None:
             LOG.warning("Starting version %s", versions['main']['git_hash'])
 
 
-def _read_versions() -> Any:
+def _read_versions() -> Dict[str, Dict[str, str]]:
     with open(VERSIONS_PATH) as file:
         versions = json.load(file)
-    return versions
+    return cast(Dict[str, Dict[str, str]], versions)
 
 
 def get_version() -> Optional[str]:

@@ -5,7 +5,7 @@ every SELECT query going through SQLAlchemy.
 import logging
 import re
 from threading import Lock
-from typing import Any, Mapping
+from typing import Any, Mapping, Set
 
 import pyramid.request
 import sqlalchemy.engine
@@ -19,19 +19,20 @@ LOG = logging.getLogger(__name__)
 repository = None
 
 
-class _Repository(set):
+class _Repository:
     def __init__(self) -> None:
         super().__init__()
         self._lock = Lock()
+        self._repo: Set[str] = set()
 
     def profile(self, conn: sqlalchemy.engine.Connection, _cursor: Any, statement: str, parameters: Any,
                 _context: Any, _executemany: Any) -> None:
         if statement.startswith("SELECT ") and LOG.isEnabledFor(logging.INFO):
             do_it = False
             with self._lock:
-                if statement not in self:
+                if statement not in self._repo:
                     do_it = True
-                    self.add(statement)
+                    self._repo.add(statement)
             if do_it:
                 try:
                     LOG.info("statement:\n%s", _indent(_beautify_sql(statement)))

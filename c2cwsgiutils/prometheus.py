@@ -32,7 +32,7 @@ class PushgatewayGroupPublisher(object):
             return tmp
 
     def add(self, metric_name: str, metric_value: Any, metric_type: str = 'gauge',
-            metric_labels: Mapping[str, str] = None) -> None:
+            metric_labels: Optional[Mapping[str, str]] = None) -> None:
         if metric_name in self._types:
             if self._types[metric_name] != metric_type:
                 raise ValueError("Cannot change the type of a given metric")

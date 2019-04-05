@@ -22,8 +22,9 @@ class Connection:
         self.session = requests.session()
         self.origin = origin
 
-    def get(self, url: str, expected_status: int = 200, cors: bool = True, headers: Mapping[str, str] = None,
-            cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) -> Optional[str]:
+    def get(self, url: str, expected_status: int = 200, cors: bool = True,
+            headers: Optional[Mapping[str, str]] = None, cache_expected: CacheExpected = CacheExpected.NO,
+            **kwargs: Any) -> Optional[str]:
         """
         get the given URL (relative to the root of API).
         """
@@ -32,7 +33,7 @@ class Connection:
             self._check_cors(cors, r)
             return None if r.status_code == 204 else r.text
 
-    def get_raw(self, url: str, expected_status: int = 200, headers: Mapping[str, str] = None,
+    def get_raw(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
                 cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
             -> requests.Response:
         """
@@ -43,7 +44,7 @@ class Connection:
             self._check_cors(cors, r)
             return r
 
-    def get_json(self, url: str, expected_status: int = 200, headers: Mapping[str, str] = None,
+    def get_json(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
                  cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
             -> Any:
         """
@@ -55,7 +56,7 @@ class Connection:
             return _get_json(r)
 
     def get_xml(self, url: str, schema: Optional[str] = None, expected_status: int = 200,
-                headers: Mapping[str, str] = None, cors: bool = True,
+                headers: Optional[Mapping[str, str]] = None, cors: bool = True,
                 cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) -> Any:
         """
         get the given URL (relative to the root of API).
@@ -72,7 +73,7 @@ class Connection:
                 xml_schema.assertValid(doc)
             return doc
 
-    def post_json(self, url: str, expected_status: int = 200, headers: Mapping[str, str] = None,
+    def post_json(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
                   cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
             -> Any:
         """
@@ -84,7 +85,7 @@ class Connection:
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def post_files(self, url: str, expected_status: int = 200, headers: Mapping[str, str] = None,
+    def post_files(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
                    cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) -> Any:
         """
         POST files to the the given URL (relative to the root of API).
@@ -95,8 +96,9 @@ class Connection:
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def post(self, url: str, expected_status: int = 200, headers: Mapping[str, str] = None, cors: bool = True,
-             cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) -> Optional[str]:
+    def post(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
+             cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any)\
+            -> Optional[str]:
         """
         POST the given URL (relative to the root of API).
         """
@@ -106,7 +108,7 @@ class Connection:
             self._check_cors(cors, r)
             return None if r.status_code == 204 else r.text
 
-    def put_json(self, url: str, expected_status: int = 200, headers: Mapping[str, str] = None,
+    def put_json(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
                  cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
             -> Any:
         """
@@ -117,7 +119,7 @@ class Connection:
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def delete(self, url: str, expected_status: int = 204, headers: Mapping[str, str] = None,
+    def delete(self, url: str, expected_status: int = 204, headers: Optional[Mapping[str, str]] = None,
                cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
             -> requests.Response:
         """

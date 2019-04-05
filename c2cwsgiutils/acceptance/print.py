@@ -1,7 +1,7 @@
 import functools
 import json
 import logging
-from typing import Dict, Optional, List
+from typing import Dict, Optional, Any
 
 import requests
 
@@ -31,10 +31,10 @@ class PrintConnection(connection.Connection):
         utils.retry_timeout(functools.partial(self.get_capabilities, app=app),
                             timeout=timeout)
 
-    def get_capabilities(self, app: str) -> Dict:
+    def get_capabilities(self, app: str) -> Any:
         return self.get_json(app + "/capabilities.json", cache_expected=connection.CacheExpected.YES)
 
-    def get_example_requests(self, app: str) -> Dict[str, Dict]:
+    def get_example_requests(self, app: str) -> Dict[str, Any]:
         samples = self.get_json(app + "/exampleRequest.json",
                                 cache_expected=connection.CacheExpected.YES)
         out = {}
@@ -42,7 +42,7 @@ class PrintConnection(connection.Connection):
             out[name] = json.loads(value)
         return out
 
-    def get_pdf(self, app: str, request: Dict, timeout: int = 60) -> requests.Response:
+    def get_pdf(self, app: str, request: Dict[str, Any], timeout: int = 60) -> requests.Response:
         create_report = self.post_json(app + "/report.pdf", json=request)
         LOG.debug("create_report=%s", create_report)
         ref = create_report['ref']
@@ -55,11 +55,11 @@ class PrintConnection(connection.Connection):
         assert report.headers['Content-Type'] == 'application/pdf'
         return report
 
-    def _check_completion(self, ref: str) -> Optional[Dict]:
+    def _check_completion(self, ref: str) -> Optional[Any]:
         status = self.get_json("status/{ref}.json".format(ref=ref))
         if status['done']:
             return status
         return None
 
-    def get_apps(self) -> List[str]:
+    def get_apps(self) -> Any:
         return self.get_json("apps.json", cache_expected=connection.CacheExpected.YES)

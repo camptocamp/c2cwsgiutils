@@ -1,5 +1,5 @@
 import hashlib
-from typing import Optional
+from typing import Optional, cast
 
 import pyramid.request
 from pyramid.httpexceptions import HTTPForbidden
@@ -17,7 +17,7 @@ def get_expected_secret(request: pyramid.request.Request) -> str:
     Returns the secret expected from the client.
     """
     settings = request.registry.settings
-    return env_or_settings(settings, SECRET_ENV, SECRET_PROP, False)
+    return cast(str, env_or_settings(settings, SECRET_ENV, SECRET_PROP, False))
 
 
 def _hash_secret(secret: str) -> str:

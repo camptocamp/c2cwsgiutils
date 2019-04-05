@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Callable, Mapping, Any  # noqa  # pylint: disable=unused-import
+from typing import Optional, Callable, Mapping, Any, List
 
 
 class BaseBroadcaster(object):
@@ -8,7 +8,7 @@ class BaseBroadcaster(object):
     """
 
     @abstractmethod
-    def subscribe(self, channel: str, callback: Callable) -> None:
+    def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:
         pass  # pragma: no cover
 
     @abstractmethod
@@ -17,5 +17,5 @@ class BaseBroadcaster(object):
 
     @abstractmethod
     def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
-                  timeout: float) -> Optional[list]:
+                  timeout: float) -> Optional[List[Any]]:
         pass  # pragma: no cover

@@ -9,7 +9,7 @@ SEP_RE = re.compile(r', *')
 
 
 class Filter:
-    def __init__(self, application: Callable):
+    def __init__(self, application: Callable[[Dict[str, str], Any], Any]):
         self._application = application
 
     def __call__(self, environ: Dict[str, str], start_response: Any) -> Any:

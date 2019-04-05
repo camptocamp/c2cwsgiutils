@@ -25,7 +25,7 @@ DEFAULT_TIMEOUT: Optional[float] = None
 def _gen_request_id(request: pyramid.request.Request) -> str:
     for id_header in ID_HEADERS:
         if id_header in request.headers:
-            return request.headers[id_header]
+            return request.headers[id_header]  # type: ignore
     return str(uuid.uuid4())
 
 
@@ -61,8 +61,8 @@ def _patch_requests() -> None:
                 port = parsed.port or (80 if parsed.scheme == 'http' else 443)
                 if stats.USE_TAGS:
                     key: Sequence[Any] = ['requests']
-                    tags: Optional[Dict] = dict(scheme=parsed.scheme, host=parsed.hostname, port=port,
-                                                method=request.method, status=status)
+                    tags: Optional[Dict[str, Any]] = dict(scheme=parsed.scheme, host=parsed.hostname,
+                                                          port=port, method=request.method, status=status)
                 else:
                     key = ['requests', parsed.scheme, parsed.hostname, port, request.method, status]
                     tags = None

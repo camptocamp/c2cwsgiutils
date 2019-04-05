@@ -74,7 +74,7 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     return result
 
 
-def _dump_memory_diff(request: pyramid.request.Request) -> List:
+def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
     auth.auth_view(request)
     limit = int(request.params.get('limit', '30'))
     if 'path' in request.matchdict:
@@ -97,7 +97,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List:
 
     LOG.debug("checking memory growth for %s", path)
 
-    peak_stats: Dict = {}
+    peak_stats: Dict[Any, Any] = {}
     for i in range(3):
         gc.collect(i)
 
@@ -116,9 +116,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List:
     for i in range(3):
         gc.collect(i)
 
-    growth = objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)
-
-    return growth
+    return objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)  # type: ignore
 
 
 def _dump_memory_impl(limit: int) -> Mapping[str, Any]:
@@ -164,7 +162,8 @@ def _error(request: pyramid.request.Request) -> Any:
     raise exception_response(int(request.params['status']), detail="Test")
 
 
-def _add_view(config: pyramid.config.Configurator, name: str, path: str, view: Callable) -> None:
+def _add_view(config: pyramid.config.Configurator, name: str, path: str,
+              view: Callable[[pyramid.request.Request], Any]) -> None:
     config.add_route("c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path,
                      request_method="GET")
     config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)

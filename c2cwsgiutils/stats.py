@@ -208,7 +208,7 @@ INVALID_KEY_CHARS = re.compile(r"[^a-zA-Z0-9_]")
 
 
 class StatsDBackend(_BaseBackend):  # pragma: nocover
-    def __init__(self, address: str, prefix: str, tags: Dict[str, str] = None) -> None:
+    def __init__(self, address: str, prefix: str, tags: Optional[Dict[str, str]] = None) -> None:
         self._prefix = prefix
         self._tags = tags
         if self._prefix != "" and not self._prefix.endswith("."):

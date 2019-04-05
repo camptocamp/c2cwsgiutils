@@ -2,7 +2,7 @@ import logging
 import netifaces
 import os
 import time
-from typing import Callable, Any, Tuple
+from typing import Callable, Any, Tuple, List
 
 import boltons.iterutils
 import pytest
@@ -58,7 +58,7 @@ def approx(struct: Any, **kwargs: Any) -> Any:
     if isinstance(struct, float):
         return pytest.approx(struct, **kwargs)
 
-    def visit(_path: list, key: Any, value: Any) -> Tuple[Any, Any]:
+    def visit(_path: List[str], key: Any, value: Any) -> Tuple[Any, Any]:
         if isinstance(value, float):
             value = pytest.approx(value, **kwargs)
         return key, value

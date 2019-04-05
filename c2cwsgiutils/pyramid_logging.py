@@ -80,7 +80,7 @@ def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
     return _un_underscore(msg)
 
 
-class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):
+class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ignore
     """
     A CEE (JSON format) log handler with additional information about the current request.
     """
@@ -100,7 +100,7 @@ class JsonLogHandler(logging.StreamHandler):
     Log to stdout in JSON.
     """
 
-    def __init__(self, stream: IO = None) -> None:
+    def __init__(self, stream: Optional[IO[str]] = None):
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
         self._fqdn = socket.getfqdn()

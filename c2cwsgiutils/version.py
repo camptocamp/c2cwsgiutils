@@ -5,7 +5,7 @@ from typing import Optional, Dict, cast
 
 import pyramid.config
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import _utils, stats
 
 VERSIONS_PATH = '/app/versions.json'
 LOG = logging.getLogger(__name__)
@@ -19,10 +19,17 @@ def init(config: pyramid.config.Configurator) -> None:
         config.add_view(lambda request: versions, route_name="c2c_versions", renderer="fast_json",
                         http_cache=0)
         LOG.info("Installed the /versions.json service")
+        git_hash = versions['main']['git_hash']
+
         if 'git_tag' in versions['main']:
-            LOG.warning("Starting version %s (%s)", versions['main']['git_tag'], versions['main']['git_hash'])
+            LOG.warning("Starting version %s (%s)", versions['main']['git_tag'], git_hash)
         else:
-            LOG.warning("Starting version %s", versions['main']['git_hash'])
+            LOG.warning("Starting version %s", git_hash)
+
+        if stats.USE_TAGS:
+            stats.increment_counter(['version'], 1, tags=dict(version=git_hash))
+        else:
+            stats.increment_counter(['version', git_hash], 1)
 
 
 def _read_versions() -> Dict[str, Dict[str, str]]:

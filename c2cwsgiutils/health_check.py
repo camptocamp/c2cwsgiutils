@@ -148,6 +148,8 @@ class HealthCheck(object):
                         if stats.USE_TAGS:
                             stats.increment_counter(['alembic_version'], 1,
                                                     tags=dict(version=actual_version, name=name))
+                        else:
+                            stats.increment_counter(['alembic_version', name, actual_version], 1)
                         if actual_version != version_:
                             raise Exception("Invalid alembic version: %s != %s" % (actual_version, version_))
                 finally:
@@ -235,11 +237,14 @@ class HealthCheck(object):
             versions = _get_all_versions()
             versions = list(filter(lambda x: x is not None, versions))
             assert len(versions) > 0
-            if stats.USE_TAGS:
-                # output the versions we see on the monitoring
-                for v, count in Counter(versions).items():
+            # output the versions we see on the monitoring
+            for v, count in Counter(versions).items():
+                if stats.USE_TAGS:
                     stats.increment_counter(['version'], count, tags=dict(version=v))
-            ref = versions[0]
+                else:
+                    stats.increment_counter(['version', v], count)
+
+                ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
             return dict(version=ref, count=len(versions))
 
@@ -283,9 +288,13 @@ class HealthCheck(object):
                         results['successes'][name]['result'] = result
                     if stats.USE_TAGS:
                         stats.increment_counter(['health_check'], 1, tags=dict(name=name, outcome='success'))
+                    else:
+                        stats.increment_counter(['health_check', name, 'success'], 1)
                 except Exception as e:
                     if stats.USE_TAGS:
                         stats.increment_counter(['health_check'], 1, tags=dict(name=name, outcome='failure'))
+                    else:
+                        stats.increment_counter(['health_check', name, 'failure'], 1)
                     LOG.warning("Health check %s failed", name, exc_info=True)
                     failure = {
                         'message': str(e),

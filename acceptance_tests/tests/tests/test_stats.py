@@ -51,4 +51,4 @@ def test_version(app_connection):
     version = app_connection.get_json('c2c/versions.json')
     stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
-    assert stats['gauges']['version/version=' + version['main']['git_hash']] == 1
+    assert stats['counters']['version/version=' + version['main']['git_hash']] == 1

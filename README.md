@@ -286,6 +286,9 @@ The levels are:
      by default and used by load balancers to determine if the service is alive.
 * \>=2: Use those at your convenience. Pingdom and CO are usually setup at max_level=100. So stay below.
 
+The URL `{C2C_BASE_PATH}/health_check?checks=<check_name>` can be used to run the health checks on some
+checks, coma separated list.
+
 When you instanciate the `HealthCheck` class, two checks may be automatically enabled:
 
 * If redis is configured, check that redis is reachable.

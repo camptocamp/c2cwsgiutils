@@ -4,7 +4,8 @@ could be useful.
 
 Must be imported at the very beginning of the process' life, before any other module is imported.
 """
-from c2cwsgiutils import pyramid_logging, coverage_setup, sentry, broadcast, stats, redis_stats, stats_pyramid
+from c2cwsgiutils import pyramid_logging, coverage_setup, sentry, broadcast, stats, redis_stats,\
+    stats_pyramid, debug
 
 pyramid_logging.init()
 coverage_setup.init()
@@ -13,3 +14,4 @@ broadcast.init()
 stats.init_backends()
 redis_stats.init()
 stats_pyramid.init_db_spy()
+debug.init_daemon()

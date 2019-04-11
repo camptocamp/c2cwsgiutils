@@ -13,8 +13,6 @@ import sqlalchemy.event
 
 from c2cwsgiutils import _utils, auth, broadcast
 
-ENV_KEY = 'C2C_SQL_PROFILER_ENABLED'
-CONFIG_KEY = 'c2c.sql_profiler_enabled'
 LOG = logging.getLogger(__name__)
 repository = None
 
@@ -87,10 +85,9 @@ def init(config: pyramid.config.Configurator) -> None:
     """
     Install a pyramid  event handler that adds the request information
     """
-    if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
-        broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
+    broadcast.subscribe('c2c_sql_profiler', _setup_profiler)
 
-        config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
-                         request_method="GET")
-        config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="fast_json", http_cache=0)
-        LOG.info("Enabled the /sql_profiler API")
+    config.add_route("c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler",
+                     request_method="GET")
+    config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="fast_json", http_cache=0)
+    LOG.info("Enabled the /sql_profiler API")

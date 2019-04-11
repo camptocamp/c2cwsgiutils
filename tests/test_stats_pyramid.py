@@ -1,4 +1,4 @@
-from c2cwsgiutils.stats_pyramid import _simplify_sql as simplify_sql   # pylint: disable=W0212
+from c2cwsgiutils.stats_pyramid._db_spy import _simplify_sql as simplify_sql   # pylint: disable=W0212
 
 
 def test_simplify_sql():

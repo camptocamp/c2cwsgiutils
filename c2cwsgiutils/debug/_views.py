@@ -1,28 +1,16 @@
-import gc
 import logging
-import sys
-import threading
-import time
-import traceback
-from typing import Dict, Mapping, List, Any, Callable
-
+import gc
 import objgraph
-import pyramid.response
 from pyramid.httpexceptions import HTTPException, exception_response
+import pyramid.config
+import pyramid.request
+import pyramid.response
+import time
+from typing import List, Mapping, Any, Dict, Callable
 
-from c2cwsgiutils import _utils, auth, broadcast
-
-CONFIG_KEY = 'c2c.debug_view_enabled'
-ENV_KEY = 'C2C_DEBUG_VIEW_ENABLED'
+from c2cwsgiutils import auth, broadcast, _utils
 
 LOG = logging.getLogger(__name__)
-
-
-def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
-    auth.auth_view(request)
-    result = broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
-    assert result is not None
-    return _beautify_stacks(result)
 
 
 def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
@@ -46,24 +34,11 @@ def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]
     return results
 
 
-def _dump_stacks_impl() -> Dict[str, Any]:
-    id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
-    threads = {}
-    for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
-        frames = []
-        for filename, lineno, name, line in traceback.extract_stack(stack):
-            cur = {
-                'file': filename,
-                'line': lineno,
-                'function': name
-            }
-            if line:
-                cur['code'] = line.strip()
-            frames.append(cur)
-        threads["%s(%d)" % (id2name.get(thread_id, ""), thread_id)] = frames
-    return {
-        'threads': threads
-    }
+def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
+    auth.auth_view(request)
+    result = broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
+    assert result is not None
+    return _beautify_stacks(result)
 
 
 def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
@@ -119,16 +94,6 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
     return objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)  # type: ignore
 
 
-def _dump_memory_impl(limit: int) -> Mapping[str, Any]:
-    nb_collected = [gc.collect(generation) for generation in range(3)]
-    return {
-        'nb_collected': nb_collected,
-        'most_common_types': objgraph.most_common_types(limit=limit, shortnames=False),
-        'leaking_objects': objgraph.most_common_types(limit=limit, shortnames=False,
-                                                      objects=objgraph.get_leaking_objects())
-    }
-
-
 def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
     auth.auth_view(request)
     timeout = float(request.params['time'])
@@ -170,16 +135,11 @@ def _add_view(config: pyramid.config.Configurator, name: str, path: str,
 
 
 def init(config: pyramid.config.Configurator) -> None:
-    if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
-        broadcast.subscribe('c2c_dump_memory', _dump_memory_impl)
-        broadcast.subscribe('c2c_dump_stacks', _dump_stacks_impl)
-
-        _add_view(config, "stacks", "stacks", _dump_stacks)
-        _add_view(config, "memory", "memory", _dump_memory)
-        _add_view(config, "memory_diff", "memory_diff", _dump_memory_diff)
-        _add_view(config, "memory_diff_deprecated", "memory_diff/*path", _dump_memory_diff)
-        _add_view(config, "sleep", "sleep", _sleep)
-        _add_view(config, "headers", "headers", _headers)
-        _add_view(config, "error", "error", _error)
-
-        LOG.info("Enabled the /debug/... API")
+    _add_view(config, "stacks", "stacks", _dump_stacks)
+    _add_view(config, "memory", "memory", _dump_memory)
+    _add_view(config, "memory_diff", "memory_diff", _dump_memory_diff)
+    _add_view(config, "memory_diff_deprecated", "memory_diff/*path", _dump_memory_diff)
+    _add_view(config, "sleep", "sleep", _sleep)
+    _add_view(config, "headers", "headers", _headers)
+    _add_view(config, "error", "error", _error)
+    LOG.info("Enabled the /debug/... API")

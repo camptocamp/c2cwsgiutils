@@ -10,9 +10,7 @@ from typing import List, Any, Optional, Dict, Sequence  # noqa  # pylint: disabl
 import pyramid.request
 import requests.adapters
 import requests.models
-import sqlalchemy.event
 from pyramid.threadlocal import get_current_request
-from sqlalchemy.orm import Session
 
 from c2cwsgiutils import _utils, stats
 
@@ -27,12 +25,6 @@ def _gen_request_id(request: pyramid.request.Request) -> str:
         if id_header in request.headers:
             return request.headers[id_header]  # type: ignore
     return str(uuid.uuid4())
-
-
-def _add_session_id(session: Session, _transaction: Any, _connection: Any) -> None:
-    request = get_current_request()
-    if request is not None:
-        session.execute("set application_name=:session_id", params={'session_id': request.c2c_request_id})
 
 
 def _patch_requests() -> None:
@@ -84,4 +76,5 @@ def init(config: pyramid.config.Configurator) -> None:
     _patch_requests()
 
     if _utils.env_or_config(config, 'C2C_SQL_REQUEST_ID', 'c2c.sql_request_id', False):
-        sqlalchemy.event.listen(Session, "after_begin", _add_session_id)
+        from . import _sql
+        _sql.init()

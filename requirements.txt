@@ -10,7 +10,7 @@ junit2html==022
 lxml==4.3.3
 mypy==0.701
 netifaces==0.10.9
-objgraph==3.4.0
+objgraph==3.4.1
 psycopg2-binary==2.8.2
 pyramid==1.10.4
 pyramid-tm==2.2.1

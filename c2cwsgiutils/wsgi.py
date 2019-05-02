@@ -1,13 +1,13 @@
 import logging
 import os
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Mapping
 
 from pyramid.paster import get_app
 
 from c2cwsgiutils import pyramid_logging
 
 
-def _escape_variables(environ: Dict[str, str]) -> Dict[str, str]:
+def _escape_variables(environ: Mapping[str, str]) -> Mapping[str, str]:
     """
     Escape environment variables so that they can be interpreted correctly by python configparser.
     """

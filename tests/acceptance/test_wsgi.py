@@ -1,4 +1,4 @@
-from c2cwsgiutils.wsgi import _escape_variables
+from c2cwsgiutils.wsgi import _escape_variables as escape_variables  # pylint: disable=W0212
 
 
 def test_escape_variables():
@@ -6,7 +6,7 @@ def test_escape_variables():
         'TOTO': 'TITI',
         'TUTU': 'T%%T%%',
         'TATA': '',
-    } == _escape_variables({
+    } == escape_variables({
         'TOTO': 'TITI',
         'TUTU': 'T%T%',
         'TATA': ''

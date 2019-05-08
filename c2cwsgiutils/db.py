@@ -9,7 +9,7 @@ from typing import Pattern  # noqa  # pylint: disable=unused-import
 import pyramid.config
 import pyramid.request
 import sqlalchemy.orm
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 LOG = logging.getLogger(__name__)
 RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
@@ -56,8 +56,9 @@ def setup_session(
     settings = config.registry.settings
     rw_engine = sqlalchemy.engine_from_config(settings, master_prefix + ".")
     rw_engine.c2c_name = master_prefix
-    db_session = sqlalchemy.orm.scoped_session(
-        sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
+    factory = sqlalchemy.orm.sessionmaker(bind=rw_engine)
+    register(factory)
+    db_session = sqlalchemy.orm.scoped_session(factory)
 
     # Setup a slave DB connection and add a tween to use it.
     if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
@@ -101,8 +102,9 @@ def create_session(config: Optional[pyramid.config.Configurator], name: str, url
         slave_url = url
 
     rw_engine = sqlalchemy.create_engine(url, **engine_config)
-    db_session = sqlalchemy.orm.scoped_session(
-        sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=rw_engine))
+    factory = sqlalchemy.orm.sessionmaker(bind=rw_engine)
+    register(factory)
+    db_session = sqlalchemy.orm.scoped_session(factory)
 
     # Setup a slave DB connection and add a tween to use it.
     if url != slave_url and config is not None:

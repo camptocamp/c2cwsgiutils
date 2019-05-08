@@ -9,7 +9,7 @@ import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy.exc
 import transaction
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 from c2cwsgiutils import stats, sentry
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
@@ -143,8 +143,9 @@ def main():
     reporter = Reporter(args)
     try:
         engine = sqlalchemy.create_engine(args.db)
-        session = sqlalchemy.orm.scoped_session(
-            sqlalchemy.orm.sessionmaker(extension=ZopeTransactionExtension(), bind=engine))()
+        factory = sqlalchemy.orm.sessionmaker(bind=engine)
+        register(factory)
+        session = sqlalchemy.orm.scoped_session(factory)
     except Exception as e:
         reporter.error(['connection'], e)
         raise

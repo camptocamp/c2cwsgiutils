@@ -35,6 +35,7 @@ def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
 def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, interval: float = 0.5) -> Any:
     timeout = time.monotonic() + timeout
     while True:
+        error = ""
         try:
             ret = what()
             if ret:
@@ -42,9 +43,10 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
         except NameError:
             raise
         except Exception as e:
+            error = str(e)
             LOG.info("  Failed: " + str(e))
         if time.monotonic() > timeout:
-            assert False, "Timeout"
+            assert False, "Timeout: " + error
         time.sleep(interval)
 
 

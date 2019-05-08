@@ -13,7 +13,6 @@ class Filter:
         self._application = application
 
     def __call__(self, environ: Dict[str, str], start_response: Any) -> Any:
-        print(repr(environ))
         if 'HTTP_FORWARDED' in environ:
             forwarded = SEP_RE.split(environ.pop('HTTP_FORWARDED'))[0]
             fields = dict(tuple(f.split('=', maxsplit=1)) for f in forwarded.split(";"))  # type: ignore

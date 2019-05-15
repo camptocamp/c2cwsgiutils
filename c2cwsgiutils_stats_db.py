@@ -135,7 +135,7 @@ def _do_table_count(reporter, schema, session, table):
 
 def do_extra(session, extra, reporter):
     for metric, count in session.execute(extra):
-        reporter.do_report(str(metric).split("."), count, kind='count')
+        reporter.do_report(str(metric).split("."), count, kind='count', tags=dict(metric=metric))
 
 
 def main():

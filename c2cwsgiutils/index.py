@@ -222,6 +222,7 @@ def _debug(request: pyramid.request.Request) -> str:
             form(_url(request, 'c2c_debug_memory_diff'), button('Memory diff'), input_('path'),
                  input_('limit', value=30)),
             form(_url(request, 'c2c_debug_sleep'), button('Sleep'), input_('time', value=1)),
+            form(_url(request, 'c2c_debug_time'), button('Time')),
             form(_url(request, 'c2c_debug_error'), button('Generate an HTTP error'),
                  input_('status', value=500))
         )

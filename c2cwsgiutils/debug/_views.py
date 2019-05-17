@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import gc
 import objgraph
@@ -127,6 +128,15 @@ def _error(request: pyramid.request.Request) -> Any:
     raise exception_response(int(request.params['status']), detail="Test")
 
 
+def _time(request: pyramid.request.Request) -> Any:
+    return {
+        'local_time': str(datetime.now()),
+        'gmt_time': str(datetime.utcnow()),
+        'epoch': time.time(),
+        'timezone': datetime.now().astimezone().tzname()
+    }
+
+
 def _add_view(config: pyramid.config.Configurator, name: str, path: str,
               view: Callable[[pyramid.request.Request], Any]) -> None:
     config.add_route("c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path,
@@ -142,4 +152,5 @@ def init(config: pyramid.config.Configurator) -> None:
     _add_view(config, "sleep", "sleep", _sleep)
     _add_view(config, "headers", "headers", _headers)
     _add_view(config, "error", "error", _error)
+    _add_view(config, "time", "time", _time)
     LOG.info("Enabled the /debug/... API")

@@ -34,6 +34,11 @@ def test_sleep(app_connection):
     assert time.monotonic() - start_time > 0.1
 
 
+def test_time(app_connection):
+    time_ = app_connection.get_json('c2c/debug/time')
+    assert time_['timezone'] == 'UTC'  # run in docker -> UTC
+
+
 def test_headers(app_connection):
     response = app_connection.get_json('c2c/debug/headers', params={'secret': 'changeme'},
                                        headers={'X-Toto': '42'})

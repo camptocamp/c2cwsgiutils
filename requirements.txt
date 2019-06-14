@@ -11,7 +11,7 @@ lxml==4.3.4
 mypy==0.701
 netifaces==0.10.9
 objgraph==3.4.1
-psycopg2-binary==2.8.2
+psycopg2-binary==2.8.3
 pyramid==1.10.4
 pyramid-tm==2.2.1
 pytest==4.6.3

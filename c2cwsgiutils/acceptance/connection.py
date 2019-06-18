@@ -131,6 +131,17 @@ class Connection:
             self._check_cors(cors, r)
             return r
 
+    def options(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
+                cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
+            -> requests.Response:
+        """
+        get the given URL (relative to the root of API).
+        """
+        with self.session.options(self.base_url + url, headers=self._merge_headers(headers, False),
+                                  **kwargs) as r:
+            check_response(r, expected_status, cache_expected=cache_expected)
+            return r
+
     def _cors_headers(self, cors: bool) -> Mapping[str, str]:
         if cors:
             return {
@@ -166,7 +177,9 @@ def check_response(r: requests.Response, expected_status: int = 200,
         assert 'no-cache' in cache_control
     elif cache_expected == CacheExpected.YES:
         assert 'Cache-Control' in r.headers
-        assert 'max-age' in r.headers['Cache-Control']
+        assert 'max-age=' in r.headers['Cache-Control']
+        assert 'max-age=0' not in r.headers['Cache-Control']
+        assert 'no-cache' not in r.headers['Cache-Control']
 
 
 def _get_json(r: requests.Response) -> Any:

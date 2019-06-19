@@ -20,7 +20,10 @@ app:
     SQL_LOG_LEVEL: DEBUG
     OTHER_LOG_LEVEL: DEBUG
     COVERAGE: 1
-    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
+    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+    SENTRY_CLIENT_ENVIRONMENT: local
+    SENTRY_CLIENT_RELEASE: latest
+    SENTRY_TAG_SERVICE: app
     C2C_REDIS_URL: redis://redis:6379
     PYTHONMALLOC: debug
     GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
@@ -37,7 +40,10 @@ alembic_master:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQL_LOG_LEVEL: DEBUG
     OTHER_LOG_LEVEL: DEBUG
-    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
+    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+    SENTRY_CLIENT_ENVIRONMENT: local
+    SENTRY_CLIENT_RELEASE: latest
+    SENTRY_TAG_SERVICE: alembic_master
     STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: alembic_master
   links:
@@ -50,7 +56,10 @@ alembic_slave:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQL_LOG_LEVEL: DEBUG
     OTHER_LOG_LEVEL: DEBUG
-    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72:6a05548ddef84982958c45fd2a70ff39@sentry.camptocamp.com/5
+    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+    SENTRY_CLIENT_ENVIRONMENT: local
+    SENTRY_CLIENT_RELEASE: latest
+    SENTRY_TAG_SERVICE: alembic_slave
     STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: alembic_slave
   links:

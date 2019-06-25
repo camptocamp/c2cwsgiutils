@@ -36,7 +36,7 @@ acceptance: build_acceptance build_test_app
 	docker run --rm $(DOCKER_BASE):latest cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
 	#run the tests
 	docker run $(DOCKER_TTY) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
-	    bash -c "py.test -vv --color=yes --junitxml /reports/acceptance.xml $(PYTEST_OPTS) tests; status=\$$?; junit2html /reports/acceptance.xml /reports/acceptance.html; exit \$$status\$$?"; \
+	    py.test -vv --color=yes --junitxml /reports/acceptance.xml --html /reports/acceptance.html --self-contained-html $(PYTEST_OPTS) tests; \
 	status=$$?; \
 	#copy the reports locally \
 	docker cp c2cwsgiutils_acceptance_$$PPID:/reports ./; \

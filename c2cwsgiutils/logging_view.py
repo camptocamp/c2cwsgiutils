@@ -80,4 +80,4 @@ def _list_overrides(settings: Mapping[str, Any]) -> Generator[Tuple[str, str], N
         level = con.get(key)
         name = key[len(REDIS_PREFIX):]
         if level is not None:
-            yield name, level
+            yield name, str(level)

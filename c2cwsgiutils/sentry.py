@@ -43,7 +43,7 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
             level=logging.DEBUG,
             event_level=_utils.env_or_config(config, 'SENTRY_LEVEL', 'c2c.sentry_level', 'ERROR').upper()
         )
-        sentry_sdk.init(
+        sentry_sdk.init(  # type: ignore
             dsn=sentry_url,
             integrations=[sentry_logging],
             before_send=_create_before_send_filter(tags),
@@ -87,7 +87,7 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     if _client_setup:
         try:
             LOG.info("Enable WSGI filter for Sentry")
-            return SentryWsgiMiddleware(application)  # type: ignore
+            return SentryWsgiMiddleware(application)
         except Exception:
             LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
             return application

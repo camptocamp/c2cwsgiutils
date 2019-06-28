@@ -87,7 +87,7 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     if _client_setup:
         try:
             LOG.info("Enable WSGI filter for Sentry")
-            return SentryWsgiMiddleware(application)  # type: ignore
+            return SentryWsgiMiddleware(application)
         except Exception:
             LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
             return application

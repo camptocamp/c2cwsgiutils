@@ -83,6 +83,7 @@ def _check_roundtrip() -> None:
     start = time.monotonic()
     while time.monotonic() < start + LOG_TIMEOUT:
         r = requests.post(SEARCH_URL, json=query, headers=SEARCH_HEADERS)
+        r.raise_for_status()
         json = r.json()
         found = json['hits']['total']
         if found > 0:

@@ -18,9 +18,9 @@ then
     exit 0
 fi
 
-python3 ./setup.py bdist_wheel
-
 pip install -r publish-requirements.txt
+
+python3 ./setup.py bdist_wheel
 
 if twine upload -u "${USERNAME}" -p "${PASSWORD}" dist/*.whl
 then

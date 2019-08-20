@@ -18,8 +18,6 @@ from typing import Any, MutableMapping, Mapping, IO, Optional
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-LOG = logging.getLogger(__name__)
-
 
 class _PyramidFilter(logging.Filter):
     """
@@ -118,6 +116,14 @@ def init(configfile: Optional[str] = None) -> Optional[str]:
     if os.path.isfile(configfile_):
         logging.config.fileConfig(configfile_, defaults=dict(os.environ))
         return configfile_
+    elif os.environ.get('LOG_TYPE') == 'json':
+        root = logging.getLogger()
+        handler = JsonLogHandler(stream=sys.stdout)
+        handler.setLevel(logging.NOTSET)
+        root.addHandler(handler)
+        level = os.environ.get('LOG_LEVEL', os.environ.get('OTHER_LOG_LEVEL', 'INFO'))
+        root.setLevel(level)
+        return None
     else:
         logging.basicConfig(level=logging.DEBUG,
                             format="%(asctime)-15s %(levelname)5s %(name)s %(message)s",

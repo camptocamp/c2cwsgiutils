@@ -6,12 +6,12 @@ Must be imported at the very beginning of the process' life, before any other mo
 """
 
 
-def _first():
+def _first() -> None:
     from c2cwsgiutils import pyramid_logging
     pyramid_logging.init()
 
 
-def _second():
+def _second() -> None:
     from c2cwsgiutils import coverage_setup, sentry, broadcast, stats, redis_stats,\
         stats_pyramid, debug
     coverage_setup.init()

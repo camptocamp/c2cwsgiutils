@@ -1,7 +1,7 @@
 # Camptocamp WSGI utilities
 
 | branch  | CI  | static analysis |
-|---|---|---|---|
+|---|---|---|
 | master | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c47d09a059ca410cbc325f94d7993518)](https://www.codacy.com/app/camptocamp/c2cwsgiutils?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=camptocamp/c2cwsgiutils&amp;utm_campaign=Badge_Grade) |
 | release_3 | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_3)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_3/) |
 | release_2 (deprecated) | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_2)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_2/) |

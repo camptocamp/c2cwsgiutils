@@ -31,8 +31,8 @@ RUN flake8 /opt/c2cwsgiutils && \
     echo "from pickle import *" > /usr/lib/python3.7/cPickle.py && \
     pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
     (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
-    python3 -m compileall -q && \
-    python3 -m compileall -q /opt/c2cwsgiutils && \
+    python3 -OO -m compileall -q && \
+    python3 -OO -m compileall /usr/local/lib/python3.7 /usr/lib/python3.7 /opt/c2cwsgiutils -q && \
     rm /opt/c2cwsgiutils/fake_python3
 
 ENV TERM=linux \

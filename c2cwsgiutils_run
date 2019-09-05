@@ -23,7 +23,7 @@ trap _int SIGINT
 
 while true
 do
-    gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application &
+    python3 -OO /usr/local/bin/gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application &
     child=$!
     wait "$child"
     exit_status=$?

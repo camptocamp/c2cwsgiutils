@@ -26,7 +26,7 @@ DOCKER_TTY := $(shell [ -t 0 ] && echo -ti)
 all: mypy acceptance
 
 .PHONY: build
-build: build_acceptance build_test_app build_docker_light
+build: build_acceptance build_test_app
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app
@@ -64,15 +64,15 @@ send_coverage: build_docker_full
 
 .PHONY: build_docker_lite
 build_docker_light:
-	docker build --target lite --tag $(DOCKER_BASE):latest-lite .
+	docker build --tag $(DOCKER_BASE):latest-lite -f Dockerfile.lite .
 
 .PHONY: build_docker
-build_docker:
-	docker build --target standard --tag $(DOCKER_BASE):latest .
+build_docker: build_docker_light
+	docker build --tag $(DOCKER_BASE):latest .
 
 .PHONY: build_docker_full
-build_docker_full:
-	docker build --target full --tag $(DOCKER_BASE):latest-full .
+build_docker_full: build_docker
+	docker build --tag $(DOCKER_BASE):latest-full -f Dockerfile.full .
 
 .PHONY: build_acceptance
 build_acceptance: build_docker

@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS lite
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt docker-requirements.txt fake_python3 /opt/c2cwsgiutils/
@@ -24,16 +24,13 @@ RUN apt update && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
     pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
-    apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
+    apt remove --purge --autoremove --yes $DEV_PACKAGES binutils && \
+    rm /opt/c2cwsgiutils/fake_python3
 
 COPY . /opt/c2cwsgiutils/
-RUN flake8 /opt/c2cwsgiutils && \
-    echo "from pickle import *" > /usr/lib/python3.7/cPickle.py && \
-    pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
-    (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
+RUN pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
     python3 -OO -m compileall -q && \
-    python3 -OO -m compileall /usr/local/lib/python3.7 /usr/lib/python3.7 /opt/c2cwsgiutils -q && \
-    rm /opt/c2cwsgiutils/fake_python3
+    python3 -OO -m compileall /usr/local/lib/python3.7 /usr/lib/python3.7 /opt/c2cwsgiutils -q
 
 ENV TERM=linux \
     LANG=C.UTF-8 \
@@ -47,3 +44,31 @@ ENV TERM=linux \
     PKG_CONFIG_ALLOW_SYSTEM_LIBS=OHYESPLEASE
 
 CMD ["c2cwsgiutils_run"]
+
+
+FROM lite AS standard
+
+RUN python3 -m pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements-dev.txt && \
+    flake8 /opt/c2cwsgiutils && \
+    echo "from pickle import *" > /usr/lib/python3.7/cPickle.py && \
+    (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
+    python3 -OO -m compileall /usr/local/lib/python3.7 -q
+
+
+FROM standard AS full
+
+RUN apt update && \
+    cd /opt/c2cwsgiutils && \
+    DEV_PACKAGES="python3.7-dev graphviz-dev build-essential" && \
+    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
+        graphviz postgresql-client-10 git net-tools iputils-ping screen \
+        vim vim-editorconfig vim-addon-manager tree \
+        ${DEV_PACKAGES} && \
+    vim-addon-manager --system-wide install editorconfig && \
+    echo 'set hlsearch  " Highlight search' > /etc/vim/vimrc.local && \
+    echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
+    echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local && \
+    pip install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
+    apt remove --purge --autoremove --yes ${DEV_PACKAGES} binutils && \
+    apt-get clean && \
+    rm --force --recursive /var/lib/apt/lists/*

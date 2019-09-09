@@ -96,6 +96,7 @@ dockerBuild {
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                docker.image('camptocamp/c2cwsgiutils:latest-lite').push()
                 docker.image('camptocamp/c2cwsgiutils:latest').push()
                 docker.image('camptocamp/c2cwsgiutils:latest-full').push()
                 sh 'rm -rf ~/.docker*'
@@ -109,8 +110,10 @@ dockerBuild {
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                sh "docker tag camptocamp/c2cwsgiutils:latest-lite camptocamp/c2cwsgiutils:${env.BRANCH_NAME}-lite"
                 sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${env.BRANCH_NAME}"
                 sh "docker tag camptocamp/c2cwsgiutils:latest-full camptocamp/c2cwsgiutils:${env.BRANCH_NAME}-full"
+                docker.image("camptocamp/c2cwsgiutils:${env.BRANCH_NAME}-lite").push()
                 docker.image("camptocamp/c2cwsgiutils:${env.BRANCH_NAME}").push()
                 docker.image("camptocamp/c2cwsgiutils:${env.BRANCH_NAME}-full").push()
                 sh 'rm -rf ~/.docker*'
@@ -127,6 +130,7 @@ dockerBuild {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                 sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}"
                 sh "docker tag camptocamp/c2cwsgiutils:latest-full camptocamp/c2cwsgiutils:${majorRelease}-full"
+                docker.image("camptocamp/c2cwsgiutils:${majorRelease}-lite").push()
                 docker.image("camptocamp/c2cwsgiutils:${majorRelease}").push()
                 docker.image("camptocamp/c2cwsgiutils:${majorRelease}-full").push()
                 sh 'rm -rf ~/.docker*'

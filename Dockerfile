@@ -7,7 +7,7 @@ RUN apt update && \
         libgeos-dev \
         libproj-dev \
         libjpeg-dev \
-        postgresql-client-10 \
+        postgresql-client \
         git \
         graphviz-dev \
         graphviz \

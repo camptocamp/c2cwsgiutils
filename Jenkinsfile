@@ -128,6 +128,7 @@ dockerBuild {
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                sh "docker tag camptocamp/c2cwsgiutils:latest-lite camptocamp/c2cwsgiutils:${majorRelease}-lite"
                 sh "docker tag camptocamp/c2cwsgiutils:latest camptocamp/c2cwsgiutils:${majorRelease}"
                 sh "docker tag camptocamp/c2cwsgiutils:latest-full camptocamp/c2cwsgiutils:${majorRelease}-full"
                 docker.image("camptocamp/c2cwsgiutils:${majorRelease}-lite").push()

@@ -13,6 +13,7 @@
 !publish-requirements.txt
 !README.md
 !requirements.txt
+!requirements-dev.txt
 !setup.py
 !setup.cfg
 !tests

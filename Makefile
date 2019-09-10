@@ -61,13 +61,18 @@ acceptance: build_acceptance build_test_app
 send_coverage: build_docker_full
 	docker run --rm -v $(THIS_DIR):$(THIS_DIR) -e CODACY_PROJECT_TOKEN=$(CODACY_PROJECT_TOKEN) $(DOCKER_BASE):latest-full bash -c "cd $(THIS_DIR) && python-codacy-coverage -r reports/coverage/api/coverage.xml" || true
 
+
+.PHONY: build_docker_lite
+build_docker_light:
+	docker build --tag $(DOCKER_BASE):latest-lite -f Dockerfile.lite .
+
 .PHONY: build_docker
-build_docker:
-	docker build -t $(DOCKER_BASE):latest .
+build_docker: build_docker_light
+	docker build --tag $(DOCKER_BASE):latest .
 
 .PHONY: build_docker_full
 build_docker_full: build_docker
-	docker build -t $(DOCKER_BASE):latest-full -f Dockerfile.full .
+	docker build --tag $(DOCKER_BASE):latest-full -f Dockerfile.full .
 
 .PHONY: build_acceptance
 build_acceptance: build_docker

@@ -29,8 +29,8 @@ RUN apt update && \
 
 COPY . /opt/c2cwsgiutils/
 RUN pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
-    python3 -OO -m compileall -q && \
-    python3 -OO -m compileall /usr/local/lib/python3.7 /usr/lib/python3.7 /opt/c2cwsgiutils -q
+    python3 -m compileall -q && \
+    python3 -m compileall /usr/local/lib/python3.7 /usr/lib/python3.7 /opt/c2cwsgiutils -q
 
 ENV TERM=linux \
     LANG=C.UTF-8 \

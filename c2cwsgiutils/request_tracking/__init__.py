@@ -65,8 +65,8 @@ def _patch_requests() -> None:
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global ID_HEADERS, DEFAULT_TIMEOUT
+    ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish', 'X-Amzn-Trace-Id']
     if config is not None:
-        ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish', 'X-Amzn-Trace-Id']
         extra_header = _utils.env_or_config(config, 'C2C_REQUEST_ID_HEADER', 'c2c.request_id_header')
         if extra_header is not None:
             ID_HEADERS.insert(0, extra_header)

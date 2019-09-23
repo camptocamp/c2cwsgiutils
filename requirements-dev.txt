@@ -3,7 +3,7 @@ coverage==4.5.4
 flake8==3.7.8
 junit2html==022
 mypy==0.701
-pytest==5.1.2
+pytest==5.1.3
 pytest-cov==2.7.1
 pytest-html==2.0.0
 yamllint==1.17.0

@@ -20,7 +20,7 @@ def test_forwarded_openshift(app_connection):
         "Forwarded": "for=1.1.1.1;host=example.com;proto=https;proto-version=h2",
         "X-Forwarded-Port": "443",
         "X-Forwarded-Proto-Version": "h2"
-    })
+    }, cors=False)
     print("response=" + json.dumps(response, indent=4))
     assert response['client_info'] == EXPECTED
 
@@ -30,6 +30,6 @@ def test_forwarded_haproxy(app_connection):
         "X-Forwarded-Host": "example.com",
         "X-Forwarded-Proto": "https",
         "X-Forwarded-For": "1.1.1.1"
-    })
+    }, cors=False)
     print("response=" + json.dumps(response, indent=4))
     assert response['client_info'] == EXPECTED

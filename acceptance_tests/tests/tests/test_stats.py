@@ -39,7 +39,7 @@ def test_redis(app_connection):
     app_connection.get_json('c2c/stats.json?reset=1', cors=False)
 
     # that sends a few PUBLISH to redis
-    app_connection.get_json('c2c/debug/stacks', params={'secret': 'changeme'})
+    app_connection.get_json('c2c/debug/stacks', params={'secret': 'changeme'}, cors=False)
 
     stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
@@ -47,8 +47,8 @@ def test_redis(app_connection):
 
 
 def test_version(app_connection):
-    app_connection.get_json("c2c/health_check", params={'checks': 'version', 'max_level': '10'})
-    version = app_connection.get_json('c2c/versions.json')
+    app_connection.get_json("c2c/health_check", params={'checks': 'version', 'max_level': '10'}, cors=False)
+    version = app_connection.get_json('c2c/versions.json', cors=False)
     stats = app_connection.get_json('c2c/stats.json', cors=False)
     print(stats)
     assert stats['counters']['version/version=' + version['main']['git_hash']] == 1

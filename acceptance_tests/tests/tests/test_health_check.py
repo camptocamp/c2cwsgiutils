@@ -11,7 +11,7 @@ def _remove_timings(response):
 
 
 def test_ok(app_connection):
-    response = app_connection.get_json("c2c/health_check")
+    response = app_connection.get_json("c2c/health_check", cors=False)
     print('response=' + json.dumps(response))
     assert _remove_timings(response) == {
         'successes': {
@@ -37,7 +37,8 @@ def test_ok(app_connection):
 
 
 def test_filter(app_connection):
-    response = app_connection.get_json("c2c/health_check", params={'checks': 'db_engine_sqlalchemy,fun_url'})
+    response = app_connection.get_json("c2c/health_check", params={'checks': 'db_engine_sqlalchemy,fun_url'},
+                                       cors=False)
     print('response=' + json.dumps(response))
     assert _remove_timings(response) == {
         'successes': {
@@ -53,7 +54,7 @@ def test_filter(app_connection):
 
 
 def test_empty_filter(app_connection):
-    response = app_connection.get_json("c2c/health_check", params={'checks': ''})
+    response = app_connection.get_json("c2c/health_check", params={'checks': ''}, cors=False)
     print('response=' + json.dumps(response))
     assert _remove_timings(response) == {
         'successes': {
@@ -79,7 +80,8 @@ def test_empty_filter(app_connection):
 
 
 def test_failure(app_connection):
-    response = app_connection.get_json("c2c/health_check", params={'max_level': '2'}, expected_status=500)
+    response = app_connection.get_json("c2c/health_check", params={'max_level': '2'}, expected_status=500,
+                                       cors=False)
     print('response=' + json.dumps(response))
     assert _remove_timings(response) == {
         'successes': {
@@ -126,7 +128,7 @@ def test_failure(app_connection):
 
 def test_failure_with_stack(app_connection):
     response = app_connection.get_json("c2c/health_check", params={'max_level': '2', 'secret': 'changeme'},
-                                       expected_status=500)
+                                       expected_status=500, cors=False)
     print('response=' + json.dumps(response))
     assert _remove_timings(response) == {
         'successes': {
@@ -174,7 +176,7 @@ def test_failure_with_stack(app_connection):
 
 
 def test_ping(app_connection):
-    response = app_connection.get_json("c2c/health_check", params={'max_level': '0'})
+    response = app_connection.get_json("c2c/health_check", params={'max_level': '0'}, cors=False)
     print('response=' + json.dumps(response))
     assert response == {
         'successes': {},

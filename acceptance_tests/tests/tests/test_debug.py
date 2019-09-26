@@ -3,7 +3,7 @@ import time
 
 
 def test_stacks(app_connection):
-    stacks = app_connection.get_json('c2c/debug/stacks', params={'secret': 'changeme'})
+    stacks = app_connection.get_json('c2c/debug/stacks', params={'secret': 'changeme'}, cors=False)
     _check_stacks(stacks)
 
 
@@ -13,16 +13,16 @@ def _check_stacks(stacks):
 
 
 def test_header_auth(app_connection):
-    stacks = app_connection.get_json('c2c/debug/stacks', headers={'X-API-Key': 'changeme'})
+    stacks = app_connection.get_json('c2c/debug/stacks', headers={'X-API-Key': 'changeme'}, cors=False)
     _check_stacks(stacks)
 
 
 def test_no_auth(app_connection):
-    app_connection.get_json('c2c/debug/stacks', expected_status=403)
+    app_connection.get_json('c2c/debug/stacks', expected_status=403, cors=False)
 
 
 def test_memory(app_connection):
-    memory = app_connection.get_json('c2c/debug/memory', params={'secret': 'changeme'})
+    memory = app_connection.get_json('c2c/debug/memory', params={'secret': 'changeme'}, cors=False)
     print("memory=" + json.dumps(memory, indent=4))
     assert len(memory) == 1
 
@@ -30,18 +30,18 @@ def test_memory(app_connection):
 def test_sleep(app_connection):
     start_time = time.monotonic()
     app_connection.get('c2c/debug/sleep', params={'secret': 'changeme', 'time': '0.1'},
-                       expected_status=204)
+                       expected_status=204, cors=False)
     assert time.monotonic() - start_time > 0.1
 
 
 def test_time(app_connection):
-    time_ = app_connection.get_json('c2c/debug/time')
+    time_ = app_connection.get_json('c2c/debug/time', cors=False)
     assert time_['timezone'] == 'UTC'  # run in docker -> UTC
 
 
 def test_headers(app_connection):
     response = app_connection.get_json('c2c/debug/headers', params={'secret': 'changeme'},
-                                       headers={'X-Toto': '42'})
+                                       headers={'X-Toto': '42'}, cors=False)
     print("response=" + json.dumps(response, indent=4))
     assert response['headers']['X-Toto'] == '42'
 
@@ -56,15 +56,16 @@ def test_memory_diff(app_connection):
     response = app_connection.get_json('c2c/debug/memory_diff', params={
         'secret': 'changeme',
         'path': '/api/ping?toto=tutu'
-    })
+    }, cors=False)
     _check_leak_there(response)
 
 
 def test_memory_diff_deprecated(app_connection):
-    response = app_connection.get_json('c2c/debug/memory_diff/api/ping', params={'secret': 'changeme'})
+    response = app_connection.get_json('c2c/debug/memory_diff/api/ping', params={'secret': 'changeme'},
+                                       cors=False)
     _check_leak_there(response)
 
 
 def test_error(app_connection):
     app_connection.get_json('c2c/debug/error', params={'secret': 'changeme', 'status': '500'},
-                            expected_status=500)
+                            expected_status=500, cors=False)

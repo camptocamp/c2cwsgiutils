@@ -152,8 +152,10 @@ class Connection:
 
     def _check_cors(self, cors: bool, r: requests.Response) -> None:
         if cors:
-            assert r.headers["Access-Control-Allow-Origin"] == \
-                   self.origin if 'Access-Control-Allow-Credentials' in r.headers else '*'
+            if r.headers.get('Access-Control-Allow-Credentials', 'false') == 'true':
+                assert r.headers["Access-Control-Allow-Origin"] == self.origin
+            else:
+                assert r.headers["Access-Control-Allow-Origin"] == '*'
 
     def _merge_headers(self, headers: Optional[Mapping[str, str]], cors: bool) -> Mapping[str, str]:
         merged = dict(headers) if headers is not None else {}

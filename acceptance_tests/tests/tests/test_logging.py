@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 def _query(app_connection, params, expected=None):
     all_params = {'secret': 'changeme'}
     all_params.update(params)
-    response = app_connection.get_json('c2c/logging/level', params=all_params)
+    response = app_connection.get_json('c2c/logging/level', params=all_params, cors=False)
 
     all_expected = {'status': 200}
     if 'name' in all_params:
@@ -39,11 +39,12 @@ def test_api(app_connection):
 
 def test_api_bad_secret(app_connection):
     app_connection.get_json('c2c/logging/level', params={'secret': 'wrong', 'name': 'sqlalchemy.engine'},
-                            expected_status=403)
+                            expected_status=403, cors=False)
 
 
 def test_api_missing_secret(app_connection):
-    app_connection.get_json('c2c/logging/level', params={'name': 'sqlalchemy.engine'}, expected_status=403)
+    app_connection.get_json('c2c/logging/level', params={'name': 'sqlalchemy.engine'}, expected_status=403,
+                            cors=False)
 
 
 class LogListener(threading.Thread):

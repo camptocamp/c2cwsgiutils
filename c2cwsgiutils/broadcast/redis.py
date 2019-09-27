@@ -106,7 +106,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         LOG.debug("Sending a broadcast on %s", actual_channel)
         nb_received = self._connection.publish(actual_channel, json.dumps(message))
         LOG.debug('Broadcast on %s sent to %d listeners', actual_channel, nb_received)
-        return nb_received  # type: ignore
+        return nb_received
 
     def copy_local_subscriptions(self, prev_broadcaster: local.LocalBroadcaster) -> None:
         for channel, callback in prev_broadcaster.get_subscribers().items():

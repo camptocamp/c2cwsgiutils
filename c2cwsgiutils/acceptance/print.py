@@ -15,7 +15,7 @@ class PrintConnection(connection.Connection):
     A Connection with specialized methods to interact with a Mapfish Print server.
     """
 
-    def __init__(self, base_url: str, origin: str) -> None:
+    def __init__(self, base_url: str, origin: str, cors: bool = True) -> None:
         """
         :param base_url: The base URL to the print server (including the /print)
         :param app: The name of the application to use
@@ -23,6 +23,7 @@ class PrintConnection(connection.Connection):
         """
         super().__init__(base_url=base_url, origin=origin)
         self.session.headers['Referer'] = origin
+        self.cors = cors
 
     def wait_ready(self, timeout: int = 60, app: str = "default") -> None:
         """
@@ -32,7 +33,8 @@ class PrintConnection(connection.Connection):
                             timeout=timeout)
 
     def get_capabilities(self, app: str) -> Any:
-        return self.get_json(app + "/capabilities.json", cache_expected=connection.CacheExpected.YES)
+        return self.get_json(app + "/capabilities.json", cache_expected=connection.CacheExpected.YES,
+                             cors=self.cors)
 
     def get_example_requests(self, app: str) -> Dict[str, Any]:
         samples = self.get_json(app + "/exampleRequest.json",
@@ -43,7 +45,7 @@ class PrintConnection(connection.Connection):
         return out
 
     def get_pdf(self, app: str, request: Dict[str, Any], timeout: int = 60) -> requests.Response:
-        create_report = self.post_json(app + "/report.pdf", json=request)
+        create_report = self.post_json(app + "/report.pdf", json=request, cors=self.cors)
         LOG.debug("create_report=%s", create_report)
         ref = create_report['ref']
 
@@ -51,15 +53,15 @@ class PrintConnection(connection.Connection):
         LOG.debug("status=%s", repr(status))
         assert status['status'] == 'finished'
 
-        report = self.get_raw("report/" + ref)
+        report = self.get_raw("report/" + ref, cors=self.cors)
         assert report.headers['Content-Type'] == 'application/pdf'
         return report
 
     def _check_completion(self, ref: str) -> Optional[Any]:
-        status = self.get_json("status/{ref}.json".format(ref=ref))
+        status = self.get_json("status/{ref}.json".format(ref=ref), cors=self.cors)
         if status['done']:
             return status
         return None
 
     def get_apps(self) -> Any:
-        return self.get_json("apps.json", cache_expected=connection.CacheExpected.YES)
+        return self.get_json("apps.json", cache_expected=connection.CacheExpected.YES, cors=self.cors)

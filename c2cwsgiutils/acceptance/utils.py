@@ -22,7 +22,7 @@ DEFAULT_TIMEOUT = 60
 def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
     def what() -> bool:
         LOG.info("Trying to connect to " + url + "... ")
-        r = requests.get(url)
+        r = requests.get(url, timeout=timeout)
         if r.status_code == 200:
             LOG.info(url + " service started")
             return True

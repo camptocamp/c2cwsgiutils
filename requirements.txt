@@ -1,5 +1,5 @@
 alembic==1.2.1
-boltons==19.1.0
+boltons==19.2.0
 cee-syslog-handler==0.5.0
 cornice==3.6.0
 gunicorn==19.9.0

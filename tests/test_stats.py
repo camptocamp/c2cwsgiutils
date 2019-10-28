@@ -36,7 +36,8 @@ def test_outcome_timer_context_failure():
 
 def test_format_tags():
     format_tags = stats._format_tags   # pylint: disable=W0212
-    assert format_tags(None, "|", ",", "=", lambda x: x) == ""
-    assert format_tags({}, "|", ",", "=", lambda x: x) == ""
-    assert format_tags({"x": "a/b"}, "|", ",", "=", lambda x: x.replace("/", "_")) == "|x=a_b"
-    assert format_tags({"x": "a", "y/z": "b"}, "|", ",", "=", lambda x: x.replace("/", "_")) == "|x=a,y_z=b"
+    assert format_tags(None, "|", ",", "=", lambda x: x, lambda x: x) == ""
+    assert format_tags({}, "|", ",", "=", lambda x: x, lambda x: x) == ""
+    assert format_tags({"x": "a/b"}, "|", ",", "=", lambda x: x, lambda x: x.replace("/", "_")) == "|x=a_b"
+    assert format_tags({"x": "a", "y/z": "b"}, "|", ",", "=", lambda x: x.replace("/", "_"),
+                       lambda x: x) == "|x=a,y_z=b"

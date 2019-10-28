@@ -158,7 +158,9 @@ class MemoryBackend(_BaseBackend):
     @staticmethod
     def _key(key: Sequence[Any], tags: TagType) -> str:
         result = "/".join(MemoryBackend._key_entry(v) for v in key)
-        result += _format_tags(tags, prefix="/", tag_sep="/", kv_sep="=", formatter=MemoryBackend._key_entry)
+        result += _format_tags(tags, prefix="/", tag_sep="/", kv_sep="=",
+                               key_formatter=MemoryBackend._key_entry,
+                               value_formatter=MemoryBackend._key_entry)
         return result
 
     def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
@@ -205,6 +207,7 @@ class MemoryBackend(_BaseBackend):
 
 # https://github.com/prometheus/statsd_exporter/blob/master/mapper.go#L29
 INVALID_KEY_CHARS = re.compile(r"[^a-zA-Z0-9_]")
+INVALID_TAG_VALUE_CHARS = re.compile(r"[,#|]")
 
 
 class StatsDBackend(_BaseBackend):  # pragma: nocover
@@ -228,6 +231,10 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
     def _key_entry(key_entry: Any) -> str:
         return INVALID_KEY_CHARS.sub("_", str(key_entry))
 
+    @staticmethod
+    def _tag_value(tag_value: Any) -> str:
+        return INVALID_TAG_VALUE_CHARS.sub("_", str(tag_value))
+
     def _key(self, key: Sequence[Any]) -> str:
         return (self._prefix + ".".join(map(StatsDBackend._key_entry, key)))[:450]
 
@@ -244,7 +251,8 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
     def _send(self, message: str, tags: TagType) -> None:
         tags = self._merge_tags(tags)
         message += _format_tags(tags, prefix="|#", tag_sep=",", kv_sep=":",
-                                formatter=StatsDBackend._key_entry)
+                                key_formatter=StatsDBackend._key_entry,
+                                value_formatter=StatsDBackend._tag_value)
         # noinspection PyBroadException
         try:
             self._socket.send(message.encode('utf-8'))
@@ -289,11 +297,11 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
 
 
 def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, kv_sep: str,
-                 formatter: Callable[[str], str]) -> str:
+                 key_formatter: Callable[[str], str], value_formatter: Callable[[str], str]) -> str:
     if tags is not None and len(tags) > 0:
         return prefix + tag_sep.join(
-            kv_sep.join(map(formatter, item))
-            for item in sorted(tags.items()))
+            key_formatter(k) + kv_sep + value_formatter(v)
+            for k, v in sorted(tags.items()))
     else:
         return ""
 

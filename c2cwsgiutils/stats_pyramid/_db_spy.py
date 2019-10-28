@@ -6,6 +6,10 @@ from typing import Any, Callable, Optional, Dict
 
 from c2cwsgiutils import stats
 
+import logging
+
+LOG = logging.getLogger(__name__)
+
 
 def _jump_string(content: str, pos: int) -> int:
     quote_char = content[pos]
@@ -65,7 +69,8 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
     measure = stats.timer(key, tags)
 
     def after(*_args: Any, **_kwargs: Any) -> None:
-        measure.stop()
+        duration = measure.stop()
+        LOG.debug("Execute statement '%s' in %d.", what, duration)
 
     return after
 

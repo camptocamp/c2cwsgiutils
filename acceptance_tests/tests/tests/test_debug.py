@@ -27,6 +27,31 @@ def test_memory(app_connection):
     assert len(memory) == 1
 
 
+def test_memory_analyze_functions(app_connection):
+    class_ = 'builtins.function'
+    memory = app_connection.get_json('c2c/debug/memory', params={'secret': 'changeme',
+                                                                 'analyze_type': class_},
+                                     cors=False)
+    print("memory=" + json.dumps(memory, indent=4))
+    assert len(memory) == 1
+    assert class_ in memory[0]
+    assert 'modules' in memory[0][class_]
+    assert 'timeout' not in memory[0][class_]
+
+
+def test_memory_analyze_other(app_connection):
+    class_ = 'gunicorn.six.MovedAttribute'
+    memory = app_connection.get_json('c2c/debug/memory',
+                                     params={'secret': 'changeme',
+                                             'analyze_type': class_},
+                                     cors=False)
+    print("memory=" + json.dumps(memory, indent=4))
+    assert len(memory) == 1
+    assert class_ in memory[0]
+    assert 'biggest_objects' in memory[0][class_]
+    assert 'timeout' not in memory[0][class_]
+
+
 def test_sleep(app_connection):
     start_time = time.monotonic()
     app_connection.get('c2c/debug/sleep', params={'secret': 'changeme', 'time': '0.1'},

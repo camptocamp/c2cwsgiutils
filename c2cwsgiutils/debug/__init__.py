@@ -1,5 +1,8 @@
+import gc
+import sys
 import pyramid.config
-from typing import Optional
+from types import ModuleType, FunctionType
+from typing import Set, Optional, Any
 
 from c2cwsgiutils import _utils, auth
 
@@ -22,3 +25,24 @@ def init_daemon(config: Optional[pyramid.config.Configurator] = None) -> None:
     if _utils.env_or_config(config, ENV_KEY, CONFIG_KEY, type_=_utils.config_bool):
         from . import _listeners
         _listeners.init()
+
+
+BLACKLIST = type, ModuleType, FunctionType
+
+
+def get_size(obj: Any) -> int:
+    """sum size of object & members."""
+    if isinstance(obj, BLACKLIST):
+        return 0
+    seen_ids: Set[int] = set()
+    size = 0
+    objects = [obj]
+    while objects:
+        need_referents = []
+        for obj in objects:
+            if not isinstance(obj, BLACKLIST) and id(obj) not in seen_ids:
+                seen_ids.add(id(obj))
+                size += sys.getsizeof(obj)
+                need_referents.append(obj)
+        objects = gc.get_referents(*need_referents)
+    return size

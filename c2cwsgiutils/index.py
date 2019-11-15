@@ -217,7 +217,8 @@ def _debug(request: pyramid.request.Request) -> str:
         return section(
             "Debug",
             paragraph(link(_url(request, 'c2c_debug_stacks'), 'Stack traces'),
-                      link(_url(request, 'c2c_debug_headers'), 'HTTP headers')),
+                      link(_url(request, 'c2c_debug_headers'), 'HTTP headers'),
+                      link(_url(request, 'c2c_debug_memory_maps'), 'Mapped memory')),
             form(dump_memory_url, button('Dump memory usage'), input_('limit', value=30),
                  input_('analyze_type')),
             form(_url(request, 'c2c_debug_memory_diff'), button('Memory diff'), input_('path'),

@@ -94,3 +94,9 @@ def test_memory_diff_deprecated(app_connection):
 def test_error(app_connection):
     app_connection.get_json('c2c/debug/error', params={'secret': 'changeme', 'status': '500'},
                             expected_status=500, cors=False)
+
+
+def test_memory_maps(app_connection):
+    memory = app_connection.get_json('c2c/debug/memory_maps', params={'secret': 'changeme'}, cors=False)
+    print("memory_maps=" + json.dumps(memory, indent=4))
+    assert len(memory) > 0

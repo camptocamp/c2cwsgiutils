@@ -16,7 +16,14 @@ def create() -> Callable[[Any, Any], Any]:  # pragma: no cover
 
     # then, we can setup a few filters
     from c2cwsgiutils import sentry, profiler, client_info
-    return sentry.filter_wsgi_app(profiler.filter_wsgi_app(client_info.Filter(main_app)))
+    full_all = sentry.filter_wsgi_app(profiler.filter_wsgi_app(client_info.Filter(main_app)))
+
+    # Reduce a bit (10s of MB) the memory used by clearing the pre-cached entries for building
+    # stack traces. It will be re-built when needed with only the files needed.
+    import linecache
+    linecache.clearcache()
+
+    return full_all
 
 
 application = create()  # pragma: no cover

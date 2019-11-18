@@ -24,6 +24,7 @@ RUN apt update && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
     pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
+    strip /usr/local/lib/python3.7/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils && \
     rm /opt/c2cwsgiutils/fake_python3
 

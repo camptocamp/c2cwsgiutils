@@ -5,7 +5,7 @@ Currently only `sqlite` and `postgres_psycopg2` are fully supported.
 
 To add the logger in a pyramid ini file use something like:
 
-```config
+```
 [handlers]
 keys = sqlalchemy_logger
 
@@ -27,8 +27,23 @@ DB. Useful to filter out health-check specific `User-Agent` headers or so.
 
 To use the handler in a script, you might:
 
-.. literalinclude:: examples/example.py
-    :linenos:
-    :language: python
+```python
+import logging
+import time
+from sqlalchemylogger.handlers import SQLAlchemyHandler
 
 
+if __name__ == '__main__':
+    logging.basicConfig(
+        format='%(asctime)s : %(name)s : %(levelname)s : %(message)s',
+        level=logging.DEBUG,
+    )
+    logger = logging.getLogger(__name__)
+    logger_db_engine = {'url':'sqlite:///logger_db.sqlite3'}
+    
+    logger.addHandler(SQLAlchemyHandler(logger_db_engine))
+    logger.info('bla')
+    # wait a few seconds because the second thread will write the
+    # logs after a timeout
+    time.sleep(2)
+```

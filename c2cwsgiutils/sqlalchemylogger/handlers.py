@@ -8,7 +8,7 @@ from sqlalchemy.exc import OperationalError, InvalidRequestError
 from sqlalchemy_utils import database_exists, create_database
 import threading, time, queue
 from .filters import ContainsExpression, DoesNotContainExpression
-from typing import Any, List, MutableMapping, Mapping, IO, Optional
+from typing import Any, List, Dict, MutableMapping, Mapping, IO, Optional
 
 
 module_logs = logging.getLogger(__name__)
@@ -18,20 +18,21 @@ class SQLAlchemyHandler(logging.Handler):
     MAX_NB_LOGS = 100
     MAX_TIMEOUT = 1
 
-    def __init__(self, sqlalchemyUrl: Dict,
-              doesNotContainExpression = None,
-              containsExpression = None):
+    def __init__(self, 
+              sqlalchemyUrl: Dict[str,str],
+              doesNotContainExpression: str = '',
+              containsExpression:str = '') -> None:
         super().__init__()
         # initialize DB session
         self.engine = create_engine(sqlalchemyUrl['url'])
         self.Log = createLogClass(
                   tablename = sqlalchemyUrl.get('tablename', 'logs'),
-                  tableargs = sqlalchemyUrl.get('tableargs', None))
+                  tableargs = sqlalchemyUrl.get('tableargs', ''))
         Base.metadata.bind = self.engine
         DBSession = sessionmaker(bind=self.engine)
         self.session = DBSession()
         # initialize log queue
-        self.log_queue = queue.Queue()
+        self.log_queue: Any = queue.Queue()
         # initialize a thread to process the logs Asynchronously
         self.condition = threading.Condition()
         self.processor_thread = threading.Thread(target = self._processor, daemon = True)

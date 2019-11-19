@@ -4,14 +4,14 @@ from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import scoped_session, sessionmaker
 from zope.sqlalchemy import register
-
+from typing import Any, Dict, Union, Type
 
 DBSession = scoped_session(sessionmaker())
 register(DBSession)
-Base = declarative_base()
+Base: Type[declarative_base] = declarative_base()
 
 
-def createLogClass(tablename = 'logs', tableargs = None):
+def createLogClass(tablename: str = 'logs', tableargs: Union[str, Dict[str,str]] = '') -> Any:
     class Log(Base):
         __table_args__ = tableargs
         __tablename__ = tablename
@@ -22,15 +22,19 @@ def createLogClass(tablename = 'logs', tableargs = None):
         msg = Column(String) # any custom log you may have included
         created_at = Column(DateTime, default=func.now()) # the current timestamp
     
-        def __init__(self, logger=None, level=None, trace=None, msg=None):
+        def __init__(self,
+                  logger: Any=None,
+                  level: Any=None,
+                  trace: Any=None,
+                  msg: Any=None) -> None:
             self.logger = logger
             self.level = level
             self.trace = trace
             self.msg = msg
     
-        def __unicode__(self):
+        def __unicode__(self) -> str:
             return self.__repr__()
     
-        def __repr__(self):
+        def __repr__(self) -> str:
             return "<Log: %s - %s>" % (self.created_at.strftime('%m/%d/%Y-%H:%M:%S'), self.msg[:50])
     return Log

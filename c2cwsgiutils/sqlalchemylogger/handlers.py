@@ -8,6 +8,7 @@ from sqlalchemy.exc import OperationalError, InvalidRequestError
 from sqlalchemy_utils import database_exists, create_database
 import threading, time, queue
 from .filters import ContainsExpression, DoesNotContainExpression
+from typing import Any, List, MutableMapping, Mapping, IO, Optional
 
 
 module_logs = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ class SQLAlchemyHandler(logging.Handler):
     MAX_NB_LOGS = 100
     MAX_TIMEOUT = 1
 
-    def __init__(self, sqlalchemyUrl, 
+    def __init__(self, sqlalchemyUrl: Dict,
               doesNotContainExpression = None,
               containsExpression = None):
         super().__init__()
@@ -42,7 +43,7 @@ class SQLAlchemyHandler(logging.Handler):
              self.addFilter(ContainsExpression(containsExpression))
 
 
-    def _processor(self):
+    def _processor(self) -> None:
         module_logs.debug('{} : starting processor thread'.format(__name__))
         while True:
             logs = []
@@ -63,7 +64,7 @@ class SQLAlchemyHandler(logging.Handler):
         module_logs.debug('{} : stopping processor thread'.format(__name__))
 
 
-    def _write_logs(self,logs):
+    def _write_logs(self,logs: List[Any]) -> None:
        try:
            self.session.bulk_save_objects(logs)
            self.session.commit()
@@ -82,7 +83,7 @@ class SQLAlchemyHandler(logging.Handler):
            self.session.expunge_all()
 
 
-    def create_db(self):
+    def create_db(self) -> None:
         module_logs.info('{} : creating new database'.format(__name__))
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
@@ -94,7 +95,7 @@ class SQLAlchemyHandler(logging.Handler):
         Base.metadata.create_all(self.engine)
 
 
-    def emit(self, record):
+    def emit(self, record: Any) -> None:
         trace = None
         exc = record.__dict__['exc_info']
         if exc:

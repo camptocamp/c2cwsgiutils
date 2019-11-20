@@ -13,7 +13,7 @@ from .filters import ContainsExpression, DoesNotContainExpression
 from typing import Any, List, Dict
 
 
-module_logs = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class SQLAlchemyHandler(logging.Handler):
@@ -47,7 +47,7 @@ class SQLAlchemyHandler(logging.Handler):
             self.addFilter(ContainsExpression(containsExpression))
 
     def _processor(self) -> None:
-        module_logs.debug('{} : starting processor thread'.format(__name__))
+        LOG.debug('{} : starting processor thread'.format(__name__))
         while True:
             logs = []
             time_since_last = time.monotonic()
@@ -65,7 +65,7 @@ class SQLAlchemyHandler(logging.Handler):
                        (time.monotonic() >= (time_since_last + self.MAX_TIMEOUT))):
                         self._write_logs(logs)
                         break
-        module_logs.debug('{} : stopping processor thread'.format(__name__))
+        LOG.debug('{} : stopping processor thread'.format(__name__))
 
     def _write_logs(self, logs: List[Any]) -> None:
         try:
@@ -80,13 +80,13 @@ class SQLAlchemyHandler(logging.Handler):
             except Exception as e:
                 # if we really cannot commit the log to DB, do not lock the
                 # thread and do not crash the application
-                module_logs.critical(e)
+                LOG.critical(e)
                 pass
         finally:
             self.session.expunge_all()
 
     def create_db(self) -> None:
-        module_logs.info('{} : creating new database'.format(__name__))
+        LOG.info('{} : creating new database'.format(__name__))
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__

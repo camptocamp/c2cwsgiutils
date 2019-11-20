@@ -23,4 +23,3 @@ class DoesNotContainExpression(logging.Filter):
 
     def filter(self, record: Any) -> bool:
         return not bool(self.regex.search(record.msg))
-

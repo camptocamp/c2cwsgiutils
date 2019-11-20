@@ -1,9 +1,21 @@
+from c2cwsgiutils import (
+    broadcast,
+    debug,
+    errors,
+    index,
+    logging_view,
+    metrics,
+    pretty_json,
+    redis_stats,
+    request_tracking,
+    sentry,
+    sql_profiler,
+    stats_pyramid,
+    version,
+)
 import cornice
 import pyramid.config
 import pyramid_tm
-
-from c2cwsgiutils import stats_pyramid, logging_view, sql_profiler, version, debug, sentry, \
-    request_tracking, errors, pretty_json, broadcast, index, redis_stats
 
 
 def includeme(config: pyramid.config.Configurator) -> None:
@@ -25,5 +37,6 @@ def includeme(config: pyramid.config.Configurator) -> None:
     sql_profiler.init(config)
     version.init(config)
     debug.init(config)
+    metrics.init(config)
     errors.init(config)
     index.init(config)

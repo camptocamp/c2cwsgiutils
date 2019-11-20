@@ -27,7 +27,7 @@ class SQLAlchemyHandler(logging.Handler):
         self.engine = create_engine(sqlalchemyUrl['url'])
         self.Log = createLogClass(
                   tablename = sqlalchemyUrl.get('tablename', 'logs'),
-                  tableargs = sqlalchemyUrl.get('tableargs', ''))
+                  tableargs = sqlalchemyUrl.get('tableargs', None)) # type: ignore
         Base.metadata.bind = self.engine
         DBSession = sessionmaker(bind=self.engine)
         self.session = DBSession()

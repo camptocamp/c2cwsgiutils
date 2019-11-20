@@ -8,11 +8,11 @@ from typing import Any, Dict, Union, Type
 
 DBSession = scoped_session(sessionmaker())
 register(DBSession)
-Base: Type[declarative_base] = declarative_base()
+Base = declarative_base() 
 
 
 def createLogClass(tablename: str = 'logs', tableargs: Union[str, Dict[str,str]] = '') -> Any:
-    class Log(Base):
+    class Log(Base): # type: ignore
         __table_args__ = tableargs
         __tablename__ = tablename
         id = Column(Integer, primary_key=True) # auto incrementing

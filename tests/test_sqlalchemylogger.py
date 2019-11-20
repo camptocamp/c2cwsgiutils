@@ -29,7 +29,7 @@ class SqlAlchemyLoggerTests(unittest.TestCase):
                               args=None,
                               exc_info=None)
         handler.emit(x)
+        time.sleep(handler.MAX_TIMEOUT+1.0)
         result = handler.session.execute(text('SELECT * FROM logs')).fetchall()
-        time.sleep(handler.MAX_TIMEOUT)
         assert glob.glob(self.dummy_db_name)
         assert test_message == result[0][4]

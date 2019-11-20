@@ -91,7 +91,8 @@ class SQLAlchemyHandler(logging.Handler):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__
         # variable, but add an accessor method in models.Log class
-        if not isinstance(self.Log.__table_args__, None) and self.Log.__table_args__.get('schema', None):
+        if (not isinstance(self.Log.__table_args__, type(None)) and
+           self.Log.__table_args__.get('schema', None)):
             if not self.engine.dialect.has_schema(self.engine, self.Log.__table_args__['schema']):
                 self.engine.execute(sqlalchemy.schema.CreateSchema(self.Log.__table_args__['schema']))
         Base.metadata.create_all(self.engine)

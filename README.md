@@ -42,7 +42,7 @@ pip install c2cwsgiutils
 ```
 
 Or (preferred) as a base Docker image:
-[camptocamp/c2cwsgiutils:2](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
+[camptocamp/c2cwsgiutils:3](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
 
 If you need an image with a smaller foot print, use the tags prefixed with `-light`. Those are without
 gdal and without the build tools.

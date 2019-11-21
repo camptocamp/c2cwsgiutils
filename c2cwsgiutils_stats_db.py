@@ -84,14 +84,12 @@ def do_table(session, schema, table, reporter):
 
 
 def _do_indexes(reporter, schema, session, table):
-    for index_name, size_main, size_fsm, size_vm, size_init, number_of_scans, tuples_read, tuples_fetched in \
+    for index_name, size_main, size_fsm, number_of_scans, tuples_read, tuples_fetched in \
             session.execute("""
     SELECT
          foo.indexname,
          pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'main'),
          pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'fsm'),
-         pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'vm'),
-         pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'init'),
          foo.idx_scan AS number_of_scans,
          foo.idx_tup_read AS tuples_read,
          foo.idx_tup_fetch AS tuples_fetched
@@ -107,7 +105,7 @@ def _do_indexes(reporter, schema, session, table):
          ON t.tablename = foo.ctablename AND t.schemaname=foo.schemaname
     WHERE t.schemaname=:schema AND t.tablename=:table
     """, params={'schema': schema, 'table': table}):
-        for fork, value in (('main', size_main), ('fsm', size_fsm), ('vm', size_vm), ('init', size_init)):
+        for fork, value in (('main', size_main), ('fsm', size_fsm)):
             reporter.do_report([schema, table, index_name, fork], value, kind='index_size',
                                tags=dict(schema=schema, table=table, index=index_name, fork=fork))
         for action, value in (('scan', number_of_scans), ('read', tuples_read), ('fetch', tuples_fetched)):

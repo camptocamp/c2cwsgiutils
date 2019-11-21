@@ -1,26 +1,20 @@
-from collections import defaultdict
 from datetime import datetime
-import logging
 import gc
-import objgraph
-from pyramid.httpexceptions import HTTPException, exception_response
-import pyramid.config
-import pyramid.request
-import pyramid.response
+import logging
 import re
 import time
-from typing import List, Mapping, Any, Dict, Callable
+from typing import Any, Callable, Dict, List, Mapping
 
-from c2cwsgiutils import auth, broadcast, _utils
+from c2cwsgiutils import _utils, auth, broadcast
+from c2cwsgiutils.debug import dump_memory_maps
+import objgraph
+import pyramid.config
+from pyramid.httpexceptions import HTTPException, exception_response
+import pyramid.request
+import pyramid.response
 
 LOG = logging.getLogger(__name__)
 SPACE_RE = re.compile(r" +")
-
-# 7ff7d33bd000-7ff7d33be000 r--p 00000000 00:65 49                         /usr/lib/toto.so
-SMAPS_LOCATION_RE = re.compile(r'^[0-9a-f]+-[0-9a-f]+ +.... +[0-9a-f]+ +[^ ]+ +\d+ +(.*)$')
-
-# Size:                  4 kB
-SMAPS_ENTRY_RE = re.compile(r'^([\w]+): +(\d+) kB$')
 
 
 def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
@@ -60,31 +54,6 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
                                  expect_answers=True, timeout=70)
     assert result is not None
     return result
-
-
-def _dump_memory_maps(request: pyramid.request.Request) -> List[Any]:
-    auth.auth_view(request)
-    with open("/proc/self/smaps") as input_:
-        cur_dict: Dict[str, int] = defaultdict(int)
-        sizes: Dict[str, Any] = {}
-        for line in input_:
-            line = line.rstrip("\n")
-            matcher = SMAPS_LOCATION_RE.match(line)
-            if matcher:
-                cur_dict = sizes.setdefault(matcher.group(1), defaultdict(int))
-            else:
-                matcher = SMAPS_ENTRY_RE.match(line)
-                if matcher:
-                    name = matcher.group(1)
-                    if name in ('Size', 'Rss', 'Pss'):
-                        cur_dict[name.lower() + '_kb'] += int(matcher.group(2))
-                elif not line.startswith("VmFlags:"):
-                    LOG.warning("Don't know how to parse /proc/self/smaps line: %s", line)
-        return sorted([
-            {'name': name, **value}
-            for name, value in sizes.items()
-            if value.get('pss_kb', 0) > 0
-        ], key=lambda i: -i.get('pss_kb', 0))
 
 
 def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
@@ -179,6 +148,11 @@ def _add_view(config: pyramid.config.Configurator, name: str, path: str,
     config.add_route("c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path,
                      request_method="GET")
     config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)
+
+
+def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
+    auth.auth_view(request)
+    return sorted(dump_memory_maps(), key=lambda i: -i.get('pss_kb', 0))
 
 
 def init(config: pyramid.config.Configurator) -> None:

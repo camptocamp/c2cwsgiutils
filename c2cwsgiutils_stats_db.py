@@ -53,14 +53,14 @@ class Reporter(object):
 
     def do_report(self, metric, value, kind, tags=None):
         LOG.info("%s.%s -> %d", kind, ".".join(metric), value)
-        if self.statsd is not None:
-            if stats.USE_TAGS and tags is not None:
-                self.statsd.gauge([kind], value, tags=tags)
-            else:
-                self.statsd.gauge([kind] + metric, value)
-        if self.prometheus is not None:
-
-            self.prometheus.add('database_table_' + kind, value, metric_labels=tags)
+        if value > 0:  # Don't export 0 values. We can always set null=0 in grafana...
+            if self.statsd is not None:
+                if stats.USE_TAGS and tags is not None:
+                    self.statsd.gauge([kind], value, tags=tags)
+                else:
+                    self.statsd.gauge([kind] + metric, value)
+            if self.prometheus is not None:
+                self.prometheus.add('database_table_' + kind, value, metric_labels=tags)
 
     def commit(self):
         if self.prometheus is not None:

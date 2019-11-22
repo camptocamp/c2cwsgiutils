@@ -1,4 +1,3 @@
-import coverage
 import logging
 import os
 
@@ -11,6 +10,7 @@ def init() -> None:
     """
     if os.environ.get("COVERAGE", "0") != "1":
         return
+    import coverage
     LOG.warning("Setting up code coverage")
     report_dir = "/tmp/coverage/api"
     os.makedirs(report_dir, exist_ok=True)

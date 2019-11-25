@@ -9,6 +9,8 @@ from c2cwsgiutils import broadcast
 from c2cwsgiutils.debug import get_size
 import objgraph
 
+FILES_FIELDS = {'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__file__'}
+
 
 def _dump_stacks_impl() -> Dict[str, Any]:
     id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
@@ -51,6 +53,14 @@ def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, A
                 short = obj.__module__.split('.')[0] if obj.__module__ is not None else ""
                 mod_counts[short] = mod_counts.get(short, 0) + 1
             else:
+                if analyze_type == 'builtins.dict':
+                    if not len(FILES_FIELDS - set(obj.keys())):
+                        continue
+                    if \
+                            not len({'scope', 'module', 'locals', 'globals'} - set(obj.keys())) and \
+                            isinstance(obj['globals'], dict) and \
+                            not len(FILES_FIELDS - set(obj['globals'].keys())):
+                        continue
                 size = get_size(obj)
                 if len(biggest_objects) < limit or size > biggest_objects[0][0]:
                     biggest_objects.append((size, obj))

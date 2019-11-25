@@ -69,6 +69,7 @@ def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
     if msg['message'] != msg['short_message']:
         # only output full_message if it's different from short message
         msg['full_message'] = msg['message']
+        msg['stack'] = 'true'
     del msg['message']
 
     # make the output more consistent with the one from java

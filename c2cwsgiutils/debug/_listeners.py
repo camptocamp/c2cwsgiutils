@@ -32,7 +32,11 @@ def _dump_stacks_impl() -> Dict[str, Any]:
     }
 
 
-def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, Any]:
+def _dump_memory_impl(
+    limit: int,
+    analyze_type: Optional[str],
+    python_internals_map: bool = False,
+) -> Mapping[str, Any]:
     nb_collected = [gc.collect(generation) for generation in range(3)]
     result = {
         'nb_collected': nb_collected,
@@ -40,6 +44,9 @@ def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, A
         'leaking_objects': objgraph.most_common_types(limit=limit, shortnames=False,
                                                       objects=objgraph.get_leaking_objects())
     }
+
+    if python_internals_map and not analyze_type:
+        analyze_type = 'builtins.dict'
 
     if analyze_type:
         # timeout after one minute, must be set to a bit less that the timeout of the broadcast in _views.py
@@ -54,12 +61,16 @@ def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, A
                 mod_counts[short] = mod_counts.get(short, 0) + 1
             else:
                 if analyze_type == 'builtins.dict':
+                    python_internal = False
                     if not len(FILES_FIELDS - set(obj.keys())):
-                        continue
+                        python_internal = True
                     if \
                             not len({'scope', 'module', 'locals', 'globals'} - set(obj.keys())) and \
                             isinstance(obj['globals'], dict) and \
                             not len(FILES_FIELDS - set(obj['globals'].keys())):
+                        python_internal = True
+                    if python_internal and not python_internals_map \
+                            or not python_internal and python_internals_map:
                         continue
                 size = get_size(obj) / 1024
                 if len(biggest_objects) < limit or size > biggest_objects[0][0]:

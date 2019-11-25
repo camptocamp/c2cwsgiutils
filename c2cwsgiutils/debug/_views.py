@@ -49,9 +49,12 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     auth.auth_view(request)
     limit = int(request.params.get('limit', '30'))
     analyze_type = request.params.get('analyze_type')
-    result = broadcast.broadcast('c2c_dump_memory',
-                                 params={'limit': limit, 'analyze_type': analyze_type},
-                                 expect_answers=True, timeout=70)
+    python_internals_map = request.params.get('python_internals_map', '0').lower() in ('', '1', 'true', 'on')
+    result = broadcast.broadcast(
+        'c2c_dump_memory',
+        params={'limit': limit, 'analyze_type': analyze_type, 'python_internals_map': python_internals_map},
+        expect_answers=True, timeout=70
+    )
     assert result is not None
     return result
 

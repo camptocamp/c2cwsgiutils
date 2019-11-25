@@ -63,7 +63,7 @@ def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, A
         if analyze_type == 'builtins.function':
             result[analyze_type]['modules'] = [dict(module=i[0], nb_func=i[1])
                                                for i in sorted(mod_counts.items(),
-                                                               key=lambda x: -x[1])[-limit:]]
+                                                               key=lambda x: -x[1])[:limit]]
         elif analyze_type == 'linecache':
             import linecache
             cache = linecache.cache  # type: ignore

@@ -9,6 +9,8 @@ from c2cwsgiutils import broadcast
 from c2cwsgiutils.debug import get_size
 import objgraph
 
+FILES_FIELDS = {'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__file__'}
+
 
 def _dump_stacks_impl() -> Dict[str, Any]:
     id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
@@ -30,7 +32,11 @@ def _dump_stacks_impl() -> Dict[str, Any]:
     }
 
 
-def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, Any]:
+def _dump_memory_impl(
+    limit: int,
+    analyze_type: Optional[str],
+    python_internals_map: bool = False,
+) -> Mapping[str, Any]:
     nb_collected = [gc.collect(generation) for generation in range(3)]
     result = {
         'nb_collected': nb_collected,
@@ -39,19 +45,34 @@ def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, A
                                                       objects=objgraph.get_leaking_objects())
     }
 
+    if python_internals_map and not analyze_type:
+        analyze_type = 'builtins.dict'
+
     if analyze_type:
         # timeout after one minute, must be set to a bit less that the timeout of the broadcast in _views.py
         timeout = time.monotonic() + 60
 
         mod_counts: Dict[str, int] = {}
-        biggest_objects: List[Tuple[int, Any]] = []
+        biggest_objects: List[Tuple[float, Any]] = []
         result[analyze_type] = {}
         for obj in objgraph.by_type(analyze_type):
             if analyze_type == 'builtins.function':
                 short = obj.__module__.split('.')[0] if obj.__module__ is not None else ""
                 mod_counts[short] = mod_counts.get(short, 0) + 1
             else:
-                size = get_size(obj)
+                if analyze_type == 'builtins.dict':
+                    python_internal = False
+                    if not len(FILES_FIELDS - set(obj.keys())):
+                        python_internal = True
+                    if \
+                            not len({'scope', 'module', 'locals', 'globals'} - set(obj.keys())) and \
+                            isinstance(obj['globals'], dict) and \
+                            not len(FILES_FIELDS - set(obj['globals'].keys())):
+                        python_internal = True
+                    if python_internal and not python_internals_map \
+                            or not python_internal and python_internals_map:
+                        continue
+                size = get_size(obj) / 1024
                 if len(biggest_objects) < limit or size > biggest_objects[0][0]:
                     biggest_objects.append((size, obj))
                     biggest_objects.sort(key=lambda x: x[0])
@@ -67,12 +88,12 @@ def _dump_memory_impl(limit: int, analyze_type: Optional[str]) -> Mapping[str, A
         elif analyze_type == 'linecache':
             import linecache
             cache = linecache.cache  # type: ignore
-            result[analyze_type]['biggest_objects'] = sorted([dict(filename=k, size=get_size(v))
+            result[analyze_type]['biggest_objects'] = sorted([dict(filename=k, size_kb=get_size(v))
                                                               for k, v in cache.items()],
                                                              key=lambda i: -i['size'])
         else:
             biggest_objects.reverse()
-            result[analyze_type]['biggest_objects'] = [dict(size=i[0], repr=repr(i[1]))
+            result[analyze_type]['biggest_objects'] = [dict(size_kb=i[0], repr=repr(i[1]))
                                                        for i in biggest_objects]
     return result
 

@@ -114,7 +114,7 @@ def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
 
 def _headers(request: pyramid.request.Request) -> Mapping[str, Any]:
     auth.auth_view(request)
-    return {
+    result = {
         'headers': dict(request.headers),
         'client_info': {
             'client_addr': request.client_addr,
@@ -130,6 +130,10 @@ def _headers(request: pyramid.request.Request) -> Mapping[str, Any]:
             'server_port': request.server_port
         }
     }
+    if 'status' in request.params:
+        raise exception_response(int(request.params['status']), detail=result)
+    else:
+        return result
 
 
 def _error(request: pyramid.request.Request) -> Any:

@@ -20,7 +20,7 @@ class Filter:
                 'X_FORWARDED_SERVER', 'X_FORWARDED_HOST', 'X_FORWARDED_FOR',
                 'X_FORWARDED_SCHEME', 'X_FORWARDED_PROTO'
             ):
-                if 'HTTP_ ' + header in environ:
+                if 'HTTP_' + header in environ:
                     environ['HTTP_ORIGINAL_' + header] = environ.pop('HTTP_' + header)
 
             forwarded = SEP_RE.split(environ.pop('HTTP_FORWARDED'))[0]

@@ -14,7 +14,7 @@ class Filter:
 
     def __call__(self, environ: Dict[str, str], start_response: Any) -> Any:
         if 'HTTP_FORWARDED' in environ:
-            environ['HTTP_ORIGINAL_FORWARDED'] = 'HTTP_FORWARDED'
+            environ['HTTP_ORIGINAL_FORWARDED'] = environ['HTTP_FORWARDED']
             forwarded = SEP_RE.split(environ.pop('HTTP_FORWARDED'))[0]
             fields = dict(tuple(f.split('=', maxsplit=1)) for f in forwarded.split(";"))  # type: ignore
             if 'for' in fields:
@@ -26,21 +26,21 @@ class Filter:
 
         # the rest is taken from paste.deploy.config.PrefixMiddleware
         if 'HTTP_X_FORWARDED_SERVER' in environ:
-            environ['HTTP_ORIGINAL_FORWARDED'] = 'HTTP_FORWARDED'
+            environ['HTTP_ORIGINAL_FORWARDED'] = environ['HTTP_FORWARDED']
             environ['SERVER_NAME'] = environ['HTTP_HOST'] = \
                 environ.pop('HTTP_X_FORWARDED_SERVER').split(',')[0]
         if 'HTTP_X_FORWARDED_HOST' in environ:
-            environ['HTTP_ORIGINAL_X_FORWARDED_HOST'] = 'HTTP_X_FORWARDED_HOST'
-            environ['HTTP_ORIGINAL_HOST'] = 'HTTP_HOST'
+            environ['HTTP_ORIGINAL_X_FORWARDED_HOST'] = environ['HTTP_X_FORWARDED_HOST']
+            environ['HTTP_ORIGINAL_HOST'] = environ['HTTP_HOST']
             environ['HTTP_HOST'] = environ.pop('HTTP_X_FORWARDED_HOST').split(',')[0]
         if 'HTTP_X_FORWARDED_FOR' in environ:
-            environ['HTTP_ORIGINAL_X_FORWARDED_FOR'] = 'HTTP_X_FORWARDED_FOR'
+            environ['HTTP_ORIGINAL_X_FORWARDED_FOR'] = environ['HTTP_X_FORWARDED_FOR']
             environ['REMOTE_ADDR'] = environ.pop('HTTP_X_FORWARDED_FOR').split(',')[0]
         if 'HTTP_X_FORWARDED_SCHEME' in environ:
-            environ['HTTP_ORIGINAL_X_FORWARDED_SCHEME'] = 'HTTP_X_FORWARDED_SCHEME'
+            environ['HTTP_ORIGINAL_X_FORWARDED_SCHEME'] = environ['HTTP_X_FORWARDED_SCHEME']
             environ['wsgi.url_scheme'] = environ.pop('HTTP_X_FORWARDED_SCHEME')
         elif 'HTTP_X_FORWARDED_PROTO' in environ:
-            environ['HTTP_ORIGINAL_X_FORWARDED_PROTO'] = 'HTTP_X_FORWARDED_PROTO'
+            environ['HTTP_ORIGINAL_X_FORWARDED_PROTO'] = environ['HTTP_X_FORWARDED_PROTO']
             environ['wsgi.url_scheme'] = environ.pop('HTTP_X_FORWARDED_PROTO')
 
         return self._application(environ, start_response)

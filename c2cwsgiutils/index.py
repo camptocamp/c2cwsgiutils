@@ -1,10 +1,10 @@
-from typing import Optional, List, Union  # noqa  # pylint: disable=unused-import
+from typing import List, Optional, Union  # noqa  # pylint: disable=unused-import
 
+from c2cwsgiutils.auth import is_auth
 import pyramid.config
 import pyramid.request
 import pyramid.response
 
-from c2cwsgiutils.auth import is_auth
 from . import _utils, profiler
 
 additional_title: Optional[str] = None
@@ -219,8 +219,18 @@ def _debug(request: pyramid.request.Request) -> str:
             paragraph(link(_url(request, 'c2c_debug_stacks'), 'Stack traces'),
                       link(_url(request, 'c2c_debug_headers'), 'HTTP headers'),
                       link(_url(request, 'c2c_debug_memory_maps'), 'Mapped memory')),
-            form(dump_memory_url, button('Dump memory usage'), input_('limit', value=30),
-                 input_('analyze_type')),
+            form(
+                dump_memory_url, button('Dump memory usage'),
+                input_('limit', value=30),
+                input_('analyze_type'),
+            ),
+            form(
+                _url(request, 'c2c_debug_show_refs'), button('Object refs'),
+                input_('analyze_type', value='gunicorn.app.wsgiapp.WSGIApplication'),
+                input_('max_depth', value=3),
+                input_('too_many', value=10),
+                input_('min_size_kb', type_='number'),
+            ),
             form(_url(request, 'c2c_debug_memory_diff'), button('Memory diff'), input_('path'),
                  input_('limit', value=30)),
             form(_url(request, 'c2c_debug_sleep'), button('Sleep'), input_('time', value=1)),

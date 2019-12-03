@@ -1,12 +1,13 @@
 from datetime import datetime
 import gc
+from io import StringIO
 import logging
 import re
 import time
 from typing import Any, Callable, Dict, List, Mapping
 
 from c2cwsgiutils import _utils, auth, broadcast
-from c2cwsgiutils.debug import dump_memory_maps
+from c2cwsgiutils.debug import dump_memory_maps, get_size
 import objgraph
 import pyramid.config
 from pyramid.httpexceptions import HTTPException, exception_response
@@ -76,7 +77,8 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
 
     # warmup run
     try:
-        request.invoke_subrequest(sub_request)
+        if 'no_warmup' not in request.params:
+            request.invoke_subrequest(sub_request)
     except Exception:  # nosec
         pass
 
@@ -162,6 +164,38 @@ def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
     return sorted(dump_memory_maps(), key=lambda i: -i.get('pss_kb', 0))
 
 
+def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
+    [gc.collect(generation) for generation in range(3)]
+
+    objs: List[Any] = []
+    if 'analyze_type' in request.params:
+        objs = objgraph.by_type(request.params['analyze_type'])
+    elif 'analyze_id' in request.params:
+        objs = [objgraph.by(int(request.params['analyze_id']))]
+
+    args: Dict[str, Any] = {
+        'refcounts': True,
+    }
+    if 'max_depth' in request.params and request.params['max_depth'] != '':
+        args['max_depth'] = int(request.params['max_depth'])
+    if 'too_many' in request.params and request.params['too_many'] != '':
+        args['too_many'] = int(request.params['too_many'])
+    if 'min_size_kb' in request.params and request.params['min_size_kb'] != '':
+        args['filter'] = lambda obj: get_size(obj) > (int(request.params['min_size_kb']) * 1024)
+    if 'no_extra_info' not in request.params or request.params['no_extra_info'] == '':
+        args['extra_info'] = lambda obj: '{:.3f} kb\n{}'.format(get_size(obj) / 1024, id(obj))
+
+    result = StringIO()
+    if 'backrefs' in request.params and request.params['backrefs'] != '':
+        objgraph.show_backrefs(objs, output=result, **args)
+    else:
+        objgraph.show_refs(objs, output=result, **args)
+
+    request.response.text = result.getvalue()
+    result.close()
+    return request.response
+
+
 def init(config: pyramid.config.Configurator) -> None:
     _add_view(config, "stacks", "stacks", _dump_stacks)
     _add_view(config, "memory", "memory", _dump_memory)
@@ -172,4 +206,5 @@ def init(config: pyramid.config.Configurator) -> None:
     _add_view(config, "headers", "headers", _headers)
     _add_view(config, "error", "error", _error)
     _add_view(config, "time", "time", _time)
+    _add_view(config, "show_refs", "show_refs", _show_refs)
     LOG.info("Enabled the /debug/... API")

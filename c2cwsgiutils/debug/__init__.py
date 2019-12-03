@@ -75,7 +75,7 @@ def dump_memory_maps(pid: str = 'self') -> List[Dict[str, Any]]:
                     if name in ('Size', 'Rss', 'Pss'):
                         cur_dict[name.lower() + '_kb'] += int(matcher.group(2))
                 elif not line.startswith("VmFlags:"):
-                    LOG.warning("Don't know how to parse /proc/self/smaps line: %s", line)
+                    LOG.warning("Don't know how to parse /proc/%s/smaps line: %s", pid, line)
         return [
             {'name': name, **value}
             for name, value in sizes.items()

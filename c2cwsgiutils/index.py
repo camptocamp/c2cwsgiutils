@@ -134,7 +134,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
         response.text += _logging(request)
         response.text += _profiler(request)
 
-    if additional_title is not None and (auth or len(additional_noauth) > 0):
+    if additional_title is not None and (auth or additional_noauth):
         response.text += additional_title
         response.text += "\n"
 

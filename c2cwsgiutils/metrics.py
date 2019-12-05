@@ -7,7 +7,7 @@ import re
 import socket
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from c2cwsgiutils.debug import dump_memory_maps
+from c2cwsgiutils.debug.utils import dump_memory_maps
 import pyramid.request
 import pyramid.response
 

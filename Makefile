@@ -84,7 +84,7 @@ build_test_app: build_docker_full
 
 .venv/timestamp: requirements.txt Makefile
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
-	.venv/bin/pip install --upgrade -r requirements.txt
+	.venv/bin/pip install --upgrade -r requirements.txt -r docker-requirements.txt -r docker-requirements-full.txt
 	touch $@
 
 .PHONY: pull

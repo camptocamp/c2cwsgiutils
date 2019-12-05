@@ -83,6 +83,7 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
     else:
         _crude_add_cors(request)
         request.response.status_code = 200
+        return request.response
 
 
 def _include_dev_details(request: pyramid.request.Request) -> bool:

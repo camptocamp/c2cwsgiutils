@@ -1,0 +1,12 @@
+ignore-paths:
+  - docs
+  - acceptance_tests
+  - tests
+
+pylint:
+  disable:
+    - no-else-return
+    - no-else-raise
+    - too-many-arguments
+    - unused-argument
+    - use-symbolic-message-instead

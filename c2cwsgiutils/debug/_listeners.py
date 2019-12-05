@@ -6,14 +6,14 @@ import traceback
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 from c2cwsgiutils import broadcast
-from c2cwsgiutils.debug import get_size
+from c2cwsgiutils.debug.utils import get_size
 import objgraph
 
 FILES_FIELDS = {'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__file__'}
 
 
 def _dump_stacks_impl() -> Dict[str, Any]:
-    id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
+    id2name = {th.ident: th.name for th in threading.enumerate()}
     threads = {}
     for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
         frames = []
@@ -62,12 +62,12 @@ def _dump_memory_impl(
             else:
                 if analyze_type == 'builtins.dict':
                     python_internal = False
-                    if not len(FILES_FIELDS - set(obj.keys())):
+                    if not (FILES_FIELDS - set(obj.keys())):
                         python_internal = True
                     if \
-                            not len({'scope', 'module', 'locals', 'globals'} - set(obj.keys())) and \
+                            not ({'scope', 'module', 'locals', 'globals'} - set(obj.keys())) and \
                             isinstance(obj['globals'], dict) and \
-                            not len(FILES_FIELDS - set(obj['globals'].keys())):
+                            not (FILES_FIELDS - set(obj['globals'].keys())):
                         python_internal = True
                     if python_internal and not python_internals_map \
                             or not python_internal and python_internals_map:

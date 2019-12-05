@@ -10,7 +10,7 @@ import requests
 LabelsType = Optional[Mapping[str, Any]]
 
 
-class PushgatewayGroupPublisher(object):
+class PushgatewayGroupPublisher:
     def __init__(self, base_url: str, job: str, instance: Optional[str] = None,
                  labels: LabelsType = None) -> None:
         if not base_url.endswith('/'):

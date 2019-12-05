@@ -29,7 +29,7 @@ def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: floa
             time.sleep(delay)
 
 
-class Composition(object):
+class Composition:
     def __init__(self, request: _pytest.fixtures.FixtureRequest, project_name: str, composition: str,
                  coverage_paths: Optional[List[str]] = None) -> None:
         self.project_name = project_name

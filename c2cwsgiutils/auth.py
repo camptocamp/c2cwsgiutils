@@ -8,8 +8,8 @@ from pyramid.httpexceptions import HTTPForbidden
 from c2cwsgiutils._utils import env_or_settings, env_or_config, config_bool
 
 COOKIE_AGE = 7 * 24 * 3600
-SECRET_PROP = 'c2c.secret'
-SECRET_ENV = 'C2C_SECRET'
+SECRET_PROP = 'c2c.secret'  # noqa
+SECRET_ENV = 'C2C_SECRET'  # noqa
 
 
 def get_expected_secret(request: pyramid.request.Request) -> str:

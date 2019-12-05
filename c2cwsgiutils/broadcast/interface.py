@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Optional, Callable, Mapping, Any, List
 
 
-class BaseBroadcaster(object):
+class BaseBroadcaster:
     """
     Interface definition for message broadcasting implementation
     """

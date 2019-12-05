@@ -67,7 +67,7 @@ def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     return out_match.group(1)
 
 
-class HealthCheck(object):
+class HealthCheck:
     """
     Class for managing health checks.
 
@@ -238,7 +238,7 @@ class HealthCheck(object):
         def check(request: pyramid.request.Request) -> Any:
             versions = _get_all_versions()
             versions = list(filter(lambda x: x is not None, versions))
-            assert len(versions) > 0
+            assert versions
             # output the versions we see on the monitoring
             for v, count in Counter(versions).items():
                 if stats.USE_TAGS:

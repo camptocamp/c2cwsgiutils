@@ -35,7 +35,7 @@ def _parse_args():
     return args
 
 
-class Reporter(object):
+class Reporter:
     def __init__(self, args):
         self._error = None
         if args.statsd_address:

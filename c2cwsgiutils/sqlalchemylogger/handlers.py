@@ -47,7 +47,7 @@ class SQLAlchemyHandler(logging.Handler):
             self.addFilter(ContainsExpression(containsExpression))
 
     def _processor(self) -> None:
-        LOG.debug('{} : starting processor thread'.format(__name__))
+        LOG.debug('%s : starting processor thread', __name__)
         while True:
             logs = []
             time_since_last = time.monotonic()
@@ -57,7 +57,7 @@ class SQLAlchemyHandler(logging.Handler):
                     if not self.log_queue.empty():
                         logs.append(self.log_queue.get())
                         self.log_queue.task_done()
-                if len(logs) > 0:
+                if logs:
                     # try to reduce the number of INSERT requests to the DB
                     # by writing chunks of self.MAX_NB_LOGS size,
                     # but also do not wait forever before writing stuff (self.MAX_TIMOUT)
@@ -65,7 +65,7 @@ class SQLAlchemyHandler(logging.Handler):
                        (time.monotonic() >= (time_since_last + self.MAX_TIMEOUT))):
                         self._write_logs(logs)
                         break
-        LOG.debug('{} : stopping processor thread'.format(__name__))
+        LOG.debug('%s : stopping processor thread', __name__)
 
     def _write_logs(self, logs: List[Any]) -> None:
         try:
@@ -81,12 +81,11 @@ class SQLAlchemyHandler(logging.Handler):
                 # if we really cannot commit the log to DB, do not lock the
                 # thread and do not crash the application
                 LOG.critical(e)
-                pass
         finally:
             self.session.expunge_all()
 
     def create_db(self) -> None:
-        LOG.info('{} : creating new database'.format(__name__))
+        LOG.info('%s : creating new database', __name__)
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__

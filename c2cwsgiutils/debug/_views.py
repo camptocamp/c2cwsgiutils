@@ -7,7 +7,7 @@ import time
 from typing import Any, Callable, Dict, List, Mapping
 
 from c2cwsgiutils import _utils, auth, broadcast
-from c2cwsgiutils.debug import dump_memory_maps, get_size
+from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
 import objgraph
 import pyramid.config
 from pyramid.httpexceptions import HTTPException, exception_response
@@ -165,7 +165,8 @@ def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
 
 
 def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
-    [gc.collect(generation) for generation in range(3)]
+    for generation in range(3):
+        gc.collect(generation)
 
     objs: List[Any] = []
     if 'analyze_type' in request.params:

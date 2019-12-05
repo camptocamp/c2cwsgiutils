@@ -21,10 +21,10 @@ DEFAULT_TIMEOUT = 60
 
 def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
     def what() -> bool:
-        LOG.info("Trying to connect to " + url + "... ")
+        LOG.info("Trying to connect to %s... ", url)
         r = requests.get(url, timeout=timeout)
         if r.status_code == 200:
-            LOG.info(url + " service started")
+            LOG.info("%s service started", url)
             return True
         else:
             return False
@@ -44,7 +44,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
             raise
         except Exception as e:
             error = str(e)
-            LOG.info("  Failed: " + str(e))
+            LOG.info("  Failed: %s", e)
         if time.monotonic() > timeout:
             assert False, "Timeout: " + error
         time.sleep(interval)

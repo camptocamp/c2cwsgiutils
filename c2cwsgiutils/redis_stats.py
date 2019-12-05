@@ -16,9 +16,9 @@ def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
     else:
         key = ['redis', args[0]]
         tags = None
-    if ORIG is not None:
-        with stats.outcome_timer_context(key, tags):
-            return ORIG(self, *args, **options)
+    assert ORIG is not None
+    with stats.outcome_timer_context(key, tags):
+        return ORIG(self, *args, **options)
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:

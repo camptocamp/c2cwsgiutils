@@ -15,7 +15,7 @@ LOG = logging.getLogger(__name__)
 RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
 
 
-class Tweens(object):
+class Tweens:
     pass
 
 

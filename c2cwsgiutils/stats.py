@@ -42,7 +42,7 @@ class _BaseBackend(metaclass=ABCMeta):
 BACKENDS: MutableMapping[str, _BaseBackend] = {}
 
 
-class Timer(object):
+class Timer:
     """
     Allow to measure the duration of some activity
     """
@@ -298,7 +298,7 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
 
 def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, kv_sep: str,
                  key_formatter: Callable[[str], str], value_formatter: Callable[[str], str]) -> str:
-    if tags is not None and len(tags) > 0:
+    if tags:
         return prefix + tag_sep.join(
             key_formatter(k) + kv_sep + value_formatter(v)
             for k, v in sorted(tags.items()))

@@ -1,6 +1,7 @@
 import os
-from plaster_pastedeploy import Loader as BaseLoader
 from typing import Dict, Optional, cast
+
+from plaster_pastedeploy import Loader as BaseLoader
 
 
 class Loader(BaseLoader):  # type: ignore

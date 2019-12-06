@@ -1,11 +1,11 @@
 import logging
-import netifaces
 import os
 import subprocess
 import sys
 import time
 from typing import Callable, Any, Optional, List, Mapping
 
+import netifaces
 import _pytest.fixtures
 
 from c2cwsgiutils.acceptance import utils
@@ -22,7 +22,7 @@ def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: floa
         # noinspection PyBroadException
         try:
             return what()
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             LOG.warning("Exception:", exc_info=True)
             if i + 1 == times and fail:
                 raise

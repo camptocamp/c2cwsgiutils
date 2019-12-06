@@ -1,7 +1,7 @@
+import logging
 from typing import Any
 
 from cornice import Service
-import logging
 from pyramid.request import Request
 from pyramid.response import Response
 

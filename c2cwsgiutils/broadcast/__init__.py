@@ -85,7 +85,7 @@ def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeo
     True, the returned value will be a list of all the answers.
     """
 
-    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+    def impl(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
         def wrapper(**kwargs: Any) -> Any:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
@@ -98,4 +98,4 @@ def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeo
 
         return wrapper
 
-    return decorator
+    return impl

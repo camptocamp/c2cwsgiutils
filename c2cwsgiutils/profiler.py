@@ -17,7 +17,7 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
             return linesman.middleware.ProfilingMiddleware(  # type: ignore
                 app=application, profiler_path=PATH, chart_packages=_MODULES,
                 filename=os.path.join(gettempdir(), 'linesman-graph-sessions.db'))
-        except Exception:  # pragma: no cover
+        except Exception:  # pragma: no cover  # pylint: disable=broad-except
             LOG.error("Failed enabling the profiler. Continuing without it.", exc_info=True)
             return application
     else:  # pragma: no cover

@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import
-from c2cwsgiutils import stats
+import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import,wrong-import-order
 
 import datetime
-from dateutil import parser as dp
 import logging
 import os
-import requests
 import time
 from typing import Optional
 import uuid
+
+from dateutil import parser as dp
+import requests
+
+from c2cwsgiutils import stats
 
 
 def _ensure_slash(txt: Optional[str]) -> Optional[str]:

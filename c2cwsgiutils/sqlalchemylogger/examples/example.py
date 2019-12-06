@@ -1,6 +1,7 @@
 import logging
 import time
-from sqlalchemylogger.handlers import SQLAlchemyHandler
+
+from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 
 
 if __name__ == '__main__':

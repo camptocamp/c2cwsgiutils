@@ -9,7 +9,6 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/acceptance_tests/app" />
       <excludeFolder url="file://$MODULE_DIR$/acceptance_tests/tests" />
-      <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/c2cwsgiutils.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/reports" />

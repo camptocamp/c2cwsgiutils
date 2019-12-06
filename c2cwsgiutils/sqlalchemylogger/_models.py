@@ -1,17 +1,18 @@
+from typing import Any, Dict, Union
+
 from sqlalchemy import Column
 from sqlalchemy.types import DateTime, Integer, String
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from zope.sqlalchemy import register
-from typing import Any, Dict, Union
 
 DBSession = scoped_session(sessionmaker())
 register(DBSession)
 Base = declarative_base()
 
 
-def createLogClass(tablename: str = 'logs', tableargs: Union[str, Dict[str, str]] = '') -> Any:
+def create_log_class(tablename: str = 'logs', tableargs: Union[str, Dict[str, str]] = '') -> Any:
     class Log(Base):  # type: ignore
         __table_args__ = tableargs
         __tablename__ = tablename

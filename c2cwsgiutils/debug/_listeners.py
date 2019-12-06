@@ -5,9 +5,10 @@ import time
 import traceback
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
+import objgraph
+
 from c2cwsgiutils import broadcast
 from c2cwsgiutils.debug.utils import get_size
-import objgraph
 
 FILES_FIELDS = {'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__file__'}
 
@@ -32,6 +33,7 @@ def _dump_stacks_impl() -> Dict[str, Any]:
     }
 
 
+# pylint: disable=too-many-branches
 def _dump_memory_impl(
     limit: int,
     analyze_type: Optional[str],

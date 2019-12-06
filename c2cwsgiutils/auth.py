@@ -8,8 +8,8 @@ from pyramid.httpexceptions import HTTPForbidden
 from c2cwsgiutils._utils import env_or_settings, env_or_config, config_bool
 
 COOKIE_AGE = 7 * 24 * 3600
-SECRET_PROP = 'c2c.secret'  # noqa
-SECRET_ENV = 'C2C_SECRET'  # noqa
+SECRET_PROP = 'c2c.secret'  # nosec  # noqa
+SECRET_ENV = 'C2C_SECRET'  # nosec  # noqa
 
 
 def get_expected_secret(request: pyramid.request.Request) -> str:
@@ -65,4 +65,4 @@ def auth_view(request: pyramid.request.Request) -> None:
 def is_enabled(config: pyramid.config.Configurator,
                env_name: Optional[str] = None, config_name: Optional[str] = None) -> bool:
     return config_bool(env_or_config(config, env_name, config_name)) and \
-           env_or_config(config, SECRET_ENV, SECRET_PROP, '') != ''
+        env_or_config(config, SECRET_ENV, SECRET_PROP, '') != ''

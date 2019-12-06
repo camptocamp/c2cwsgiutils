@@ -22,9 +22,9 @@ def init(config: pyramid.config.Configurator) -> None:
         git_hash = versions['main']['git_hash']
 
         if 'git_tag' in versions['main']:
-            LOG.warning("Starting version %s (%s)", versions['main']['git_tag'], git_hash)
+            LOG.info("Starting version %s (%s)", versions['main']['git_tag'], git_hash)
         else:
-            LOG.warning("Starting version %s", git_hash)
+            LOG.info("Starting version %s", git_hash)
 
         if stats.USE_TAGS:
             stats.increment_counter(['version'], 1, tags=dict(version=git_hash))

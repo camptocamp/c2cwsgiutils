@@ -6,13 +6,14 @@ import re
 import time
 from typing import Any, Callable, Dict, List, Mapping
 
-from c2cwsgiutils import _utils, auth, broadcast
-from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
 import objgraph
 import pyramid.config
 from pyramid.httpexceptions import HTTPException, exception_response
 import pyramid.request
 import pyramid.response
+
+from c2cwsgiutils import _utils, auth, broadcast
+from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
 
 LOG = logging.getLogger(__name__)
 SPACE_RE = re.compile(r" +")
@@ -79,7 +80,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
     try:
         if 'no_warmup' not in request.params:
             request.invoke_subrequest(sub_request)
-    except Exception:  # nosec
+    except Exception:  # nosec  # pylint: disable=broad-except
         pass
 
     LOG.debug("checking memory growth for %s", path)

@@ -1,12 +1,12 @@
 import logging
-import netifaces
 import os
 import time
 from typing import Callable, Any, Tuple, List
 
 import boltons.iterutils
-import pytest
+import netifaces
 import requests
+import pytest
 
 LOG = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
                 return ret
         except NameError:
             raise
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             error = str(e)
             LOG.info("  Failed: %s", e)
         if time.monotonic() > timeout:

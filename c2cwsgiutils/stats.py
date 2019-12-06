@@ -96,7 +96,7 @@ def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[Non
             measure.stop(key, opt_tags)
         else:
             measure.stop(key + ['success'], tags)
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         if USE_TAGS:
             opt_tags = dict(tags) if tags is not None else {}
             opt_tags['success'] = 0
@@ -253,10 +253,9 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         message += _format_tags(tags, prefix="|#", tag_sep=",", kv_sep=":",
                                 key_formatter=StatsDBackend._key_entry,
                                 value_formatter=StatsDBackend._tag_value)
-        # noinspection PyBroadException
         try:
             self._socket.send(message.encode('utf-8'))
-        except Exception:
+        except Exception:  # nosec  # pylint: disable=broad-except
             pass  # Ignore errors (must survive if stats cannot be sent)
 
     def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
@@ -292,7 +291,7 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
         statsd_tags = get_env_tags()
         try:
             BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix, statsd_tags)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             LOG.error("Failed configuring the statsd backend. Will continue without it.", exc_info=True)
 
 

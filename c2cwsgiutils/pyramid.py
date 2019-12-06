@@ -1,3 +1,7 @@
+import cornice
+import pyramid.config
+import pyramid_tm
+
 from c2cwsgiutils import (
     broadcast,
     debug,
@@ -13,9 +17,6 @@ from c2cwsgiutils import (
     stats_pyramid,
     version,
 )
-import cornice
-import pyramid.config
-import pyramid_tm
 
 
 def includeme(config: pyramid.config.Configurator) -> None:

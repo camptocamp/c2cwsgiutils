@@ -2,7 +2,8 @@
 """
 Emits statsd gauges for every tables of a database.
 """
-import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import
+import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import,wrong-import-order
+
 import argparse
 import logging
 import sqlalchemy
@@ -66,11 +67,11 @@ class Reporter:
         if self.prometheus is not None:
             self.prometheus.commit()
 
-    def error(self, metric, e):
+    def error(self, metric, error_):
         if self.statsd is not None:
             self.statsd.counter(['error'] + metric, 1)
         if self._error is None:
-            self._error = e
+            self._error = error_
 
     def report_error(self):
         if self._error is not None:
@@ -155,14 +156,14 @@ def main():
     for schema, table in tables:
         try:
             do_table(session, schema, table, reporter)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             reporter.error([schema, table], e)
 
     if args.extra:
         for pos, extra in enumerate(args.extra):
             try:
                 do_extra(session, extra, reporter)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 reporter.error(['extra', str(pos + 1)], e)
 
     reporter.commit()

@@ -1,12 +1,12 @@
+import logging
 import re
-import sqlalchemy.event
-from sqlalchemy.engine import Engine, Connection
-from sqlalchemy.orm import Session
 from typing import Any, Callable, Optional, Dict
 
-from c2cwsgiutils import stats
+from sqlalchemy.engine import Engine, Connection
+import sqlalchemy.event
+from sqlalchemy.orm import Session
 
-import logging
+from c2cwsgiutils import stats
 
 LOG = logging.getLogger(__name__)
 

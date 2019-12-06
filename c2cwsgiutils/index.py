@@ -1,11 +1,11 @@
 from typing import List, Optional, Union  # noqa  # pylint: disable=unused-import
 
-from c2cwsgiutils.auth import is_auth
 import pyramid.config
 import pyramid.request
 import pyramid.response
 
-from . import _utils, profiler
+from c2cwsgiutils import _utils, profiler
+from c2cwsgiutils.auth import is_auth
 
 additional_title: Optional[str] = None
 additional_noauth: List[str] = []

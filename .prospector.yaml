@@ -1,3 +1,5 @@
+strictness: veryhigh
+
 ignore-paths:
   - docs
   - acceptance_tests
@@ -5,8 +7,23 @@ ignore-paths:
 
 pylint:
   disable:
+    - global-statement
+    - line-too-long
+    - invalid-name
     - no-else-return
     - no-else-raise
+    - no-self-use
+    - import-error
+    - superfluous-parens
+    - too-few-public-methods
     - too-many-arguments
+    - ungrouped-imports
     - unused-argument
     - use-symbolic-message-instead
+
+pep8:
+  options:
+    max-line-length: 110
+
+mccabe:
+  run: false

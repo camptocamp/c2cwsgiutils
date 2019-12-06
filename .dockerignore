@@ -1,6 +1,7 @@
 *
 !build_full.sh
 !.coveragerc
+!.prospector.yaml
 !c2cwsgiutils
 !c2cwsgiutils_*.py
 !c2cwsgiutils_run

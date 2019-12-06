@@ -1,0 +1,5 @@
+-r requirements.txt
+-r docker-requirements.txt
+-r docker-requirements-full.txt
+-r publish-requirements.txt
+prospector==1.1.7

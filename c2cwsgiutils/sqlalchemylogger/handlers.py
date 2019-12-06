@@ -1,16 +1,18 @@
 import logging
-import traceback
-import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from .models import createLogClass, Base
-from sqlalchemy.exc import OperationalError, InvalidRequestError
-from sqlalchemy_utils import database_exists, create_database
+import queue
 import threading
 import time
-import queue
-from .filters import ContainsExpression, DoesNotContainExpression
+import traceback
 from typing import Any, List, Dict
+
+import sqlalchemy
+from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError, InvalidRequestError
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import database_exists, create_database
+
+from c2cwsgiutils.sqlalchemylogger._models import create_log_class, Base
+from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
 
 
 LOG = logging.getLogger(__name__)
@@ -22,17 +24,17 @@ class SQLAlchemyHandler(logging.Handler):
     MAX_TIMEOUT = 1
 
     def __init__(self,
-                 sqlalchemyUrl: Dict[str, str],
-                 doesNotContainExpression: str = '',
-                 containsExpression: str = '') -> None:
+                 sqlalchemy_url: Dict[str, str],
+                 does_not_contain_expression: str = '',
+                 contains_expression: str = '') -> None:
         super().__init__()
         # initialize DB session
-        self.engine = create_engine(sqlalchemyUrl['url'])
-        self.Log = createLogClass(
-                  tablename=sqlalchemyUrl.get('tablename', 'logs'),
-                  tableargs=sqlalchemyUrl.get('tableargs', None))  # type: ignore
+        self.engine = create_engine(sqlalchemy_url['url'])
+        self.Log = create_log_class(
+            tablename=sqlalchemy_url.get('tablename', 'logs'),
+            tableargs=sqlalchemy_url.get('tableargs', None))  # type: ignore
         Base.metadata.bind = self.engine
-        DBSession = sessionmaker(bind=self.engine)
+        DBSession = sessionmaker(bind=self.engine)  # noqa
         self.session = DBSession()
         # initialize log queue
         self.log_queue: Any = queue.Queue()
@@ -41,10 +43,10 @@ class SQLAlchemyHandler(logging.Handler):
         self.processor_thread = threading.Thread(target=self._processor, daemon=True)
         self.processor_thread.start()
         # initialize filters
-        if doesNotContainExpression:
-            self.addFilter(DoesNotContainExpression(doesNotContainExpression))
-        if containsExpression:
-            self.addFilter(ContainsExpression(containsExpression))
+        if does_not_contain_expression:
+            self.addFilter(DoesNotContainExpression(does_not_contain_expression))
+        if contains_expression:
+            self.addFilter(ContainsExpression(contains_expression))
 
     def _processor(self) -> None:
         LOG.debug('%s : starting processor thread', __name__)
@@ -77,7 +79,7 @@ class SQLAlchemyHandler(logging.Handler):
                 self.session.rollback()
                 self.session.bulk_save_objects(logs)
                 self.session.commit()
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 # if we really cannot commit the log to DB, do not lock the
                 # thread and do not crash the application
                 LOG.critical(e)

@@ -23,7 +23,7 @@ THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 DOCKER_TTY := $(shell [ -t 0 ] && echo -ti)
 
 .PHONY: all
-all: mypy acceptance
+all: prospector mypy acceptance
 
 .PHONY: build
 build: build_acceptance build_test_app
@@ -82,9 +82,9 @@ build_acceptance: build_docker
 build_test_app: build_docker_full
 	docker build -t $(DOCKER_BASE)_test_app:latest --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
-.venv/timestamp: requirements.txt Makefile
+.venv/timestamp: requirements.txt docker-requirements.txt docker-requirements-full.txt requirements-local.txt publish-requirements.txt
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
-	.venv/bin/pip install --upgrade -r requirements.txt -r docker-requirements.txt -r docker-requirements-full.txt
+	.venv/bin/pip install --upgrade -r requirements-local.txt
 	touch $@
 
 .PHONY: pull
@@ -103,6 +103,11 @@ mypy: build_docker
 .PHONY: mypy_local
 mypy_local: .venv/timestamp
 	.venv/bin/mypy --ignore-missing-imports --strict-optional --strict c2cwsgiutils
+
+.PHONY: prospector
+prospector: .venv/timestamp
+	#must run outside of docker (flake8 and prospector cannot be installed together)
+	.venv/bin/prospector
 
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache

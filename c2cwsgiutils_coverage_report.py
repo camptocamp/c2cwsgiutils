@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import coverage
 import os
 import shutil
 import sys
+
+import coverage
 
 
 def main():

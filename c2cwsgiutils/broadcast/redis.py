@@ -37,7 +37,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             data = json.loads(message['data'].decode('utf-8'))
             try:
                 response = callback(**data['params'])
-            except Exception as e:  # pragma: no cover
+            except Exception as e:  # pragma: no cover  # pylint: disable=broad-except
                 LOG.error("Failed handling a broadcast message", exc_info=True)
                 response = dict(status=500, message=str(e))
             answer_channel = data.get('answer_channel')

@@ -29,5 +29,5 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
             ORIG = redis.client.StrictRedis.execute_command
             redis.client.StrictRedis.execute_command = _execute_command_patch  # type: ignore
             LOG.info("Enabled the redis tracking")
-        except Exception:  # pragma: nocover
+        except Exception:  # pragma: nocover  # pylint: disable=broad-except
             LOG.warning("Cannot enable redis tracking", exc_info=True)

@@ -64,7 +64,7 @@ def _store_override(settings: Mapping[str, Any], name: str, level: str) -> None:
         import redis
         redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
         if redis_url:
-            con = redis.StrictRedis.from_url(redis_url, socket_timeout=3, decode_responses=True)
+            con = redis.Redis.from_url(redis_url, socket_timeout=3, decode_responses=True)
             con.set(REDIS_PREFIX + name, level)
     except ImportError:
         pass
@@ -75,7 +75,7 @@ def _list_overrides(settings: Mapping[str, Any]) -> Generator[Tuple[str, str], N
     redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
     if redis_url is None:
         return
-    con = redis.StrictRedis.from_url(redis_url, socket_timeout=3, decode_responses=True)
+    con = redis.Redis.from_url(redis_url, socket_timeout=3, decode_responses=True)
     for key in con.scan_iter(REDIS_PREFIX + '*'):
         level = con.get(key)
         name = key[len(REDIS_PREFIX):]

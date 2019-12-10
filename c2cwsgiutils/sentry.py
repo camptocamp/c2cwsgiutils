@@ -6,6 +6,8 @@ from typing import MutableMapping, Any, Generator, Optional, Callable  # noqa  #
 import pyramid.config
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.wsgi import SentryWsgiMiddleware
 
 from c2cwsgiutils import _utils
@@ -45,7 +47,7 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
         )
         sentry_sdk.init(  # type: ignore
             dsn=sentry_url,
-            integrations=[sentry_logging],
+            integrations=[sentry_logging, SqlalchemyIntegration(), RedisIntegration()],
             before_send=_create_before_send_filter(tags),
             **client_info
         )

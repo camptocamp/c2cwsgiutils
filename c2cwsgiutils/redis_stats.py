@@ -26,8 +26,8 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     if _utils.env_or_config(config, 'C2C_TRACK_REDIS', 'c2c.track_redis', True, _utils.config_bool):
         try:
             import redis.client
-            ORIG = redis.client.StrictRedis.execute_command
-            redis.client.StrictRedis.execute_command = _execute_command_patch  # type: ignore
+            ORIG = redis.client.Redis.execute_command
+            redis.client.Redis.execute_command = _execute_command_patch  # type: ignore
             LOG.info("Enabled the redis tracking")
         except Exception:  # pragma: nocover  # pylint: disable=broad-except
             LOG.warning("Cannot enable redis tracking", exc_info=True)

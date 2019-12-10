@@ -213,7 +213,7 @@ class HealthCheck:
         import redis
 
         def check(request: pyramid.request.Request) -> Any:
-            con = redis.StrictRedis(connection_pool=pool)
+            con = redis.Redis(connection_pool=pool)
             return {
                 'info': con.info(),
                 'dbsize': con.dbsize()

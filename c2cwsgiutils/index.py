@@ -10,6 +10,7 @@ from c2cwsgiutils.auth import is_auth
 additional_title: Optional[str] = None
 additional_noauth: List[str] = []
 additional_auth: List[str] = []
+ELEM_ID = 0
 
 
 def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
@@ -63,6 +64,10 @@ def form(url: Optional[str], *content: str, method: str = 'get', target: str = '
 
 def input_(name: str, label: Optional[str] = None, type_: Optional[str] = None,
            value: Union[str, int] = "") -> str:
+    global ELEM_ID
+    id_ = ELEM_ID
+    ELEM_ID += 1
+
     if label is None and type_ != 'hidden':
         label = name
     if type_ is None:
@@ -72,9 +77,12 @@ def input_(name: str, label: Optional[str] = None, type_: Optional[str] = None,
             type_ = 'text'
     result = ''
     if label is not None:
-        result += '<label>{label}:</label>'.format(label=label)
-    result += '<input class="form-control" type="{type}" name="{name}" value="{value}">'.\
-        format(name=name, type=type_, value=value)
+        result += '<div class="form-group form-inline"><label for="{id}">{label}:</label>'.\
+            format(label=label, id=id_)
+    result += '<input class="form-control" type="{type}" name="{name}" value="{value}" id="{id}">'.\
+        format(name=name, type=type_, value=value, id=id_)
+    if label is not None:
+        result += '</div>'
     return result
 
 
@@ -95,8 +103,8 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet"
-              href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-              integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
               crossorigin="anonymous">
         <title>c2cwsgiutils tools</title>
         <style>

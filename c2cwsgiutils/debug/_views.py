@@ -166,6 +166,7 @@ def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
 
 
 def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
+    auth.auth_view(request)
     for generation in range(3):
         gc.collect(generation)
 
@@ -178,21 +179,22 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
     args: Dict[str, Any] = {
         'refcounts': True,
     }
-    if 'max_depth' in request.params and request.params['max_depth'] != '':
+    if request.params.get('max_depth', '') != '':
         args['max_depth'] = int(request.params['max_depth'])
-    if 'too_many' in request.params and request.params['too_many'] != '':
+    if request.params.get('too_many', '') != '':
         args['too_many'] = int(request.params['too_many'])
-    if 'min_size_kb' in request.params and request.params['min_size_kb'] != '':
+    if request.params.get('min_size_kb', '') != '':
         args['filter'] = lambda obj: get_size(obj) > (int(request.params['min_size_kb']) * 1024)
-    if 'no_extra_info' not in request.params or request.params['no_extra_info'] == '':
+    if request.params.get('no_extra_info', '') == '':
         args['extra_info'] = lambda obj: '{:.3f} kb\n{}'.format(get_size(obj) / 1024, id(obj))
 
     result = StringIO()
-    if 'backrefs' in request.params and request.params['backrefs'] != '':
+    if request.params.get('backrefs', '') != '':
         objgraph.show_backrefs(objs, output=result, **args)
     else:
         objgraph.show_refs(objs, output=result, **args)
 
+    request.response.content_type = 'text/vnd.graphviz'
     request.response.text = result.getvalue()
     result.close()
     return request.response
@@ -208,5 +210,5 @@ def init(config: pyramid.config.Configurator) -> None:
     _add_view(config, "headers", "headers", _headers)
     _add_view(config, "error", "error", _error)
     _add_view(config, "time", "time", _time)
-    _add_view(config, "show_refs", "show_refs", _show_refs)
+    _add_view(config, "show_refs", "show_refs.dot", _show_refs)
     LOG.info("Enabled the /debug/... API")

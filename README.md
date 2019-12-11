@@ -339,7 +339,7 @@ have dumps of a few things:
 
 * every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={C2C_SECRET}`
 * memory usage: `{C2C_BASE_PATH}/debug/memory?secret={C2C_SECRET}&limit=30&analyze_type=builtins.dict&python_internals_map=false`
-* object ref: `{C2C_BASE_PATH}/debug/show_refs?secret={C2C_SECRET}&analyze_type=gunicorn.app.wsgiapp.WSGIApplication&analyze_id=12345&max_depth=3&too_many=10&filter=1024&no_extra_info&backrefs`
+* object ref: `{C2C_BASE_PATH}/debug/show_refs.dot?secret={C2C_SECRET}&analyze_type=gunicorn.app.wsgiapp.WSGIApplication&analyze_id=12345&max_depth=3&too_many=10&filter=1024&no_extra_info&backrefs`
   `analyze_type` and `analyze_id` should not ve used toogether, you can use it like:
   ```
   curl "<URL>" > /tmp/show_refs.dot

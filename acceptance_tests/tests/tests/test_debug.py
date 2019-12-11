@@ -100,3 +100,14 @@ def test_memory_maps(app_connection):
     memory = app_connection.get_json('c2c/debug/memory_maps', params={'secret': 'changeme'}, cors=False)
     print("memory_maps=" + json.dumps(memory, indent=4))
     assert len(memory) > 0
+
+
+def test_show_refs(app_connection):
+    refs = app_connection.get('c2c/debug/show_refs.dot', params=dict(
+        secret='changeme',
+        analyze_type='gunicorn.app.wsgiapp.WSGIApplication',
+        max_depth='3',
+        too_many='10'
+    ), cors=False)
+    print("refs=" + refs)
+    assert "WSGIApplication" in refs

@@ -9,6 +9,7 @@ pylint:
   disable:
     - global-statement
     - line-too-long
+    - import-outside-toplevel
     - invalid-name
     - no-else-return
     - no-else-raise

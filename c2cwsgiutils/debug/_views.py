@@ -192,7 +192,8 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
     if request.params.get('backrefs', '') != '':
         objgraph.show_backrefs(objs, output=result, **args)
     else:
-        objgraph.show_refs(objs, output=result, **args)
+        objgraph.show_refs(objs, output=result,
+                           filter=lambda x: not objgraph.inspect.isclass(x), **args)
 
     request.response.content_type = 'text/vnd.graphviz'
     request.response.text = result.getvalue()

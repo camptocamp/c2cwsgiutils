@@ -1,8 +1,9 @@
-from collections import defaultdict
 import gc
 import logging
+import os
 import re
 import sys
+from collections import defaultdict
 from types import FunctionType, ModuleType
 from typing import Any, Dict, List, Set
 
@@ -35,7 +36,10 @@ def get_size(obj: Any) -> int:
 
 
 def dump_memory_maps(pid: str = 'self') -> List[Dict[str, Any]]:
-    with open("/proc/{}/smaps".format(pid)) as input_:
+    filename = os.path.join('/proc', pid, 'smaps')
+    if not os.path.exists(filename):
+        return []
+    with open(filename) as input_:
         cur_dict: Dict[str, int] = defaultdict(int)
         sizes: Dict[str, Any] = {}
         for line in input_:

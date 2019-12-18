@@ -1,0 +1,92 @@
+name: Build
+
+on:
+  push:
+
+env:
+  IN_CI: '1'
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: camptocamp/initialise-gopass-summon-action@v1
+        with:
+          large-secret-passphrase: ${{secrets.LARGE_SECRET_PASSPHRASE}}
+          github-gopass-ci-token: ${{secrets.GITHUB_GOPASS_CI_TOKEN}}
+
+      - name: Pull
+        run: make pull
+
+      - name: Build
+        run: make build
+
+      - name: Acceptance
+        run: make acceptance
+
+      - name: Send coverage
+        if: always()
+        run: make send_coverage
+        env:
+          CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
+
+      - name: mypy
+        run: make mypy
+
+      - name: install GDAL
+        run: docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh
+
+      - name: Release
+        run: |
+          if [[ ${{github.ref}} =~ ^refs/tags/([0-9]+(\.[0-9]+)*)$ ]]
+          then
+            tag="${BASH_REMATCH[1]}"
+            echo "Create release ${tag} in pypi"
+            summon --yaml '
+              USERNAME: !var gs/ci/pypi/username
+              PASSWORD: !var gs/ci/pypi/password
+            ' bash -c 'docker run -e USERNAME -e PASSWORD --rm camptocamp/c2cwsgiutils:latest /opt/c2cwsgiutils/release.sh "${tag}"'
+            echo "Release tag ${tag}"
+
+          elif [[ ${{github.ref}} =~ ^refs/heads/(release_[0-9]+)$ ]]
+          then
+            tag="${BASH_REMATCH[1]}"
+            echo "Release major ${tag}"
+
+          elif [[ ${{github.ref}} == master ]]
+          then
+            tag=latest
+            echo "Release latest"
+
+          else
+            echo "No release to do for ${{github.ref}}"
+
+          fi
+
+          if [[ -n "$tag" ]]
+          then
+            summon --yaml '
+              USER: !var gs/ci/dockerhub/username
+              PASS: !var gs/ci/dockerhub/password
+            ' bash -c 'docker login -u $USER -p $PASS'
+
+            for tag_suffix in "-lite" "" "-full"
+            do
+              if [[ "$tag" != "latest" ]]
+              then
+                docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} camptocamp/c2cwsgiutils:${tag}${tag_suffix}
+              fi
+              docker push camptocamp/c2cwsgiutils:${tag}${tag_suffix}
+            done
+
+            rm -rf ~/.docker*  # docker logout
+          fi
+
+      - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: reports
+          path: reports

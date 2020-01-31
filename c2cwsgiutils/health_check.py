@@ -85,8 +85,9 @@ class HealthCheck:
             if version.get_version() is not None:
                 self.add_version_check(level=2)
 
-    def add_db_session_check(self, session: sqlalchemy.orm.Session,
-                             query_cb: Optional[Callable[[sqlalchemy.orm.Session], Any]] = None,
+    def add_db_session_check(self, session: sqlalchemy.orm.scoping.scoped_session,
+                             query_cb: Optional[Callable[
+                                 [sqlalchemy.orm.scoping.scoped_session], Any]] = None,
                              at_least_one_model: Optional[object] = None, level: int = 1) -> None:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
@@ -102,8 +103,8 @@ class HealthCheck:
             name, cb = self._create_db_engine_check(session, binding, query_cb)
             self._checks.append((name, cb, level))
 
-    def add_alembic_check(self, session: sqlalchemy.orm.Session, alembic_ini_path: str, level: int = 2,
-                          name: str = 'alembic', version_schema: Optional[str] = None,
+    def add_alembic_check(self, session: sqlalchemy.orm.scoping.scoped_session, alembic_ini_path: str,
+                          level: int = 2, name: str = 'alembic', version_schema: Optional[str] = None,
                           version_table: Optional[str] = None) -> None:
         """
         Check the DB version against the HEAD version of Alembic.
@@ -321,9 +322,9 @@ class HealthCheck:
 
     @staticmethod
     def _create_db_engine_check(
-            session: sqlalchemy.orm.Session,
+            session: sqlalchemy.orm.scoping.scoped_session,
             bind: sqlalchemy.engine.Engine,
-            query_cb: Callable[[sqlalchemy.orm.Session], None]
+            query_cb: Callable[[sqlalchemy.orm.scoping.scoped_session], None]
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(_request: pyramid.request.Request) -> None:
             prev_bind = session.bind
@@ -343,8 +344,8 @@ class HealthCheck:
         return 'db_engine_' + bind.c2c_name, check
 
     @staticmethod
-    def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.Session], Any]:
-        def query(session: sqlalchemy.orm.Session) -> None:
+    def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.scoping.scoped_session], Any]:
+        def query(session: sqlalchemy.orm.scoping.scoped_session) -> None:
             result = session.query(model).first()
             if result is None:
                 raise HTTPNotFound(model.__name__ + " record not found")

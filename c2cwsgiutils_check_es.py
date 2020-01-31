@@ -78,7 +78,7 @@ def _check_roundtrip() -> None:
     query = {
         "query": {
             "match_phrase": {
-                "json.logger_name": logger_name
+                "log.logger": logger_name
             }
         }
     }

@@ -57,7 +57,7 @@ jobs:
             tag="${BASH_REMATCH[1]}"
             echo "Release major ${tag}"
 
-          elif [[ ${{github.ref}} == master ]]
+          elif [[ ${{github.ref}} == refs/heads/master ]]
           then
             tag=latest
             echo "Release latest"
@@ -85,9 +85,3 @@ jobs:
 
             rm -rf ~/.docker*  # docker logout
           fi
-
-      - uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: reports
-          path: reports

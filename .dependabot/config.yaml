@@ -17,7 +17,7 @@ update_configs:
   - package_manager: python
     directory: /
     update_schedule: live
-    target_branch: "2.4"
+    target_branch: release_3
     allowed_updates:
       - match:
           update_type: security

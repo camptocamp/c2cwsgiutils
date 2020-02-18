@@ -64,15 +64,15 @@ send_coverage: build_docker_full
 
 .PHONY: build_docker_lite
 build_docker_light:
-	docker build --tag $(DOCKER_BASE):latest-lite -f Dockerfile.lite .
+	docker build --tag $(DOCKER_BASE):latest-lite --target=lite .
 
 .PHONY: build_docker
 build_docker: build_docker_light
-	docker build --tag $(DOCKER_BASE):latest .
+	docker build --tag $(DOCKER_BASE):latest  --target=standard .
 
 .PHONY: build_docker_full
 build_docker_full: build_docker
-	docker build --tag $(DOCKER_BASE):latest-full -f Dockerfile.full .
+	docker build --tag $(DOCKER_BASE):latest-full --target=full .
 
 .PHONY: build_acceptance
 build_acceptance: build_docker

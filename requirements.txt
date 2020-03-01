@@ -1,4 +1,4 @@
-alembic==1.4.0
+alembic==1.4.1
 boltons==20.0.0
 cee-syslog-handler==0.5.0
 cornice==4.0.1

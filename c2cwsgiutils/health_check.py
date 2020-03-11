@@ -4,7 +4,6 @@ Setup an health_check API.
 To use it, create an instance of this class in your application initialization and do a few calls to its
 methods add_db_check()
 """
-from collections import Counter
 import configparser
 import copy
 import logging
@@ -13,7 +12,8 @@ import re
 import subprocess
 import time
 import traceback
-from typing import Optional, Callable, Mapping, List, Tuple, Any, Union, Dict  # noqa
+from collections import Counter
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union  # noqa
 
 import pyramid.config
 import pyramid.request
@@ -22,10 +22,10 @@ import sqlalchemy.engine
 import sqlalchemy.orm
 from pyramid.httpexceptions import HTTPNotFound
 
-from c2cwsgiutils import stats, _utils, broadcast, version, auth
+from c2cwsgiutils import _utils, auth, broadcast, stats, version
 
 LOG = logging.getLogger(__name__)
-ALEMBIC_HEAD_RE = re.compile(r'^([a-f0-9]+) \(head\)\n$')
+ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
 
 
 class JsonCheckException(Exception):
@@ -46,21 +46,25 @@ class JsonCheckException(Exception):
 
 
 def _get_bindings(session: Any) -> List[sqlalchemy.engine.Engine]:
-    return [session.c2c_rw_bind, session.c2c_ro_bind] if session.c2c_rw_bind != session.c2c_ro_bind \
+    return (
+        [session.c2c_rw_bind, session.c2c_ro_bind]
+        if session.c2c_rw_bind != session.c2c_ro_bind
         else [session.c2c_rw_bind]
+    )
 
 
 def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     # Go to the directory holding the config file and add '.' to the PYTHONPATH variable to support Alembic
     # migration scripts using common modules
     env = dict(os.environ)
-    pythonpath = os.environ.get('PYTHONPATH', '')
-    pythonpath = (pythonpath + ':' if pythonpath else '') + '.'
-    env['PYTHONPATH'] = pythonpath
+    pythonpath = os.environ.get("PYTHONPATH", "")
+    pythonpath = (pythonpath + ":" if pythonpath else "") + "."
+    env["PYTHONPATH"] = pythonpath
     dirname = os.path.abspath(os.path.dirname(alembic_ini_path))
 
-    out = subprocess.check_output(['alembic', '--config', alembic_ini_path, '--name', name, 'heads'],
-                                  cwd=dirname, env=env).decode('utf-8')
+    out = subprocess.check_output(
+        ["alembic", "--config", alembic_ini_path, "--name", name, "heads"], cwd=dirname, env=env
+    ).decode("utf-8")
     out_match = ALEMBIC_HEAD_RE.match(out)
     if not out_match:
         raise Exception("Cannot get the alembic HEAD version from: " + out)
@@ -75,8 +79,9 @@ class HealthCheck:
     """
 
     def __init__(self, config: pyramid.config.Configurator) -> None:
-        config.add_route("c2c_health_check", _utils.get_base_path(config) + r"/health_check",
-                         request_method="GET")
+        config.add_route(
+            "c2c_health_check", _utils.get_base_path(config) + r"/health_check", request_method="GET"
+        )
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
         redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
@@ -85,10 +90,13 @@ class HealthCheck:
             if version.get_version() is not None:
                 self.add_version_check(level=2)
 
-    def add_db_session_check(self, session: sqlalchemy.orm.scoping.scoped_session,
-                             query_cb: Optional[Callable[
-                                 [sqlalchemy.orm.scoping.scoped_session], Any]] = None,
-                             at_least_one_model: Optional[object] = None, level: int = 1) -> None:
+    def add_db_session_check(
+        self,
+        session: sqlalchemy.orm.scoping.scoped_session,
+        query_cb: Optional[Callable[[sqlalchemy.orm.scoping.scoped_session], Any]] = None,
+        at_least_one_model: Optional[object] = None,
+        level: int = 1,
+    ) -> None:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
 
@@ -103,9 +111,15 @@ class HealthCheck:
             name, cb = self._create_db_engine_check(session, binding, query_cb)
             self._checks.append((name, cb, level))
 
-    def add_alembic_check(self, session: sqlalchemy.orm.scoping.scoped_session, alembic_ini_path: str,
-                          level: int = 2, name: str = 'alembic', version_schema: Optional[str] = None,
-                          version_table: Optional[str] = None) -> None:
+    def add_alembic_check(
+        self,
+        session: sqlalchemy.orm.scoping.scoped_session,
+        alembic_ini_path: str,
+        level: int = 2,
+        name: str = "alembic",
+        version_schema: Optional[str] = None,
+        version_table: Optional[str] = None,
+    ) -> None:
         """
         Check the DB version against the HEAD version of Alembic.
 
@@ -123,10 +137,10 @@ class HealthCheck:
         config.read(alembic_ini_path)
 
         if version_schema is None:
-            version_schema = config.get(name, 'version_table_schema', fallback='public')
+            version_schema = config.get(name, "version_table_schema", fallback="public")
 
         if version_table is None:
-            version_table = config.get(name, 'version_table', fallback='alembic_version')
+            version_table = config.get(name, "version_table", fallback="alembic_version")
 
         def check(_request: Any) -> str:
             for binding in _get_bindings(session):
@@ -134,44 +148,50 @@ class HealthCheck:
                 try:
                     session.bind = binding
                     if stats.USE_TAGS:
-                        key = ['sql', 'manual', 'health_check', 'alembic']
+                        key = ["sql", "manual", "health_check", "alembic"]
                         tags: Optional[Dict[str, str]] = dict(conf=alembic_ini_path, con=binding.c2c_name)
                     else:
-                        key = ['sql', 'manual', 'health_check', 'alembic', alembic_ini_path,
-                               binding.c2c_name]
+                        key = ["sql", "manual", "health_check", "alembic", alembic_ini_path, binding.c2c_name]
                         tags = None
                     with stats.timer_context(key, tags):
                         quote = session.bind.dialect.identifier_preparer.quote
-                        actual_version, = session.execute(
-                            "SELECT version_num FROM {schema}.{table}".  # nosec
-                            format(schema=quote(version_schema), table=quote(version_table))
+                        (actual_version,) = session.execute(
+                            "SELECT version_num FROM {schema}.{table}".format(  # nosec
+                                schema=quote(version_schema), table=quote(version_table)
+                            )
                         ).fetchone()
                         if stats.USE_TAGS:
-                            stats.increment_counter(['alembic_version'], 1,
-                                                    tags=dict(version=actual_version, name=name))
+                            stats.increment_counter(
+                                ["alembic_version"], 1, tags=dict(version=actual_version, name=name)
+                            )
                         else:
-                            stats.increment_counter(['alembic_version', name, actual_version], 1)
+                            stats.increment_counter(["alembic_version", name, actual_version], 1)
                         if actual_version != version_:
-                            raise Exception("Invalid alembic version (db: %s, code: %s)" % (
-                                actual_version, version_
-                            ))
+                            raise Exception(
+                                "Invalid alembic version (db: %s, code: %s)" % (actual_version, version_)
+                            )
                 finally:
                     session.bind = prev_bind
             return version_
 
-        self._checks.append(('alembic_' + alembic_ini_path.replace('/', '_').strip('_') + '_' + name, check,
-                             level))
+        self._checks.append(
+            ("alembic_" + alembic_ini_path.replace("/", "_").strip("_") + "_" + name, check, level)
+        )
 
     def add_url_check(
-            self, url: Union[str, Callable[[pyramid.request.Request], str]],
-            params: Union[Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]],
-                          None] = None,
-            headers: Union[Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]],
-                           None] = None,
-            name: Optional[str] = None,
-            check_cb: Callable[[pyramid.request.Request, requests.Response],
-                               Any] = lambda request, response: None,
-            timeout: float = 3, level: int = 1) -> None:
+        self,
+        url: Union[str, Callable[[pyramid.request.Request], str]],
+        params: Union[Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]], None] = None,
+        headers: Union[
+            Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]], None
+        ] = None,
+        name: Optional[str] = None,
+        check_cb: Callable[
+            [pyramid.request.Request, requests.Response], Any
+        ] = lambda request, response: None,
+        timeout: float = 3,
+        level: int = 1,
+    ) -> None:
         """
         Check that a GET on an URL returns 2xx
 
@@ -189,9 +209,7 @@ class HealthCheck:
             the_url = _maybe_function(url, request)
             the_params = _maybe_function(params, request)
             the_headers = copy.deepcopy(_maybe_function(headers, request) if headers is not None else {})
-            the_headers.update({
-                'X-Request-ID': request.c2c_request_id
-            })
+            the_headers.update({"X-Request-ID": request.c2c_request_id})
 
             response = requests.get(the_url, timeout=timeout, params=the_params, headers=the_headers)
             response.raise_for_status()
@@ -215,13 +233,11 @@ class HealthCheck:
 
         def check(request: pyramid.request.Request) -> Any:
             con = redis.Redis(connection_pool=pool)
-            return {
-                'info': con.info(),
-                'dbsize': con.dbsize()
-            }
+            return {"info": con.info(), "dbsize": con.dbsize()}
 
-        pool = redis.ConnectionPool.from_url(url, retry_on_timeout=False, socket_connect_timeout=0.5,
-                                             socket_timeout=0.5)
+        pool = redis.ConnectionPool.from_url(
+            url, retry_on_timeout=False, socket_connect_timeout=0.5, socket_timeout=0.5
+        )
         if not url.startswith("redis://"):
             url = "redis://" + url
         if name is None:
@@ -243,9 +259,9 @@ class HealthCheck:
             # output the versions we see on the monitoring
             for v, count in Counter(versions).items():
                 if stats.USE_TAGS:
-                    stats.increment_counter(['version'], count, tags=dict(version=v))
+                    stats.increment_counter(["version"], count, tags=dict(version=v))
                 else:
-                    stats.increment_counter(['version', v], count)
+                    stats.increment_counter(["version", v], count)
 
                 ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
@@ -253,8 +269,9 @@ class HealthCheck:
 
         self._checks.append((name, check, level))
 
-    def add_custom_check(self, name: str, check_cb: Callable[[pyramid.request.Request], Any],
-                         level: int = 1) -> None:
+    def add_custom_check(
+        self, name: str, check_cb: Callable[[pyramid.request.Request], Any], level: int = 1
+    ) -> None:
         """
         Add a custom check.
 
@@ -268,80 +285,79 @@ class HealthCheck:
         self._checks.append((name, check_cb, level))
 
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
-        max_level = int(request.params.get('max_level', '1'))
+        max_level = int(request.params.get("max_level", "1"))
         is_auth = auth.is_auth(request)
         results: Dict[str, Dict[str, Any]] = {
-            'failures': {},
-            'successes': {},
+            "failures": {},
+            "successes": {},
         }
         checks = None
-        if 'checks' in request.params:
-            if request.params['checks'] != '':
-                checks = request.params['checks'].split(',')
+        if "checks" in request.params:
+            if request.params["checks"] != "":
+                checks = request.params["checks"].split(",")
         for name, check, level in self._checks:
             if level <= max_level and (checks is None or name in checks):
                 self._run_one(check, is_auth, level, name, request, results)
 
-        if results['failures']:
+        if results["failures"]:
             request.response.status = 500
 
         return results
 
     @staticmethod
-    def _run_one(check: Callable[[pyramid.request.Request], Any], is_auth: bool, level: int,
-                 name: str, request: pyramid.request.Request, results: Dict[str, Dict[str, Any]]) -> None:
+    def _run_one(
+        check: Callable[[pyramid.request.Request], Any],
+        is_auth: bool,
+        level: int,
+        name: str,
+        request: pyramid.request.Request,
+        results: Dict[str, Dict[str, Any]],
+    ) -> None:
         start = time.monotonic()
         try:
             result = check(request)
-            results['successes'][name] = {
-                'timing': time.monotonic() - start,
-                'level': level
-            }
+            results["successes"][name] = {"timing": time.monotonic() - start, "level": level}
             if result is not None:
-                results['successes'][name]['result'] = result
+                results["successes"][name]["result"] = result
             if stats.USE_TAGS:
-                stats.increment_counter(['health_check'], 1, tags=dict(name=name, outcome='success'))
+                stats.increment_counter(["health_check"], 1, tags=dict(name=name, outcome="success"))
             else:
-                stats.increment_counter(['health_check', name, 'success'], 1)
+                stats.increment_counter(["health_check", name, "success"], 1)
         except Exception as e:  # pylint: disable=broad-except
             if stats.USE_TAGS:
-                stats.increment_counter(['health_check'], 1, tags=dict(name=name, outcome='failure'))
+                stats.increment_counter(["health_check"], 1, tags=dict(name=name, outcome="failure"))
             else:
-                stats.increment_counter(['health_check', name, 'failure'], 1)
+                stats.increment_counter(["health_check", name, "failure"], 1)
             LOG.warning("Health check %s failed", name, exc_info=True)
-            failure = {
-                'message': str(e),
-                'timing': time.monotonic() - start,
-                'level': level
-            }
+            failure = {"message": str(e), "timing": time.monotonic() - start, "level": level}
             if isinstance(e, JsonCheckException) and e.json_data() is not None:
-                failure['result'] = e.json_data()
-            if is_auth or os.environ.get('DEVELOPMENT', '0') != '0':
-                failure['stacktrace'] = traceback.format_exc()
-            results['failures'][name] = failure
+                failure["result"] = e.json_data()
+            if is_auth or os.environ.get("DEVELOPMENT", "0") != "0":
+                failure["stacktrace"] = traceback.format_exc()
+            results["failures"][name] = failure
 
     @staticmethod
     def _create_db_engine_check(
-            session: sqlalchemy.orm.scoping.scoped_session,
-            bind: sqlalchemy.engine.Engine,
-            query_cb: Callable[[sqlalchemy.orm.scoping.scoped_session], None]
+        session: sqlalchemy.orm.scoping.scoped_session,
+        bind: sqlalchemy.engine.Engine,
+        query_cb: Callable[[sqlalchemy.orm.scoping.scoped_session], None],
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(_request: pyramid.request.Request) -> None:
             prev_bind = session.bind
             try:
                 session.bind = bind
                 if stats.USE_TAGS:
-                    key = ['sql', 'manual', 'health_check', 'db']
+                    key = ["sql", "manual", "health_check", "db"]
                     tags: Optional[Dict[str, str]] = dict(con=bind.c2c_name)
                 else:
-                    key = ['sql', 'manual', 'health_check', 'db', bind.c2c_name]
+                    key = ["sql", "manual", "health_check", "db", bind.c2c_name]
                     tags = None
                 with stats.timer_context(key, tags):
                     return query_cb(session)
             finally:
                 session.bind = prev_bind
 
-        return 'db_engine_' + bind.c2c_name, check
+        return "db_engine_" + bind.c2c_name, check
 
     @staticmethod
     def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.scoping.scoped_session], Any]:

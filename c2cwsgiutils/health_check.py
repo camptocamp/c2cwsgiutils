@@ -256,7 +256,8 @@ class HealthCheck:
             versions = _get_all_versions()
             versions = list(filter(lambda x: x is not None, versions))
             assert versions
-            # output the versions we see on the monitoring
+            # Output the versions we see on the monitoring
+            v: Optional[str]
             for v, count in Counter(versions).items():
                 if stats.USE_TAGS:
                     stats.increment_counter(["version"], count, tags=dict(version=v))

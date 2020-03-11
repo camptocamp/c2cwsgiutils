@@ -58,11 +58,16 @@ RUN python3 -m pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements-dev.
 
 FROM standard AS full
 
-RUN apt update && \
+RUN . /etc/os-release && \
+    apt update && \
     cd /opt/c2cwsgiutils && \
     DEV_PACKAGES="python3.7-dev graphviz-dev build-essential" && \
+    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends curl ca-certificates && \
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt update && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
-        graphviz postgresql-client-10 git net-tools iputils-ping screen \
+        graphviz postgresql-client-12 git net-tools iputils-ping screen \
         vim vim-editorconfig vim-addon-manager tree \
         ${DEV_PACKAGES} && \
     vim-addon-manager --system-wide install editorconfig && \

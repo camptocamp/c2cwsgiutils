@@ -6,7 +6,7 @@ gunicorn==20.0.4
 lxml==4.5.0
 netifaces==0.10.9
 objgraph==3.4.1
-psycopg2==2.8.4
+psycopg2==2.8.5
 pyramid==1.10.4
 pyramid-tm==2.4
 sentry-sdk==0.14.3

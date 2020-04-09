@@ -19,9 +19,9 @@ def _query(app_connection, params, expected=None):
 def test_api(app_connection):
     _query(app_connection, {}, {'current_readonly': None})
     _query(app_connection, {'readonly': 'false'})
-    _query(app_connection, {}, {'current_readonly': 'false'})
+    _query(app_connection, {}, {'current_readonly': False})
     _query(app_connection, {'readonly': 'true'})
-    _query(app_connection, {}, {'current_readonly': 'true'})
+    _query(app_connection, {}, {'current_readonly': True})
 
 
 def test_api_bad_secret(app_connection):

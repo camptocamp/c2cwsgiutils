@@ -35,7 +35,10 @@ def _db_maintenance(request: pyramid.request.Request) -> Mapping[str, Any]:
         _store(request.registry.settings, readonly)
         return {'status': 200, 'readonly': readonly}
     else:
-        return {'status': 200, 'current_readonly': _get_redis_value(request.registry.settings)}
+        cur = _get_redis_value(request.registry.settings)
+        if cur is not None:
+            cur = cur == 'true'
+        return {'status': 200, 'current_readonly': cur}
 
 
 @broadcast.decorator(expect_answers=True)

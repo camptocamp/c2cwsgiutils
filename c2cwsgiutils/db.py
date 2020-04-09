@@ -14,6 +14,8 @@ from zope.sqlalchemy import register
 LOG = logging.getLogger(__name__)
 RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
 
+force_readonly = False
+
 
 class Tweens:
     pass
@@ -149,8 +151,8 @@ def _add_tween(
             old = session.bind
             method_path: Any = "%s %s" % (request.method, request.path)
             has_force_master = any(r.match(method_path) for r in master_paths)
-            if not has_force_master and (
-                    request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths)
+            if force_readonly or (not has_force_master and (
+                    request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths))
             ):
                 LOG.debug("Using %s database for: %s", db_session.c2c_ro_bind.c2c_name, method_path)
                 session.bind = db_session.c2c_ro_bind

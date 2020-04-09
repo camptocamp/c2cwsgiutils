@@ -4,6 +4,7 @@ import pyramid_tm
 
 from c2cwsgiutils import (
     broadcast,
+    db_maintenance_view,
     debug,
     errors,
     index,
@@ -34,6 +35,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
     stats_pyramid.init(config)
     request_tracking.init(config)
     redis_stats.init(config)
+    db_maintenance_view.install_subscriber(config)
     logging_view.install_subscriber(config)
     sql_profiler.init(config)
     version.init(config)

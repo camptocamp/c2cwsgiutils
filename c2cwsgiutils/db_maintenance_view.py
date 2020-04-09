@@ -1,5 +1,5 @@
 import logging
-from typing import Mapping, Any
+from typing import Mapping, Any, Optional
 
 import pyramid.request
 
@@ -35,15 +35,15 @@ def _db_maintenance(request: pyramid.request.Request) -> Mapping[str, Any]:
         _store(request.registry.settings, readonly)
         return {'status': 200, 'readonly': readonly}
     else:
-        cur = _get_redis_value(request.registry.settings)
-        if cur is not None:
-            cur = cur == 'true'
-        return {'status': 200, 'current_readonly': cur}
+        readonly = _get_redis_value(request.registry.settings)
+        if readonly is not None:
+            readonly = readonly == 'true'
+        return {'status': 200, 'current_readonly': readonly}
 
 
 @broadcast.decorator(expect_answers=True)
 def _set_readonly(value: bool) -> bool:
-    db.readonly = value
+    db.force_readonly = value
     return True
 
 
@@ -60,7 +60,7 @@ def _restore(config: pyramid.config.Configurator) -> None:
         LOG.error("Cannot restore readonly DB status.", exc_info=True)
 
 
-def _store(settings: Mapping[str, Any], readonly) -> None:
+def _store(settings: Mapping[str, Any], readonly: bool) -> None:
     try:
         import redis
         redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
@@ -71,10 +71,10 @@ def _store(settings: Mapping[str, Any], readonly) -> None:
         pass
 
 
-def _get_redis_value(settings: Mapping[str, Any]) -> bool:
+def _get_redis_value(settings: Mapping[str, Any]) -> Optional[str]:
     import redis
     redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
     if redis_url is None:
-        return
+        return None
     con = redis.Redis.from_url(redis_url, socket_timeout=3, decode_responses=True)
-    return con.get(REDIS_PREFIX + 'force_readonly')
+    return str(con.get(REDIS_PREFIX + 'force_readonly'))

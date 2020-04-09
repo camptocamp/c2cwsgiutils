@@ -1,4 +1,5 @@
 -r requirements.txt
+-r requirements-dev.txt
 -r docker-requirements.txt
 -r docker-requirements-full.txt
 -r publish-requirements.txt

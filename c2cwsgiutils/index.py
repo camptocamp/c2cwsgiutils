@@ -139,6 +139,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response.text += _versions(request)
     if auth:
         response.text += _debug(request)
+        response.text += _db_maintenance(request)
         response.text += _logging(request)
         response.text += _profiler(request)
 
@@ -205,13 +206,28 @@ def _profiler(request: pyramid.request.Request) -> str:
         return ""
 
 
+def _db_maintenance(request: pyramid.request.Request) -> str:
+    db_maintenance_url = _url(request, 'c2c_db_maintenance')
+    if db_maintenance_url:
+        return section(
+            "DB maintenance",
+            paragraph(link(db_maintenance_url, 'Get if readonly')),
+            form(db_maintenance_url, button('Set readonly=true'),
+                 input_('readonly', value="true", type_='hidden')),
+            form(db_maintenance_url, button('Set readonly=false'),
+                 input_('readonly', value="false", type_='hidden')),
+        )
+    else:
+        return ""
+
+
 def _logging(request: pyramid.request.Request) -> str:
     logging_url = _url(request, 'c2c_logging_level')
     if logging_url:
         return section(
             "Logging",
             form(logging_url, button('Get'), input_('name', value="c2cwsgiutils")),
-            form(logging_url, button('Set'), input_('name', value="c2cwsgiutils"),
+            form(logging_url, button('Set'), input_('readonly', value="c2cwsgiutils"),
                  input_('level', value='INFO')),
             paragraph(link(logging_url, 'List overrides'))
         )

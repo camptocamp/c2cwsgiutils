@@ -227,7 +227,7 @@ def _logging(request: pyramid.request.Request) -> str:
         return section(
             "Logging",
             form(logging_url, button('Get'), input_('name', value="c2cwsgiutils")),
-            form(logging_url, button('Set'), input_('readonly', value="c2cwsgiutils"),
+            form(logging_url, button('Set'), input_('name', value="c2cwsgiutils"),
                  input_('level', value='INFO')),
             paragraph(link(logging_url, 'List overrides'))
         )

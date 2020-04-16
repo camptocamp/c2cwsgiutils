@@ -77,4 +77,5 @@ def _get_redis_value(settings: Mapping[str, Any]) -> Optional[str]:
     if redis_url is None:
         return None
     con = redis.Redis.from_url(redis_url, socket_timeout=3, decode_responses=True)
-    return str(con.get(REDIS_PREFIX + 'force_readonly'))
+    value = con.get(REDIS_PREFIX + 'force_readonly')
+    return str(value) if value else None

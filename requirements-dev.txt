@@ -1,7 +1,7 @@
 codacy-coverage==1.3.11
 coverage==5.1
 flake8==3.7.9
-junit2html==022
+junit2html==023
 mypy==0.770
 pytest==5.4.1
 pytest-cov==2.8.1

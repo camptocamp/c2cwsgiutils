@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS lite
+FROM ubuntu:20.04 AS lite
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt docker-requirements.txt fake_python3 /opt/c2cwsgiutils/

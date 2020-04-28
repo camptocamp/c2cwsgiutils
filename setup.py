@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-VERSION = '3.11.0'
+VERSION = '3.12.0'
 HERE = os.path.abspath(os.path.dirname(__file__))
 INSTALL_REQUIRES = [
     pkg.split('==')[0]

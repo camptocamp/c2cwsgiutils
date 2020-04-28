@@ -1,5 +1,5 @@
 import logging
-from typing import Mapping, Any, Optional
+from typing import Mapping, Any, Optional, cast
 
 import pyramid.request
 
@@ -26,12 +26,12 @@ def install_subscriber(config: pyramid.config.Configurator) -> None:
 
 def _db_maintenance(request: pyramid.request.Request) -> Mapping[str, Any]:
     auth.auth_view(request)
-    readonly_param = request.params.get('readonly')
+    readonly_param = cast(str, request.params.get('readonly'))
     if readonly_param is not None:
         readonly = readonly_param.lower() == 'true'
 
         LOG.critical("Readonly DB status changed from %s to %s", db.force_readonly, readonly)
-        _set_readonly(value=readonly_param)
+        _set_readonly(value=readonly)
         _store(request.registry.settings, readonly)
         return {'status': 200, 'readonly': readonly}
     else:

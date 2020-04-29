@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 # Script used to install GDAL in child images.
 
-DEV_PACKAGES="python3.7-dev libgdal-dev libcpl-dev build-essential"
+DEV_PACKAGES="python3.8-dev libgdal-dev libcpl-dev build-essential"
 
 apt update
 

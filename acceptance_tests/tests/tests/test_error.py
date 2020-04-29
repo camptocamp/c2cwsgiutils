@@ -19,7 +19,10 @@ def test_commit_time_db(app_connection):
 def test_db_data_error(app_connection):
     error = app_connection.get_json("error", params={"db": "data"}, expected_status=400)
     assert error["status"] == 400
-    assert "invalid input syntax for integer" in error["message"]
+    assert (
+        "invalid input syntax for integer" in error["message"]
+        or "invalid input syntax for type integer" in error["message"]
+    )
 
 
 def test_401(app_connection):

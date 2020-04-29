@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS lite
+FROM ubuntu:20.04 AS base
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/
@@ -11,6 +11,8 @@ RUN apt update && \
         libpq5 \
         python3.8 \
         curl \
+        postgresql-client-12 \
+        net-tools iputils-ping screen \
         gnupg \
         $DEV_PACKAGES && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
@@ -23,11 +25,6 @@ RUN apt update && \
     pip3 install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
     strip /usr/local/lib/python3.8/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
-
-COPY . /opt/c2cwsgiutils/
-RUN pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
-    python3 -m compileall -q && \
-    python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q
 
 ENV TERM=linux \
     LANG=C.UTF-8 \
@@ -43,34 +40,25 @@ ENV TERM=linux \
 CMD ["c2cwsgiutils_run"]
 
 
-FROM lite AS standard
+FROM base AS lite
+COPY . /opt/c2cwsgiutils/
+RUN pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
+    python3 -m compileall -q && \
+    python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q
 
-RUN python3 -m pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements-dev.txt && \
-    (cd /opt/c2cwsgiutils/ && flake8) && \
+
+FROM lite AS standardbase
+COPY requirements-dev.txt /opt/c2cwsgiutils/
+RUN python3 -m pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements-dev.txt
+
+
+FROM standardbase AS standard
+COPY . /opt/c2cwsgiutils/
+RUN python3 -m compileall -q && \
+    python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q
+RUN (cd /opt/c2cwsgiutils/ && flake8) && \
     echo "from pickle import *" > /usr/lib/python3.8/cPickle.py && \
-    (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests) && \
-    python3 -m compileall /usr/local/lib/python3.8 -q
+    (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests)
 
 
 FROM standard AS full
-
-RUN . /etc/os-release && \
-    apt update && \
-    cd /opt/c2cwsgiutils && \
-    DEV_PACKAGES="python3.8-dev graphviz-dev build-essential" && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends curl ca-certificates && \
-    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
-        graphviz postgresql-client-12 git net-tools iputils-ping screen \
-        vim vim-editorconfig vim-addon-manager tree \
-        ${DEV_PACKAGES} && \
-    vim-addon-manager --system-wide install editorconfig && \
-    echo 'set hlsearch  " Highlight search' > /etc/vim/vimrc.local && \
-    echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
-    echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local && \
-    pip3 install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
-    apt remove --purge --autoremove --yes ${DEV_PACKAGES} binutils && \
-    apt-get clean && \
-    rm --force --recursive /var/lib/apt/lists/*

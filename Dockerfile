@@ -1,19 +1,15 @@
 FROM ubuntu:20.04 AS lite
 LABEL maintainer "info@camptocamp.org"
 
-COPY requirements.txt docker-requirements.txt fake_python3 /opt/c2cwsgiutils/
+COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/
 RUN apt update && \
-    DEV_PACKAGES="libpq-dev build-essential python3.8-dev equivs" && \
+    DEV_PACKAGES="libpq-dev build-essential python3.8-dev" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libpq5 \
         python3.8 \
         curl \
         gnupg \
         $DEV_PACKAGES && \
-    equivs-build /opt/c2cwsgiutils/fake_python3 && \
-    ln -s pip3 /usr/bin/pip && \
-    ln -s python3.8 /usr/bin/python && \
-    ln -sf python3.8 /usr/bin/python3 && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         python3-pip \
         python3-setuptools \
@@ -24,7 +20,6 @@ RUN apt update && \
     pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
     strip /usr/local/lib/python3.8/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils && \
-    rm /opt/c2cwsgiutils/fake_python3
 
 COPY . /opt/c2cwsgiutils/
 RUN pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \

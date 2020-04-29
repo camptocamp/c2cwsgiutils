@@ -18,7 +18,7 @@ then
     exit 0
 fi
 
-pip install -r publish-requirements.txt
+pip3 install -r publish-requirements.txt
 
 python3 ./setup.py bdist_wheel
 

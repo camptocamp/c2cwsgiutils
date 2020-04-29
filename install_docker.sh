@@ -7,7 +7,7 @@ DEBIAN_VERSION=$(grep VERSION= /etc/os-release | sed 's/.*(\(.*\)).\+/\1/')
 apt-get update
 apt-get install --yes --no-install-recommends apt-transport-https
 
-if [[ "${DEBIAN_VERSION}" == "Bionic Beaver" || "${DEBIAN_VERSION}" == "Focal Fossa" ]]
+if [[ "${DEBIAN_VERSION}" == "Focal Fossa" ]]
 then
     DEBIAN_VERSION=buster
 fi

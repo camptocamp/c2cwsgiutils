@@ -17,9 +17,9 @@ RUN apt update && \
         python3-pkgconfig && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
-    pip install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
+    pip3 install --no-cache-dir -r /opt/c2cwsgiutils/requirements.txt -r /opt/c2cwsgiutils/docker-requirements.txt && \
     strip /usr/local/lib/python3.8/dist-packages/*/*.so && \
-    apt remove --purge --autoremove --yes $DEV_PACKAGES binutils && \
+    apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
 COPY . /opt/c2cwsgiutils/
 RUN pip3 install --disable-pip-version-check --no-cache-dir -e /opt/c2cwsgiutils && \
@@ -67,7 +67,7 @@ RUN . /etc/os-release && \
     echo 'set hlsearch  " Highlight search' > /etc/vim/vimrc.local && \
     echo 'set wildmode=list:longest  " Completion menu' >> /etc/vim/vimrc.local && \
     echo 'set term=xterm-256color  " Make home and end working' >> /etc/vim/vimrc.local && \
-    pip install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
+    pip3 install --disable-pip-version-check --no-cache-dir -r docker-requirements-full.txt && \
     apt remove --purge --autoremove --yes ${DEV_PACKAGES} binutils && \
     apt-get clean && \
     rm --force --recursive /var/lib/apt/lists/*

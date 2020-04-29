@@ -17,11 +17,17 @@ update_configs:
   - package_manager: python
     directory: /
     update_schedule: live
+    target_branch: release_3
+    allowed_updates:
+      - match:
+          update_type: security
+  - package_manager: python
+    directory: /
+    update_schedule: live
     target_branch: release_4
     allowed_updates:
       - match:
           update_type: security
-
   - package_manager: docker
     directory: /
     update_schedule: weekly

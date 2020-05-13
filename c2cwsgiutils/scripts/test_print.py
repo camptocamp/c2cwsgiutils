@@ -9,7 +9,7 @@ import pprint
 import c2cwsgiutils.setup_process
 from c2cwsgiutils.acceptance.print import PrintConnection
 
-LOG = logging.getLogger("c2cwsgiutils_test_print")
+LOG = logging.getLogger(__name__)
 
 
 def _parse_args():

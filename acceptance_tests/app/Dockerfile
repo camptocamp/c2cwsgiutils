@@ -16,7 +16,7 @@ ARG GIT_HASH
 RUN pip3 install --no-cache-dir -e . && \
     ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models_hello.dot && \
-    c2cwsgiutils_genversion.py $GIT_HASH && \
+    c2cwsgiutils-genversion $GIT_HASH && \
     flake8 c2cwsgiutils_app app_alembic && \
     python3 -m compileall -q .
 

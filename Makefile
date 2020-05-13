@@ -44,7 +44,7 @@ acceptance: build_acceptance build_test_app
 	docker rm c2cwsgiutils_acceptance_$$PPID; \
 	status=$$status$$?; \
 	#generate the HTML report for code coverage \
-	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$$PPID $(DOCKER_BASE)_test_app:latest c2cwsgiutils_coverage_report.py c2cwsgiutils c2cwsgiutils_app; \
+	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$$PPID $(DOCKER_BASE)_test_app:latest c2cwsgiutils-coverage-report c2cwsgiutils c2cwsgiutils_app; \
 	status=$$status$$?; \
 	#copy the HTML locally \
 	docker cp c2cwsgiutils_acceptance_reports_$$PPID:/tmp/coverage/api reports/coverage; \

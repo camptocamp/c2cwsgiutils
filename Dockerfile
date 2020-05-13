@@ -37,7 +37,7 @@ ENV TERM=linux \
     DEVELOPMENT=0 \
     PKG_CONFIG_ALLOW_SYSTEM_LIBS=OHYESPLEASE
 
-CMD ["c2cwsgiutils_run"]
+CMD ["c2cwsgiutils-run"]
 
 
 FROM base AS lite

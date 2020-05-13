@@ -1,7 +1,7 @@
 """
-Module used by c2cwsgiutils_run.sh to provide a WSGI application when starting gunicorn
+Module used by c2cwsgiutils-run to provide a WSGI application when starting gunicorn
 """
-from typing import Callable, Any
+from typing import Any, Callable
 
 from c2cwsgiutils import coverage_setup  # pragma: no cover
 

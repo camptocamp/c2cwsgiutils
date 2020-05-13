@@ -43,7 +43,13 @@ setup(
     install_requires=INSTALL_REQUIRES,
     extras_require={"profiler": ["linesman"], "broadcast": ["redis"]},
     entry_points={
-        "console_scripts": [],
+        "console_scripts": [
+            "c2cwsgiutils-genversion = c2cwsgiutils.scripts.genversion:main",
+            "c2cwsgiutils-coverage-report = c2cwsgiutils.scripts.coverage_report:main",
+            "c2cwsgiutils-stats-db = c2cwsgiutils.scripts.stats_db:main",
+            "c2cwsgiutils-test-print = c2cwsgiutils.scripts.test_print:main",
+            "c2cwsgiutils-check-es = c2cwsgiutils.scripts.check_es:main",
+        ],
         "plaster.loader_factory": [
             "c2c=c2cwsgiutils.loader:Loader",
             "c2c+ini=c2cwsgiutils.loader:Loader",
@@ -55,12 +61,5 @@ setup(
             "c2c+egg=c2cwsgiutils.loader:Loader",
         ],
     },
-    scripts=[
-        "c2cwsgiutils_run",
-        "c2cwsgiutils_genversion.py",
-        "c2cwsgiutils_coverage_report.py",
-        "c2cwsgiutils_stats_db.py",
-        "c2cwsgiutils_test_print.py",
-        "c2cwsgiutils_check_es.py",
-    ],
+    scripts=["c2cwsgiutils-run"],
 )

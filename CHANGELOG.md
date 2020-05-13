@@ -8,3 +8,5 @@ Release 4
   * c2cwsgiutils_stats_db.py => c2cwsgiutils-stats-db
   * c2cwsgiutils_test_print.py => c2cwsgiutils-test-print
   * c2cwsgiutils_check_es.py => c2cwsgiutils-check-es
+
+* `install_docker.sh` is removed

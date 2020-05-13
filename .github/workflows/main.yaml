@@ -35,9 +35,6 @@ jobs:
         env:
           CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
 
-      - name: mypy
-        run: make mypy
-
       - name: install GDAL
         run: docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh
 

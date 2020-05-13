@@ -26,16 +26,16 @@ DOCKER_TTY := $(shell [ -t 0 ] && echo -ti)
 all: prospector mypy acceptance
 
 .PHONY: build
-build: build_acceptance build_test_app
+build: build_acceptance build_test_app lint
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app
 	rm -rf reports/coverage/api reports/acceptance.xml
 	mkdir -p reports/coverage/api
 	#get the UT reports
-	docker run --rm $(DOCKER_BASE):latest cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
+	docker run --rm $(DOCKER_BASE) cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
 	#run the tests
-	docker run $(DOCKER_TTY) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance:latest \
+	docker run $(DOCKER_TTY) -v /var/run/docker.sock:/var/run/docker.sock --name c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance \
 	    py.test -vv --color=yes --junitxml /reports/acceptance.xml --html /reports/acceptance.html --self-contained-html $(PYTEST_OPTS) tests; \
 	status=$$?; \
 	#copy the reports locally \
@@ -44,7 +44,7 @@ acceptance: build_acceptance build_test_app
 	docker rm c2cwsgiutils_acceptance_$$PPID; \
 	status=$$status$$?; \
 	#generate the HTML report for code coverage \
-	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$$PPID $(DOCKER_BASE)_test_app:latest c2cwsgiutils-coverage-report c2cwsgiutils c2cwsgiutils_app; \
+	docker run -v $(THIS_DIR)/reports/coverage/api:/reports/coverage/api:ro --name c2cwsgiutils_acceptance_reports_$$PPID $(DOCKER_BASE)_test_app c2cwsgiutils-coverage-report c2cwsgiutils c2cwsgiutils_app; \
 	status=$$status$$?; \
 	#copy the HTML locally \
 	docker cp c2cwsgiutils_acceptance_reports_$$PPID:/tmp/coverage/api reports/coverage; \
@@ -57,32 +57,23 @@ acceptance: build_acceptance build_test_app
 	docker rm c2cwsgiutils_acceptance_reports_$$PPID; \
 	exit $$status$$?
 
-.PHONY: send-coverage
-send_coverage: build_docker_full
-	docker run --rm -v $(THIS_DIR):$(THIS_DIR) -e CODACY_PROJECT_TOKEN=$(CODACY_PROJECT_TOKEN) $(DOCKER_BASE):latest-full bash -c "cd $(THIS_DIR) && python-codacy-coverage -r reports/coverage/api/coverage.xml" || true
-
-
-.PHONY: build_docker_lite
-build_docker_light:
-	docker build --tag $(DOCKER_BASE):latest-lite --target=lite .
-
 .PHONY: build_docker
-build_docker: build_docker_light
-	docker build --tag $(DOCKER_BASE):latest  --target=standard .
+build_docker:
+	docker build --tag $(DOCKER_BASE) --target=standard .
 
-.PHONY: build_docker_full
-build_docker_full: build_docker
-	docker build --tag $(DOCKER_BASE):latest-full --target=full .
+.PHONY: lint
+lint:
+	docker build .
 
 .PHONY: build_acceptance
 build_acceptance: build_docker
-	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance:latest acceptance_tests/tests
+	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" -t $(DOCKER_BASE)_acceptance acceptance_tests/tests
 
 .PHONY: build_test_app
-build_test_app: build_docker_full
-	docker build -t $(DOCKER_BASE)_test_app:latest --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
+build_test_app: build_docker
+	docker build -t $(DOCKER_BASE)_test_app --build-arg "GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
-.venv/timestamp: requirements.txt docker-requirements.txt docker-requirements-full.txt requirements-local.txt publish-requirements.txt
+.venv/timestamp: requirements-local.txt publish-requirements.txt
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
 	.venv/bin/pip3 install --upgrade -r requirements-local.txt
 	touch $@
@@ -96,18 +87,9 @@ pull:
 run: build_test_app
 	TEST_IP=172.17.0.1 docker-compose -f acceptance_tests/tests/docker-compose.yml up
 
-.PHONY: mypy
-mypy: build_docker
-	docker run --rm $(DOCKER_BASE):latest mypy --ignore-missing-imports --strict-optional --strict /opt/c2cwsgiutils/c2cwsgiutils
-
 .PHONY: mypy_local
 mypy_local: .venv/timestamp
 	.venv/bin/mypy --ignore-missing-imports --strict-optional --strict c2cwsgiutils
-
-.PHONY: prospector
-prospector: .venv/timestamp
-	#must run outside of docker (flake8 and prospector cannot be installed together)
-	.venv/bin/prospector
 
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache

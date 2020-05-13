@@ -11,7 +11,12 @@ VERSION_RE = re.compile(r"^(.*)==(.*)$")
 def _get_packages_version():
     result = {}
     with open(os.devnull, "w") as devnull:
-        for comp in subprocess.check_output(["pip3", "freeze"], stderr=devnull).decode().strip().split("\n"):
+        for comp in (
+            subprocess.check_output(["python3", "-m" "pip", "freeze"], stderr=devnull)
+            .decode()
+            .strip()
+            .split("\n")
+        ):
             matcher = VERSION_RE.match(comp)
             if matcher:
                 name, version = matcher.groups()

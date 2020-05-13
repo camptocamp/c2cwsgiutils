@@ -1,4 +1,4 @@
-FROM camptocamp/c2cwsgiutils:latest-full
+FROM camptocamp/c2cwsgiutils
 LABEL maintainer "info@camptocamp.org"
 
 WORKDIR /app
@@ -13,11 +13,11 @@ COPY . /app
 
 ARG GIT_HASH
 
-RUN pip3 install --no-cache-dir -e . && \
-    ./models_graph.py > models.dot && \
-    ./models_graph.py Hello > models_hello.dot && \
+RUN python3 -m pip install --no-cache-dir --editable=. prospector
+RUN ./models_graph.py > models.dot && \
+    ./models_graph.py Hello > models-hello.dot && \
     c2cwsgiutils-genversion $GIT_HASH && \
-    flake8 c2cwsgiutils_app app_alembic && \
+    prospector && \
     python3 -m compileall -q .
 
 # www-data

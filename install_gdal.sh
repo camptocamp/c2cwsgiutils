@@ -11,7 +11,7 @@ DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
 GDAL_VERSION=$(dpkg -s gdal-bin | sed -ne 's/^Version: \([^.]*\.[^.]*\.[^.+]*\).*/\1/p')
 
 CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal \
-    pip3 install --disable-pip-version-check --no-cache-dir GDAL==${GDAL_VERSION}
+    python3 -m pip install --disable-pip-version-check --no-cache-dir GDAL==${GDAL_VERSION}
 
 apt remove --purge --autoremove --yes ${DEV_PACKAGES} binutils
 apt-get clean

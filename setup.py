@@ -2,11 +2,10 @@ import os
 from setuptools import setup, find_packages
 
 
+import pipfile
+
 VERSION = "3.12.0"
 HERE = os.path.abspath(os.path.dirname(__file__))
-INSTALL_REQUIRES = [
-    pkg.split("==")[0] for pkg in open(os.path.join(HERE, "requirements.txt")).read().splitlines()
-]
 
 
 def long_description():
@@ -40,7 +39,7 @@ setup(
     packages=find_packages(exclude=["ez_setup", "acceptance_tests", "tests", "docs"]),
     include_package_data=True,
     zip_safe=False,
-    install_requires=INSTALL_REQUIRES,
+    install_requires=["".join(e) for e in pipfile.load().data["default"].items()],
     extras_require={"profiler": ["linesman"], "broadcast": ["redis"]},
     entry_points={
         "console_scripts": [

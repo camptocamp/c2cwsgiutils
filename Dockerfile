@@ -3,9 +3,6 @@ LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt docker-requirements.txt /opt/c2cwsgiutils/
 RUN apt update && \
-    ln -s pip3 /usr/bin/pip && \
-    ln -s python3.8 /usr/bin/python && \
-    ln -sf python3.8 /usr/bin/python3 && \
     DEV_PACKAGES="libpq-dev build-essential python3.8-dev" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libpq5 \

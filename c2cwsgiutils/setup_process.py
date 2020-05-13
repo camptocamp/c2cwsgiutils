@@ -34,5 +34,12 @@ def _second() -> None:
     debug.init_daemon()
 
 
-_first()
-_second()
+_init = False
+
+
+def init() -> None:
+    global _init
+    if not _init:
+        _first()
+        _second()
+        _init = True

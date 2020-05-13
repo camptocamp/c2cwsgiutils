@@ -1,7 +1,9 @@
-import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import
+import os
+
 from alembic import context
 from sqlalchemy import engine_from_config, pool
-import os
+
+import c2cwsgiutils.setup_process
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -62,6 +64,7 @@ def run_migrations_online():
             context.run_migrations()
 
 
+c2cwsgiutils.setup_process.init()
 if context.is_offline_mode():
     run_migrations_offline()
 else:

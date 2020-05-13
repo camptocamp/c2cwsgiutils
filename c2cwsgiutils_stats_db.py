@@ -2,17 +2,17 @@
 """
 Emits statsd gauges for every tables of a database.
 """
-import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import,wrong-import-order
-
 import argparse
 import logging
+
 import sqlalchemy
-import sqlalchemy.orm
 import sqlalchemy.exc
+import sqlalchemy.orm
 import transaction
 from zope.sqlalchemy import register
 
-from c2cwsgiutils import stats, sentry
+import c2cwsgiutils.setup_process
+from c2cwsgiutils import sentry, stats
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 
 LOG = logging.getLogger("stats_db")
@@ -162,6 +162,8 @@ def do_extra(session, extra, reporter):
 
 
 def main():
+    c2cwsgiutils.setup_process.init()
+
     args = _parse_args()
     reporter = Reporter(args)
     try:

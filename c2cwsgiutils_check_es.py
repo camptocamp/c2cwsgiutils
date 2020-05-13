@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import,wrong-import-order
-
 import datetime
 import logging
 import os
 import time
-from typing import Optional
 import uuid
+from typing import Optional
 
-from dateutil import parser as dp
 import requests
+from dateutil import parser as dp
 
+import c2cwsgiutils.setup_process
 from c2cwsgiutils import stats
 
 
@@ -77,6 +76,8 @@ def _check_roundtrip() -> None:
 
 
 def main() -> None:
+    c2cwsgiutils.setup_process.init()
+
     with stats.outcome_timer_context(["get_max_timestamp"]):
         max_ts = _max_timestamp()
     now = datetime.datetime.now(max_ts.tzinfo)
@@ -88,4 +89,5 @@ def main() -> None:
         _check_roundtrip()
 
 
-main()
+if __name__ == "__main__":
+    main()

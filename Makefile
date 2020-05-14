@@ -1,6 +1,6 @@
 DOCKER_BASE = camptocamp/c2cwsgiutils
 
-#Get the docker version (must use the same version for acceptance tests)
+# Get the docker version (must use the same version for acceptance tests)
 DOCKER_VERSION_ACTUAL := $(shell docker version --format '{{.Server.Version}}')
 ifeq ($(DOCKER_VERSION_ACTUAL),)
 DOCKER_VERSION := 1.12.0
@@ -8,13 +8,6 @@ else
 DOCKER_VERSION := $(DOCKER_VERSION_ACTUAL)
 endif
 
-#Get the docker-compose version (must use the same version for acceptance tests)
-DOCKER_COMPOSE_VERSION_ACTUAL := $(shell docker-compose version --short)
-ifeq ($(DOCKER_COMPOSE_VERSION_ACTUAL),)
-DOCKER_COMPOSE_VERSION := 1.10.0
-else
-DOCKER_COMPOSE_VERSION := $(DOCKER_COMPOSE_VERSION_ACTUAL)
-endif
 
 GIT_HASH := $(shell git rev-parse HEAD)
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
@@ -63,7 +56,7 @@ build_docker_test:
 
 .PHONY: build_acceptance
 build_acceptance: build_docker_test
-	docker build --build-arg DOCKER_VERSION="$(DOCKER_VERSION)" --build-arg=DOCKER_COMPOSE_VERSION="$(DOCKER_COMPOSE_VERSION)" --tag=$(DOCKER_BASE)_acceptance acceptance_tests/tests
+	docker build --build-arg=DOCKER_VERSION="$(DOCKER_VERSION)" --tag=$(DOCKER_BASE)_acceptance acceptance_tests/tests
 
 .PHONY: build_test_app
 build_test_app: build_docker

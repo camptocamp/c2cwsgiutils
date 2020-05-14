@@ -3,17 +3,16 @@ import queue
 import threading
 import time
 import traceback
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError, InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, OperationalError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy_utils import create_database, database_exists
 
-from c2cwsgiutils.sqlalchemylogger._models import create_log_class, Base
 from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
-
+from c2cwsgiutils.sqlalchemylogger._models import Base, create_log_class
 
 LOG = logging.getLogger(__name__)
 
@@ -33,8 +32,9 @@ class SQLAlchemyHandler(logging.Handler):
         # initialize DB session
         self.engine = create_engine(sqlalchemy_url["url"])
         self.Log = create_log_class(
-            tablename=sqlalchemy_url.get("tablename", "logs"), tableargs=sqlalchemy_url.get("tableargs", None)
-        )  # type: ignore
+            tablename=sqlalchemy_url.get("tablename", "logs"),
+            tableargs=sqlalchemy_url.get("tableargs", None),  # type: ignore
+        )
         Base.metadata.bind = self.engine
         DBSession = sessionmaker(bind=self.engine)  # noqa
         self.session = DBSession()

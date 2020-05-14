@@ -50,7 +50,6 @@ RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps 
         --editable=/opt/c2cwsgiutils && \
     python3 -m compileall -q && \
     python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q && \
-    python3 -m pip freeze && \
     python3 -c 'import c2cwsgiutils'
 
 

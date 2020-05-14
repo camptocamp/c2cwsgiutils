@@ -1,4 +1,5 @@
 import logging
+
 import psycopg2
 import pytest
 
@@ -19,7 +20,7 @@ def composition(request):
     result = Composition(
         request,
         PROJECT_NAME,
-        "/acceptance_tests/docker-compose.yml",
+        "/acceptance_tests/docker-compose.yaml",
         coverage_paths=[PROJECT_NAME + "_app_1:/tmp/coverage"],
     )
     utils.wait_url(BASE_URL + "ping")

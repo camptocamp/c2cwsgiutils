@@ -29,14 +29,8 @@ jobs:
       - name: Acceptance
         run: make acceptance
 
-      - name: Send coverage
-        if: always()
-        run: make send_coverage
-        env:
-          CODACY_PROJECT_TOKEN: ${{secrets.CODACY_PROJECT_TOKEN}}
-
       - name: install GDAL
-        run: docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh
+        run: docker run --rm camptocamp/c2cwsgiutils /opt/c2cwsgiutils/install_gdal.sh
 
       - name: Release
         run: |

@@ -1,4 +1,4 @@
-FROM camptocamp/c2cwsgiutils
+FROM camptocamp/c2cwsgiutils:tests
 LABEL maintainer "info@camptocamp.org"
 
 ARG DOCKER_VERSION=1.12.0

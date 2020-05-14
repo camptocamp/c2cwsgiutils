@@ -16,10 +16,14 @@ timeout_service = services.create("timeout", "timeout/{where:sql}")
 leaked_objects = []
 
 
+class LeakedObject:
+    pass
+
+
 @ping_service.get()
 def ping(_):
     global leaked_objects
-    leaked_objects.append(object())  # a memory leak to test debug/memory_diff
+    leaked_objects.append(LeakedObject())  # A memory leak to test debug/memory_diff
     logging.getLogger(__name__ + ".ping").info("Ping!")
     return {"pong": True}
 

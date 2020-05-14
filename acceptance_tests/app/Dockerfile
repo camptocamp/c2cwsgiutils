@@ -13,7 +13,7 @@ COPY . /app
 
 ARG GIT_HASH
 
-RUN python3 -m pip install --no-cache-dir --editable=. prospector
+RUN python3 -m pip install --no-cache-dir --editable=. prospector coverage
 RUN ./models_graph.py > models.dot && \
     ./models_graph.py Hello > models-hello.dot && \
     c2cwsgiutils-genversion $GIT_HASH && \

@@ -3,28 +3,24 @@ import os
 import subprocess
 import sys
 import time
-from typing import Callable, Any, Optional, List, Mapping
+from typing import Mapping
 
 import netifaces
-import _pytest.fixtures
 
 from c2cwsgiutils.acceptance import utils
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(
-    level=logging.DEBUG,
-    format="TEST       | %(asctime)-15s %(levelname)5s %(name)s %(message)s",
-    stream=sys.stdout,
+    level=logging.DEBUG, format="TEST: %(asctime)-15s %(levelname)5s %(name)s %(message)s", stream=sys.stdout,
 )
 logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.WARN)
 
 
-def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: float = 10) -> Any:
+def _try(what, fail=True, times=5, delay=10) -> None:
     for i in range(times):
-        # noinspection PyBroadException
         try:
             return what()
-        except Exception:  # pylint: disable=broad-except
+        except:  # noqa: bare-except
             LOG.warning("Exception:", exc_info=True)
             if i + 1 == times and fail:
                 raise
@@ -32,172 +28,59 @@ def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: floa
 
 
 class Composition:
-    def __init__(
-        self,
-        request: _pytest.fixtures.FixtureRequest,
-        project_name: str,
-        composition: str,
-        coverage_paths: Optional[List[str]] = None,
-    ) -> None:
-        self.project_name = project_name
-        self.composition_file = composition
+    def __init__(self, request, project_name, composition, coverage_paths=None) -> None:
+        self.docker_compose = ["docker-compose", "--file=" + composition, "--project-name=" + project_name]
         self.coverage_paths = coverage_paths
         env = Composition._get_env()
         if os.environ.get("docker_start", "1") == "1":
-            _try(
-                lambda: subprocess.check_call(
-                    ["docker-compose", "--file", composition, "--project-name", project_name, "stop"],
-                    env=env,
-                    stderr=subprocess.STDOUT,
-                ),
-                fail=False,
-            )
+            self.dc_try(["stop"], fail=False)
+            self.dc_try(["rm", "-f", "--all"], fail=False)
+            self.dc_try(["build"], fail=False)
+            self.dc_try(["up", "-d"], fail=False)
 
-            _try(
-                lambda: subprocess.check_call(
-                    [
-                        "docker-compose",
-                        "--file",
-                        composition,
-                        "--project-name",
-                        project_name,
-                        "rm",
-                        "-f",
-                        "-v",
-                    ],
-                    env=env,
-                    stderr=subprocess.STDOUT,
-                ),
-                fail=False,
-            )
-
-            _try(
-                lambda: subprocess.check_call(
-                    ["docker-compose", "--file", composition, "--project-name", project_name, "build"],
-                    env=env,
-                    stderr=subprocess.STDOUT,
-                ),
-                fail=False,
-            )
-
-            _try(
-                lambda: subprocess.check_call(
-                    ["docker-compose", "--file", composition, "--project-name", project_name, "up", "-d"],
-                    env=env,
-                    stderr=subprocess.STDOUT,
-                )
-            )
-
-        # setup something that redirects the docker container logs to the test output
+        # Setup something that redirects the docker container logs to the test output
         log_watcher = subprocess.Popen(
-            [
-                "docker-compose",
-                "--file",
-                composition,
-                "--project-name",
-                project_name,
-                "logs",
-                "--follow",
-                "--no-color",
-            ],
-            env=env,
-            stderr=subprocess.STDOUT,
+            self.docker_compose + ["logs", "--follow", "--no-color"], env=env, stderr=subprocess.STDOUT,
         )
         request.addfinalizer(log_watcher.kill)
         if os.environ.get("docker_stop", "1") == "1":
             request.addfinalizer(self.stop_all)
 
-    def stop_all(self) -> None:
-        env = Composition._get_env()
-        _try(
-            lambda: subprocess.check_call(
-                [
-                    "docker-compose",
-                    "--file",
-                    self.composition_file,
-                    "--project-name",
-                    self.project_name,
-                    "stop",
-                ],
-                env=env,
-                stderr=subprocess.STDOUT,
-            )
+    def dc(self, args, **kwargs) -> None:
+        subprocess.check_call(
+            self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
         )
+
+    def dc_try(self, args, **kwargs) -> None:
+        _try(
+            lambda: self.dc(args), **kwargs,
+        )
+
+    def stop_all(self) -> None:
+        self.dc_try(["stop"])
         if self.coverage_paths:
             target_dir = "/reports/"
             os.makedirs(target_dir, exist_ok=True)
             for path in self.coverage_paths:
-                subprocess.check_call(["docker", "cp", path, target_dir], stderr=subprocess.STDOUT)
+                try:
+                    subprocess.check_call(["docker", "cp", path, target_dir], stderr=subprocess.STDOUT)
+                except Exception:
+                    self.dc(["ps"])
+                    raise
 
-        _try(
-            lambda: subprocess.check_call(
-                [
-                    "docker-compose",
-                    "--file",
-                    self.composition_file,
-                    "--project-name",
-                    self.project_name,
-                    "rm",
-                    "-f",
-                    "-v",
-                ],
-                env=env,
-                stderr=subprocess.STDOUT,
-            ),
-            fail=False,
+    def stop(self, container) -> None:
+        self.dc_try(["stop", container])
+
+    def restart(self, container) -> None:
+        self.dc_try(["restart", container])
+
+    def run(self, container, *command, **kwargs) -> None:
+        self.dc(
+            ["run", "--rm", container] + list(command), **kwargs,
         )
 
-    def stop(self, container: str) -> None:
-        _try(
-            lambda: subprocess.check_call(
-                ["docker", "--log-level=warn", "stop", "%s_%s_1" % (self.project_name, container)],
-                stderr=subprocess.STDOUT,
-            )
-        )
-
-    def restart(self, container: str) -> None:
-        _try(
-            lambda: subprocess.check_call(
-                ["docker", "--log-level=warn", "restart", "%s_%s_1" % (self.project_name, container)],
-                stderr=subprocess.STDOUT,
-            )
-        )
-
-    def run(self, container: str, *command: str, **kwargs: Any) -> None:
-        subprocess.check_call(
-            [
-                "docker-compose",
-                "--file",
-                self.composition_file,
-                "--project-name",
-                self.project_name,
-                "run",
-                "--rm",
-                container,
-            ]
-            + list(command),
-            env=Composition._get_env(),
-            stderr=subprocess.STDOUT,
-            **kwargs,
-        )
-
-    def exec(self, container: str, *command: str, **kwargs: Any) -> None:
-        subprocess.check_call(
-            [
-                "docker-compose",
-                "--file",
-                self.composition_file,
-                "--project-name",
-                self.project_name,
-                "exec",
-                "-T",
-                container,
-            ]
-            + list(command),
-            env=Composition._get_env(),
-            stderr=subprocess.STDOUT,
-            **kwargs,
-        )
+    def exec(self, container, *command, **kwargs) -> None:
+        self.dc(["exec", "-T", container] + list(command), **kwargs)
 
     @staticmethod
     def _get_env() -> Mapping[str, str]:

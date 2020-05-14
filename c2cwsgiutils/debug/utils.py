@@ -8,10 +8,10 @@ from types import FunctionType, ModuleType
 from typing import Any, Dict, List, Set
 
 # 7ff7d33bd000-7ff7d33be000 r--p 00000000 00:65 49                         /usr/lib/toto.so
-SMAPS_LOCATION_RE = re.compile(r'^[0-9a-f]+-[0-9a-f]+ +.... +[0-9a-f]+ +[^ ]+ +\d+ +(.*)$')
+SMAPS_LOCATION_RE = re.compile(r"^[0-9a-f]+-[0-9a-f]+ +.... +[0-9a-f]+ +[^ ]+ +\d+ +(.*)$")
 
 # Size:                  4 kB
-SMAPS_ENTRY_RE = re.compile(r'^([\w]+): +(\d+) kB$')
+SMAPS_ENTRY_RE = re.compile(r"^([\w]+): +(\d+) kB$")
 
 BLACKLIST = type, ModuleType, FunctionType
 LOG = logging.getLogger(__name__)
@@ -35,8 +35,8 @@ def get_size(obj: Any) -> int:
     return size
 
 
-def dump_memory_maps(pid: str = 'self') -> List[Dict[str, Any]]:
-    filename = os.path.join('/proc', pid, 'smaps')
+def dump_memory_maps(pid: str = "self") -> List[Dict[str, Any]]:
+    filename = os.path.join("/proc", pid, "smaps")
     if not os.path.exists(filename):
         return []
     with open(filename) as input_:
@@ -51,12 +51,8 @@ def dump_memory_maps(pid: str = 'self') -> List[Dict[str, Any]]:
                 matcher = SMAPS_ENTRY_RE.match(line)
                 if matcher:
                     name = matcher.group(1)
-                    if name in ('Size', 'Rss', 'Pss'):
-                        cur_dict[name.lower() + '_kb'] += int(matcher.group(2))
+                    if name in ("Size", "Rss", "Pss"):
+                        cur_dict[name.lower() + "_kb"] += int(matcher.group(2))
                 elif not line.startswith("VmFlags:"):
                     LOG.warning("Don't know how to parse /proc/%s/smaps line: %s", pid, line)
-        return [
-            {'name': name, **value}
-            for name, value in sizes.items()
-            if value.get('pss_kb', 0) > 0
-        ]
+        return [{"name": name, **value} for name, value in sizes.items() if value.get("pss_kb", 0) > 0]

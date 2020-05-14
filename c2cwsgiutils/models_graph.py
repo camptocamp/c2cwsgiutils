@@ -7,7 +7,7 @@ import sqlalchemy as sa
 
 def generate_model_graph(module: Any) -> None:
     if len(sys.argv) == 1:
-        base_name = 'Base'
+        base_name = "Base"
     elif len(sys.argv) == 2:
         base_name = sys.argv[1]
     else:
@@ -18,10 +18,12 @@ def generate_model_graph(module: Any) -> None:
 
 
 def _generate_model_graph(module: Any, base: Any) -> None:
-    print("""
+    print(
+        """
     digraph {
         rankdir=BT;
-    """)
+    """
+    )
 
     interesting = {
         getattr(module, symbol_name)
@@ -62,17 +64,19 @@ def _get_all_cols(symbol: Any) -> List[str]:
 
     for member_name in symbol.__dict__:
         member = getattr(symbol, member_name)
-        if member_name in ('__table__', 'metadata'):
+        if member_name in ("__table__", "metadata"):
             # Those are not fields
             pass
         elif isinstance(member, sa.sql.schema.SchemaItem):
-            cols.append(member_name + ('[null]' if member.nullable else ''))
+            cols.append(member_name + ("[null]" if member.nullable else ""))
         elif isinstance(member, sa.orm.attributes.InstrumentedAttribute):
-            nullable = member.property.columns[0].nullable \
-                if isinstance(member.property, sa.orm.ColumnProperty) \
+            nullable = (
+                member.property.columns[0].nullable
+                if isinstance(member.property, sa.orm.ColumnProperty)
                 else False
+            )
             link = not isinstance(member.property, sa.orm.ColumnProperty)
-            cols.append(member_name + (' [null]' if nullable else '') + (' ->' if link else ''))
+            cols.append(member_name + (" [null]" if nullable else "") + (" ->" if link else ""))
 
     return cols
 

@@ -11,10 +11,10 @@ ORIG: Optional[Callable[..., Any]] = None
 
 def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
     if stats.USE_TAGS:
-        key = ['redis']
+        key = ["redis"]
         tags: Optional[Dict[str, str]] = dict(cmd=args[0])
     else:
-        key = ['redis', args[0]]
+        key = ["redis", args[0]]
         tags = None
     assert ORIG is not None
     with stats.outcome_timer_context(key, tags):
@@ -23,9 +23,10 @@ def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global ORIG
-    if _utils.env_or_config(config, 'C2C_TRACK_REDIS', 'c2c.track_redis', True, _utils.config_bool):
+    if _utils.env_or_config(config, "C2C_TRACK_REDIS", "c2c.track_redis", True, _utils.config_bool):
         try:
             import redis.client
+
             ORIG = redis.client.Redis.execute_command
             redis.client.Redis.execute_command = _execute_command_patch  # type: ignore
             LOG.info("Enabled the redis tracking")

@@ -8,12 +8,22 @@ Must be imported at the very beginning of the process' life, before any other mo
 
 def _first() -> None:
     from c2cwsgiutils import pyramid_logging
+
     pyramid_logging.init()
 
 
 def _second() -> None:
-    from c2cwsgiutils import coverage_setup, sentry, broadcast, stats, redis_stats,\
-        stats_pyramid, debug, request_tracking
+    from c2cwsgiutils import (
+        coverage_setup,
+        sentry,
+        broadcast,
+        stats,
+        redis_stats,
+        stats_pyramid,
+        debug,
+        request_tracking,
+    )
+
     coverage_setup.init()
     sentry.init()
     broadcast.init()

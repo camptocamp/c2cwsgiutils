@@ -25,37 +25,35 @@ def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]
     """
     results: List[Mapping[str, Any]] = []
     for host_stacks in source:
-        host_id = '%s/%d' % (host_stacks['hostname'], host_stacks['pid'])
-        for thread, frames in host_stacks['threads'].items():
-            full_id = host_id + '/' + thread
+        host_id = "%s/%d" % (host_stacks["hostname"], host_stacks["pid"])
+        for thread, frames in host_stacks["threads"].items():
+            full_id = host_id + "/" + thread
             for existing in results:
-                if existing['frames'] == frames:
-                    existing['threads'].append(full_id)
+                if existing["frames"] == frames:
+                    existing["threads"].append(full_id)
                     break
             else:
-                results.append({
-                    'frames': frames,
-                    'threads': [full_id]
-                })
+                results.append({"frames": frames, "threads": [full_id]})
     return results
 
 
 def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     auth.auth_view(request)
-    result = broadcast.broadcast('c2c_dump_stacks', expect_answers=True)
+    result = broadcast.broadcast("c2c_dump_stacks", expect_answers=True)
     assert result is not None
     return _beautify_stacks(result)
 
 
 def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     auth.auth_view(request)
-    limit = int(request.params.get('limit', '30'))
-    analyze_type = request.params.get('analyze_type')
-    python_internals_map = request.params.get('python_internals_map', '0').lower() in ('', '1', 'true', 'on')
+    limit = int(request.params.get("limit", "30"))
+    analyze_type = request.params.get("analyze_type")
+    python_internals_map = request.params.get("python_internals_map", "0").lower() in ("", "1", "true", "on")
     result = broadcast.broadcast(
-        'c2c_dump_memory',
-        params={'limit': limit, 'analyze_type': analyze_type, 'python_internals_map': python_internals_map},
-        expect_answers=True, timeout=70
+        "c2c_dump_memory",
+        params={"limit": limit, "analyze_type": analyze_type, "python_internals_map": python_internals_map},
+        expect_answers=True,
+        timeout=70,
     )
     assert result is not None
     return result
@@ -63,22 +61,22 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
 
 def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
     auth.auth_view(request)
-    limit = int(request.params.get('limit', '30'))
-    if 'path' in request.matchdict:
+    limit = int(request.params.get("limit", "30"))
+    if "path" in request.matchdict:
         # deprecated
-        path = '/' + '/'.join(request.matchdict['path'])
+        path = "/" + "/".join(request.matchdict["path"])
     else:
-        path = request.params['path']
+        path = request.params["path"]
 
     sub_request = request.copy()
-    split_path = path.split('?')
+    split_path = path.split("?")
     sub_request.path_info = split_path[0]
     if len(split_path) > 1:
         sub_request.query_string = split_path[1]
 
     # warmup run
     try:
-        if 'no_warmup' not in request.params:
+        if "no_warmup" not in request.params:
             request.invoke_subrequest(sub_request)
     except Exception:  # nosec  # pylint: disable=broad-except
         pass
@@ -109,7 +107,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
 
 def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
     auth.auth_view(request)
-    timeout = float(request.params['time'])
+    timeout = float(request.params["time"])
     time.sleep(timeout)
     request.response.status_code = 204
     return request.response
@@ -118,51 +116,53 @@ def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:
 def _headers(request: pyramid.request.Request) -> Mapping[str, Any]:
     auth.auth_view(request)
     result = {
-        'headers': dict(request.headers),
-        'client_info': {
-            'client_addr': request.client_addr,
-            'host': request.host,
-            'host_port': request.host_port,
-            'http_version': request.http_version,
-            'path': request.path,
-            'path_info': request.path_info,
-            'remote_addr': request.remote_addr,
-            'remote_host': request.remote_host,
-            'scheme': request.scheme,
-            'server_name': request.server_name,
-            'server_port': request.server_port
-        }
+        "headers": dict(request.headers),
+        "client_info": {
+            "client_addr": request.client_addr,
+            "host": request.host,
+            "host_port": request.host_port,
+            "http_version": request.http_version,
+            "path": request.path,
+            "path_info": request.path_info,
+            "remote_addr": request.remote_addr,
+            "remote_host": request.remote_host,
+            "scheme": request.scheme,
+            "server_name": request.server_name,
+            "server_port": request.server_port,
+        },
     }
-    if 'status' in request.params:
-        raise exception_response(int(request.params['status']), detail=result)
+    if "status" in request.params:
+        raise exception_response(int(request.params["status"]), detail=result)
     else:
         return result
 
 
 def _error(request: pyramid.request.Request) -> Any:
     auth.auth_view(request)
-    raise exception_response(int(request.params['status']), detail="Test")
+    raise exception_response(int(request.params["status"]), detail="Test")
 
 
 def _time(request: pyramid.request.Request) -> Any:
     return {
-        'local_time': str(datetime.now()),
-        'gmt_time': str(datetime.utcnow()),
-        'epoch': time.time(),
-        'timezone': datetime.now().astimezone().tzname()
+        "local_time": str(datetime.now()),
+        "gmt_time": str(datetime.utcnow()),
+        "epoch": time.time(),
+        "timezone": datetime.now().astimezone().tzname(),
     }
 
 
-def _add_view(config: pyramid.config.Configurator, name: str, path: str,
-              view: Callable[[pyramid.request.Request], Any]) -> None:
-    config.add_route("c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path,
-                     request_method="GET")
+def _add_view(
+    config: pyramid.config.Configurator, name: str, path: str, view: Callable[[pyramid.request.Request], Any]
+) -> None:
+    config.add_route(
+        "c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path, request_method="GET"
+    )
     config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)
 
 
 def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
     auth.auth_view(request)
-    return sorted(dump_memory_maps(), key=lambda i: -i.get('pss_kb', 0))
+    return sorted(dump_memory_maps(), key=lambda i: -i.get("pss_kb", 0))
 
 
 def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
@@ -171,31 +171,30 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
         gc.collect(generation)
 
     objs: List[Any] = []
-    if 'analyze_type' in request.params:
-        objs = objgraph.by_type(request.params['analyze_type'])
-    elif 'analyze_id' in request.params:
-        objs = [objgraph.by(int(request.params['analyze_id']))]
+    if "analyze_type" in request.params:
+        objs = objgraph.by_type(request.params["analyze_type"])
+    elif "analyze_id" in request.params:
+        objs = [objgraph.by(int(request.params["analyze_id"]))]
 
     args: Dict[str, Any] = {
-        'refcounts': True,
+        "refcounts": True,
     }
-    if request.params.get('max_depth', '') != '':
-        args['max_depth'] = int(request.params['max_depth'])
-    if request.params.get('too_many', '') != '':
-        args['too_many'] = int(request.params['too_many'])
-    if request.params.get('min_size_kb', '') != '':
-        args['filter'] = lambda obj: get_size(obj) > (int(request.params['min_size_kb']) * 1024)
-    if request.params.get('no_extra_info', '') == '':
-        args['extra_info'] = lambda obj: '{:.3f} kb\n{}'.format(get_size(obj) / 1024, id(obj))
+    if request.params.get("max_depth", "") != "":
+        args["max_depth"] = int(request.params["max_depth"])
+    if request.params.get("too_many", "") != "":
+        args["too_many"] = int(request.params["too_many"])
+    if request.params.get("min_size_kb", "") != "":
+        args["filter"] = lambda obj: get_size(obj) > (int(request.params["min_size_kb"]) * 1024)
+    if request.params.get("no_extra_info", "") == "":
+        args["extra_info"] = lambda obj: "{:.3f} kb\n{}".format(get_size(obj) / 1024, id(obj))
 
     result = StringIO()
-    if request.params.get('backrefs', '') != '':
+    if request.params.get("backrefs", "") != "":
         objgraph.show_backrefs(objs, output=result, **args)
     else:
-        objgraph.show_refs(objs, output=result,
-                           filter=lambda x: not objgraph.inspect.isclass(x), **args)
+        objgraph.show_refs(objs, output=result, filter=lambda x: not objgraph.inspect.isclass(x), **args)
 
-    request.response.content_type = 'text/vnd.graphviz'
+    request.response.content_type = "text/vnd.graphviz"
     request.response.text = result.getvalue()
     result.close()
     return request.response

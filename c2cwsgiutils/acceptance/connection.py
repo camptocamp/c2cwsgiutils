@@ -5,7 +5,7 @@ from typing import Mapping, Any, Optional
 import requests
 from lxml import etree  # nosec
 
-COLON_SPLIT_RE = re.compile(r'\s*,\s*')
+COLON_SPLIT_RE = re.compile(r"\s*,\s*")
 
 
 class CacheExpected(Enum):
@@ -17,14 +17,20 @@ class CacheExpected(Enum):
 class Connection:
     def __init__(self, base_url: str, origin: str) -> None:
         self.base_url = base_url
-        if not self.base_url.endswith('/'):
-            self.base_url += '/'
+        if not self.base_url.endswith("/"):
+            self.base_url += "/"
         self.session = requests.session()
         self.origin = origin
 
-    def get(self, url: str, expected_status: int = 200, cors: bool = True,
-            headers: Optional[Mapping[str, str]] = None, cache_expected: CacheExpected = CacheExpected.NO,
-            **kwargs: Any) -> Optional[str]:
+    def get(
+        self,
+        url: str,
+        expected_status: int = 200,
+        cors: bool = True,
+        headers: Optional[Mapping[str, str]] = None,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Optional[str]:
         """
         get the given URL (relative to the root of API).
         """
@@ -33,9 +39,15 @@ class Connection:
             self._check_cors(cors, r)
             return None if r.status_code == 204 else r.text
 
-    def get_raw(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-                cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
-            -> requests.Response:
+    def get_raw(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> requests.Response:
         """
         get the given URL (relative to the root of API).
         """
@@ -44,9 +56,15 @@ class Connection:
             self._check_cors(cors, r)
             return r
 
-    def get_json(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-                 cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
-            -> Any:
+    def get_json(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Any:
         """
         get the given URL (relative to the root of API).
         """
@@ -55,62 +73,98 @@ class Connection:
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def get_xml(self, url: str, schema: Optional[str] = None, expected_status: int = 200,
-                headers: Optional[Mapping[str, str]] = None, cors: bool = True,
-                cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) -> Any:
+    def get_xml(
+        self,
+        url: str,
+        schema: Optional[str] = None,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Any:
         """
         get the given URL (relative to the root of API).
         """
-        with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors),
-                              stream=True, **kwargs) as r:
+        with self.session.get(
+            self.base_url + url, headers=self._merge_headers(headers, cors), stream=True, **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
             r.raw.decode_content = True
             doc = etree.parse(r.raw)  # nosec
             if schema is not None:
-                with open(schema, 'r') as schema_file:
+                with open(schema, "r") as schema_file:
                     xml_schema = etree.XMLSchema(etree.parse(schema_file))  # nosec
                 xml_schema.assertValid(doc)
             return doc
 
-    def post_json(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-                  cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
-            -> Any:
+    def post_json(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Any:
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, headers=self._merge_headers(headers, cors),
-                               **kwargs) as r:
+        with self.session.post(
+            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def post_files(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-                   cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) -> Any:
+    def post_files(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Any:
         """
         POST files to the the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, headers=self._merge_headers(headers, cors),
-                               **kwargs) as r:
+        with self.session.post(
+            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def post(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-             cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any)\
-            -> Optional[str]:
+    def post(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Optional[str]:
         """
         POST the given URL (relative to the root of API).
         """
-        with self.session.post(self.base_url + url, headers=self._merge_headers(headers, cors),
-                               **kwargs) as r:
+        with self.session.post(
+            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
             return None if r.status_code == 204 else r.text
 
-    def put_json(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-                 cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
-            -> Any:
+    def put_json(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Any:
         """
         POST the given URL (relative to the root of API).
         """
@@ -119,43 +173,54 @@ class Connection:
             self._check_cors(cors, r)
             return _get_json(r)
 
-    def delete(self, url: str, expected_status: int = 204, headers: Optional[Mapping[str, str]] = None,
-               cors: bool = True, cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
-            -> requests.Response:
+    def delete(
+        self,
+        url: str,
+        expected_status: int = 204,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> requests.Response:
         """
         DELETE the given URL (relative to the root of API).
         """
-        with self.session.delete(self.base_url + url,
-                                 headers=self._merge_headers(headers, cors), **kwargs) as r:
+        with self.session.delete(
+            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
             return r
 
-    def options(self, url: str, expected_status: int = 200, headers: Optional[Mapping[str, str]] = None,
-                cache_expected: CacheExpected = CacheExpected.NO, **kwargs: Any) \
-            -> requests.Response:
+    def options(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> requests.Response:
         """
         get the given URL (relative to the root of API).
         """
-        with self.session.options(self.base_url + url, headers=self._merge_headers(headers, False),
-                                  **kwargs) as r:
+        with self.session.options(
+            self.base_url + url, headers=self._merge_headers(headers, False), **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             return r
 
     def _cors_headers(self, cors: bool) -> Mapping[str, str]:
         if cors:
-            return {
-                "Origin": self.origin
-            }
+            return {"Origin": self.origin}
         else:
             return {}
 
     def _check_cors(self, cors: bool, r: requests.Response) -> None:
         if cors:
-            if r.headers.get('Access-Control-Allow-Credentials', 'false') == 'true':
+            if r.headers.get("Access-Control-Allow-Credentials", "false") == "true":
                 assert r.headers["Access-Control-Allow-Origin"] == self.origin
             else:
-                assert r.headers["Access-Control-Allow-Origin"] == '*'
+                assert r.headers["Access-Control-Allow-Origin"] == "*"
 
     def _merge_headers(self, headers: Optional[Mapping[str, str]], cors: bool) -> Mapping[str, str]:
         merged = dict(headers) if headers is not None else {}
@@ -165,8 +230,9 @@ class Connection:
         return merged
 
 
-def check_response(r: requests.Response, expected_status: int = 200,
-                   cache_expected: CacheExpected = CacheExpected.DONT_CARE) -> None:
+def check_response(
+    r: requests.Response, expected_status: int = 200, cache_expected: CacheExpected = CacheExpected.DONT_CARE
+) -> None:
     if isinstance(expected_status, tuple):
         assert r.status_code in expected_status, "status=%d\n%s" % (r.status_code, r.text)
     else:
@@ -174,20 +240,20 @@ def check_response(r: requests.Response, expected_status: int = 200,
 
     if cache_expected == CacheExpected.NO:
         # Cache is the root of all evil. Must never be enabled
-        assert 'Cache-Control' in r.headers
-        cache_control = COLON_SPLIT_RE.split(r.headers['Cache-Control'])
-        assert 'no-cache' in cache_control
+        assert "Cache-Control" in r.headers
+        cache_control = COLON_SPLIT_RE.split(r.headers["Cache-Control"])
+        assert "no-cache" in cache_control
     elif cache_expected == CacheExpected.YES:
-        assert 'Cache-Control' in r.headers
-        assert 'max-age=' in r.headers['Cache-Control']
-        assert 'max-age=0' not in r.headers['Cache-Control']
-        assert 'no-cache' not in r.headers['Cache-Control']
+        assert "Cache-Control" in r.headers
+        assert "max-age=" in r.headers["Cache-Control"]
+        assert "max-age=0" not in r.headers["Cache-Control"]
+        assert "no-cache" not in r.headers["Cache-Control"]
 
 
 def _get_json(r: requests.Response) -> Any:
     if r.status_code == 204:
         return None
     else:
-        content_type = r.headers['Content-Type'].split(";")[0]
-        assert content_type == 'application/json' or content_type.endswith('+json')
+        content_type = r.headers["Content-Type"].split(";")[0]
+        assert content_type == "application/json" or content_type.endswith("+json")
         return r.json()

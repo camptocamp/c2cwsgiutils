@@ -25,15 +25,15 @@ tweens = Tweens()
 
 
 def setup_session(
-        config: pyramid.config.Configurator,
-        master_prefix: str,
-        slave_prefix: Optional[str] = None,
-        force_master: Optional[Iterable[str]] = None,
-        force_slave: Optional[Iterable[str]] = None
+    config: pyramid.config.Configurator,
+    master_prefix: str,
+    slave_prefix: Optional[str] = None,
+    force_master: Optional[Iterable[str]] = None,
+    force_slave: Optional[Iterable[str]] = None,
 ) -> Tuple[
     Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
     sqlalchemy.engine.Engine,
-    sqlalchemy.engine.Engine
+    sqlalchemy.engine.Engine,
 ]:
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
@@ -67,7 +67,7 @@ def setup_session(
         LOG.info("Using a slave DB for reading %s", master_prefix)
         ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
         ro_engine.c2c_name = slave_prefix
-        tween_name = master_prefix.replace('.', '_')
+        tween_name = master_prefix.replace(".", "_")
         _add_tween(config, tween_name, db_session, force_master, force_slave)
     else:
         ro_engine = rw_engine
@@ -77,11 +77,15 @@ def setup_session(
     return db_session, rw_engine, ro_engine
 
 
-def create_session(config: Optional[pyramid.config.Configurator], name: str, url: str,
-                   slave_url: Optional[str] = None,
-                   force_master: Optional[Iterable[str]] = None, force_slave: Optional[Iterable[str]] = None,
-                   **engine_config: Any) \
-        -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
+def create_session(
+    config: Optional[pyramid.config.Configurator],
+    name: str,
+    url: str,
+    slave_url: Optional[str] = None,
+    force_master: Optional[Iterable[str]] = None,
+    force_slave: Optional[Iterable[str]] = None,
+    **engine_config: Any,
+) -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
     """
     Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
     DB connection.
@@ -125,21 +129,24 @@ def create_session(config: Optional[pyramid.config.Configurator], name: str, url
 
 
 def _add_tween(
-        config: pyramid.config.Configurator,
-        name: str,
-        db_session: Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
-        force_master: Optional[Iterable[str]],
-        force_slave: Optional[Iterable[str]]
+    config: pyramid.config.Configurator,
+    name: str,
+    db_session: Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
+    force_master: Optional[Iterable[str]],
+    force_slave: Optional[Iterable[str]],
 ) -> None:
     global tweens
 
-    master_paths: Iterable[Pattern[str]] = list(map(RE_COMPILE, force_master)) if force_master is not None \
-        else []
-    slave_paths: Iterable[Pattern[str]] = list(map(RE_COMPILE, force_slave)) if force_slave is not None \
-        else []
+    master_paths: Iterable[Pattern[str]] = list(
+        map(RE_COMPILE, force_master)
+    ) if force_master is not None else []
+    slave_paths: Iterable[Pattern[str]] = list(
+        map(RE_COMPILE, force_slave)
+    ) if force_slave is not None else []
 
-    def db_chooser_tween_factory(handler: Callable[[pyramid.request.Request], Any], _registry: Any)\
-            -> Callable[[pyramid.request.Request], Any]:
+    def db_chooser_tween_factory(
+        handler: Callable[[pyramid.request.Request], Any], _registry: Any
+    ) -> Callable[[pyramid.request.Request], Any]:
         """
         Tween factory to route to a slave DB for read-only queries.
         Must be put over the pyramid_tm tween and share_config must have a "slave" engine
@@ -151,8 +158,9 @@ def _add_tween(
             old = session.bind
             method_path: Any = "%s %s" % (request.method, request.path)
             has_force_master = any(r.match(method_path) for r in master_paths)
-            if force_readonly or (not has_force_master and (
-                    request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths))
+            if force_readonly or (
+                not has_force_master
+                and (request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths))
             ):
                 LOG.debug("Using %s database for: %s", db_session.c2c_ro_bind.c2c_name, method_path)
                 session.bind = db_session.c2c_ro_bind
@@ -168,4 +176,4 @@ def _add_tween(
         return db_chooser_tween
 
     tweens.__setattr__(name, db_chooser_tween_factory)
-    config.add_tween('c2cwsgiutils.db.tweens.' + name, over="pyramid_tm.tm_tween_factory")
+    config.add_tween("c2cwsgiutils.db.tweens." + name, over="pyramid_tm.tm_tween_factory")

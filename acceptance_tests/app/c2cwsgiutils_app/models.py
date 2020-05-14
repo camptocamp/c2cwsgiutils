@@ -8,9 +8,7 @@ Base = sqlalchemy.ext.declarative.declarative_base()
 
 def init(config):
     global DBSession
-    DBSession = db.setup_session(config, 'sqlalchemy', 'sqlalchemy_slave', force_slave=[
-        "POST /api/hello"
-    ])[0]
+    DBSession = db.setup_session(config, "sqlalchemy", "sqlalchemy_slave", force_slave=["POST /api/hello"])[0]
 
 
 class Hello(Base):

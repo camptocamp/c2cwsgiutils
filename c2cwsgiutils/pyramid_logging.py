@@ -47,7 +47,7 @@ def _un_underscore(message: MutableMapping[str, Any]) -> Mapping[str, Any]:
     prefixes.
     """
     for key, value in list(message.items()):
-        if key.startswith('_'):
+        if key.startswith("_"):
             new_key = key[1:]
             if new_key not in message:
                 del message[key]
@@ -66,15 +66,15 @@ def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
     patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
     """
     msg = cee_syslog_handler.make_message_dict(*args, **kargv)
-    if msg['message'] != msg['short_message']:
+    if msg["message"] != msg["short_message"]:
         # only output full_message if it's different from short message
-        msg['full_message'] = msg['message']
-        msg['full_msg'] = 'true'
-    del msg['message']
+        msg["full_message"] = msg["message"]
+        msg["full_msg"] = "true"
+    del msg["message"]
 
     # make the output more consistent with the one from java
-    _rename_field(msg, 'short_message', 'msg')
-    _rename_field(msg, 'facility', 'logger_name')
+    _rename_field(msg, "short_message", "msg")
+    _rename_field(msg, "facility", "logger_name")
 
     return _un_underscore(msg)
 
@@ -89,8 +89,14 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ign
         self.addFilter(_PYRAMID_FILTER)
 
     def format(self, record: Any) -> str:
-        message = _make_message_dict(record, self._fqdn, self._debugging_fields, self._extra_fields,
-                                     self._facility, self._static_fields)
+        message = _make_message_dict(
+            record,
+            self._fqdn,
+            self._debugging_fields,
+            self._extra_fields,
+            self._facility,
+            self._static_fields,
+        )
         return ": @cee: %s" % json.dumps(message)
 
 
@@ -105,28 +111,30 @@ class JsonLogHandler(logging.StreamHandler):
         self._fqdn = socket.getfqdn()
 
     def format(self, record: Any) -> str:
-        message = _make_message_dict(record, self._fqdn, debugging_fields=True, extra_fields=True,
-                                     facility=None, static_fields={})
+        message = _make_message_dict(
+            record, self._fqdn, debugging_fields=True, extra_fields=True, facility=None, static_fields={}
+        )
         return json.dumps(message)
 
 
 def init(configfile: Optional[str] = None) -> Optional[str]:
     logging.captureWarnings(True)
-    configfile_ = configfile if configfile is not None \
-        else os.environ.get('C2CWSGIUTILS_CONFIG', "/app/production.ini")
+    configfile_ = (
+        configfile if configfile is not None else os.environ.get("C2CWSGIUTILS_CONFIG", "/app/production.ini")
+    )
     if os.path.isfile(configfile_):
         logging.config.fileConfig(configfile_, defaults=dict(os.environ))
         return configfile_
     else:
-        level = os.environ.get('LOG_LEVEL', os.environ.get('OTHER_LOG_LEVEL', 'INFO'))
-        if os.environ.get('LOG_TYPE') == 'json':
+        level = os.environ.get("LOG_LEVEL", os.environ.get("OTHER_LOG_LEVEL", "INFO"))
+        if os.environ.get("LOG_TYPE") == "json":
             root = logging.getLogger()
             handler = JsonLogHandler(stream=sys.stdout)
             handler.setLevel(logging.NOTSET)
             root.addHandler(handler)
             root.setLevel(level)
         else:
-            logging.basicConfig(level=level,
-                                format="%(asctime)-15s %(levelname)5s %(name)s %(message)s",
-                                stream=sys.stderr)
+            logging.basicConfig(
+                level=level, format="%(asctime)-15s %(levelname)5s %(name)s %(message)s", stream=sys.stderr
+            )
         return None

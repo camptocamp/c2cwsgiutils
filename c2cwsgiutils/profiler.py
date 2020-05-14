@@ -12,11 +12,15 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     if PATH != "":
         try:
             import linesman.middleware
+
             LOG.info("Enable WSGI filter for the profiler on %s", PATH)
-            linesman.middleware.ENABLED_FLAG_FILE = os.path.join(gettempdir(), 'linesman-enabled')
+            linesman.middleware.ENABLED_FLAG_FILE = os.path.join(gettempdir(), "linesman-enabled")
             return linesman.middleware.ProfilingMiddleware(  # type: ignore
-                app=application, profiler_path=PATH, chart_packages=_MODULES,
-                filename=os.path.join(gettempdir(), 'linesman-graph-sessions.db'))
+                app=application,
+                profiler_path=PATH,
+                chart_packages=_MODULES,
+                filename=os.path.join(gettempdir(), "linesman-graph-sessions.db"),
+            )
         except Exception:  # pragma: no cover  # pylint: disable=broad-except
             LOG.error("Failed enabling the profiler. Continuing without it.", exc_info=True)
             return application

@@ -25,8 +25,8 @@ class LeakedObject(object):
 def ping(request):
     global leaked_objects
     leaked_objects.append(LeakedObject())  # a memory leak to test debug/memory_diff
-    logging.getLogger(__name__+".ping").info("Ping!")
-    return {'pong': True}
+    logging.getLogger(__name__ + ".ping").info("Ping!")
+    return {"pong": True}
 
 
 @hello_service.get()
@@ -34,11 +34,11 @@ def hello_get(request):
     """
     Will use the slave
     """
-    with timer_context(['sql', 'read_hello']):
+    with timer_context(["sql", "read_hello"]):
         hello = models.DBSession.query(models.Hello).first()
-    increment_counter(['test', 'counter'])
-    set_gauge(['test', 'gauge/s'], 42, tags={'value': 24, 'toto': 'tutu'})
-    return {'value': hello.value}
+    increment_counter(["test", "counter"])
+    set_gauge(["test", "gauge/s"], 42, tags={"value": 24, "toto": "tutu"})
+    return {"value": hello.value}
 
 
 @hello_service.put()
@@ -48,7 +48,7 @@ def hello_put(request):
     """
     with sentry.capture_exceptions():
         hello = models.DBSession.query(models.Hello).first()
-        return {'value': hello.value}
+        return {"value": hello.value}
 
 
 @hello_service.post()
@@ -61,33 +61,33 @@ def hello_post(request):
 
 @error_service.get()
 def error(request):
-    code = int(request.params.get('code', '500'))
+    code = int(request.params.get("code", "500"))
     if code == 403:
-        raise HTTPForbidden('bam')
+        raise HTTPForbidden("bam")
     elif code == 401:
         e = HTTPUnauthorized()
-        e.headers['WWW-Authenticate'] = 'Basic realm="Access to staging site"'
+        e.headers["WWW-Authenticate"] = 'Basic realm="Access to staging site"'
         raise e
     elif code == 301:
         raise HTTPMovedPermanently(location="http://www.camptocamp.com/en/")
     elif code == 204:
         raise HTTPNoContent()
-    elif request.params.get('db', '0') == 'dup':
+    elif request.params.get("db", "0") == "dup":
         for _ in range(2):
-            models.DBSession.add(models.Hello(value='toto'))
-    elif request.params.get('db', '0') == 'data':
-        models.DBSession.add(models.Hello(id='abcd', value='toto'))
+            models.DBSession.add(models.Hello(value="toto"))
+    elif request.params.get("db", "0") == "data":
+        models.DBSession.add(models.Hello(id="abcd", value="toto"))
     else:
-        raise Exception('boom')
-    return {'status': 200}
+        raise Exception("boom")
+    return {"status": 200}
 
 
 @tracking_service.get()
 def tracking(request):
-    depth = int(request.matchdict.get('depth'))
-    result = {'request_id': request.c2c_request_id}
+    depth = int(request.matchdict.get("depth"))
+    result = {"request_id": request.c2c_request_id}
     if depth > 0:
-        result['sub'] = requests.get('http://localhost:8080/api/tracking/%d' % (depth - 1)).json()
+        result["sub"] = requests.get("http://localhost:8080/api/tracking/%d" % (depth - 1)).json()
     return result
 
 
@@ -97,7 +97,7 @@ def empty(request):
     return request.response
 
 
-@timeout_service.get(match_param='where=sql')
+@timeout_service.get(match_param="where=sql")
 def timeout_sql(request):
     models.DBSession.execute("SELECT pg_sleep(2)")
     request.response.status_code = 204

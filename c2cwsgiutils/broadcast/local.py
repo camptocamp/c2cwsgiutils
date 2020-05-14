@@ -18,8 +18,9 @@ class LocalBroadcaster(interface.BaseBroadcaster):
     def unsubscribe(self, channel: str) -> None:
         del self._subscribers[channel]
 
-    def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
-                  timeout: float) -> Optional[List[Any]]:
+    def broadcast(
+        self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
+    ) -> Optional[List[Any]]:
         subscriber = self._subscribers.get(channel, None)
         answers = [utils.add_host_info(subscriber(**params))] if subscriber is not None else []
         return answers if expect_answers else None

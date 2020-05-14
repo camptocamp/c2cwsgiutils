@@ -16,6 +16,7 @@ class BaseBroadcaster:
         pass  # pragma: no cover
 
     @abstractmethod
-    def broadcast(self, channel: str, params: Mapping[str, Any], expect_answers: bool,
-                  timeout: float) -> Optional[List[Any]]:
+    def broadcast(
+        self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
+    ) -> Optional[List[Any]]:
         pass  # pragma: no cover

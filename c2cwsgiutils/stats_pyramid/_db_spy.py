@@ -30,9 +30,9 @@ def _eat_parenthesis(content: str) -> str:
     pos = 0
     while pos < len(content):
         cur = content[pos]
-        if cur == '(':
+        if cur == "(":
             depth += 1
-        elif cur == ')':
+        elif cur == ")":
             depth -= 1
             if depth == 0:
                 pos += 1
@@ -53,18 +53,18 @@ def _simplify_sql(sql: str) -> str:
     sql = re.sub(r"INSERT INTO (.*?) \(.*", r"INSERT INTO \1", sql)
     sql = re.sub(r"SET .*? WHERE", "SET WHERE", sql)
     for in_ in reversed(list(re.compile(r" IN \(").finditer(sql))):
-        before = sql[0:in_.start()]
-        after = _eat_parenthesis(sql[in_.end() - 1:])
-        sql = before + ' IN (?)' + after
+        before = sql[0 : in_.start()]
+        after = _eat_parenthesis(sql[in_.end() - 1 :])
+        sql = before + " IN (?)" + after
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 
 def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
-    if stats.USE_TAGS and what != 'commit':
-        key = ['sql']
+    if stats.USE_TAGS and what != "commit":
+        key = ["sql"]
         tags: Optional[Dict[str, str]] = dict(query=what)
     else:
-        key = ['sql', what]
+        key = ["sql", what]
         tags = None
     measure = stats.timer(key, tags)
 
@@ -75,10 +75,12 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
     return after
 
 
-def _before_cursor_execute(conn: Connection, _cursor: Any, statement: str,
-                           _parameters: Any, _context: Any, _executemany: Any) -> None:
-    sqlalchemy.event.listen(conn, "after_cursor_execute",
-                            _create_sqlalchemy_timer_cb(_simplify_sql(statement)), once=True)
+def _before_cursor_execute(
+    conn: Connection, _cursor: Any, statement: str, _parameters: Any, _context: Any, _executemany: Any
+) -> None:
+    sqlalchemy.event.listen(
+        conn, "after_cursor_execute", _create_sqlalchemy_timer_cb(_simplify_sql(statement)), once=True
+    )
 
 
 def _before_commit(session: Session) -> None:  # pragma: nocover

@@ -29,8 +29,8 @@ jobs:
       - name: Acceptance
         run: make acceptance
 
-      - name: install GDAL
-        run: docker run --rm camptocamp/c2cwsgiutils /opt/c2cwsgiutils/install_gdal.sh
+      - name: Install GDAL
+        run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 
       - name: Release
         run: |
@@ -41,7 +41,7 @@ jobs:
             summon --yaml '
               USERNAME: !var gs/ci/pypi/username
               PASSWORD: !var gs/ci/pypi/password
-            ' bash -c 'docker run -e USERNAME -e PASSWORD --rm camptocamp/c2cwsgiutils:latest /opt/c2cwsgiutils/release.sh "${tag}"'
+            ' bash -c 'scripts/release "${tag}"'
             echo "Release tag ${tag}"
 
           elif [[ ${{github.ref}} =~ ^refs/heads/(release_[0-9]+)$ ]]

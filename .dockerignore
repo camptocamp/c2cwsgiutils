@@ -3,9 +3,7 @@
 !.coveragerc
 !.prospector.yaml
 !c2cwsgiutils
-!c2cwsgiutils-run
-!release.sh
-!install_gdal.sh
+!scripts
 !README.md
 !Pipfile
 !Pipfile.lock

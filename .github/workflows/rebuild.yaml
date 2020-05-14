@@ -39,11 +39,8 @@ jobs:
       - name: Acceptance
         run: make acceptance
 
-      - name: mypy
-        run: make mypy
-
-      - name: install GDAL
-        run: docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh
+      - name: Install GDAL
+        run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 
       - name: Release
         run: |

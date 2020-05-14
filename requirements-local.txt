@@ -1,1 +1,1 @@
--r publish-requirements.txt
+--requirement=requirements-publish.txt

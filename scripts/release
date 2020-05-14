@@ -3,7 +3,6 @@ set -e
 
 VERSION=$1
 
-cd /opt/c2cwsgiutils/
 actual_version=$(python3 ./setup.py --version 2> /dev/null)
 
 if [[ "${VERSION}" != "${actual_version}" ]]
@@ -18,7 +17,7 @@ then
     exit 0
 fi
 
-python3 -m pip install -r publish-requirements.txt
+python3 -m pip install --requirement=requirements-publish.txt
 
 python3 ./setup.py bdist_wheel
 

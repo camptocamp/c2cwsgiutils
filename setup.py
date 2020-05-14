@@ -60,5 +60,4 @@ setup(
             "c2c+egg=c2cwsgiutils.loader:Loader",
         ],
     },
-    scripts=["c2cwsgiutils-run"],
 )

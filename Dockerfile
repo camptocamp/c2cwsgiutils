@@ -44,7 +44,8 @@ FROM base-all AS base
 
 CMD ["c2cwsgiutils-run"]
 
-COPY setup.py setup.cfg c2cwsgiutils-run /opt/c2cwsgiutils/
+COPY scripts/c2cwsgiutils-run scripts/install-gdal /usr/bin/
+COPY setup.py setup.cfg /opt/c2cwsgiutils/
 COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
         --editable=/opt/c2cwsgiutils && \

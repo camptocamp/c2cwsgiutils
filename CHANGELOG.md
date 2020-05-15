@@ -10,3 +10,5 @@ Release 4
   * c2cwsgiutils_check_es.py => c2cwsgiutils-check-es
 
 * `install_docker.sh` is removed
+
+* ``C2C_DISABLE_EXCEPTION_HANDLING`` is replaced by ``C2C_ENABLE_EXCEPTION_HANDLING``.

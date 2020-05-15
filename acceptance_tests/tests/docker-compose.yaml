@@ -16,6 +16,7 @@ app:
     C2C_DEBUG_VIEW_ENABLED: 1
     C2C_PROFILER_PATH: /api_profiler
     C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
+    C2C_ENABLE_EXCEPTION_HANDLING: 1
     LOG_HOST: ${TEST_IP}
     LOG_TYPE: 'console,logstash'
     SQL_LOG_LEVEL: DEBUG

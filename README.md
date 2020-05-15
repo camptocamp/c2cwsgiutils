@@ -412,7 +412,7 @@ def hello_get(request):
 By default, c2cwsgiutils will install exception handling views that will catch any exception raised by the
 application views and will transform it into a JSON response with a HTTP status corresponding to the error.
 
-You can disable this by setting `C2C_DISABLE_EXCEPTION_HANDLING` (`c2c.disable_exception_handling`) to "1".
+You can disable this by setting `C2C_ENABLE_EXCEPTION_HANDLING` (`c2c.enable_exception_handling`) to "1".
 
 In development mode (`DEVELOPMENT=1`), all the details (SQL statement, stacktrace, ...) are sent to the
 client. In production mode, you can still get them by sending the secret defined in `C2C_SECRET` in the query.

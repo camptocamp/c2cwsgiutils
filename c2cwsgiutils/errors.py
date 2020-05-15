@@ -9,7 +9,7 @@ from typing import Any, Callable
 import pyramid.request
 import sqlalchemy.exc
 from cornice import cors
-from pyramid.httpexceptions import HTTPException, HTTPError, HTTPSuccessful, HTTPRedirection
+from pyramid.httpexceptions import HTTPError, HTTPException, HTTPRedirection, HTTPSuccessful
 from webob.request import DisconnectionError
 
 from c2cwsgiutils import _utils, auth
@@ -153,8 +153,8 @@ def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> 
 
 def init(config: pyramid.config.Configurator) -> None:
     if (
-        _utils.env_or_config(config, "C2C_DISABLE_EXCEPTION_HANDLING", "c2c.disable_exception_handling", "0")
-        == "0"
+        _utils.env_or_config(config, "C2C_ENABLE_EXCEPTION_HANDLING", "c2c.enable_exception_handling", "0")
+        != "0"
     ):
         for exception in (HTTPSuccessful, HTTPRedirection):
             config.add_view(view=_passthrough, context=exception, http_cache=0)

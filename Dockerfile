@@ -53,6 +53,18 @@ RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps 
     python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q && \
     python3 -c 'import c2cwsgiutils'
 
+ENV C2C_BASE_PATH=/c2c \
+    C2C_SECRET=c2crulez \
+    C2CWSGIUTILS_CONFIG=/app/production.ini \
+    C2C_REDIS_URL= \
+    C2C_BROADCAST_PREFIX=broadcast_api_ \
+    C2C_REQUEST_ID_HEADER= \
+    C2C_REQUESTS_DEFAULT_TIMEOUT= \
+    C2C_SQL_PROFILER_ENABLED=0 \
+    C2C_PROFILER_PATH= \
+    C2C_PROFILER_MODULES= \
+    C2C_DEBUG_VIEW_ENABLED=0 \
+    C2C_ENABLE_EXCEPTION_HANDLING=0
 
 FROM base-lint as tests
 

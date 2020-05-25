@@ -1,7 +1,7 @@
 alembic==1.4.2
 boltons==20.1.0
 cee-syslog-handler==0.5.0
-cornice==5.0.0
+cornice==5.0.1
 gunicorn==20.0.4
 lxml==4.5.1
 netifaces==0.10.9

@@ -20,46 +20,46 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
     """
     A filter that adds tags to every events
     """
+
     def do_filter(event: Any, hint: Any) -> Any:
         event.setdefault("tags", {}).update(tags)
         return event
+
     return do_filter
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global _client_setup
-    sentry_url = _utils.env_or_config(config, 'SENTRY_URL', 'c2c.sentry.url')
+    sentry_url = _utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
     if sentry_url is not None and not _client_setup:
         client_info: MutableMapping[str, Any] = {
-            key[14:].lower(): value
-            for key, value in os.environ.items() if key.startswith('SENTRY_CLIENT_')
+            key[14:].lower(): value for key, value in os.environ.items() if key.startswith("SENTRY_CLIENT_")
         }
-        git_hash = _utils.env_or_config(config, 'GIT_HASH', 'c2c.git_hash')
-        if git_hash is not None and not ('release' in client_info and client_info['release'] != 'latest'):
-            client_info['release'] = git_hash
-        client_info['ignore_errors'] = client_info.pop('ignore_exceptions', 'SystemExit').split(",")
-        tags = {key[11:].lower(): value
-                for key, value in os.environ.items() if key.startswith('SENTRY_TAG_')}
+        git_hash = _utils.env_or_config(config, "GIT_HASH", "c2c.git_hash")
+        if git_hash is not None and not ("release" in client_info and client_info["release"] != "latest"):
+            client_info["release"] = git_hash
+        client_info["ignore_errors"] = client_info.pop("ignore_exceptions", "SystemExit").split(",")
+        tags = {key[11:].lower(): value for key, value in os.environ.items() if key.startswith("SENTRY_TAG_")}
 
         sentry_logging = LoggingIntegration(
             level=logging.DEBUG,
-            event_level=_utils.env_or_config(config, 'SENTRY_LEVEL', 'c2c.sentry_level', 'ERROR').upper()
+            event_level=_utils.env_or_config(config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR").upper(),
         )
         sentry_sdk.init(  # type: ignore
             dsn=sentry_url,
             integrations=[sentry_logging, SqlalchemyIntegration(), RedisIntegration()],
             before_send=_create_before_send_filter(tags),
-            **client_info
+            **client_info,
         )
         _client_setup = True
 
-        excludes = _utils.env_or_config(config, "SENTRY_EXCLUDES", "c2c.sentry.excludes",
-                                        "sentry_sdk").split(",")
+        excludes = _utils.env_or_config(config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "sentry_sdk").split(
+            ","
+        )
         for exclude in excludes:
             ignore_logger(exclude)
 
-        LOG.info("Configured sentry reporting with client=%s and tags=%s",
-                 repr(client_info), repr(tags))
+        LOG.info("Configured sentry reporting with client=%s and tags=%s", repr(client_info), repr(tags))
 
 
 @contextlib.contextmanager

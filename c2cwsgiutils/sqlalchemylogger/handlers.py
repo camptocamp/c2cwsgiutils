@@ -3,17 +3,16 @@ import queue
 import threading
 import time
 import traceback
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError, InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, OperationalError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy_utils import create_database, database_exists
 
-from c2cwsgiutils.sqlalchemylogger._models import create_log_class, Base
 from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
-
+from c2cwsgiutils.sqlalchemylogger._models import Base, create_log_class
 
 LOG = logging.getLogger(__name__)
 
@@ -23,16 +22,19 @@ class SQLAlchemyHandler(logging.Handler):
     MAX_NB_LOGS = 100
     MAX_TIMEOUT = 1
 
-    def __init__(self,
-                 sqlalchemy_url: Dict[str, str],
-                 does_not_contain_expression: str = '',
-                 contains_expression: str = '') -> None:
+    def __init__(
+        self,
+        sqlalchemy_url: Dict[str, str],
+        does_not_contain_expression: str = "",
+        contains_expression: str = "",
+    ) -> None:
         super().__init__()
         # initialize DB session
-        self.engine = create_engine(sqlalchemy_url['url'])
+        self.engine = create_engine(sqlalchemy_url["url"])
         self.Log = create_log_class(
-            tablename=sqlalchemy_url.get('tablename', 'logs'),
-            tableargs=sqlalchemy_url.get('tableargs', None))  # type: ignore
+            tablename=sqlalchemy_url.get("tablename", "logs"),
+            tableargs=sqlalchemy_url.get("tableargs", None),  # type: ignore
+        )
         Base.metadata.bind = self.engine
         DBSession = sessionmaker(bind=self.engine)  # noqa
         self.session = DBSession()
@@ -49,7 +51,7 @@ class SQLAlchemyHandler(logging.Handler):
             self.addFilter(ContainsExpression(contains_expression))
 
     def _processor(self) -> None:
-        LOG.debug('%s : starting processor thread', __name__)
+        LOG.debug("%s : starting processor thread", __name__)
         while True:
             logs = []
             time_since_last = time.monotonic()
@@ -63,11 +65,12 @@ class SQLAlchemyHandler(logging.Handler):
                     # try to reduce the number of INSERT requests to the DB
                     # by writing chunks of self.MAX_NB_LOGS size,
                     # but also do not wait forever before writing stuff (self.MAX_TIMOUT)
-                    if ((len(logs) >= self.MAX_NB_LOGS) or
-                       (time.monotonic() >= (time_since_last + self.MAX_TIMEOUT))):
+                    if (len(logs) >= self.MAX_NB_LOGS) or (
+                        time.monotonic() >= (time_since_last + self.MAX_TIMEOUT)
+                    ):
                         self._write_logs(logs)
                         break
-        LOG.debug('%s : stopping processor thread', __name__)
+        LOG.debug("%s : stopping processor thread", __name__)
 
     def _write_logs(self, logs: List[Any]) -> None:
         try:
@@ -87,27 +90,29 @@ class SQLAlchemyHandler(logging.Handler):
             self.session.expunge_all()
 
     def create_db(self) -> None:
-        LOG.info('%s : creating new database', __name__)
+        LOG.info("%s : creating new database", __name__)
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__
         # variable, but add an accessor method in models.Log class
-        if (not isinstance(self.Log.__table_args__, type(None)) and
-           self.Log.__table_args__.get('schema', None)):
-            if not self.engine.dialect.has_schema(self.engine, self.Log.__table_args__['schema']):
-                self.engine.execute(sqlalchemy.schema.CreateSchema(self.Log.__table_args__['schema']))
+        if not isinstance(self.Log.__table_args__, type(None)) and self.Log.__table_args__.get(
+            "schema", None
+        ):
+            if not self.engine.dialect.has_schema(self.engine, self.Log.__table_args__["schema"]):
+                self.engine.execute(sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]))
         Base.metadata.create_all(self.engine)
 
     def emit(self, record: Any) -> None:
         trace = None
-        exc = record.__dict__['exc_info']
+        exc = record.__dict__["exc_info"]
         if exc:
             trace = traceback.format_exc()
         log = self.Log(
-            logger=record.__dict__['name'],
-            level=record.__dict__['levelname'],
+            logger=record.__dict__["name"],
+            level=record.__dict__["levelname"],
             trace=trace,
-            msg=record.__dict__['msg'])
+            msg=record.__dict__["msg"],
+        )
         with self.condition:
             # put the log in an asynchronous queue
             self.log_queue.put(log)

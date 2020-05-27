@@ -9,7 +9,7 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = '4a8c1bb4e775'
+revision = "4a8c1bb4e775"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -17,12 +17,14 @@ depends_on = None
 
 def upgrade():
     op.execute("CREATE EXTENSION IF NOT EXISTS postgis;")
-    op.execute("""
+    op.execute(
+        """
     CREATE TABLE hello (
       id SERIAL PRIMARY KEY,
       value TEXT UNIQUE INITIALLY DEFERRED
     )
-    """)
+    """
+    )
 
 
 def downgrade():

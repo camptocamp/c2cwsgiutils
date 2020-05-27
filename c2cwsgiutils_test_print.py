@@ -30,7 +30,7 @@ def main():
     print_.wait_ready(app=args.app)
     if args.app is None:
         for app in print_.get_apps():
-            if app != 'default':
+            if app != "default":
                 LOG.info("\n\n%s=================", app)
                 test_app(print_, app)
     else:

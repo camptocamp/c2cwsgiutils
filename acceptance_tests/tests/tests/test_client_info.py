@@ -11,25 +11,35 @@ EXPECTED = {
     "remote_host": None,
     "scheme": "https",
     "server_name": "0.0.0.0",
-    "server_port": 8080
+    "server_port": 8080,
 }
 
 
 def test_forwarded_openshift(app_connection):
-    response = app_connection.get_json('c2c/debug/headers', params={'secret': 'changeme'}, headers={
-        "Forwarded": "for=1.1.1.1;host=example.com;proto=https;proto-version=h2",
-        "X-Forwarded-Port": "443",
-        "X-Forwarded-Proto-Version": "h2"
-    }, cors=False)
+    response = app_connection.get_json(
+        "c2c/debug/headers",
+        params={"secret": "changeme"},
+        headers={
+            "Forwarded": "for=1.1.1.1;host=example.com;proto=https;proto-version=h2",
+            "X-Forwarded-Port": "443",
+            "X-Forwarded-Proto-Version": "h2",
+        },
+        cors=False,
+    )
     print("response=" + json.dumps(response, indent=4))
-    assert response['client_info'] == EXPECTED
+    assert response["client_info"] == EXPECTED
 
 
 def test_forwarded_haproxy(app_connection):
-    response = app_connection.get_json('c2c/debug/headers', params={'secret': 'changeme'}, headers={
-        "X-Forwarded-Host": "example.com",
-        "X-Forwarded-Proto": "https",
-        "X-Forwarded-For": "1.1.1.1"
-    }, cors=False)
+    response = app_connection.get_json(
+        "c2c/debug/headers",
+        params={"secret": "changeme"},
+        headers={
+            "X-Forwarded-Host": "example.com",
+            "X-Forwarded-Proto": "https",
+            "X-Forwarded-For": "1.1.1.1",
+        },
+        cors=False,
+    )
     print("response=" + json.dumps(response, indent=4))
-    assert response['client_info'] == EXPECTED
+    assert response["client_info"] == EXPECTED

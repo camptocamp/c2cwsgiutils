@@ -26,8 +26,7 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
     global _broadcaster
     redis_url = _utils.env_or_config(config, REDIS_ENV_KEY, REDIS_CONFIG_KEY)
-    broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY,
-                                            "broadcast_api_")
+    broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY, "broadcast_api_")
     if _broadcaster is None:
         if redis_url is not None:
             _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
@@ -68,18 +67,21 @@ def unsubscribe(channel: str) -> None:
     _get().unsubscribe(channel)
 
 
-def broadcast(channel: str, params: Optional[Dict[str, Any]] = None, expect_answers: bool = False,
-              timeout: float = 10) -> Optional[List[Any]]:
+def broadcast(
+    channel: str, params: Optional[Dict[str, Any]] = None, expect_answers: bool = False, timeout: float = 10
+) -> Optional[List[Any]]:
     """
     Broadcast a message to the given channel. If answers are expected, it will wait up to "timeout" seconds
     to get all the answers.
     """
-    return _get(need_init=True).broadcast(channel, params if params is not None else {},
-                                          expect_answers, timeout)
+    return _get(need_init=True).broadcast(
+        channel, params if params is not None else {}, expect_answers, timeout
+    )
 
 
-def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10)\
-        -> Callable[..., Any]:
+def decorator(
+    channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
+) -> Callable[..., Any]:
     """
     The decorated function will be called through the broadcast functionality. If expect_answers is set to
     True, the returned value will be a list of all the answers.
@@ -91,7 +93,7 @@ def decorator(channel: Optional[str] = None, expect_answers: bool = False, timeo
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
         if channel is None:
-            _channel = 'c2c_decorated_%s.%s' % (func.__module__, func.__name__)
+            _channel = "c2c_decorated_%s.%s" % (func.__module__, func.__name__)
         else:
             _channel = channel
         subscribe(_channel, func)

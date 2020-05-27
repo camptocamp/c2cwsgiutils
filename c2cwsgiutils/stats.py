@@ -19,9 +19,9 @@ from c2cwsgiutils import _utils
 
 
 LOG = logging.getLogger(__name__)
-USE_TAGS_ENV = 'STATSD_USE_TAGS'
-TAG_PREFIX_ENV = 'STATSD_TAG_'
-USE_TAGS = _utils.config_bool(os.environ.get(USE_TAGS_ENV, '0'))
+USE_TAGS_ENV = "STATSD_USE_TAGS"
+TAG_PREFIX_ENV = "STATSD_TAG_"
+USE_TAGS = _utils.config_bool(os.environ.get(USE_TAGS_ENV, "0"))
 TagType = Optional[Mapping[str, Any]]
 
 
@@ -92,17 +92,17 @@ def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[Non
         yield
         if USE_TAGS:
             opt_tags = dict(tags) if tags is not None else {}
-            opt_tags['success'] = 1
+            opt_tags["success"] = 1
             measure.stop(key, opt_tags)
         else:
-            measure.stop(key + ['success'], tags)
+            measure.stop(key + ["success"], tags)
     except Exception:  # pylint: disable=broad-except
         if USE_TAGS:
             opt_tags = dict(tags) if tags is not None else {}
-            opt_tags['success'] = 0
+            opt_tags["success"] = 0
             measure.stop(key, opt_tags)
         else:
-            measure.stop(key + ['failure'], tags)
+            measure.stop(key + ["failure"], tags)
         raise
 
 
@@ -153,14 +153,19 @@ class MemoryBackend(_BaseBackend):
 
     @staticmethod
     def _key_entry(key: str) -> str:
-        return str(key).replace('/', '_')
+        return str(key).replace("/", "_")
 
     @staticmethod
     def _key(key: Sequence[Any], tags: TagType) -> str:
         result = "/".join(MemoryBackend._key_entry(v) for v in key)
-        result += _format_tags(tags, prefix="/", tag_sep="/", kv_sep="=",
-                               key_formatter=MemoryBackend._key_entry,
-                               value_formatter=MemoryBackend._key_entry)
+        result += _format_tags(
+            tags,
+            prefix="/",
+            tag_sep="/",
+            kv_sep="=",
+            key_formatter=MemoryBackend._key_entry,
+            value_formatter=MemoryBackend._key_entry,
+        )
         return result
 
     def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
@@ -173,8 +178,12 @@ class MemoryBackend(_BaseBackend):
             if cur is None:
                 self._timers[the_key] = (1, duration, duration, duration)
             else:
-                self._timers[the_key] = (cur[0] + 1, cur[1] + duration, min(cur[2], duration),
-                                         max(cur[3], duration))
+                self._timers[the_key] = (
+                    cur[0] + 1,
+                    cur[1] + duration,
+                    min(cur[2], duration),
+                    max(cur[3], duration),
+                )
 
     def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
         self._gauges[self._key(key, tags)] = value
@@ -250,11 +259,16 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
 
     def _send(self, message: str, tags: TagType) -> None:
         tags = self._merge_tags(tags)
-        message += _format_tags(tags, prefix="|#", tag_sep=",", kv_sep=":",
-                                key_formatter=StatsDBackend._key_entry,
-                                value_formatter=StatsDBackend._tag_value)
+        message += _format_tags(
+            tags,
+            prefix="|#",
+            tag_sep=",",
+            kv_sep=":",
+            key_formatter=StatsDBackend._key_entry,
+            value_formatter=StatsDBackend._tag_value,
+        )
         try:
-            self._socket.send(message.encode('utf-8'))
+            self._socket.send(message.encode("utf-8"))
         except Exception:  # nosec  # pylint: disable=broad-except
             pass  # Ignore errors (must survive if stats cannot be sent)
 
@@ -283,24 +297,30 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
     :param settings: The Pyramid config
     """
     if _utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
-        BACKENDS['memory'] = MemoryBackend()
+        BACKENDS["memory"] = MemoryBackend()
 
     statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
         statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
         statsd_tags = get_env_tags()
         try:
-            BACKENDS['statsd'] = StatsDBackend(statsd_address, statsd_prefix, statsd_tags)
+            BACKENDS["statsd"] = StatsDBackend(statsd_address, statsd_prefix, statsd_tags)
         except Exception:  # pylint: disable=broad-except
             LOG.error("Failed configuring the statsd backend. Will continue without it.", exc_info=True)
 
 
-def _format_tags(tags: Optional[Mapping[str, Any]], prefix: str, tag_sep: str, kv_sep: str,
-                 key_formatter: Callable[[str], str], value_formatter: Callable[[str], str]) -> str:
+def _format_tags(
+    tags: Optional[Mapping[str, Any]],
+    prefix: str,
+    tag_sep: str,
+    kv_sep: str,
+    key_formatter: Callable[[str], str],
+    value_formatter: Callable[[str], str],
+) -> str:
     if tags:
         return prefix + tag_sep.join(
-            key_formatter(k) + kv_sep + value_formatter(v)
-            for k, v in sorted(tags.items()))
+            key_formatter(k) + kv_sep + value_formatter(v) for k, v in sorted(tags.items())
+        )
     else:
         return ""
 
@@ -309,5 +329,5 @@ def get_env_tags() -> Dict[str, str]:
     tags = {}
     for name, value in os.environ.items():
         if name.startswith(TAG_PREFIX_ENV):
-            tags[name[len(TAG_PREFIX_ENV):].lower()] = value
+            tags[name[len(TAG_PREFIX_ENV) :].lower()] = value
     return tags

@@ -12,7 +12,7 @@ register(DBSession)
 Base = declarative_base()
 
 
-def create_log_class(tablename: str = 'logs', tableargs: Union[str, Dict[str, str]] = '') -> Any:
+def create_log_class(tablename: str = "logs", tableargs: Union[str, Dict[str, str]] = "") -> Any:
     class Log(Base):  # type: ignore
         __table_args__ = tableargs
         __tablename__ = tablename
@@ -23,11 +23,7 @@ def create_log_class(tablename: str = 'logs', tableargs: Union[str, Dict[str, st
         msg = Column(String)  # any custom log you may have included
         created_at = Column(DateTime, default=func.now())  # the current timestamp
 
-        def __init__(self,
-                     logger: Any = None,
-                     level: Any = None,
-                     trace: Any = None,
-                     msg: Any = None) -> None:
+        def __init__(self, logger: Any = None, level: Any = None, trace: Any = None, msg: Any = None) -> None:
             self.logger = logger
             self.level = level
             self.trace = trace
@@ -37,5 +33,6 @@ def create_log_class(tablename: str = 'logs', tableargs: Union[str, Dict[str, st
             return self.__repr__()
 
         def __repr__(self) -> str:
-            return "<Log: %s - %s>" % (self.created_at.strftime('%m/%d/%Y-%H:%M:%S'), self.msg[:50])
+            return "<Log: %s - %s>" % (self.created_at.strftime("%m/%d/%Y-%H:%M:%S"), self.msg[:50])
+
     return Log

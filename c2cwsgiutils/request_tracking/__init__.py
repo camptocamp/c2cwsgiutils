@@ -28,8 +28,12 @@ def _gen_request_id(request: pyramid.request.Request) -> str:
 
 
 def _patch_requests() -> None:
-    def send_wrapper(self: requests.adapters.HTTPAdapter, request: requests.models.PreparedRequest,
-                     timeout: Optional[float] = None, **kwargs: Any) -> requests.Response:
+    def send_wrapper(
+        self: requests.adapters.HTTPAdapter,
+        request: requests.models.PreparedRequest,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> requests.Response:
         pyramid_request = get_current_request()
         header = ID_HEADERS[0]
         if pyramid_request is not None and header not in request.headers:
@@ -50,13 +54,18 @@ def _patch_requests() -> None:
         finally:
             if request.url is not None:
                 parsed = urllib.parse.urlparse(request.url)
-                port = parsed.port or (80 if parsed.scheme == 'http' else 443)
+                port = parsed.port or (80 if parsed.scheme == "http" else 443)
                 if stats.USE_TAGS:
-                    key: Sequence[Any] = ['requests']
-                    tags: Optional[Dict[str, Any]] = dict(scheme=parsed.scheme, host=parsed.hostname,
-                                                          port=port, method=request.method, status=status)
+                    key: Sequence[Any] = ["requests"]
+                    tags: Optional[Dict[str, Any]] = dict(
+                        scheme=parsed.scheme,
+                        host=parsed.hostname,
+                        port=port,
+                        method=request.method,
+                        status=status,
+                    )
                 else:
-                    key = ['requests', parsed.scheme, parsed.hostname, port, request.method, status]
+                    key = ["requests", parsed.scheme, parsed.hostname, port, request.method, status]
                     tags = None
                 timer.stop(key, tags)
 
@@ -65,17 +74,19 @@ def _patch_requests() -> None:
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global ID_HEADERS, DEFAULT_TIMEOUT
-    ID_HEADERS = ['X-Request-ID', 'X-Correlation-ID', 'Request-ID', 'X-Varnish', 'X-Amzn-Trace-Id']
+    ID_HEADERS = ["X-Request-ID", "X-Correlation-ID", "Request-ID", "X-Varnish", "X-Amzn-Trace-Id"]
     if config is not None:
-        extra_header = _utils.env_or_config(config, 'C2C_REQUEST_ID_HEADER', 'c2c.request_id_header')
+        extra_header = _utils.env_or_config(config, "C2C_REQUEST_ID_HEADER", "c2c.request_id_header")
         if extra_header is not None:
             ID_HEADERS.insert(0, extra_header)
-        config.add_request_method(_gen_request_id, 'c2c_request_id', reify=True)
+        config.add_request_method(_gen_request_id, "c2c_request_id", reify=True)
 
-    DEFAULT_TIMEOUT = _utils.env_or_config(config, 'C2C_REQUESTS_DEFAULT_TIMEOUT',
-                                           'c2c.requests_default_timeout', type_=float)
+    DEFAULT_TIMEOUT = _utils.env_or_config(
+        config, "C2C_REQUESTS_DEFAULT_TIMEOUT", "c2c.requests_default_timeout", type_=float
+    )
     _patch_requests()
 
-    if _utils.env_or_config(config, 'C2C_SQL_REQUEST_ID', 'c2c.sql_request_id', False):
+    if _utils.env_or_config(config, "C2C_SQL_REQUEST_ID", "c2c.sql_request_id", False):
         from . import _sql
+
         _sql.init()

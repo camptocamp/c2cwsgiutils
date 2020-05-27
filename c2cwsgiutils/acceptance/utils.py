@@ -15,7 +15,7 @@ def in_docker() -> bool:
     return os.environ.get("DOCKER_RUN", "0") == "1"
 
 
-DOCKER_GATEWAY = netifaces.gateways()[netifaces.AF_INET][0][0] if in_docker() else 'localhost'
+DOCKER_GATEWAY = netifaces.gateways()[netifaces.AF_INET][0][0] if in_docker() else "localhost"
 DEFAULT_TIMEOUT = 60
 
 
@@ -50,7 +50,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
         time.sleep(interval)
 
 
-skipIfCI = pytest.mark.skipif(os.environ.get('IN_CI', "0") == "1", reason="Not running on CI")
+skipIfCI = pytest.mark.skipif(os.environ.get("IN_CI", "0") == "1", reason="Not running on CI")
 
 
 def approx(struct: Any, **kwargs: Any) -> Any:

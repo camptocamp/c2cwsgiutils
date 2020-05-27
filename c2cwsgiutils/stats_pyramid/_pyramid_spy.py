@@ -8,23 +8,28 @@ import pyramid.request
 from c2cwsgiutils import stats
 
 
-def _add_server_metric(request: pyramid.request.Request, name: str, duration: Optional[float] = None,
-                       description: Optional[str] = None) -> None:
+def _add_server_metric(
+    request: pyramid.request.Request,
+    name: str,
+    duration: Optional[float] = None,
+    description: Optional[str] = None,
+) -> None:
     # format: <name>;dur=<duration>;desc=<description>
     metric = name
     if duration is not None:
-        metric += ';dur=' + str(round(duration * 1000))
+        metric += ";dur=" + str(round(duration * 1000))
     if description is not None:
-        metric += ';desc=' + description
+        metric += ";desc=" + description
 
-    if 'Server-Timing' not in request.response.headers:
-        request.response.headers['Server-Timing'] = metric
+    if "Server-Timing" not in request.response.headers:
+        request.response.headers["Server-Timing"] = metric
     else:
-        request.response.headers['Server-Timing'] += ', ' + metric
+        request.response.headers["Server-Timing"] += ", " + metric
 
 
-def _create_finished_cb(kind: str, measure: stats.Timer) \
-        -> Callable[[pyramid.request.Request], None]:  # pragma: nocover
+def _create_finished_cb(
+    kind: str, measure: stats.Timer
+) -> Callable[[pyramid.request.Request], None]:  # pragma: nocover
     def finished_cb(request: pyramid.request.Request) -> None:
         if request.exception is not None:
             if isinstance(request.exception, HTTPException):
@@ -37,12 +42,13 @@ def _create_finished_cb(kind: str, measure: stats.Timer) \
             name = "_not_found"
         else:
             name = request.matched_route.name
-            if kind == 'route':
-                _add_server_metric(request, 'route', description=name)
+            if kind == "route":
+                _add_server_metric(request, "route", description=name)
         if stats.USE_TAGS:
             key = [kind]
-            tags: Optional[Dict[str, Any]] = dict(method=request.method, route=name, status=status,
-                                                  group=status // 100)
+            tags: Optional[Dict[str, Any]] = dict(
+                method=request.method, route=name, status=status, group=status // 100
+            )
         else:
             key = [kind, request.method, name, status]
             tags = None

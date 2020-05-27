@@ -11,7 +11,7 @@ def _escape_variables(environ: Mapping[str, str]) -> Mapping[str, str]:
     """
     Escape environment variables so that they can be interpreted correctly by python configparser.
     """
-    return {key: environ[key].replace('%', '%%') for key in environ}
+    return {key: environ[key].replace("%", "%%") for key in environ}
 
 
 def create_application(configfile: Optional[str] = None) -> Any:
@@ -26,7 +26,7 @@ def create_application(configfile: Optional[str] = None) -> Any:
     # Load the logging config without using pyramid to be able to use environment variables in there.
     try:
         options = _escape_variables(os.environ)
-        return get_app(configfile_, 'main', options=options)
+        return get_app(configfile_, "main", options=options)
     except Exception:
         logging.getLogger(__name__).exception("Failed starting the application")
         raise

@@ -20,15 +20,15 @@ then
 else
   echo "No release to do for $1"
 fi
-if [[ -n "$tag" ]]
+if [[ -n "${tag}" ]]
 then
   summon --yaml '
     USER: !var gs/ci/dockerhub/username
     PASS: !var gs/ci/dockerhub/password
-  ' bash -c 'docker login -u $USER -p $PASS'
+  ' bash -c 'docker login -u ${USER} -p ${PASS}'
   for tag_suffix in "-lite" "" "-full"
   do
-    if [[ "$tag" != "latest" ]]
+    if [[ "${tag}" != "latest" ]]
     then
       docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} camptocamp/c2cwsgiutils:${tag}${tag_suffix}
     fi

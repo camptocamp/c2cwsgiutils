@@ -26,13 +26,10 @@ then
     USER: !var gs/ci/dockerhub/username
     PASS: !var gs/ci/dockerhub/password
   ' bash -c 'docker login -u ${USER} -p ${PASS}'
-  for tag_suffix in "-lite" "" "-full"
-  do
-    if [[ "${tag}" != "latest" ]]
-    then
-      docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} camptocamp/c2cwsgiutils:${tag}${tag_suffix}
-    fi
-    docker push camptocamp/c2cwsgiutils:${tag}${tag_suffix}
-  done
+  if [[ "${tag}" != "latest" ]]
+  then
+    docker tag camptocamp/c2cwsgiutils camptocamp/c2cwsgiutils:${tag}
+  fi
+  docker push camptocamp/c2cwsgiutils:${tag}
   rm -rf ~/.docker*  # docker logout
 fi

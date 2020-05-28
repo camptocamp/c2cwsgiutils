@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+if [[ $1 =~ ^refs/tags/([0-9]+(\.[0-9]+)*)$ ]]
+then
+  tag="${BASH_REMATCH[1]}"
+  echo "Create release ${tag} in pypi"
+  summon --yaml '
+    USERNAME: !var gs/ci/pypi/username
+    PASSWORD: !var gs/ci/pypi/password
+  ' bash -c 'scripts/release "${tag}"'
+  echo "Release tag ${tag}"
+elif [[ $1 =~ ^refs/heads/(release_[0-9]+)$ ]]
+then
+  tag="${BASH_REMATCH[1]}"
+  echo "Release major ${tag}"
+elif [[ $1 == refs/heads/master ]]
+then
+  tag=latest
+  echo "Release latest"
+else
+  echo "No release to do for $1"
+fi
+if [[ -n "$tag" ]]
+then
+  summon --yaml '
+    USER: !var gs/ci/dockerhub/username
+    PASS: !var gs/ci/dockerhub/password
+  ' bash -c 'docker login -u $USER -p $PASS'
+  for tag_suffix in "-lite" "" "-full"
+  do
+    if [[ "$tag" != "latest" ]]
+    then
+      docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} camptocamp/c2cwsgiutils:${tag}${tag_suffix}
+    fi
+    docker push camptocamp/c2cwsgiutils:${tag}${tag_suffix}
+  done
+  rm -rf ~/.docker*  # docker logout
+fi

@@ -1,7 +1,7 @@
 FROM ubuntu:20.04 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
-COPY Pipfile* /opt/c2cwsgiutils/
+COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
 RUN apt update && \
     DEV_PACKAGES="libpq-dev build-essential python3-dev" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
@@ -19,7 +19,7 @@ RUN apt update && \
         python3-pkgconfig && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
-    python3 -m pip install --no-cache-dir pipenv && \
+    python3 -m pip install --no-cache-dir --requirement=/opt/c2cwsgiutils/requirements.txt && \
     (cd /opt/c2cwsgiutils/ && pipenv install --system --clear) && \
     strip /usr/local/lib/python3.8/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils

@@ -5,6 +5,7 @@
 !c2cwsgiutils
 !scripts
 !README.md
+!requirements.txt
 !Pipfile
 !Pipfile.lock
 !setup.py

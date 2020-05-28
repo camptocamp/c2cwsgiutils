@@ -1,5 +1,5 @@
 app:
-  image: camptocamp/c2cwsgiutils_test_app:latest
+  image: camptocamp/c2cwsgiutils_test_app
   environment: &app_env
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
@@ -16,6 +16,7 @@ app:
     C2C_DEBUG_VIEW_ENABLED: 1
     C2C_PROFILER_PATH: /api_profiler
     C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
+    C2C_ENABLE_EXCEPTION_HANDLING: 1
     LOG_HOST: ${TEST_IP}
     LOG_TYPE: 'console,logstash'
     SQL_LOG_LEVEL: DEBUG
@@ -36,7 +37,7 @@ app:
     - 8480:8080
 
 alembic_master:
-  image: camptocamp/c2cwsgiutils_test_app:latest
+  image: camptocamp/c2cwsgiutils_test_app
   environment:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQL_LOG_LEVEL: DEBUG
@@ -52,7 +53,7 @@ alembic_master:
   command: /bin/true  # will use execute with another script from the tests to actually do it
 
 alembic_slave:
-  image: camptocamp/c2cwsgiutils_test_app:latest
+  image: camptocamp/c2cwsgiutils_test_app
   environment:
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQL_LOG_LEVEL: DEBUG
@@ -68,7 +69,7 @@ alembic_slave:
   command: /bin/true  # will use execute with another script from the tests to actually do it
 
 db:
-  image: camptocamp/postgres:9.6
+  image: camptocamp/postgres:12
   environment:
     POSTGRES_USER: www-data
     POSTGRES_PASSWORD: www-data
@@ -78,7 +79,7 @@ db:
     - 15432:5432
 
 db_slave:
-  image: camptocamp/postgres:9.6
+  image: camptocamp/postgres:12
   environment:
     POSTGRES_USER: www-data
     POSTGRES_PASSWORD: www-data
@@ -89,7 +90,7 @@ db_slave:
 
 
 run_test:
-  image: camptocamp/c2cwsgiutils_test_app:latest
+  image: camptocamp/c2cwsgiutils_test_app
   command: 'true'
   environment: *app_env
   links:

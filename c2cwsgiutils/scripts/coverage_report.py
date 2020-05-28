@@ -21,4 +21,5 @@ def main():
     cov.report(ignore_errors=True)
 
 
-main()
+if __name__ == "__main__":
+    main()

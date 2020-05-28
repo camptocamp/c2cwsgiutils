@@ -2,15 +2,14 @@
 """
 Test a MapfishPrint server.
 """
-import c2cwsgiutils.setup_process  # noqa  # pylint: disable=unused-import,wrong-import-order
-
 import argparse
 import logging
 import pprint
 
+import c2cwsgiutils.setup_process
 from c2cwsgiutils.acceptance.print import PrintConnection
 
-LOG = logging.getLogger("c2cwsgiutils_test_print")
+LOG = logging.getLogger(__name__)
 
 
 def _parse_args():
@@ -23,6 +22,8 @@ def _parse_args():
 
 
 def main():
+    c2cwsgiutils.setup_process.init()
+
     args = _parse_args()
     if not args.verbose:
         logging.root.setLevel(logging.INFO)
@@ -48,4 +49,5 @@ def test_app(print_, app):
         LOG.info("Size=%d", size)
 
 
-main()
+if __name__ == "__main__":
+    main()

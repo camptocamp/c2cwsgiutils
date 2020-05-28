@@ -1,12 +1,11 @@
 import logging
-from pyramid.httpexceptions import HTTPForbidden, HTTPMovedPermanently, HTTPNoContent, HTTPUnauthorized
+
 import requests
+from pyramid.httpexceptions import HTTPForbidden, HTTPMovedPermanently, HTTPNoContent, HTTPUnauthorized
 
-from c2cwsgiutils import services
-from c2cwsgiutils import sentry
-from c2cwsgiutils.stats import timer_context, increment_counter, set_gauge
+from c2cwsgiutils import sentry, services
+from c2cwsgiutils.stats import increment_counter, set_gauge, timer_context
 from c2cwsgiutils_app import models
-
 
 ping_service = services.create("ping", "/ping")
 hello_service = services.create("hello", "/hello", cors_credentials=True)
@@ -17,20 +16,20 @@ timeout_service = services.create("timeout", "timeout/{where:sql}")
 leaked_objects = []
 
 
-class LeakedObject(object):
+class LeakedObject:
     pass
 
 
 @ping_service.get()
-def ping(request):
+def ping(_):
     global leaked_objects
-    leaked_objects.append(LeakedObject())  # a memory leak to test debug/memory_diff
+    leaked_objects.append(LeakedObject())  # A memory leak to test debug/memory_diff
     logging.getLogger(__name__ + ".ping").info("Ping!")
     return {"pong": True}
 
 
 @hello_service.get()
-def hello_get(request):
+def hello_get(_):
     """
     Will use the slave
     """
@@ -42,7 +41,7 @@ def hello_get(request):
 
 
 @hello_service.put()
-def hello_put(request):
+def hello_put(_):
     """
     Will use the master
     """
@@ -64,15 +63,15 @@ def error(request):
     code = int(request.params.get("code", "500"))
     if code == 403:
         raise HTTPForbidden("bam")
-    elif code == 401:
+    if code == 401:
         e = HTTPUnauthorized()
         e.headers["WWW-Authenticate"] = 'Basic realm="Access to staging site"'
         raise e
-    elif code == 301:
+    if code == 301:
         raise HTTPMovedPermanently(location="http://www.camptocamp.com/en/")
-    elif code == 204:
+    if code == 204:
         raise HTTPNoContent()
-    elif request.params.get("db", "0") == "dup":
+    if request.params.get("db", "0") == "dup":
         for _ in range(2):
             models.DBSession.add(models.Hello(value="toto"))
     elif request.params.get("db", "0") == "data":

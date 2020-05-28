@@ -25,6 +25,11 @@ pylint:
 pep8:
   options:
     max-line-length: 110
+  disable:
+    - E203
+
+mypy:
+  run: true
 
 mccabe:
   run: false

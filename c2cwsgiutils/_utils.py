@@ -2,7 +2,7 @@
 Private utilities.
 """
 import os
-from typing import Mapping, Any, Optional, Callable, cast
+from typing import Any, Callable, Mapping, Optional, cast
 
 import pyramid.config
 
@@ -30,7 +30,7 @@ def env_or_settings(
     default: Any = None,
     type_: Callable[[str], Any] = str,
 ) -> Any:
-    if env_name is not None and env_name in os.environ:
+    if env_name is not None and env_name in os.environ and os.environ[env_name] != "":
         return type_(os.environ[env_name])
     if settings is not None and settings_name is not None and settings_name in settings:
         return type_(settings[settings_name])

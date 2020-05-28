@@ -7,9 +7,9 @@ DEBIAN_VERSION=$(grep VERSION= /etc/os-release | sed 's/.*(\(.*\)).\+/\1/')
 apt-get update
 apt-get install --yes --no-install-recommends apt-transport-https
 
-if [[ "${DEBIAN_VERSION}" == "Bionic Beaver" ]]
+if [[ "${DEBIAN_VERSION}" == "Focal Fossa" ]]
 then
-    DEBIAN_VERSION=stretch
+    DEBIAN_VERSION=buster
 fi
 
 if [[ "${DOCKER_VERSION}" == 1.* ]]
@@ -33,8 +33,7 @@ fi
 apt-get update
 apt-get install --yes --no-install-recommends ${PACKAGE}=${DOCKER_VERSION}*
 
-curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" > /usr/bin/docker-compose
-chmod a+x /usr/bin/docker-compose
+python3 -m pip install docker-compose
 
 apt-get clean
 rm -r /var/lib/apt/lists/*

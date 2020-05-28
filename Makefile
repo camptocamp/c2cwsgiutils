@@ -46,7 +46,7 @@ acceptance: build_acceptance build_test_app
 	sed -ie 's%file="tests/%file="acceptance_tests/tests/tests/%' reports/acceptance.xml
 	docker rm c2cwsgiutils_acceptance_reports_$$PPID
 
-.PHONY:s build_docker
+.PHONY: build_docker
 build_docker:
 	docker build --tag=$(DOCKER_BASE) --target=standard .
 

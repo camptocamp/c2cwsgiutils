@@ -4,15 +4,16 @@ import os
 import re
 import subprocess
 import sys
+from typing import Dict
 
 VERSION_RE = re.compile(r"^(.*)==(.*)$")
 
 
-def _get_packages_version():
+def _get_packages_version() -> Dict[str, str]:
     result = {}
     with open(os.devnull, "w") as devnull:
         for comp in (
-            subprocess.check_output(["python3", "-m" "pip", "freeze"], stderr=devnull)
+            subprocess.check_output(["python3", "-m", "pip", "freeze"], stderr=devnull)
             .decode()
             .strip()
             .split("\n")
@@ -26,7 +27,7 @@ def _get_packages_version():
     return result
 
 
-def main():
+def main() -> None:
     if len(sys.argv) == 2:
         git_tag = None
         git_hash = sys.argv[1]

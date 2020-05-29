@@ -4,6 +4,7 @@ Emits statsd gauges for every tables of a database.
 """
 import argparse
 import logging
+from typing import Dict, List, Optional
 
 import sqlalchemy
 import sqlalchemy.exc
@@ -18,7 +19,7 @@ from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 LOG = logging.getLogger(__name__)
 
 
-def _parse_args():
+def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=str, required=True, help="DB connection string")
     parser.add_argument(
@@ -34,23 +35,24 @@ def _parse_args():
         "--prometheus_instance", type=str, help="Instance name for the Prometheus Pushgateway"
     )
     parser.add_argument("--verbosity", type=str, default="INFO")
+
     args = parser.parse_args()
     logging.root.setLevel(args.verbosity)
     return args
 
 
 class Reporter:
-    def __init__(self, args):
-        self._error = None
+    def __init__(self, args: argparse.Namespace) -> None:
+        self._error: Optional[Exception] = None
         if args.statsd_address:
-            self.statsd = stats.StatsDBackend(
+            self.statsd: Optional[stats.StatsDBackend] = stats.StatsDBackend(
                 args.statsd_address, args.statsd_prefix, tags=stats.get_env_tags()
             )
         else:
             self.statsd = None
 
         if args.prometheus_url:
-            self.prometheus = PushgatewayGroupPublisher(
+            self.prometheus: Optional[PushgatewayGroupPublisher] = PushgatewayGroupPublisher(
                 args.prometheus_url,
                 "db_counts",
                 instance=args.prometheus_instance,
@@ -59,7 +61,9 @@ class Reporter:
         else:
             self.prometheus = None
 
-    def do_report(self, metric, value, kind, tags=None):
+    def do_report(
+        self, metric: List[str], value: int, kind: str, tags: Optional[Dict[str, str]] = None
+    ) -> None:
         LOG.info("%s.%s -> %d", kind, ".".join(metric), value)
         if value > 0:  # Don't export 0 values. We can always set null=0 in grafana...
             if self.statsd is not None:
@@ -70,28 +74,28 @@ class Reporter:
             if self.prometheus is not None:
                 self.prometheus.add("database_table_" + kind, value, metric_labels=tags)
 
-    def commit(self):
+    def commit(self) -> None:
         if self.prometheus is not None:
             self.prometheus.commit()
 
-    def error(self, metric, error_):
+    def error(self, metric: List[str], error_: Exception) -> None:
         if self.statsd is not None:
             self.statsd.counter(["error"] + metric, 1)
         if self._error is None:
             self._error = error_
 
-    def report_error(self):
+    def report_error(self) -> None:
         if self._error is not None:
             raise self._error
 
 
-def do_table(session, schema, table, reporter):
+def do_table(session: sqlalchemy.orm.scoped_session, schema: str, table: str, reporter: Reporter) -> None:
     _do_table_count(reporter, schema, session, table)
     _do_table_size(reporter, schema, session, table)
     _do_indexes(reporter, schema, session, table)
 
 
-def _do_indexes(reporter, schema, session, table):
+def _do_indexes(reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_session, table: str) -> None:
     for index_name, size_main, size_fsm, number_of_scans, tuples_read, tuples_fetched in session.execute(
         """
     SELECT
@@ -131,7 +135,10 @@ def _do_indexes(reporter, schema, session, table):
             )
 
 
-def _do_table_size(reporter, schema, session, table):
+def _do_table_size(
+    reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_session, table: str
+) -> None:
+    size: int = 0
     (size,) = session.execute(
         """
     SELECT pg_table_size(c.oid) AS total_bytes
@@ -144,7 +151,9 @@ def _do_table_size(reporter, schema, session, table):
     reporter.do_report([schema, table], size, kind="size", tags=dict(schema=schema, table=table))
 
 
-def _do_table_count(reporter, schema, session, table):
+def _do_table_count(
+    reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_session, table: str
+) -> None:
     quote = session.bind.dialect.identifier_preparer.quote
     (count,) = session.execute(
         """
@@ -156,12 +165,12 @@ def _do_table_count(reporter, schema, session, table):
     reporter.do_report([schema, table], count, kind="count", tags=dict(schema=schema, table=table))
 
 
-def do_extra(session, extra, reporter):
+def do_extra(session: sqlalchemy.orm.scoped_session, extra: str, reporter: Reporter) -> None:
     for metric, count in session.execute(extra):
         reporter.do_report(str(metric).split("."), count, kind="count", tags=dict(metric=metric))
 
 
-def main():
+def main() -> None:
     c2cwsgiutils.setup_process.init()
     sentry.init()
 

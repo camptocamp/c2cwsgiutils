@@ -3,9 +3,10 @@ import os
 import subprocess
 import sys
 import time
-from typing import Mapping
+from typing import Any, Callable, Dict, List, Mapping, Optional
 
 import netifaces
+from pyramid.request import Request
 
 from c2cwsgiutils.acceptance import utils
 
@@ -16,7 +17,7 @@ logging.basicConfig(
 logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.WARN)
 
 
-def _try(what, fail=True, times=5, delay=10) -> None:
+def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: int = 10) -> Optional[Any]:
     for i in range(times):
         try:
             return what()
@@ -25,10 +26,13 @@ def _try(what, fail=True, times=5, delay=10) -> None:
             if i + 1 == times and fail:
                 raise
             time.sleep(delay)
+    return None
 
 
 class Composition:
-    def __init__(self, request, project_name, composition, coverage_paths=None) -> None:
+    def __init__(
+        self, request: Request, project_name: str, composition: str, coverage_paths: Optional[str] = None
+    ) -> None:
         self.docker_compose = ["docker-compose", "--file=" + composition, "--project-name=" + project_name]
         self.coverage_paths = coverage_paths
         env = Composition._get_env()
@@ -46,12 +50,12 @@ class Composition:
         if os.environ.get("docker_stop", "1") == "1":
             request.addfinalizer(self.stop_all)
 
-    def dc(self, args, **kwargs) -> None:
+    def dc(self, args: List[str], **kwargs: Any) -> None:
         subprocess.check_call(
             self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
         )
 
-    def dc_try(self, args, **kwargs) -> None:
+    def dc_try(self, args: List[str], **kwargs: Any) -> None:
         _try(
             lambda: self.dc(args), **kwargs,
         )
@@ -68,18 +72,18 @@ class Composition:
                     self.dc(["ps"])
                     raise
 
-    def stop(self, container) -> None:
+    def stop(self, container: str) -> None:
         self.dc_try(["stop", container])
 
-    def restart(self, container) -> None:
+    def restart(self, container: str) -> None:
         self.dc_try(["restart", container])
 
-    def run(self, container, *command, **kwargs) -> None:
+    def run(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> None:
         self.dc(
             ["run", "--rm", container] + list(command), **kwargs,
         )
 
-    def exec(self, container, *command, **kwargs) -> None:
+    def exec(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> None:
         self.dc(["exec", "-T", container] + list(command), **kwargs)
 
     @staticmethod

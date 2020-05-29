@@ -1,6 +1,6 @@
 import os
-from setuptools import setup, find_packages
 
+from setuptools import find_packages, setup
 
 import pipfile
 
@@ -8,7 +8,7 @@ VERSION = "3.12.0"
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 
-def long_description():
+def long_description() -> str:
     try:
         return open("README.md").read()
     except FileNotFoundError:

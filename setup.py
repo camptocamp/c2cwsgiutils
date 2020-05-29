@@ -1,8 +1,7 @@
 import os
 
-from setuptools import find_packages, setup
-
 import pipfile
+from setuptools import find_packages, setup
 
 VERSION = "3.12.0"
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -39,7 +38,7 @@ setup(
     packages=find_packages(exclude=["ez_setup", "acceptance_tests", "tests", "docs"]),
     include_package_data=True,
     zip_safe=False,
-    install_requires=["".join(e) for e in pipfile.load().data["default"].items()],
+    install_requires=[e[0] for e in pipfile.load().data["default"].items()],
     extras_require={"profiler": ["linesman"], "broadcast": ["redis"]},
     entry_points={
         "console_scripts": [

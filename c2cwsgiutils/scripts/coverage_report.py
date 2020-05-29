@@ -6,7 +6,7 @@ import sys
 import coverage
 
 
-def main():
+def main() -> None:
     sources = sys.argv[1:]
     report_dir = "/reports/coverage/api"
     dest_dir = "/tmp/coverage/api"

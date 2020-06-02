@@ -12,7 +12,7 @@ mypy = "==0.770"
 prospector = "==1.2.0"
 pycodestyle = "==2.4.0"
 pyflakes = "==2.1.1"
-pytest = "==5.4.2"
+pytest = "==5.4.3"
 pytest-cov = "==2.9.0"
 pytest-html = "==2.1.1"
 

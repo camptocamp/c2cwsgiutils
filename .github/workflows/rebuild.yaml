@@ -40,14 +40,4 @@ jobs:
         run: make acceptance
 
       - name: Release
-        run: |
-          summon --yaml '
-            USER: !var gs/ci/dockerhub/username
-            PASS: !var gs/ci/dockerhub/password
-          ' bash -c 'docker login -u $USER -p $PASS'
-
-          for tag_suffix in "-lite" "" "-full"
-          do
-            docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} camptocamp/c2cwsgiutils:${{ matrix.branch }}${tag_suffix}
-            docker push camptocamp/c2cwsgiutils:${{ matrix.branch }}${tag_suffix}
-          done
+        run: scripts/publish ${{github.ref}}

@@ -3,17 +3,14 @@ Broadcast messages to all the processes of Gunicorn in every containers.
 """
 import functools
 import logging
-from typing import Optional, Callable, Any, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 import pyramid.config
 
-from c2cwsgiutils import _utils
-from c2cwsgiutils.broadcast import interface  # noqa  # pylint: disable=unused-import
-from c2cwsgiutils.broadcast import redis, local
+from c2cwsgiutils import _utils, redis_utils
+from c2cwsgiutils.broadcast import interface, local, redis
 
 LOG = logging.getLogger(__name__)
-REDIS_ENV_KEY = "C2C_REDIS_URL"
-REDIS_CONFIG_KEY = "c2c.redis_url"
 BROADCAST_ENV_KEY = "C2C_BROADCAST_PREFIX"
 BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 
@@ -25,19 +22,18 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """
     global _broadcaster
-    redis_url = _utils.env_or_config(config, REDIS_ENV_KEY, REDIS_CONFIG_KEY)
     broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY, "broadcast_api_")
+    master, slave, _ = redis_utils.get()
     if _broadcaster is None:
-        if redis_url is not None:
-            _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
-            LOG.info("Broadcast service setup using redis: %s", redis_url)
+        if master is not None and slave is not None:
+            _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)
         else:
             _broadcaster = local.LocalBroadcaster()
             LOG.info("Broadcast service setup using local implementation")
-    elif isinstance(_broadcaster, local.LocalBroadcaster) and redis_url is not None:
+    elif isinstance(_broadcaster, local.LocalBroadcaster) and master is not None and slave is not None:
         LOG.info("Switching from a local broadcaster to a redis broadcaster")
         prev_broadcaster = _broadcaster
-        _broadcaster = redis.RedisBroadcaster(redis_url, broadcast_prefix)
+        _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)
         _broadcaster.copy_local_subscriptions(prev_broadcaster)
 
 

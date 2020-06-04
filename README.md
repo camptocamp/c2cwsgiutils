@@ -106,7 +106,7 @@ You can enable a view to configure the logging level on a live system using the 
 variable. Then, the current status of a logger can be queried with a GET on
 `{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}` and can be changed with
 `{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}&level={level}`. Overrides are stored in
-Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) is configured.
+Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) or `C2C_REDIS_SENTINELS` is configured.
 
 
 ## Database maintenance
@@ -114,7 +114,7 @@ Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) is configured.
 You can enable a view to force usage of the slave engine using the `C2C_DB_MAINTENANCE_VIEW_ENABLED` environment
 variable. Then, the database can be made "readonly" with
 `{C2C_BASE_PATH}/db/maintenance?secret={C2C_SECRET}&readonly=true`.
-The current state is stored in Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) is configured.
+The current state is stored in Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) or `C2C_REDIS_SENTINELS` is configured.
 
 
 ### Request tracking
@@ -386,7 +386,11 @@ The impacted APIs are:
 
 The configuration parameters are:
 
-* `C2C_REDIS_URL` (`c2c.redis_url`): The URL to the Redis instance to use
+* `C2C_REDIS_URL` (`c2c.redis_url`): The URL to the Redis single instance to use
+* `C2C_REDIS_TIMEOUT`: The Redis timeout
+* `C2C_REDIS_SENTINELS`: The coma separated list of Redis host:port sentinel instances to use
+* `C2C_REDIS_SERVICENAME`: The redis service name in case of using sentinels
+* `C2C_REDIS_DB`: The redis database number in case of using sentinels
 * `C2C_BROADCAST_PREFIX` (`c2c.broadcast_prefix`): The prefix to add to the channels being used (must be
   different for 2 different services)
 

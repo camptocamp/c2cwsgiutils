@@ -56,6 +56,7 @@ def test_failure(app_connection):
         "c2c/health_check", params={"max_level": "2"}, expected_status=500, cors=False
     )
     print("response=" + json.dumps(response))
+    assert "redis:26379" in response["successes"].keys()
     assert _remove_timings(response) == {
         "successes": {
             "db_engine_sqlalchemy": {"level": 1},
@@ -63,8 +64,8 @@ def test_failure(app_connection):
             "http://localhost:8080/api/hello": {"level": 1},
             "fun_url": {"level": 1},
             "alembic_app_alembic.ini_alembic": {"result": "4a8c1bb4e775", "level": 1},
-            "redis://redis:6379": {
-                "result": response["successes"]["redis://redis:6379"]["result"],
+            "redis:26379": {
+                "result": response["successes"]["redis:26379"]["result"],
                 "level": 2,
             },
             "version": {"result": response["successes"]["version"]["result"], "level": 2},
@@ -81,6 +82,7 @@ def test_failure_with_stack(app_connection):
         "c2c/health_check", params={"max_level": "2", "secret": "changeme"}, expected_status=500, cors=False
     )
     print("response=" + json.dumps(response))
+    assert "redis:26379" in response["successes"].keys()
     assert _remove_timings(response) == {
         "successes": {
             "db_engine_sqlalchemy": {"level": 1},
@@ -88,8 +90,8 @@ def test_failure_with_stack(app_connection):
             "http://localhost:8080/api/hello": {"level": 1},
             "fun_url": {"level": 1},
             "alembic_app_alembic.ini_alembic": {"result": "4a8c1bb4e775", "level": 1},
-            "redis://redis:6379": {
-                "result": response["successes"]["redis://redis:6379"]["result"],
+            "redis:26379": {
+                "result": response["successes"]["redis:26379"]["result"],
                 "level": 2,
             },
             "version": {"result": response["successes"]["version"]["result"], "level": 2},

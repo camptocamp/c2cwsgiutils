@@ -13,7 +13,7 @@ import subprocess
 import time
 import traceback
 from collections import Counter
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union  # noqa
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union, cast
 
 import pyramid.config
 import pyramid.request
@@ -22,7 +22,7 @@ import sqlalchemy.engine
 import sqlalchemy.orm
 from pyramid.httpexceptions import HTTPNotFound
 
-from c2cwsgiutils import _utils, auth, broadcast, stats, version
+from c2cwsgiutils import _utils, auth, broadcast, redis_utils, stats, version
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
@@ -84,9 +84,9 @@ class HealthCheck:
         )
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
-        redis_url = _utils.env_or_config(config, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
-        if redis_url is not None:
-            self.add_redis_check(redis_url, level=2)
+
+        if redis_utils.REDIS_URL_KEY in os.environ or redis_utils.REDIS_SENTINELS_KEY in os.environ:
+            self.add_redis_check(level=2)
             if version.get_version() is not None:
                 self.add_version_check(level=2)
 
@@ -219,30 +219,45 @@ class HealthCheck:
             name = str(url)
         self._checks.append((name, check, level))
 
-    def add_redis_check(self, url: str, name: Optional[str] = None, level: int = 1) -> None:
+    def add_redis_check(self, name: Optional[str] = None, level: int = 1) -> None:
         """
         Check that the given redis server is reachable. One such check is automatically added if
         the broadcaster is configured with redis.
 
-        :param url: the redis URL
         :param name: the name of the check (defaults to url)
         :param level: the level of the health check
         :return:
         """
-        import redis
 
         def check(request: pyramid.request.Request) -> Any:
-            con = redis.Redis(connection_pool=pool)
-            return {"info": con.info(), "dbsize": con.dbsize()}
+            master, slave, sentinel = redis_utils.get()
 
-        pool = redis.ConnectionPool.from_url(
-            url, retry_on_timeout=False, socket_connect_timeout=0.5, socket_timeout=0.5
-        )
-        if not url.startswith("redis://"):
-            url = "redis://" + url
+            result = {}
+
+            def add(name: str, func: Callable[..., Any], *args: Any) -> None:
+                try:
+                    result[name] = func(*args)
+                except Exception as e:  # pylint: disable=broad-except
+                    result[name] = {"error": str(e)}
+
+            if master is not None:
+                add("info", master.info)
+                add("info", master.dbsize)
+            if slave is not None:
+                add("slave_info", slave.info)
+            if sentinel is not None:
+                service_name = os.environ.get(redis_utils.REDIS_SERVICENAME_KEY, "mymaster")
+                add("sentinel", sentinel.sentinels[0].sentinel)
+                add("sentinel_masters", sentinel.sentinels[0].sentinel_masters)
+                add("sentinel_master", sentinel.sentinels[0].sentinel_master, service_name)
+                add("sentinel_sentinels", sentinel.sentinels[0].sentinel_sentinels, service_name)
+                add("sentinel_slaves", sentinel.sentinels[0].sentinel_slaves, service_name)
+
+            return result
+
         if name is None:
-            name = url
-        self._checks.append((name, check, level))
+            name = os.environ.get(redis_utils.REDIS_SENTINELS_KEY, os.environ.get(redis_utils.REDIS_URL_KEY))
+        self._checks.append((cast(str, name), check, level))
 
     def add_version_check(self, name: str = "version", level: int = 2) -> None:
         """

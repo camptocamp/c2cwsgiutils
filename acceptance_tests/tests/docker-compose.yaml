@@ -1,105 +1,122 @@
-app:
-  image: camptocamp/c2cwsgiutils_test_app
-  environment: &app_env
-    SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-    SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
-    PGOPTIONS: '-c statement_timeout=1500'
-    STATS_VIEW: 1
-    STATSD_ADDRESS: ${TEST_IP}:8125
-    STATSD_PREFIX: acceptance
-    STATSD_TAG_XYZ: zyx
-    STATSD_USE_TAGS: 1
-    C2C_SECRET: changeme
-    C2C_LOG_VIEW_ENABLED: 1
-    C2C_DB_MAINTENANCE_VIEW_ENABLED: 1
-    C2C_SQL_PROFILER_ENABLED: 1
-    C2C_DEBUG_VIEW_ENABLED: 1
-    C2C_PROFILER_PATH: /api_profiler
-    C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
-    C2C_ENABLE_EXCEPTION_HANDLING: 1
-    LOG_HOST: ${TEST_IP}
-    LOG_TYPE: 'console,logstash'
-    SQL_LOG_LEVEL: DEBUG
-    OTHER_LOG_LEVEL: DEBUG
-    COVERAGE: 1
-    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-    SENTRY_CLIENT_ENVIRONMENT: local
-    SENTRY_CLIENT_RELEASE: latest
-    SENTRY_TAG_SERVICE: app
-    C2C_REDIS_URL: redis://redis:6379
-    PYTHONMALLOC: debug
-    GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
-  links:
-    - db
-    - db_slave
-    - redis
-  ports:
-    - 8480:8080
+version: '2.2'
 
-alembic_master:
-  image: camptocamp/c2cwsgiutils_test_app
-  environment:
-    SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-    SQL_LOG_LEVEL: DEBUG
-    OTHER_LOG_LEVEL: DEBUG
-    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-    SENTRY_CLIENT_ENVIRONMENT: local
-    SENTRY_CLIENT_RELEASE: latest
-    SENTRY_TAG_SERVICE: alembic_master
-    STATSD_ADDRESS: ${TEST_IP}:8125
-    STATSD_PREFIX: alembic_master
-  links:
-    - db
-  command: /bin/true  # will use execute with another script from the tests to actually do it
+services:
+  app:
+    image: camptocamp/c2cwsgiutils_test_app
+    environment: &app_env
+      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+      SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
+      PGOPTIONS: -c statement_timeout=1500
+      STATS_VIEW: 1
+      STATSD_ADDRESS: ${TEST_IP}:8125
+      STATSD_PREFIX: acceptance
+      STATSD_TAG_XYZ: zyx
+      STATSD_USE_TAGS: 1
+      C2C_SECRET: changeme
+      C2C_LOG_VIEW_ENABLED: 1
+      C2C_DB_MAINTENANCE_VIEW_ENABLED: 1
+      C2C_SQL_PROFILER_ENABLED: 1
+      C2C_DEBUG_VIEW_ENABLED: 1
+      C2C_PROFILER_PATH: /api_profiler
+      C2C_PROFILER_MODULES: c2cwsgiutils c2cwsgiutils_app sqlalchemy request
+      C2C_ENABLE_EXCEPTION_HANDLING: 1
+      LOG_TYPE: console,json
+      SQL_LOG_LEVEL: DEBUG
+      OTHER_LOG_LEVEL: DEBUG
+      COVERAGE: 1
+      SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      SENTRY_CLIENT_ENVIRONMENT: local
+      SENTRY_CLIENT_RELEASE: latest
+      SENTRY_TAG_SERVICE: app
+      C2C_REDIS_SENTINELS: redis:26379
+      PYTHONMALLOC: debug
+      GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
+    links:
+      - db
+      - db_slave
+      - redis
+    ports:
+      - 8480:8080
 
-alembic_slave:
-  image: camptocamp/c2cwsgiutils_test_app
-  environment:
-    SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-    SQL_LOG_LEVEL: DEBUG
-    OTHER_LOG_LEVEL: DEBUG
-    SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-    SENTRY_CLIENT_ENVIRONMENT: local
-    SENTRY_CLIENT_RELEASE: latest
-    SENTRY_TAG_SERVICE: alembic_slave
-    STATSD_ADDRESS: ${TEST_IP}:8125
-    STATSD_PREFIX: alembic_slave
-  links:
-    - db_slave:db
-  command: /bin/true  # will use execute with another script from the tests to actually do it
+  alembic_master:
+    image: camptocamp/c2cwsgiutils_test_app
+    environment:
+      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+      SQL_LOG_LEVEL: DEBUG
+      OTHER_LOG_LEVEL: DEBUG
+      SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      SENTRY_CLIENT_ENVIRONMENT: local
+      SENTRY_CLIENT_RELEASE: latest
+      SENTRY_TAG_SERVICE: alembic_master
+      STATSD_ADDRESS: ${TEST_IP}:8125
+      STATSD_PREFIX: alembic_master
+    links:
+      - db
+    command: /bin/true  # will use execute with another script from the tests to actually do it
 
-db:
-  image: camptocamp/postgres:12
-  environment:
-    POSTGRES_USER: www-data
-    POSTGRES_PASSWORD: www-data
-    POSTGRES_DB: test
-  command: postgres -c log_line_prefix="%a "
-  ports:
-    - 15432:5432
+  alembic_slave:
+    image: camptocamp/c2cwsgiutils_test_app
+    environment:
+      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
+      SQL_LOG_LEVEL: DEBUG
+      OTHER_LOG_LEVEL: DEBUG
+      SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      SENTRY_CLIENT_ENVIRONMENT: local
+      SENTRY_CLIENT_RELEASE: latest
+      SENTRY_TAG_SERVICE: alembic_slave
+      STATSD_ADDRESS: ${TEST_IP}:8125
+      STATSD_PREFIX: alembic_slave
+    links:
+      - db_slave:db
+    command: /bin/true  # will use execute with another script from the tests to actually do it
 
-db_slave:
-  image: camptocamp/postgres:12
-  environment:
-    POSTGRES_USER: www-data
-    POSTGRES_PASSWORD: www-data
-    POSTGRES_DB: test
-  command: postgres -c log_line_prefix="%a " -c log_statement=all
-  ports:
-    - 25432:5432
+  db:
+    image: camptocamp/postgres:12
+    environment:
+      POSTGRES_USER: www-data
+      POSTGRES_PASSWORD: www-data
+      POSTGRES_DB: test
+    command: postgres -c log_line_prefix="%a "
+    ports:
+      - 15432:5432
+
+  db_slave:
+    image: camptocamp/postgres:12
+    environment:
+      POSTGRES_USER: www-data
+      POSTGRES_PASSWORD: www-data
+      POSTGRES_DB: test
+    command: postgres -c log_line_prefix="%a " -c log_statement=all
+    ports:
+      - 25432:5432
 
 
-run_test:
-  image: camptocamp/c2cwsgiutils_test_app
-  command: 'true'
-  environment: *app_env
-  links:
-    - db
-    - redis
+  run_test:
+    image: camptocamp/c2cwsgiutils_test_app
+    command: 'true'
+    environment: *app_env
+    links:
+      - db
+      - redis
 
-redis:
-  image: redis:5
-  mem_limit: 64m
-  command: redis-server --save "" --appendonly no --maxmemory 50mb --tcp-keepalive 30
-  ports:
-    - 16379:6379
+
+  redis_master:
+    image: redis:5
+
+
+  redis_slave:
+    image: redis:5
+    command: redis-server --slaveof redis_master 6379
+    depends_on:
+      - redis_master
+
+
+  # Sentinel
+  redis:
+    image: camptocamp/c2cwsgiutils-redis-sentinel:5
+    environment:
+      - MASTER_NAME=mymaster
+      - QUORUM=1
+      - MASTER=redis_master
+    depends_on:
+      - redis_master

@@ -1,9 +1,9 @@
 import logging
-from typing import Mapping, Any, Generator, Tuple
+from typing import Any, Generator, Mapping, Tuple
 
 import pyramid.request
 
-from c2cwsgiutils import _utils, auth, broadcast
+from c2cwsgiutils import _utils, auth, broadcast, redis_utils
 
 LOG = logging.getLogger(__name__)
 CONFIG_KEY = "c2c.log_view_enabled"
@@ -68,25 +68,18 @@ def _restore_overrides(config: pyramid.config.Configurator) -> None:
 
 def _store_override(settings: Mapping[str, Any], name: str, level: str) -> None:
     try:
-        import redis
-
-        redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
-        if redis_url:
-            con = redis.Redis.from_url(redis_url, socket_timeout=3, decode_responses=True)
-            con.set(REDIS_PREFIX + name, level)
+        master, _, _ = redis_utils.get()
+        if master:
+            master.set(REDIS_PREFIX + name, level)
     except ImportError:
         pass
 
 
 def _list_overrides(settings: Mapping[str, Any]) -> Generator[Tuple[str, str], None, None]:
-    import redis
-
-    redis_url = _utils.env_or_settings(settings, broadcast.REDIS_ENV_KEY, broadcast.REDIS_CONFIG_KEY)
-    if redis_url is None:
-        return
-    con = redis.Redis.from_url(redis_url, socket_timeout=3, decode_responses=True)
-    for key in con.scan_iter(REDIS_PREFIX + "*"):
-        level = con.get(key)
-        name = key[len(REDIS_PREFIX) :]
-        if level is not None:
-            yield name, str(level)
+    _, slave, _ = redis_utils.get()
+    if slave is not None:
+        for key in slave.scan_iter(REDIS_PREFIX + "*"):
+            level = slave.get(key)
+            name = key[len(REDIS_PREFIX) :]
+            if level is not None:
+                yield name, str(level)

@@ -1,7 +1,7 @@
 import logging
 import os
 from tempfile import gettempdir
-from typing import Callable, Any
+from typing import Any, Callable
 
 LOG = logging.getLogger(__name__)
 PATH = os.environ.get("C2C_PROFILER_PATH", "")
@@ -21,6 +21,9 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
                 chart_packages=_MODULES,
                 filename=os.path.join(gettempdir(), "linesman-graph-sessions.db"),
             )
+        except ModuleNotFoundError:
+            LOG.error("'linesman' not installer. Continuing without profiler.")
+            return application
         except Exception:  # pragma: no cover  # pylint: disable=broad-except
             LOG.error("Failed enabling the profiler. Continuing without it.", exc_info=True)
             return application

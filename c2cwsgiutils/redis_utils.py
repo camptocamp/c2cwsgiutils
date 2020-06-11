@@ -1,12 +1,67 @@
 import logging
+import os
 import threading
 import time
-from typing import Optional  # noqa  # pylint: disable=unused-import
+from typing import Optional, Tuple
 
-import redis.client  # noqa  # pylint: disable=unused-import
+import redis.client
 import redis.exceptions
+import redis.sentinel
 
 LOG = logging.getLogger(__name__)
+
+REDIS_URL_KEY = "C2C_REDIS_URL"
+REDIS_SENTINELS_KEY = "C2C_REDIS_SENTINELS"
+REDIS_TIMEOUT_KEY = "C2C_REDIS_TIMEOUT"
+REDIS_SERVICENAME_KEY = "C2C_REDIS_SERVICENAME"
+REDIS_DB_KEY = "C2C_REDIS_DB"
+
+_master: Optional[redis.Redis] = None
+_slave: Optional[redis.Redis] = None
+_sentinel: Optional[redis.sentinel.Sentinel] = None
+
+
+def get() -> Tuple[Optional[redis.Redis], Optional[redis.Redis], Optional[redis.sentinel.Sentinel]]:
+    if _master is None:
+        _init()
+    return _master, _slave, _sentinel
+
+
+def _init() -> None:
+    global _master, _slave, _sentinel
+    sentinels = os.environ.get(REDIS_SENTINELS_KEY)
+    socket_timeout = int(os.environ[REDIS_TIMEOUT_KEY]) if REDIS_TIMEOUT_KEY in os.environ else None
+    service_name = os.environ.get(REDIS_SERVICENAME_KEY)
+    db = os.environ.get(REDIS_DB_KEY)
+    url = os.environ.get(REDIS_URL_KEY)
+    if sentinels:
+        sentinels_str = [item.split(":") for item in sentinels.split(",")]
+        _sentinel = redis.sentinel.Sentinel(
+            [(e[0], int(e[1])) for e in sentinels_str],
+            socket_timeout=socket_timeout,
+            decode_responses=True,
+            db=db,
+        )
+
+        try:
+            LOG.info("Redis setup using: %s, %s", sentinels, service_name)
+            _master = _sentinel.master_for(service_name)
+            _slave = _sentinel.slave_for(service_name)
+            return
+        except redis.sentinel.MasterNotFoundError:
+            print(_sentinel.sentinels[0].sentinel_masters())
+            raise Exception(_sentinel.sentinels[0].sentinel_masters())
+    if url:
+        if not url.startswith("redis://"):
+            url = "redis://" + url
+
+        LOG.info("Redis setup using: %s", url)
+        _master = redis.Redis.from_url(url, socket_timeout=socket_timeout, decode_responses=True)
+        _slave = _master
+    else:
+        LOG.info(
+            "No Redis configuration found, use %s or %s to configure it", REDIS_URL_KEY, REDIS_SENTINELS_KEY
+        )
 
 
 class PubSubWorkerThread(threading.Thread):

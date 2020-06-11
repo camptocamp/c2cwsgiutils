@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Any, Callable, Dict, List, Mapping, Optional
+from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 import netifaces
 from pyramid.request import Request
@@ -38,7 +38,7 @@ class Composition:
         env = Composition._get_env()
         if os.environ.get("docker_start", "1") == "1":
             self.dc_try(["stop"], fail=False)
-            self.dc_try(["rm", "-f", "--all"], fail=False)
+            self.dc_try(["rm", "-f"], fail=False)
             self.dc_try(["build"], fail=False)
             self.dc_try(["up", "-d"], fail=False)
 
@@ -50,9 +50,12 @@ class Composition:
         if os.environ.get("docker_stop", "1") == "1":
             request.addfinalizer(self.stop_all)
 
-    def dc(self, args: List[str], **kwargs: Any) -> None:
-        subprocess.check_call(
-            self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
+    def dc(self, args: List[str], **kwargs: Any) -> str:
+        return cast(
+            str,
+            subprocess.check_output(
+                self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
+            ).decode(),
         )
 
     def dc_try(self, args: List[str], **kwargs: Any) -> None:

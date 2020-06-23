@@ -1,0 +1,30 @@
+---
+
+name: Audit
+
+on:
+  schedule:
+    - cron: "30 2 * * *"
+
+jobs:
+  main:
+    runs-on: ubuntu-18.04
+    name: Audit
+    timeout-minutes: 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        branch:
+          - release_2
+          - release_3
+          - release_4
+
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          ref: ${{ matrix.branch }}
+      - run: sudo python3 -m pip install safety
+      - run: safety check --file=requirements.txt
+      - run: safety check --full-report --file=requirements.txt
+        if: failure()

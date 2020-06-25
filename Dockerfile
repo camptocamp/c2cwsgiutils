@@ -50,7 +50,8 @@ COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
         --editable=/opt/c2cwsgiutils && \
     python3 -m compileall -q && \
-    python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q && \
+    python3 -m compileall -q /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils \
+        -x /usr/local/lib/python3.8/dist-packages/pipenv/patched/yaml2/ && \
     python3 -c 'import c2cwsgiutils'
 
 ENV C2C_BASE_PATH=/c2c \

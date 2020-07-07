@@ -1,8 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash -eux
 
 VERSION=$1
 
-actual_version=$(python3 ./setup.py --version 2> /dev/null)
+actual_version=$(python3 ./setup.py --version)
 
 if [[ "${VERSION}" != "${actual_version}" ]]
 then
@@ -16,10 +16,7 @@ then
     exit 0
 fi
 
-python3 -m pip install --requirement=requirements-publish.txt
-
-python3 ./setup.py bdist_wheel
-
+set +x
 if twine upload -u "${USERNAME}" -p "${PASSWORD}" dist/*.whl
 then
     echo "Upload to pypi successful"

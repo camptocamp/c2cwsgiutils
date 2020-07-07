@@ -1,12 +1,12 @@
 import logging
 import os
 import time
-from typing import Callable, Any, Tuple, List
+from typing import Any, Callable, List, Tuple
 
 import boltons.iterutils
 import netifaces
-import requests
 import pytest
+import requests
 
 LOG = logging.getLogger(__name__)
 

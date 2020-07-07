@@ -7,9 +7,10 @@ VERSION = "4.0.0"
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 
-def long_description():
+def long_description() -> str:
     try:
-        return open("README.md").read()
+        with open("README.md") as f:
+            return f.read()
     except FileNotFoundError:
         return ""
 
@@ -59,4 +60,5 @@ setup(
             "c2c+egg=c2cwsgiutils.loader:Loader",
         ],
     },
+    scripts=["scripts/c2cwsgiutils-run"],
 )

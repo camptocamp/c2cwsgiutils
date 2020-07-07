@@ -3,7 +3,7 @@ import os
 import pipfile
 from setuptools import find_packages, setup
 
-VERSION = "3.12.0"
+VERSION = "4.0.0"
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 

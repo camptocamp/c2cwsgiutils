@@ -1,22 +1,20 @@
-FROM ubuntu:20.04 AS base-all
+FROM osgeo/gdal:ubuntu-small-3.1.1 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
 RUN apt update && \
+    apt upgrade --assume-yes && \
     DEV_PACKAGES="libpq-dev build-essential python3-dev" && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
-        libpq5 \
-        python3 \
-        curl \
-        postgresql-client-12 \
-        net-tools iputils-ping screen \
-        gnupg \
-        $DEV_PACKAGES && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel \
-        python3-pkgconfig && \
+    DEBIAN_FRONTEND=noninteractive apt install --assume-yes --no-install-recommends \
+    postgresql-client-12 \
+    net-tools iputils-ping screen \
+    gnupg \
+    $DEV_PACKAGES && \
+    DEBIAN_FRONTEND=noninteractive apt install --assume-yes --no-install-recommends \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    python3-pkgconfig && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
     python3 -m pip install --no-cache-dir --requirement=/opt/c2cwsgiutils/requirements.txt && \
@@ -44,7 +42,7 @@ FROM base-all AS base
 
 CMD ["c2cwsgiutils-run"]
 
-COPY scripts/c2cwsgiutils-run scripts/install-gdal /usr/bin/
+COPY scripts/c2cwsgiutils-run /usr/bin/
 COPY setup.py setup.cfg /opt/c2cwsgiutils/
 COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \

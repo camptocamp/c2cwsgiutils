@@ -3,7 +3,7 @@ import os
 import pipfile
 from setuptools import find_packages, setup
 
-VERSION = "4.0.0"
+VERSION = "4.0.1"
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -41,9 +41,7 @@ setup(
     zip_safe=False,
     install_requires=[],
     extras_require={
-        "standard": [
-            e[0] for e in pipfile.load().data["default"].items() if e[0] != "redis"
-        ],
+        "standard": [e[0] for e in pipfile.load().data["default"].items() if e[0] != "redis"],
         "profiler": ["linesman"],
         "broadcast": ["redis"],
     },

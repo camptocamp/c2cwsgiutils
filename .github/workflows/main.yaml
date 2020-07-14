@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 15
 
+    env:
+      PATH: /bin:/usr/bin:/usr/local/bin:/home/runner/.local/bin
+
     steps:
       - uses: actions/checkout@v1
 
@@ -31,6 +34,13 @@ jobs:
 
       - name: Install GDAL
         run: docker run --rm camptocamp/c2cwsgiutils install-gdal
+
+      - name: Check Python package
+        run: |
+          sudo apt install --yes python3-setuptools python3-wheel
+          python3 -m pip install --requirement=requirements-publish.txt
+          python3 ./setup.py sdist bdist_wheel
+          twine check dist/*
 
       - name: Release
         run: scripts/publish ${{github.ref}}

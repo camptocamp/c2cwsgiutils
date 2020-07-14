@@ -3,13 +3,14 @@ import os
 import pipfile
 from setuptools import find_packages, setup
 
-VERSION = "3.12.0"
+VERSION = "5.0.0"
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 
 def long_description() -> str:
     try:
-        return open("README.md").read()
+        with open("README.md") as f:
+            return f.read()
     except FileNotFoundError:
         return ""
 
@@ -38,8 +39,12 @@ setup(
     packages=find_packages(exclude=["ez_setup", "acceptance_tests", "tests", "docs"]),
     include_package_data=True,
     zip_safe=False,
-    install_requires=[e[0] for e in pipfile.load().data["default"].items()],
-    extras_require={"profiler": ["linesman"], "broadcast": ["redis"]},
+    install_requires=[],
+    extras_require={
+        "standard": [e[0] for e in pipfile.load().data["default"].items() if e[0] != "redis"],
+        "profiler": ["linesman"],
+        "broadcast": ["redis"],
+    },
     entry_points={
         "console_scripts": [
             "c2cwsgiutils-genversion = c2cwsgiutils.scripts.genversion:main",
@@ -59,4 +64,5 @@ setup(
             "c2c+egg=c2cwsgiutils.loader:Loader",
         ],
     },
+    scripts=["scripts/c2cwsgiutils-run"],
 )

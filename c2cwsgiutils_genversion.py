@@ -4,20 +4,38 @@ import os
 import re
 import subprocess
 import sys
+from typing import Optional, Tuple, cast
 
-VERSION_RE = re.compile(r'^(.*)==(.*)$')
+SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
+VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")
+
+
+def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Parse plain and editable versions. See test_genversion.py for examples.
+    """
+    src_matcher = SRC_VERSION_RE.match(comp)
+    matcher = src_matcher or VERSION_RE.match(comp)
+    if matcher:
+        return cast(Tuple[str, str], matcher.groups())
+    else:
+        if len(comp) > 0 and not comp[:3] == "-e ":
+            print("Cannot parse package version: " + comp)
+        return None, None
 
 
 def _get_packages_version():
     result = {}
     with open(os.devnull, "w") as devnull:
-        for comp in subprocess.check_output(["pip3", "freeze"], stderr=devnull).decode().strip().split('\n'):
-            matcher = VERSION_RE.match(comp)
-            if matcher:
-                name, version = matcher.groups()
+        for comp in (
+            subprocess.check_output(["pip3", "freeze"], stderr=devnull)
+            .decode()
+            .strip()
+            .split("\n")
+        ):
+            name, version = _get_package_version(comp)
+            if name is not None and version is not None:
                 result[name] = version
-            else:
-                print("Cannot parse package version: " + comp)
     return result
 
 
@@ -28,15 +46,10 @@ def main():
     else:
         git_tag = sys.argv[1]
         git_hash = sys.argv[2]
-    report = {
-        'main': {
-            "git_hash": git_hash,
-        },
-        'packages': _get_packages_version()
-    }
+    report = {"main": {"git_hash": git_hash}, "packages": _get_packages_version()}
     if git_tag is not None:
-        report['main']['git_tag'] = git_tag
-    with open('versions.json', 'w') as file:
+        report["main"]["git_tag"] = git_tag
+    with open("versions.json", "w") as file:
         json.dump(report, file, indent=2)
 
 

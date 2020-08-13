@@ -23,6 +23,7 @@ build: build_docker build_acceptance build_test_app
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app
+	docker build --tag=camptocamp/c2cwsgiutils-redis-sentinel:5 acceptance_tests/tests/redis/
 	rm -rf reports/coverage/api reports/acceptance.xml
 	mkdir -p reports/coverage/api
 	# Get the UT reports

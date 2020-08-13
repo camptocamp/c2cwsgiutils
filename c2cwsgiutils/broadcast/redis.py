@@ -4,9 +4,11 @@ import random
 import string
 import threading
 import time
-from typing import Callable, Optional, Mapping, Any, List
+from typing import Any, Callable, List, Mapping, Optional
 
-from c2cwsgiutils.broadcast import utils, interface, local
+import redis
+
+from c2cwsgiutils.broadcast import interface, local, utils
 
 LOG = logging.getLogger(__name__)
 
@@ -16,15 +18,16 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     Implement broadcasting messages using Redis
     """
 
-    def __init__(self, redis_url: str, broadcast_prefix: str) -> None:
-        import redis
+    def __init__(self, broadcast_prefix: str, master: redis.Redis, slave: redis.Redis) -> None:
         from c2cwsgiutils import redis_utils
 
+        self._master = master
+        self._slave = slave
         self._broadcast_prefix = broadcast_prefix
-        self._connection = redis.Redis.from_url(redis_url, socket_timeout=3)
-        self._pub_sub = self._connection.pubsub(ignore_subscribe_messages=True)
 
-        # need to be subscribed to something for the thread to stay alive
+        self._pub_sub = self._master.pubsub(ignore_subscribe_messages=True)
+
+        # Need to be subscribed to something for the thread to stay alive
         self._pub_sub.subscribe(**{self._get_channel("c2c_dummy"): lambda message: None})
         self._thread = redis_utils.PubSubWorkerThread(self._pub_sub, name="c2c_broadcast_listener")
         self._thread.start()
@@ -35,7 +38,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:
         def wrapper(message: Mapping[str, Any]) -> None:
             LOG.debug("Received a broadcast on %s: %s", message["channel"], repr(message["data"]))
-            data = json.loads(message["data"].decode("utf-8"))
+            data = json.loads(message["data"])
             try:
                 response = callback(**data["params"])
             except Exception as e:  # pragma: no cover  # pylint: disable=broad-except
@@ -44,7 +47,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             answer_channel = data.get("answer_channel")
             if answer_channel is not None:
                 LOG.debug("Sending broadcast answer on %s", answer_channel)
-                self._connection.publish(answer_channel, json.dumps(utils.add_host_info(response)))
+                self._master.publish(answer_channel, json.dumps(utils.add_host_info(response)))
 
         actual_channel = self._get_channel(channel)
         LOG.debug("Subscribing %s.%s to %s", callback.__module__, callback.__name__, actual_channel)
@@ -72,9 +75,9 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         assert self._thread.is_alive()
 
         def callback(msg: Mapping[str, Any]) -> None:
-            LOG.debug("Received a broadcast answer on %s", msg["channel"].decode("utf-8"))
+            LOG.debug("Received a broadcast answer on %s", msg["channel"])
             with cond:
-                answers.append(json.loads(msg["data"].decode("utf-8")))
+                answers.append(json.loads(msg["data"]))
                 cond.notify()
 
         answer_channel = self._get_channel(channel) + "".join(
@@ -109,7 +112,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def _broadcast(self, channel: str, message: Mapping[str, Any]) -> int:
         actual_channel = self._get_channel(channel)
         LOG.debug("Sending a broadcast on %s", actual_channel)
-        nb_received = self._connection.publish(actual_channel, json.dumps(message))
+        nb_received = self._master.publish(actual_channel, json.dumps(message))
         LOG.debug("Broadcast on %s sent to %d listeners", actual_channel, nb_received)
         return nb_received
 

@@ -3,10 +3,9 @@ import os
 import subprocess
 import sys
 import time
-from typing import Mapping
+from typing import Any, List, Mapping, cast
 
 import netifaces
-
 from c2cwsgiutils.acceptance import utils
 
 LOG = logging.getLogger(__name__)
@@ -34,7 +33,7 @@ class Composition:
         env = Composition._get_env()
         if os.environ.get("docker_start", "1") == "1":
             self.dc_try(["stop"], fail=False)
-            self.dc_try(["rm", "-f", "--all"], fail=False)
+            self.dc_try(["rm", "-f"], fail=False)
             self.dc_try(["build"], fail=False)
             self.dc_try(["up", "-d"], fail=False)
 
@@ -46,9 +45,12 @@ class Composition:
         if os.environ.get("docker_stop", "1") == "1":
             request.addfinalizer(self.stop_all)
 
-    def dc(self, args, **kwargs) -> None:
-        subprocess.check_call(
-            self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
+    def dc(self, args: List[str], **kwargs: Any) -> str:
+        return cast(
+            str,
+            subprocess.check_output(
+                self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
+            ).decode(),
         )
 
     def dc_try(self, args, **kwargs) -> None:

@@ -33,5 +33,11 @@ then
     docker tag camptocamp/c2cwsgiutils camptocamp/c2cwsgiutils:${tag}
   fi
   docker push camptocamp/c2cwsgiutils:${tag}
+
+  if [[ $1 == refs/heads/master ]]
+  then
+    docker push camptocamp/c2cwsgiutils-redis-sentinel:5
+  fi
+
   rm -rf ~/.docker*  # docker logout
 fi

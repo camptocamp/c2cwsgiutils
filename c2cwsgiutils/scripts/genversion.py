@@ -4,9 +4,24 @@ import os
 import re
 import subprocess
 import sys
-from typing import Dict
+from typing import Dict, Optional, Tuple, cast
 
-VERSION_RE = re.compile(r"^(.*)==(.*)$")
+SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
+VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")
+
+
+def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Parse plain and editable versions. See test_genversion.py for examples.
+    """
+    src_matcher = SRC_VERSION_RE.match(comp)
+    matcher = src_matcher or VERSION_RE.match(comp)
+    if matcher:
+        return cast(Tuple[str, str], matcher.groups())
+    else:
+        if len(comp) > 0 and not comp[:3] == "-e ":
+            print("Cannot parse package version: " + comp)
+        return None, None
 
 
 def _get_packages_version() -> Dict[str, str]:
@@ -18,12 +33,9 @@ def _get_packages_version() -> Dict[str, str]:
             .strip()
             .split("\n")
         ):
-            matcher = VERSION_RE.match(comp)
-            if matcher:
-                name, version = matcher.groups()
+            name, version = _get_package_version(comp)
+            if name is not None and version is not None:
                 result[name] = version
-            else:
-                print("Cannot parse package version: " + comp)
     return result
 
 

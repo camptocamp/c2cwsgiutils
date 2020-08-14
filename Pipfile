@@ -13,7 +13,7 @@ prospector = "==1.2.0"
 pycodestyle = "==2.4.0"
 pyflakes = "==2.1.1"
 pytest = "==6.0.1"
-pytest-cov = "==2.10.0"
+pytest-cov = "==2.10.1"
 pytest-html = "==2.1.1"
 
 [packages]

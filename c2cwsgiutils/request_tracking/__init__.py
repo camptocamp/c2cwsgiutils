@@ -77,7 +77,7 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     ID_HEADERS = ["X-Request-ID", "X-Correlation-ID", "Request-ID", "X-Varnish", "X-Amzn-Trace-Id"]
     if config is not None:
         extra_header = _utils.env_or_config(config, "C2C_REQUEST_ID_HEADER", "c2c.request_id_header")
-        if extra_header is not None:
+        if extra_header:
             ID_HEADERS.insert(0, extra_header)
         config.add_request_method(_gen_request_id, "c2c_request_id", reify=True)
 

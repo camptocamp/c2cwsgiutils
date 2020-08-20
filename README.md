@@ -387,7 +387,7 @@ The impacted APIs are:
 The configuration parameters are:
 
 * `C2C_REDIS_URL` (`c2c.redis_url`): The URL to the Redis single instance to use
-* `C2C_REDIS_TIMEOUT`: The Redis timeout
+* `C2C_REDIS_OPTIONS`: The Redis options, comma separated list of <key>=<value>, the value is parsed as YAML
 * `C2C_REDIS_SENTINELS`: The coma separated list of Redis host:port sentinel instances to use
 * `C2C_REDIS_SERVICENAME`: The redis service name in case of using sentinels
 * `C2C_REDIS_DB`: The redis database number in case of using sentinels

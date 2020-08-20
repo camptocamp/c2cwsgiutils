@@ -2,7 +2,6 @@ import logging
 from typing import Any, Generator, Mapping, Tuple
 
 import pyramid.request
-
 from c2cwsgiutils import _utils, auth, broadcast, redis_utils
 
 LOG = logging.getLogger(__name__)

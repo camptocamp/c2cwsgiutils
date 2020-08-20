@@ -7,12 +7,13 @@ from typing import Optional, Tuple
 import redis.client
 import redis.exceptions
 import redis.sentinel
+import yaml
 
 LOG = logging.getLogger(__name__)
 
 REDIS_URL_KEY = "C2C_REDIS_URL"
+REDIS_OPTIONS_KEY = "C2C_REDIS_OPTIONS"
 REDIS_SENTINELS_KEY = "C2C_REDIS_SENTINELS"
-REDIS_TIMEOUT_KEY = "C2C_REDIS_TIMEOUT"
 REDIS_SERVICENAME_KEY = "C2C_REDIS_SERVICENAME"
 REDIS_DB_KEY = "C2C_REDIS_DB"
 
@@ -30,21 +31,24 @@ def get() -> Tuple[Optional[redis.Redis], Optional[redis.Redis], Optional[redis.
 def _init() -> None:
     global _master, _slave, _sentinel
     sentinels = os.environ.get(REDIS_SENTINELS_KEY)
-    socket_timeout = int(os.environ[REDIS_TIMEOUT_KEY]) if REDIS_TIMEOUT_KEY in os.environ else None
     service_name = os.environ.get(REDIS_SERVICENAME_KEY)
     db = os.environ.get(REDIS_DB_KEY)
     url = os.environ.get(REDIS_URL_KEY)
+    redis_options_ = os.environ.get(REDIS_OPTIONS_KEY)
+    redis_options = (
+        {}
+        if redis_options_ is None
+        else {e[0 : e.index("=")]: yaml.load(e[e.index("=") + 1 :]) for e in redis_options_.split(",")}
+    )
+
     if sentinels:
         sentinels_str = [item.split(":") for item in sentinels.split(",")]
         _sentinel = redis.sentinel.Sentinel(
-            [(e[0], int(e[1])) for e in sentinels_str],
-            socket_timeout=socket_timeout,
-            decode_responses=True,
-            db=db,
+            [(e[0], int(e[1])) for e in sentinels_str], decode_responses=True, db=db, **redis_options,
         )
 
         try:
-            LOG.info("Redis setup using: %s, %s", sentinels, service_name)
+            LOG.info("Redis setup using: %s, %s, %s", sentinels, service_name, redis_options_)
             _master = _sentinel.master_for(service_name)
             _slave = _sentinel.slave_for(service_name)
             return
@@ -55,8 +59,8 @@ def _init() -> None:
         if not url.startswith("redis://"):
             url = "redis://" + url
 
-        LOG.info("Redis setup using: %s", url)
-        _master = redis.Redis.from_url(url, socket_timeout=socket_timeout, decode_responses=True)
+        LOG.info("Redis setup using: %s, with options: %s", url, redis_options_)
+        _master = redis.Redis.from_url(url, decode_responses=True, **redis_options)
         _slave = _master
     else:
         LOG.info(

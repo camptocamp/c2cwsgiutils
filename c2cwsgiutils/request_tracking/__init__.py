@@ -5,7 +5,7 @@ to the Pyramid Request class to access it.
 import logging
 import urllib.parse
 import uuid
-from typing import List, Any, Optional, Dict, Sequence  # noqa  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional, Sequence  # noqa  # pylint: disable=unused-import
 
 import pyramid.request
 import requests.adapters

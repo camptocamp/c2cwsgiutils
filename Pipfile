@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 astroid = "==2.3.3"
 bandit = "==1.6.2"
-coverage = "==5.2.1"
+coverage = "==5.3"
 junit2html = "==25"
 mypy = "==0.782"
 prospector = "==1.2.0"

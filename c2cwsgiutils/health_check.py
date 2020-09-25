@@ -13,7 +13,7 @@ import subprocess
 import time
 import traceback
 from collections import Counter
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 import pyramid.config
 import pyramid.request
@@ -109,6 +109,7 @@ class HealthCheck:
             query_cb = self._at_least_one(at_least_one_model)
         for binding in _get_bindings(session):
             name, cb = self._create_db_engine_check(session, binding, query_cb)
+            assert name
             self._checks.append((name, cb, level))
 
     def add_alembic_check(
@@ -217,6 +218,7 @@ class HealthCheck:
 
         if name is None:
             name = str(url)
+        assert name
         self._checks.append((name, check, level))
 
     def add_redis_check(self, name: Optional[str] = None, level: int = 1) -> None:
@@ -257,7 +259,8 @@ class HealthCheck:
 
         if name is None:
             name = os.environ.get(redis_utils.REDIS_SENTINELS_KEY, os.environ.get(redis_utils.REDIS_URL_KEY))
-        self._checks.append((cast(str, name), check, level))
+        assert name
+        self._checks.append((name, check, level))
 
     def add_version_check(self, name: str = "version", level: int = 2) -> None:
         """
@@ -283,6 +286,7 @@ class HealthCheck:
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
             return dict(version=ref, count=len(versions))
 
+        assert name
         self._checks.append((name, check, level))
 
     def add_custom_check(
@@ -298,6 +302,7 @@ class HealthCheck:
         :param check_cb: the callback to call (takes the request as parameter)
         :param level: the level of the health check
         """
+        assert name
         self._checks.append((name, check_cb, level))
 
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:

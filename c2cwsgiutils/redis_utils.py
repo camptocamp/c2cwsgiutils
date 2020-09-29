@@ -38,7 +38,10 @@ def _init() -> None:
     redis_options = (
         {}
         if redis_options_ is None
-        else {e[0 : e.index("=")]: yaml.load(e[e.index("=") + 1 :]) for e in redis_options_.split(",")}
+        else {
+            e[0 : e.index("=")]: yaml.load(e[e.index("=") + 1 :], Loader=yaml.SafeLoader)
+            for e in redis_options_.split(",")
+        }
     )
 
     if sentinels:

@@ -85,7 +85,8 @@ class HealthCheck:
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
 
-        if redis_utils.REDIS_URL_KEY in os.environ or redis_utils.REDIS_SENTINELS_KEY in os.environ:
+        redis = os.environ.get(redis_utils.REDIS_SENTINELS_KEY, os.environ.get(redis_utils.REDIS_URL_KEY))
+        if redis:
             self.add_redis_check(level=2)
             if version.get_version() is not None:
                 self.add_version_check(level=2)

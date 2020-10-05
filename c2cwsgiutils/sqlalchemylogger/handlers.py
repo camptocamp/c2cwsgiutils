@@ -51,7 +51,7 @@ class SQLAlchemyHandler(logging.Handler):
             self.addFilter(ContainsExpression(contains_expression))
 
     def _processor(self) -> None:
-        LOG.debug("%s : starting processor thread", __name__)
+        LOG.debug("%s: starting processor thread", __name__)
         while True:
             logs = []
             time_since_last = time.monotonic()
@@ -70,7 +70,7 @@ class SQLAlchemyHandler(logging.Handler):
                     ):
                         self._write_logs(logs)
                         break
-        LOG.debug("%s : stopping processor thread", __name__)
+        LOG.debug("%s: stopping processor thread", __name__)
 
     def _write_logs(self, logs: List[Any]) -> None:
         try:
@@ -90,7 +90,7 @@ class SQLAlchemyHandler(logging.Handler):
             self.session.expunge_all()
 
     def create_db(self) -> None:
-        LOG.info("%s : creating new database", __name__)
+        LOG.info("%s: creating new database", __name__)
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__

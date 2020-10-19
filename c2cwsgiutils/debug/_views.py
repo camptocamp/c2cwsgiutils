@@ -1,16 +1,16 @@
-from datetime import datetime
 import gc
-from io import StringIO
 import logging
 import re
 import time
-from typing import Any, Callable, Dict, List, Mapping
+from datetime import datetime
+from io import StringIO
+from typing import Any, Callable, Dict, List, Mapping, cast
 
 import objgraph
 import pyramid.config
-from pyramid.httpexceptions import HTTPException, exception_response
 import pyramid.request
 import pyramid.response
+from pyramid.httpexceptions import HTTPException, exception_response
 
 from c2cwsgiutils import _utils, auth, broadcast
 from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
@@ -162,7 +162,7 @@ def _add_view(
 
 def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
     auth.auth_view(request)
-    return sorted(dump_memory_maps(), key=lambda i: -i.get("pss_kb", 0))
+    return sorted(dump_memory_maps(), key=lambda i: cast(int, -i.get("pss_kb", 0)))
 
 
 def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:

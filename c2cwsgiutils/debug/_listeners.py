@@ -3,7 +3,7 @@ import sys
 import threading
 import time
 import traceback
-from typing import Any, Dict, List, Mapping, Optional, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Tuple, cast
 
 import objgraph
 
@@ -91,7 +91,8 @@ def _dump_memory_impl(
 
             cache = linecache.cache  # type: ignore
             result[analyze_type]["biggest_objects"] = sorted(
-                [dict(filename=k, size_kb=get_size(v)) for k, v in cache.items()], key=lambda i: -i["size"]
+                [dict(filename=k, size_kb=get_size(v)) for k, v in cache.items()],
+                key=lambda i: cast(int, -i["size"]),
             )
         else:
             biggest_objects.reverse()

@@ -45,7 +45,7 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
             level=logging.DEBUG,
             event_level=_utils.env_or_config(config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR").upper(),
         )
-        sentry_sdk.init(  # type: ignore
+        sentry_sdk.init(
             dsn=sentry_url,
             integrations=[sentry_logging, SqlalchemyIntegration(), RedisIntegration()],
             before_send=_create_before_send_filter(tags),
@@ -75,7 +75,7 @@ def capture_exceptions() -> Generator[None, None, None]:
         try:
             yield
         except Exception:
-            sentry_sdk.capture_exception()  # type: ignore
+            sentry_sdk.capture_exception()
             raise
     else:
         yield

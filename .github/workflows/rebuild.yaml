@@ -1,3 +1,4 @@
+---
 name: Rebuild
 
 on:
@@ -10,6 +11,7 @@ env:
 
 jobs:
   rebuild:
+    name: Rebuild
     runs-on: ubuntu-18.04
     timeout-minutes: 15
 

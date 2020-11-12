@@ -1,0 +1,19 @@
+---
+name: Clean docker hub tags
+
+on: delete
+
+jobs:
+  clean:
+    runs-on: ubuntu-20.04
+    name: Clean docker hub tags
+    env:
+      SUMMON_PROVIDER: /usr/local/bin/gopass
+    steps:
+      - uses: actions/checkout@v1
+      - uses: camptocamp/initialise-gopass-summon-action@v1
+        with:
+          ci-gpg-private-key: ${{secrets.CI_GPG_PRIVATE_KEY}}
+          github-gopass-ci-token: ${{secrets.GITHUB_GOPASS_CI_TOKEN}}
+      - name: Clean docker hub tags
+        run: scripts/clean-dockerhub-tag

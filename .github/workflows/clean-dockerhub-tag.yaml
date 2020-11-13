@@ -16,4 +16,4 @@ jobs:
           ci-gpg-private-key: ${{secrets.CI_GPG_PRIVATE_KEY}}
           github-gopass-ci-token: ${{secrets.GITHUB_GOPASS_CI_TOKEN}}
       - name: Clean docker hub tags
-        run: scripts/clean-dockerhub-tag
+        run: ci/clean-dockerhub-tag

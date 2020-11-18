@@ -9,7 +9,7 @@ then
   summon --yaml '
     USERNAME: !var gs/ci/pypi/username
     PASSWORD: !var gs/ci/pypi/password
-  ' bash -c "scripts/release '${tag}'"
+  ' bash -c "ci/release '${tag}'"
   echo "Release tag ${tag}"
 elif [[ $1 =~ ^refs/heads/(release_[0-9]+)$ ]]
 then

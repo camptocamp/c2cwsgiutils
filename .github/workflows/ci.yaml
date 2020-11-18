@@ -45,4 +45,4 @@ jobs:
           twine check dist/*
 
       - name: Release
-        run: scripts/publish ${{github.ref}}
+        run: ci/publish ${{github.ref}}

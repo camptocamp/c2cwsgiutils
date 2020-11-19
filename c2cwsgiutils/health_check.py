@@ -15,6 +15,8 @@ import traceback
 from collections import Counter
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union  # noqa
 
+from enum import Enum
+
 import pyramid.config
 import pyramid.request
 import requests
@@ -26,6 +28,12 @@ from c2cwsgiutils import _utils, auth, broadcast, stats, version
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
+
+
+class EngineType(Enum):
+    READ_ONLY = 1
+    WRITE_ONLY = 2
+    READ_AND_WRITE = 3
 
 
 class JsonCheckException(Exception):
@@ -45,12 +53,17 @@ class JsonCheckException(Exception):
         return self.json
 
 
-def _get_bindings(session: Any) -> List[sqlalchemy.engine.Engine]:
-    return (
-        [session.c2c_rw_bind, session.c2c_ro_bind]
-        if session.c2c_rw_bind != session.c2c_ro_bind
-        else [session.c2c_rw_bind]
-    )
+def _get_bindings(session: Any, engine_type: EngineType) -> List[sqlalchemy.engine.Engine]:
+    if session.c2c_rw_bind == session.c2c_ro_bind:
+        engine_type = EngineType.WRITE_ONLY
+
+    if engine_type == EngineType.READ_AND_WRITE:
+        return [session.c2c_rw_bind, session.c2c_ro_bind]
+    if engine_type == EngineType.READ_ONLY:
+        return [session.c2c_ro_bind]
+    if engine_type == EngineType.WRITE_ONLY:
+        return [session.c2c_rw_bind]
+    raise NotImplementedError('Unhandled engine type %s' % engine_type)
 
 
 def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
@@ -96,6 +109,7 @@ class HealthCheck:
         query_cb: Optional[Callable[[sqlalchemy.orm.scoping.scoped_session], Any]] = None,
         at_least_one_model: Optional[object] = None,
         level: int = 1,
+        engine_type: EngineType = EngineType.READ_AND_WRITE,
     ) -> None:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
@@ -104,10 +118,11 @@ class HealthCheck:
         :param query_cb: a callable that take a session as parameter and check it works
         :param at_least_one_model: a model that must have at least one entry in the DB
         :param level: the level of the health check
+        :param engine_type: whether to check only the RW, RO or both engines
         """
         if query_cb is None:
             query_cb = self._at_least_one(at_least_one_model)
-        for binding in _get_bindings(session):
+        for binding in _get_bindings(session, engine_type):
             name, cb = self._create_db_engine_check(session, binding, query_cb)
             self._checks.append((name, cb, level))
 
@@ -143,7 +158,7 @@ class HealthCheck:
             version_table = config.get(name, "version_table", fallback="alembic_version")
 
         def check(_request: Any) -> str:
-            for binding in _get_bindings(session):
+            for binding in _get_bindings(session, EngineType.READ_AND_WRITE):
                 prev_bind = session.bind
                 try:
                     session.bind = binding

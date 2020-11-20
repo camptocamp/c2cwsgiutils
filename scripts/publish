@@ -35,8 +35,9 @@ then
   if [[ "${tag}" != "latest" ]]
   then
     docker tag camptocamp/c2cwsgiutils camptocamp/c2cwsgiutils:${tag}
-    docker tag camptocamp/c2cwsgiutils ghcr.io/camptocamp/c2cwsgiutils:${tag}
   fi
+  docker tag camptocamp/c2cwsgiutils ghcr.io/camptocamp/c2cwsgiutils:${tag}
+
   docker push camptocamp/c2cwsgiutils:${tag}
   docker push ghcr.io/camptocamp/c2cwsgiutils:${tag}
 

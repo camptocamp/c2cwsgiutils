@@ -25,14 +25,20 @@ then
   summon --yaml '
     USER: !var gs/ci/dockerhub/username
     PASS: !var gs/ci/dockerhub/password
-  ' bash -c 'docker login -u ${USER} -p ${PASS}'
+  ' bash -c 'docker login --username=${USER} --password=${PASS}'
+  summon --yaml '
+    USER: !var gs/ci/github/username
+    PASS: !var gs/ci/github/token/gopass
+  ' bash -c 'docker login ghcr.io --username=${USER} --password=${PASS}'
   for tag_suffix in "-lite" "" "-full"
   do
     if [[ "${tag}" != "latest" ]]
     then
       docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} camptocamp/c2cwsgiutils:${tag}${tag_suffix}
     fi
+    docker tag camptocamp/c2cwsgiutils:latest${tag_suffix} ghcr.io/camptocamp/c2cwsgiutils:${tag}${tag_suffix}
     docker push camptocamp/c2cwsgiutils:${tag}${tag_suffix}
+    docker push ghcr.io/camptocamp/c2cwsgiutils:${tag}${tag_suffix}
   done
-  rm -rf ~/.docker*  # docker logout
+  rm -rf ~/.docker*  # Docker logout
 fi

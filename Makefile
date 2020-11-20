@@ -75,7 +75,7 @@ pull:
 
 .PHONY: run
 run: build_test_app
-	TEST_IP=172.17.0.1 docker-compose -f acceptance_tests/tests/docker-compose.yml up
+	TEST_IP=172.17.0.1 docker-compose -f acceptance_tests/tests/docker-compose.yaml up
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp

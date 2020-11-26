@@ -41,7 +41,8 @@ pip install c2cwsgiutils
 ```
 
 Or (preferred) as a base Docker image:
-[camptocamp/c2cwsgiutils:3](https://hub.docker.com/r/camptocamp/c2cwsgiutils/)
+[camptocamp/c2cwsgiutils:release_4](https://hub.docker.com/r/camptocamp/c2cwsgiutils/) or
+[ghcr.io/camptocamp/c2cwsgiutils:release_4](https://github.com/orgs/camptocamp/packages/container/package/c2cwsgiutils)
 
 If you need an image with a smaller foot print, use the tags prefixed with `-light`. Those are without
 gdal and without the build tools.
@@ -358,7 +359,7 @@ have dumps of a few things:
 * return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={C2C_SECRET}&status=500`
 
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
-to have a specially tweaked `docker-compose.yml`:
+to have a specially tweaked `docker-compose.yaml`:
 ```yml
 services:
   api:

@@ -18,12 +18,13 @@ jobs:
       PATH: /bin:/usr/bin:/usr/local/bin:/home/runner/.local/bin
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
-      - uses: camptocamp/initialise-gopass-summon-action@v1
+      - uses: camptocamp/initialise-gopass-summon-action@v2
         with:
           ci-gpg-private-key: ${{secrets.CI_GPG_PRIVATE_KEY}}
           github-gopass-ci-token: ${{secrets.GOPASS_CI_GITHUB_TOKEN}}
+          patterns: pypi docker
 
       - name: Pull
         run: make pull

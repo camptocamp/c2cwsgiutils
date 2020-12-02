@@ -1,0 +1,15 @@
+version:
+  branch_to_version_re:
+    - from: release_([0-9]+)
+      to: \1
+    - from: master
+      to: '5'
+
+checks:
+  versions:
+    extra_versions:
+      - '5'
+
+  black:
+    ignore_patterns_re:
+      - .*\.html

@@ -18,8 +18,10 @@ jobs:
       fail-fast: false
       matrix:
         branch:
+          - release_2
           - release_3
           - release_4
+          - master
 
     steps:
       - uses: actions/checkout@v2
@@ -32,6 +34,16 @@ jobs:
           github-gopass-ci-token: ${{secrets.GOPASS_CI_GITHUB_TOKEN}}
           patterns: pypi docker
 
+      - run: |
+          sudo rm /etc/apt/sources.list.d/*.list
+          sudo apt update
+          sudo apt install --yes python3-wheel
+
+      - run: sudo python3 -m pip install --requirement=ci/requirements.txt
+
+      - name: Checks
+        run: c2cciutils-checks
+
       - name: Pull
         run: make pull
 
@@ -41,5 +53,5 @@ jobs:
       - name: Acceptance
         run: make acceptance
 
-      - name: Release
-        run: scripts/publish ${{github.ref}}
+      - name: Publish
+        run: c2cciutils-publish --version=${{github.ref}}

@@ -6,16 +6,12 @@ on:
 
 env:
   IN_CI: '1'
-  SUMMON_PROVIDER: /usr/local/bin/gopass
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
     timeout-minutes: 15
-
-    env:
-      PATH: /bin:/usr/bin:/usr/local/bin:/home/runner/.local/bin
 
     steps:
       - uses: actions/checkout@v2
@@ -25,6 +21,16 @@ jobs:
           ci-gpg-private-key: ${{secrets.CI_GPG_PRIVATE_KEY}}
           github-gopass-ci-token: ${{secrets.GOPASS_CI_GITHUB_TOKEN}}
           patterns: pypi docker
+
+      - run: |
+          sudo rm /etc/apt/sources.list.d/*.list
+          sudo apt update
+          sudo apt install --yes python3-wheel
+
+      - run: sudo python3 -m pip install --requirement=ci/requirements.txt
+
+      - name: Checks
+        run: c2cciutils-checks
 
       - name: Pull
         run: make pull
@@ -38,12 +44,5 @@ jobs:
       - name: Install GDAL
         run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 
-      - name: Check Python package
-        run: |
-          sudo apt install --yes python3-setuptools python3-wheel
-          python3 -m pip install --requirement=requirements-publish.txt
-          python3 ./setup.py sdist bdist_wheel
-          twine check dist/*
-
-      - name: Release
-        run: scripts/publish ${{github.ref}}
+      - name: Publish
+        run: c2cciutils-publish

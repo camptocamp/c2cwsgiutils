@@ -1,4 +1,4 @@
-from c2cwsgiutils.acceptance.connection import Connection, CacheExpected
+from c2cwsgiutils.acceptance.connection import CacheExpected, Connection
 
 
 def test_pre_flight(app_connection: Connection):

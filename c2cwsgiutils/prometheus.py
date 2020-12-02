@@ -2,10 +2,9 @@
 Implement parts of the Prometheus Pushgateway protocol, as defined here:
 https://github.com/prometheus/pushgateway
 """
-from typing import Mapping, MutableMapping, Any, Optional  # noqa  # pylint: disable=unused-import
+from typing import Any, Mapping, MutableMapping, Optional  # noqa  # pylint: disable=unused-import
 
 import requests
-
 
 LabelsType = Optional[Mapping[str, Any]]
 

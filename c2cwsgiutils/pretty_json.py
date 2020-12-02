@@ -1,8 +1,8 @@
 from typing import Any
 
 import pyramid.config
-from pyramid.renderers import JSON
 import ujson
+from pyramid.renderers import JSON
 
 
 def fast_dumps(v: Any, **_kargv: Any) -> str:

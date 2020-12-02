@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Dict, Any
+from typing import Any, Callable, Dict, Optional
 
 import pyramid.config
 import pyramid.events
-from pyramid.httpexceptions import HTTPException
 import pyramid.request
+from pyramid.httpexceptions import HTTPException
 
 from c2cwsgiutils import stats
 

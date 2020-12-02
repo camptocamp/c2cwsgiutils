@@ -47,7 +47,10 @@ def _init() -> None:
     if sentinels:
         sentinels_str = [item.split(":") for item in sentinels.split(",")]
         _sentinel = redis.sentinel.Sentinel(
-            [(e[0], int(e[1])) for e in sentinels_str], decode_responses=True, db=db, **redis_options,
+            [(e[0], int(e[1])) for e in sentinels_str],
+            decode_responses=True,
+            db=db,
+            **redis_options,
         )
 
         try:

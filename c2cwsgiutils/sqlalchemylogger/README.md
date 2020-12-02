@@ -21,8 +21,8 @@ propagate = 0
 if the credentials given in `args = ` section are sufficient, the handler will
 create the DB, schema and table it needs directly.
 
-In the above example the second parameter provided `'curl'` is a negative 
-filter (any valid regex will work) to avoid writing the matching logs to the 
+In the above example the second parameter provided `'curl'` is a negative
+filter (any valid regex will work) to avoid writing the matching logs to the
 DB. Useful to filter out health-check specific `User-Agent` headers or so.
 
 To use the handler in a script, you might:
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     )
     logger = logging.getLogger(__name__)
     logger_db_engine = {'url':'sqlite:///logger_db.sqlite3'}
-    
+
     logger.addHandler(SQLAlchemyHandler(logger_db_engine))
     logger.info('bla')
     # wait a few seconds because the second thread will write the

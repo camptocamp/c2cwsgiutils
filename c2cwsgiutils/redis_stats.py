@@ -1,9 +1,9 @@
 import logging
-from typing import Optional, Callable, Any, Dict  # noqa  # pylint: disable=unused-import
+from typing import Any, Callable, Dict, Optional  # noqa  # pylint: disable=unused-import
 
 import pyramid.config
 
-from c2cwsgiutils import stats, _utils
+from c2cwsgiutils import _utils, stats
 
 LOG = logging.getLogger(__name__)
 ORIG: Optional[Callable[..., Any]] = None

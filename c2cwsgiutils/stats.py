@@ -9,14 +9,23 @@ import re
 import socket
 import threading
 import time
-from abc import abstractmethod, ABCMeta
-from typing import Mapping, Sequence, List, Generator, Any, Optional, Callable, Dict
-from typing import Tuple, MutableMapping  # noqa  # pylint: disable=unused-import
+from abc import ABCMeta, abstractmethod
+from typing import (  # noqa  # pylint: disable=unused-import
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 import pyramid.request
 
 from c2cwsgiutils import _utils
-
 
 LOG = logging.getLogger(__name__)
 USE_TAGS_ENV = "STATSD_USE_TAGS"

@@ -1,10 +1,12 @@
-import logging
-import unittest
-from sqlalchemy import text
-import time
-from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 import glob
+import logging
 import os
+import time
+import unittest
+
+from sqlalchemy import text
+
+from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 
 
 class SqlAlchemyLoggerTests(unittest.TestCase):

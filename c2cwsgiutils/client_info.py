@@ -2,8 +2,7 @@
 Small WSGI filter that interprets headers added by proxies to fix some values available in the request.
 """
 import re
-from typing import Callable, Dict, Any
-
+from typing import Any, Callable, Dict
 
 SEP_RE = re.compile(r", *")
 

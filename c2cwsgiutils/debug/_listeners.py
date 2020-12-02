@@ -29,7 +29,9 @@ def _dump_stacks_impl() -> Dict[str, Any]:
 
 # pylint: disable=too-many-branches
 def _dump_memory_impl(
-    limit: int, analyze_type: Optional[str], python_internals_map: bool = False,
+    limit: int,
+    analyze_type: Optional[str],
+    python_internals_map: bool = False,
 ) -> Mapping[str, Any]:
     nb_collected = [gc.collect(generation) for generation in range(3)]
     result = {

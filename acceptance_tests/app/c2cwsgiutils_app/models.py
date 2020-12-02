@@ -1,6 +1,7 @@
-from c2cwsgiutils import db
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative
+
+from c2cwsgiutils import db
 
 DBSession = None
 Base = sqlalchemy.ext.declarative.declarative_base()

@@ -6,6 +6,7 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 
 import pyramid.config
+
 from c2cwsgiutils import _utils, redis_utils
 from c2cwsgiutils.broadcast import interface, local, redis
 

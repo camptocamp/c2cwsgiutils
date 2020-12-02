@@ -107,6 +107,7 @@ Provides a base Docker image with Python 3.7 and the usual dependencies. The tag
 If you use cornice, you can have CORS ready views like that:
 ```python
 from c2cwsgiutils import services
+
 hello_service = services.create(
     "hello", "/hello", cors_credentials=True)
 

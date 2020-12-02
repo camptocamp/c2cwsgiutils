@@ -1,9 +1,9 @@
 import logging
 import re
-from typing import Any, Callable, Optional, Dict
+from typing import Any, Callable, Dict, Optional
 
-from sqlalchemy.engine import Engine, Connection
 import sqlalchemy.event
+from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.orm import Session
 
 from c2cwsgiutils import stats

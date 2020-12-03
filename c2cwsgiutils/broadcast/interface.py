@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Callable, Mapping, Any, List
+from typing import Any, Callable, List, Mapping, Optional
 
 
 class BaseBroadcaster:

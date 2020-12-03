@@ -13,7 +13,7 @@ import logging.config
 import os
 import socket
 import sys
-from typing import Any, MutableMapping, Mapping, IO, Optional
+from typing import IO, Any, Mapping, MutableMapping, Optional
 
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request

@@ -1,7 +1,7 @@
-from typing import MutableMapping, Callable, Optional, Mapping, Any, List
+from typing import Any, Callable, List, Mapping, MutableMapping, Optional
 
 # noinspection PyProtectedMember
-from c2cwsgiutils.broadcast import utils, interface
+from c2cwsgiutils.broadcast import interface, utils
 
 
 class LocalBroadcaster(interface.BaseBroadcaster):

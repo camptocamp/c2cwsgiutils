@@ -1,11 +1,11 @@
 import logging
 
 import requests
+from c2cwsgiutils_app import models
 from pyramid.httpexceptions import HTTPForbidden, HTTPMovedPermanently, HTTPNoContent, HTTPUnauthorized
 
 from c2cwsgiutils import sentry, services
 from c2cwsgiutils.stats import increment_counter, set_gauge, timer_context
-from c2cwsgiutils_app import models
 
 ping_service = services.create("ping", "/ping")
 hello_service = services.create("hello", "/hello", cors_credentials=True)

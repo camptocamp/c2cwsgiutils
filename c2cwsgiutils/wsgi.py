@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Optional, Any, Mapping
+from typing import Any, Mapping, Optional
 
 from pyramid.paster import get_app
 

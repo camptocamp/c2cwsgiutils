@@ -1,7 +1,7 @@
 import contextlib
 import logging
 import os
-from typing import MutableMapping, Any, Generator, Optional, Callable  # noqa  # pylint: disable=unused-import
+from typing import Any, Callable, Generator, MutableMapping, Optional  # noqa  # pylint: disable=unused-import
 
 import pyramid.config
 import sentry_sdk
@@ -65,9 +65,9 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
 @contextlib.contextmanager
 def capture_exceptions() -> Generator[None, None, None]:
     """
-    Will send exceptions raised withing the context to Sentry.
+    Will send exceptions raised within the context to Sentry.
 
-    You don't need to use that for exception terminating the process (those not catched). Sentry does that
+    You don't need to use that for exception terminating the process (those not caught). Sentry does that
     already.
     """
     global _client_setup

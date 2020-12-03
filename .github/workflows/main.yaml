@@ -1,29 +1,20 @@
 ---
-name: Rebuild
+name: Build
 
 on:
-  schedule:
-    - cron: '30 2 * * *'
+  push:
 
 env:
   IN_CI: '1'
 
 jobs:
-  rebuild:
-    name: Rebuild
+  build:
+    name: Build
     runs-on: ubuntu-20.04
     timeout-minutes: 15
 
-    strategy:
-      fail-fast: false
-      matrix:
-        branch:
-          - master
-
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ matrix.branch }}
 
       - uses: camptocamp/initialise-gopass-summon-action@v2
         with:
@@ -54,4 +45,4 @@ jobs:
         run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 
       - name: Publish
-        run: c2cciutils-publish --version=${{github.ref}}
+        run: c2cciutils-publish

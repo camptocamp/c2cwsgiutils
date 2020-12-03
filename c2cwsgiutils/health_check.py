@@ -13,9 +13,8 @@ import subprocess
 import time
 import traceback
 from collections import Counter
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
-
 from enum import Enum
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 import pyramid.config
 import pyramid.request
@@ -63,7 +62,7 @@ def _get_bindings(session: Any, engine_type: EngineType) -> List[sqlalchemy.engi
         return [session.c2c_ro_bind]
     if engine_type == EngineType.WRITE_ONLY:
         return [session.c2c_rw_bind]
-    raise NotImplementedError('Unhandled engine type %s' % engine_type)
+    raise NotImplementedError("Unhandled engine type %s" % engine_type)
 
 
 def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
@@ -280,7 +279,7 @@ class HealthCheck:
 
     def add_version_check(self, name: str = "version", level: int = 2) -> None:
         """
-        Check that the version matches accross all instances
+        Check that the version matches across all instances
         :param name: the name of the check (defaults to "version")
         :param level: the level of the health check
         :return:

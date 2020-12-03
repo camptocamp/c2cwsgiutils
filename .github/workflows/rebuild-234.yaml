@@ -1,24 +1,31 @@
 ---
-name: Build
+name: Rebuild 234
 
 on:
-  push:
+  schedule:
+    - cron: '30 2 * * *'
 
 env:
   IN_CI: '1'
-  SUMMON_PROVIDER: /usr/local/bin/gopass
 
 jobs:
-  build:
-    name: Build
+  rebuild:
+    name: Rebuild 234
     runs-on: ubuntu-20.04
     timeout-minutes: 15
 
-    env:
-      PATH: /bin:/usr/bin:/usr/local/bin:/home/runner/.local/bin
+    strategy:
+      fail-fast: false
+      matrix:
+        branch:
+          - release_2
+          - release_3
+          - release_4
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ matrix.branch }}
 
       - uses: camptocamp/initialise-gopass-summon-action@v2
         with:
@@ -34,16 +41,6 @@ jobs:
 
       - name: Acceptance
         run: make acceptance
-
-      - name: Install GDAL
-        run: docker run --rm camptocamp/c2cwsgiutils install-gdal
-
-      - name: Check Python package
-        run: |
-          sudo apt install --yes python3-setuptools python3-wheel
-          python3 -m pip install --requirement=requirements-publish.txt
-          python3 ./setup.py sdist bdist_wheel
-          twine check dist/*
 
       - name: Release
         run: scripts/publish ${{github.ref}}

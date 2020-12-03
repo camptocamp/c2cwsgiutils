@@ -164,7 +164,7 @@ def init(config: pyramid.config.Configurator) -> None:
         for exception in (sqlalchemy.exc.IntegrityError, sqlalchemy.exc.DataError):
             config.add_view(view=_integrity_error, context=exception, **common_options)
 
-        # We don't want to cry wolf if the user interrupted the uplad of the body
+        # We don't want to cry wolf if the user interrupted the upload of the body
         for exception in (ConnectionResetError, DisconnectionError):
             config.add_view(view=_client_interrupted_error, context=exception, **common_options)
 

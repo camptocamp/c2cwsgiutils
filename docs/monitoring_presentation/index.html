@@ -135,9 +135,13 @@ geographical REST services.
 The WSGI main:
 
 ```python
-from c2cwsgiutils.health_check import HealthCheck
-import c2cwsgiutils.pyramid
 import my_app.models
+
+import c2cwsgiutils.pyramid
+from c2cwsgiutils import services
+from c2cwsgiutils.health_check import HealthCheck
+from c2cwsgiutils.stats import timer_context
+
 
 def main(_, **settings):
     config = Configurator(settings=settings)
@@ -159,8 +163,6 @@ def main(_, **settings):
 A route/view:
 
 ```python
-from c2cwsgiutils import services
-from c2cwsgiutils.stats import timer_context
 
 hello_service = services.create("hello", "/hello")
 

@@ -1,7 +1,7 @@
 import pytest
 
-from c2cwsgiutils.broadcast import local
 from c2cwsgiutils import broadcast
+from c2cwsgiutils.broadcast import local
 
 
 @pytest.yield_fixture()

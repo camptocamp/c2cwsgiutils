@@ -2,9 +2,9 @@
 Used to publish metrics to Prometheus
 """
 
-from os import listdir
 import re
 import socket
+from os import listdir
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pyramid.request

@@ -297,11 +297,11 @@ The levels are:
 The URL `{C2C_BASE_PATH}/health_check?checks=<check_name>` can be used to run the health checks on some
 checks, coma separated list.
 
-When you instanciate the `HealthCheck` class, two checks may be automatically enabled:
+When you instantiate the `HealthCheck` class, two checks may be automatically enabled:
 
 * If redis is configured, check that redis is reachable.
 * If redis is configured and the version information is available, check that the version matches
-  accross all instances.
+  across all instances.
 
 Look at the documentation of the `c2cwsgiutils.health_check.HealthCheck` class for more information.
 
@@ -322,7 +322,7 @@ command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) 
 ## Metrics
 
 The path `/metrics` provide some metrics for Prometheus.
-By default we have the `smap` `pss`, but we can easly add the `rss`, `size` or your custom settings:
+By default we have the `smap` `pss`, but we can easily add the `rss`, `size` or your custom settings:
 
 Example:
 ```

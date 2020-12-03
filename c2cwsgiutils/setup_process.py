@@ -14,14 +14,14 @@ def _first() -> None:
 
 def _second() -> None:
     from c2cwsgiutils import (
-        coverage_setup,
-        sentry,
         broadcast,
-        stats,
-        redis_stats,
-        stats_pyramid,
+        coverage_setup,
         debug,
+        redis_stats,
         request_tracking,
+        sentry,
+        stats,
+        stats_pyramid,
     )
 
     coverage_setup.init()

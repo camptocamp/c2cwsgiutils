@@ -1,6 +1,6 @@
 import inspect
 import sys
-from typing import Any, Set, List
+from typing import Any, List, Set
 
 import sqlalchemy as sa
 

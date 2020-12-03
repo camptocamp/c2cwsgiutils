@@ -1,5 +1,5 @@
 def test_not_found(app_connection):
-    error = app_connection.get_json("inexistant", expected_status=404)
+    error = app_connection.get_json("inexistent", expected_status=404)
     print("error=" + repr(error))
     assert error["status"] == 404
 

@@ -18,6 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         branch:
+          - release_2
+          - release_3
+          - release_4
           - master
 
     steps:
@@ -54,4 +57,4 @@ jobs:
         run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 
       - name: Publish
-        run: scripts/publish --type=rebuild --branch=${{ matrix.branch }}
+        run: c2cciutils-publish --type=rebuild --branch=${{ matrix.branch }}

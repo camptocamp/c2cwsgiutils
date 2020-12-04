@@ -43,4 +43,4 @@ jobs:
         run: make acceptance
 
       - name: Release
-        run: scripts/publish --branch=${{ matrix.branch }}
+        run: scripts/publish --type=rebuild --branch=${{ matrix.branch }}

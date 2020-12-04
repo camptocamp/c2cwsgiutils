@@ -54,4 +54,4 @@ jobs:
         run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 
       - name: Publish
-        run: scripts/publish --branch=${{ matrix.branch }}
+        run: scripts/publish --type=rebuild --branch=${{ matrix.branch }}

@@ -63,9 +63,9 @@ build_acceptance: build_docker_test
 build_test_app: build_docker
 	docker build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
-.venv/timestamp: requirements-local.txt publish-requirements.txt
+.venv/timestamp: ci/requirements.txt
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
-	.venv/bin/pip3 install --upgrade -r requirements-local.txt
+	.venv/bin/pip3 install --upgrade -r $<
 	touch $@
 
 .PHONY: pull

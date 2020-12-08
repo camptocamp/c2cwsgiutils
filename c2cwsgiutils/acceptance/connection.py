@@ -87,7 +87,10 @@ class Connection:
         get the given URL (relative to the root of API).
         """
         with self.session.get(
-            self.base_url + url, headers=self._merge_headers(headers, cors), stream=True, **kwargs,
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors),
+            stream=True,
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
@@ -231,7 +234,9 @@ class Connection:
 
 
 def check_response(
-    r: requests.Response, expected_status: int = 200, cache_expected: CacheExpected = CacheExpected.DONT_CARE,
+    r: requests.Response,
+    expected_status: int = 200,
+    cache_expected: CacheExpected = CacheExpected.DONT_CARE,
 ) -> None:
     if isinstance(expected_status, tuple):
         assert r.status_code in expected_status, "status=%d\n%s" % (r.status_code, r.text)

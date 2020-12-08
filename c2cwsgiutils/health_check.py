@@ -63,7 +63,7 @@ def _get_bindings(session: Any, engine_type: EngineType) -> List[sqlalchemy.engi
         return [session.c2c_ro_bind]
     if engine_type == EngineType.WRITE_ONLY:
         return [session.c2c_rw_bind]
-    raise NotImplementedError('Unhandled engine type %s' % engine_type)
+    raise NotImplementedError("Unhandled engine type %s" % engine_type)
 
 
 def _get_alembic_version(alembic_ini_path: str, name: str) -> str:

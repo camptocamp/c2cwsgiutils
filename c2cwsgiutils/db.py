@@ -137,12 +137,12 @@ def _add_tween(
 ) -> None:
     global tweens
 
-    master_paths: Iterable[Pattern[str]] = list(
-        map(RE_COMPILE, force_master)
-    ) if force_master is not None else []
-    slave_paths: Iterable[Pattern[str]] = list(
-        map(RE_COMPILE, force_slave)
-    ) if force_slave is not None else []
+    master_paths: Iterable[Pattern[str]] = (
+        list(map(RE_COMPILE, force_master)) if force_master is not None else []
+    )
+    slave_paths: Iterable[Pattern[str]] = (
+        list(map(RE_COMPILE, force_slave)) if force_slave is not None else []
+    )
 
     def db_chooser_tween_factory(
         handler: Callable[[pyramid.request.Request], Any], _registry: Any

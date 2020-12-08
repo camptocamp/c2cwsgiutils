@@ -10,7 +10,9 @@ from c2cwsgiutils.acceptance import utils
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(
-    level=logging.DEBUG, format="TEST: %(asctime)-15s %(levelname)5s %(name)s %(message)s", stream=sys.stdout,
+    level=logging.DEBUG,
+    format="TEST: %(asctime)-15s %(levelname)5s %(name)s %(message)s",
+    stream=sys.stdout,
 )
 logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.WARN)
 
@@ -39,7 +41,9 @@ class Composition:
 
         # Setup something that redirects the docker container logs to the test output
         log_watcher = subprocess.Popen(
-            self.docker_compose + ["logs", "--follow", "--no-color"], env=env, stderr=subprocess.STDOUT,
+            self.docker_compose + ["logs", "--follow", "--no-color"],
+            env=env,
+            stderr=subprocess.STDOUT,
         )
         request.addfinalizer(log_watcher.kill)
         if os.environ.get("docker_stop", "1") == "1":
@@ -55,7 +59,8 @@ class Composition:
 
     def dc_try(self, args, **kwargs) -> None:
         _try(
-            lambda: self.dc(args), **kwargs,
+            lambda: self.dc(args),
+            **kwargs,
         )
 
     def stop_all(self) -> None:
@@ -78,7 +83,8 @@ class Composition:
 
     def run(self, container, *command, **kwargs) -> None:
         self.dc(
-            ["run", "--rm", container] + list(command), **kwargs,
+            ["run", "--rm", container] + list(command),
+            **kwargs,
         )
 
     def exec(self, container, *command, **kwargs) -> None:

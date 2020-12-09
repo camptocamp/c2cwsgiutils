@@ -14,8 +14,6 @@ RUN apt update && \
     $DEV_PACKAGES && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
     python3-pip \
-    python3-setuptools \
-    python3-wheel \
     python3-pkgconfig && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \

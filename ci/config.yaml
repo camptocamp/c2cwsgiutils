@@ -14,6 +14,4 @@ checks:
   isort: False
   black:
     ignore_patterns_re:
-      - .*\.html
-      - .*\.md
-      - .*\.mako
+      - .*

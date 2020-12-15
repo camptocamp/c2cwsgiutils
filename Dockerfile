@@ -11,6 +11,7 @@ RUN apt update && \
     postgresql-client-12 \
     net-tools iputils-ping screen \
     gnupg \
+    apt-transport-https \
     $DEV_PACKAGES && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
     python3-pip \
@@ -21,6 +22,8 @@ RUN apt update && \
     (cd /opt/c2cwsgiutils/ && pipenv install --system --clear) && \
     strip /usr/local/lib/python3.8/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
+
+COPY scripts/install-docker /usr/bin/
 
 ENV TERM=linux \
     LANG=C.UTF-8 \

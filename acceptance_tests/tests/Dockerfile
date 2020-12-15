@@ -8,10 +8,7 @@ WORKDIR /acceptance_tests
 ENV DOCKER_RUN=1 \
     PYTHONPATH=/acceptance_tests
 
-COPY install-docker /opt/c2cwsgiutils/
-# Install all Debian dependencies except nodejs which requires https transport
-RUN DOCKER_VERSION=${DOCKER_VERSION} \
-    /opt/c2cwsgiutils/install-docker
+RUN DOCKER_VERSION=${DOCKER_VERSION} install-docker
 
 COPY . ./
 

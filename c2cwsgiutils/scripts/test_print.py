@@ -21,6 +21,11 @@ def _parse_args():
     return parser.parse_args()
 
 
+def deprecated() -> None:
+    LOG.warning("c2cwsgiutils_test_print.py is deprecated; use c2cwsgiutils-test-print instead")
+    return main()
+
+
 def main():
     c2cwsgiutils.setup_process.init()
 

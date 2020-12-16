@@ -52,6 +52,13 @@ setup(
             "c2cwsgiutils-stats-db = c2cwsgiutils.scripts.stats_db:main",
             "c2cwsgiutils-test-print = c2cwsgiutils.scripts.test_print:main",
             "c2cwsgiutils-check-es = c2cwsgiutils.scripts.check_es:main",
+
+            # deprecated scripts
+            "c2cwsgiutils_genversion.py = c2cwsgiutils.scripts.genversion:deprecated",
+            "c2cwsgiutils_coverage_report.py = c2cwsgiutils.scripts.coverage_report:deprecated",
+            "c2cwsgiutils_stats_db.py = c2cwsgiutils.scripts.stats_db:deprecated",
+            "c2cwsgiutils_test_print.py = c2cwsgiutils.scripts.test_print:deprecated",
+            "c2cwsgiutils_check_es.py = c2cwsgiutils.scripts.check_es:deprecated",
         ],
         "plaster.loader_factory": [
             "c2c=c2cwsgiutils.loader:Loader",

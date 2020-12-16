@@ -9,4 +9,4 @@ Release 4
   * c2cwsgiutils_test_print.py => c2cwsgiutils-test-print
   * c2cwsgiutils_check_es.py => c2cwsgiutils-check-es
 
-* ``C2C_DISABLE_EXCEPTION_HANDLING`` is replaced by ``C2C_ENABLE_EXCEPTION_HANDLING``.
+* ``C2C_DISABLE_EXCEPTION_HANDLING`` is replaced by ``C2C_ENABLE_EXCEPTION_HANDLING`` and is disabled by default.

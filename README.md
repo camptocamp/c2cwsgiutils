@@ -413,7 +413,7 @@ def hello_get(request):
 
 # Exception handling
 
-By default, c2cwsgiutils will install exception handling views that will catch any exception raised by the
+c2cwsgiutils can install exception handling views that will catch any exception raised by the
 application views and will transform it into a JSON response with a HTTP status corresponding to the error.
 
 You can enable this by setting `C2C_ENABLE_EXCEPTION_HANDLING` (`c2c.enable_exception_handling`) to "1".
@@ -429,7 +429,7 @@ debugtoolbar.enabled = true
 debugtoolbar.hosts = 0.0.0.0/0
 debugtoolbar.intercept_exc = debug
 debugtoolbar.show_on_exc_only = true
-c2c.disable_exception_handling = 1
+c2c.enable_exception_handling = 0
 ```
 
 

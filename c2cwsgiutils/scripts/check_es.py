@@ -81,6 +81,11 @@ def _check_roundtrip() -> None:
     stats.set_gauge(["roundtrip"], LOG_TIMEOUT * 2)
 
 
+def deprecated() -> None:
+    LOG.warning("c2cwsgiutils_check_es.py is deprecated; use c2cwsgiutils-check-es instead")
+    return main()
+
+
 def main() -> None:
     c2cwsgiutils.setup_process.init()
 

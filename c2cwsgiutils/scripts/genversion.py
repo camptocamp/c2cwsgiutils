@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import logging
 import os
 import re
 import subprocess
@@ -8,6 +9,7 @@ from typing import Dict, Optional, Tuple, cast
 
 SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
 VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")
+LOG = logging.getLogger(__name__)
 
 
 def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
@@ -37,6 +39,11 @@ def _get_packages_version() -> Dict[str, str]:
             if name is not None and version is not None:
                 result[name] = version
     return result
+
+
+def deprecated() -> None:
+    LOG.warning("c2cwsgiutils_genversion.py is deprecated; use c2cwsgiutils-genversion instead")
+    return main()
 
 
 def main() -> None:

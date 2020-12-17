@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
+import logging
 import os
 import shutil
 import sys
 
 import coverage
+
+LOG = logging.getLogger(__name__)
+
+
+def deprecated() -> None:
+    LOG.warning("c2cwsgiutils_coverage_report.py is deprecated; use c2cwsgiutils-coverage-report instead")
+    return main()
 
 
 def main():

@@ -20,7 +20,7 @@ RUN apt update && \
     rm -r /var/lib/apt/lists/* && \
     python3 -m pip install --no-cache-dir --requirement=/opt/c2cwsgiutils/requirements.txt && \
     (cd /opt/c2cwsgiutils/ && pipenv install --system --clear) && \
-    strip /usr/local/lib/python3.8/dist-packages/*/*.so && \
+    strip /usr/local/lib/python3.*/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
 COPY scripts/install-docker /usr/bin/
@@ -52,8 +52,8 @@ COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
     --editable=/opt/c2cwsgiutils && \
     python3 -m compileall -q && \
-    python3 -m compileall /usr/local/lib/python3.8 /usr/lib/python3.8 /opt/c2cwsgiutils -q \
-    -x '/usr/local/lib/python3.8/dist-packages/pipenv/' && \
+    python3 -m compileall /usr/local/lib/python3.* /usr/lib/python3.* /opt/c2cwsgiutils -q \
+    -x '/usr/local/lib/python3.*/dist-packages/pipenv/' && \
     python3 -c 'import c2cwsgiutils'
 
 ENV C2C_BASE_PATH=/c2c \

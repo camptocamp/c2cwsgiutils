@@ -30,8 +30,8 @@ To use the handler in a script, you might:
 ```python
 import logging
 import time
-from sqlalchemylogger.handlers import SQLAlchemyHandler
 
+from sqlalchemylogger.handlers import SQLAlchemyHandler
 
 if __name__ == '__main__':
     logging.basicConfig(

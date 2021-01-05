@@ -23,7 +23,7 @@ import sqlalchemy.engine
 import sqlalchemy.orm
 from pyramid.httpexceptions import HTTPNotFound
 
-from c2cwsgiutils import _utils, auth, broadcast, redis_utils, stats, version
+from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
@@ -92,13 +92,18 @@ class HealthCheck:
 
     def __init__(self, config: pyramid.config.Configurator) -> None:
         config.add_route(
-            "c2c_health_check", _utils.get_base_path(config) + r"/health_check", request_method="GET"
+            "c2c_health_check", config_utils.get_base_path(config) + r"/health_check", request_method="GET"
         )
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
         self._checks: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
 
-        redis = os.environ.get(redis_utils.REDIS_SENTINELS_KEY, os.environ.get(redis_utils.REDIS_URL_KEY))
-        if redis:
+        self.name = config_utils.env_or_config(
+            config,
+            redis_utils.REDIS_SENTINELS_KEY,
+            redis_utils.REDIS_SENTINELS_KEY_PROP,
+            config_utils.env_or_config(config, redis_utils.REDIS_URL_KEY, redis_utils.REDIS_URL_KEY_PROP),
+        )
+        if self.name:
             self.add_redis_check(level=2)
             if version.get_version() is not None:
                 self.add_version_check(level=2)
@@ -247,7 +252,7 @@ class HealthCheck:
         """
 
         def check(request: pyramid.request.Request) -> Any:
-            master, slave, sentinel = redis_utils.get()
+            master, slave, sentinel = redis_utils.get(request.registry.settings)
 
             result = {}
 
@@ -263,7 +268,12 @@ class HealthCheck:
             if slave is not None:
                 add("slave_info", slave.info)
             if sentinel is not None:
-                service_name = os.environ.get(redis_utils.REDIS_SERVICENAME_KEY, "mymaster")
+                service_name = config_utils.env_or_settings(
+                    request.registry.settings,
+                    redis_utils.REDIS_SERVICENAME_KEY,
+                    redis_utils.REDIS_SERVICENAME_KEY_PROP,
+                    "mymaster",
+                )
                 add("sentinel", sentinel.sentinels[0].sentinel)
                 add("sentinel_masters", sentinel.sentinels[0].sentinel_masters)
                 add("sentinel_master", sentinel.sentinels[0].sentinel_master, service_name)
@@ -273,8 +283,11 @@ class HealthCheck:
             return result
 
         if name is None:
-            name = os.environ.get(redis_utils.REDIS_SENTINELS_KEY, os.environ.get(redis_utils.REDIS_URL_KEY))
-        assert name
+            name = self.name
+
+            if name is None:
+                raise RuntimeError("Redis should be confgured")
+
         self._checks.append((name, check, level))
 
     def add_version_check(self, name: str = "version", level: int = 2) -> None:

@@ -5,7 +5,7 @@ from typing import Dict, Optional, cast
 
 import pyramid.config
 
-from c2cwsgiutils import _utils, stats
+from c2cwsgiutils import config_utils, stats
 
 VERSIONS_PATH = "/app/versions.json"
 LOG = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ def init(config: pyramid.config.Configurator) -> None:
     if os.path.isfile(VERSIONS_PATH):
         versions = _read_versions()
         config.add_route(
-            "c2c_versions", _utils.get_base_path(config) + r"/versions.json", request_method="GET"
+            "c2c_versions", config_utils.get_base_path(config) + r"/versions.json", request_method="GET"
         )
         config.add_view(
             lambda request: versions, route_name="c2c_versions", renderer="fast_json", http_cache=0

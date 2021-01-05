@@ -1,13 +1,14 @@
 import logging
-import os
 import threading
 import time
-from typing import Optional, Tuple
+from typing import Any, Mapping, Optional, Tuple
 
 import redis.client
 import redis.exceptions
 import redis.sentinel
 import yaml
+
+import c2cwsgiutils.config_utils
 
 LOG = logging.getLogger(__name__)
 
@@ -17,24 +18,39 @@ REDIS_SENTINELS_KEY = "C2C_REDIS_SENTINELS"
 REDIS_SERVICENAME_KEY = "C2C_REDIS_SERVICENAME"
 REDIS_DB_KEY = "C2C_REDIS_DB"
 
+REDIS_URL_KEY_PROP = "c2c.redis_url"
+REDIS_OPTIONS_KEY_PROP = "c2c.redis_options"
+REDIS_SENTINELS_KEY_PROP = "c2c.redis_sentinels"
+REDIS_SERVICENAME_KEY_PROP = "c2c.redis_servicename"
+REDIS_DB_KEY_PROP = "c2c.redis_db"
+
 _master: Optional[redis.Redis] = None
 _slave: Optional[redis.Redis] = None
 _sentinel: Optional[redis.sentinel.Sentinel] = None
 
 
-def get() -> Tuple[Optional[redis.Redis], Optional[redis.Redis], Optional[redis.sentinel.Sentinel]]:
+def get(
+    settings: Optional[Mapping[str, Any]] = None,
+) -> Tuple[Optional[redis.Redis], Optional[redis.Redis], Optional[redis.sentinel.Sentinel]]:
     if _master is None:
-        _init()
+        _init(settings)
     return _master, _slave, _sentinel
 
 
-def _init() -> None:
+def _init(settings: Optional[Mapping[str, Any]]) -> None:
     global _master, _slave, _sentinel
-    sentinels = os.environ.get(REDIS_SENTINELS_KEY)
-    service_name = os.environ.get(REDIS_SERVICENAME_KEY)
-    db = os.environ.get(REDIS_DB_KEY)
-    url = os.environ.get(REDIS_URL_KEY)
-    redis_options_ = os.environ.get(REDIS_OPTIONS_KEY)
+    sentinels = c2cwsgiutils.config_utils.env_or_settings(
+        settings, REDIS_SENTINELS_KEY, REDIS_SENTINELS_KEY_PROP
+    )
+    service_name = c2cwsgiutils.config_utils.env_or_settings(
+        settings, REDIS_SERVICENAME_KEY, REDIS_SERVICENAME_KEY_PROP
+    )
+    db = c2cwsgiutils.config_utils.env_or_settings(settings, REDIS_DB_KEY, REDIS_DB_KEY_PROP)
+    url = c2cwsgiutils.config_utils.env_or_settings(settings, REDIS_URL_KEY, REDIS_URL_KEY_PROP)
+    redis_options_ = c2cwsgiutils.config_utils.env_or_settings(
+        settings, REDIS_OPTIONS_KEY, REDIS_OPTIONS_KEY_PROP
+    )
+
     redis_options = (
         {}
         if redis_options_ is None

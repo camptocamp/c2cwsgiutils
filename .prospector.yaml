@@ -21,6 +21,7 @@ pylint:
     - ungrouped-imports
     - unused-argument
     - use-symbolic-message-instead
+    - wrong-import-order
 
 pep8:
   options:

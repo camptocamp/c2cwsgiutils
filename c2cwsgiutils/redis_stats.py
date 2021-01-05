@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Optional  # noqa  # pylint: disable=unus
 
 import pyramid.config
 
-from c2cwsgiutils import _utils, stats
+from c2cwsgiutils import config_utils, stats
 
 LOG = logging.getLogger(__name__)
 ORIG: Optional[Callable[..., Any]] = None
@@ -23,7 +23,9 @@ def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global ORIG
-    if _utils.env_or_config(config, "C2C_TRACK_REDIS", "c2c.track_redis", True, _utils.config_bool):
+    if config_utils.env_or_config(
+        config, "C2C_TRACK_REDIS", "c2c.track_redis", True, config_utils.config_bool
+    ):
         try:
             import redis.client
 

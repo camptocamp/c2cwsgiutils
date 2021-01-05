@@ -4,7 +4,7 @@ import pyramid.config
 import pyramid.request
 import pyramid.response
 
-from c2cwsgiutils import _utils, profiler
+from c2cwsgiutils import config_utils, profiler
 from c2cwsgiutils.auth import is_auth
 
 additional_title: Optional[str] = None
@@ -308,7 +308,7 @@ def _health_check(request: pyramid.request.Request) -> str:
 
 
 def init(config: pyramid.config.Configurator) -> None:
-    base_path = _utils.get_base_path(config)
+    base_path = config_utils.get_base_path(config)
     if base_path != "":
         config.add_route("c2c_index", base_path, request_method=("GET", "POST"))
         config.add_view(_index, route_name="c2c_index", http_cache=0)

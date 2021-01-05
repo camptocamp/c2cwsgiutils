@@ -6,7 +6,8 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 
 import pyramid.config
-from c2cwsgiutils import _utils, redis_utils
+
+from c2cwsgiutils import config_utils, redis_utils
 from c2cwsgiutils.broadcast import interface, local, redis
 
 LOG = logging.getLogger(__name__)
@@ -21,8 +22,10 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
     """
     global _broadcaster
-    broadcast_prefix = _utils.env_or_config(config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY, "broadcast_api_")
-    master, slave, _ = redis_utils.get()
+    broadcast_prefix = config_utils.env_or_config(
+        config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY, "broadcast_api_"
+    )
+    master, slave, _ = redis_utils.get(config.get_settings() if config else None)
     if _broadcaster is None:
         if master is not None and slave is not None:
             _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)

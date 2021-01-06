@@ -12,7 +12,7 @@ import requests.adapters
 import requests.models
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import _utils, stats
+from c2cwsgiutils import config_utils, stats
 
 ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
@@ -76,17 +76,17 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global ID_HEADERS, DEFAULT_TIMEOUT
     ID_HEADERS = ["X-Request-ID", "X-Correlation-ID", "Request-ID", "X-Varnish", "X-Amzn-Trace-Id"]
     if config is not None:
-        extra_header = _utils.env_or_config(config, "C2C_REQUEST_ID_HEADER", "c2c.request_id_header")
+        extra_header = config_utils.env_or_config(config, "C2C_REQUEST_ID_HEADER", "c2c.request_id_header")
         if extra_header:
             ID_HEADERS.insert(0, extra_header)
         config.add_request_method(_gen_request_id, "c2c_request_id", reify=True)
 
-    DEFAULT_TIMEOUT = _utils.env_or_config(
+    DEFAULT_TIMEOUT = config_utils.env_or_config(
         config, "C2C_REQUESTS_DEFAULT_TIMEOUT", "c2c.requests_default_timeout", type_=float
     )
     _patch_requests()
 
-    if _utils.env_or_config(config, "C2C_SQL_REQUEST_ID", "c2c.sql_request_id", False):
+    if config_utils.env_or_config(config, "C2C_SQL_REQUEST_ID", "c2c.sql_request_id", False):
         from . import _sql
 
         _sql.init()

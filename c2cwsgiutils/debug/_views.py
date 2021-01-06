@@ -12,7 +12,7 @@ import pyramid.request
 import pyramid.response
 from pyramid.httpexceptions import HTTPException, exception_response
 
-from c2cwsgiutils import _utils, auth, broadcast
+from c2cwsgiutils import auth, broadcast, config_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
 
 LOG = logging.getLogger(__name__)
@@ -155,7 +155,7 @@ def _add_view(
     config: pyramid.config.Configurator, name: str, path: str, view: Callable[[pyramid.request.Request], Any]
 ) -> None:
     config.add_route(
-        "c2c_debug_" + name, _utils.get_base_path(config) + r"/debug/" + path, request_method="GET"
+        "c2c_debug_" + name, config_utils.get_base_path(config) + r"/debug/" + path, request_method="GET"
     )
     config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)
 

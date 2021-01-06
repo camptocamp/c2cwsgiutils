@@ -3,7 +3,7 @@ from typing import Any, Mapping, Optional, cast
 
 import pyramid.request
 
-from c2cwsgiutils import _utils, auth, broadcast, db, redis_utils
+from c2cwsgiutils import auth, broadcast, config_utils, db, redis_utils
 
 LOG = logging.getLogger(__name__)
 CONFIG_KEY = "c2c.db_maintenance_view_enabled"
@@ -17,7 +17,9 @@ def install_subscriber(config: pyramid.config.Configurator) -> None:
     """
     if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         config.add_route(
-            "c2c_db_maintenance", _utils.get_base_path(config) + r"/db/maintenance", request_method="GET"
+            "c2c_db_maintenance",
+            config_utils.get_base_path(config) + r"/db/maintenance",
+            request_method="GET",
         )
         config.add_view(_db_maintenance, route_name="c2c_db_maintenance", renderer="fast_json", http_cache=0)
         _restore(config)
@@ -61,13 +63,13 @@ def _restore(config: pyramid.config.Configurator) -> None:
 
 
 def _store(settings: Mapping[str, Any], readonly: bool) -> None:
-    master, _, _ = redis_utils.get()
+    master, _, _ = redis_utils.get(settings)
     if master is not None:
         master.set(REDIS_PREFIX + "force_readonly", "true" if readonly else "false")
 
 
 def _get_redis_value(settings: Mapping[str, Any]) -> Optional[str]:
-    _, slave, _ = redis_utils.get()
+    _, slave, _ = redis_utils.get(settings)
     if slave is not None:
         value = slave.get(REDIS_PREFIX + "force_readonly")
         return str(value) if value else None

@@ -25,12 +25,12 @@ from typing import (  # noqa  # pylint: disable=unused-import
 
 import pyramid.request
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import config_utils
 
 LOG = logging.getLogger(__name__)
 USE_TAGS_ENV = "STATSD_USE_TAGS"
 TAG_PREFIX_ENV = "STATSD_TAG_"
-USE_TAGS = _utils.config_bool(os.environ.get(USE_TAGS_ENV, "0"))
+USE_TAGS = config_utils.config_bool(os.environ.get(USE_TAGS_ENV, "0"))
 TagType = Optional[Mapping[str, Any]]
 
 
@@ -305,12 +305,12 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
 
     :param settings: The Pyramid config
     """
-    if _utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
+    if config_utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
         BACKENDS["memory"] = MemoryBackend()
 
-    statsd_address = _utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
+    statsd_address = config_utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
-        statsd_prefix = _utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
+        statsd_prefix = config_utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
         statsd_tags = get_env_tags()
         try:
             BACKENDS["statsd"] = StatsDBackend(statsd_address, statsd_prefix, statsd_tags)

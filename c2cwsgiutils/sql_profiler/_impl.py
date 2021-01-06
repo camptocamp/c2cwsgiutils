@@ -11,7 +11,7 @@ import pyramid.request
 import sqlalchemy.engine
 import sqlalchemy.event
 
-from c2cwsgiutils import _utils, auth, broadcast
+from c2cwsgiutils import auth, broadcast, config_utils
 
 LOG = logging.getLogger(__name__)
 repository = None
@@ -61,7 +61,7 @@ def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
 
 def _setup_profiler(enable: str) -> None:
     global repository
-    if _utils.config_bool(enable):
+    if config_utils.config_bool(enable):
         if repository is None:
             LOG.warning("Enabling the SQL profiler")
             repository = _Repository()
@@ -93,7 +93,7 @@ def init(config: pyramid.config.Configurator) -> None:
     broadcast.subscribe("c2c_sql_profiler", _setup_profiler)
 
     config.add_route(
-        "c2c_sql_profiler", _utils.get_base_path(config) + r"/sql_profiler", request_method="GET"
+        "c2c_sql_profiler", config_utils.get_base_path(config) + r"/sql_profiler", request_method="GET"
     )
     config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="fast_json", http_cache=0)
     LOG.info("Enabled the /sql_profiler API")

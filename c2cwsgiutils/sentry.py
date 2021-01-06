@@ -10,7 +10,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.wsgi import SentryWsgiMiddleware
 
-from c2cwsgiutils import _utils
+from c2cwsgiutils import config_utils
 
 LOG = logging.getLogger(__name__)
 _client_setup = False
@@ -30,12 +30,12 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     global _client_setup
-    sentry_url = _utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
+    sentry_url = config_utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
     if sentry_url is not None and not _client_setup:
         client_info: MutableMapping[str, Any] = {
             key[14:].lower(): value for key, value in os.environ.items() if key.startswith("SENTRY_CLIENT_")
         }
-        git_hash = _utils.env_or_config(config, "GIT_HASH", "c2c.git_hash")
+        git_hash = config_utils.env_or_config(config, "GIT_HASH", "c2c.git_hash")
         if git_hash is not None and not ("release" in client_info and client_info["release"] != "latest"):
             client_info["release"] = git_hash
         client_info["ignore_errors"] = client_info.pop("ignore_exceptions", "SystemExit").split(",")
@@ -43,7 +43,9 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
 
         sentry_logging = LoggingIntegration(
             level=logging.DEBUG,
-            event_level=_utils.env_or_config(config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR").upper(),
+            event_level=config_utils.env_or_config(
+                config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR"
+            ).upper(),
         )
         sentry_sdk.init(
             dsn=sentry_url,
@@ -53,9 +55,9 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
         )
         _client_setup = True
 
-        excludes = _utils.env_or_config(config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "sentry_sdk").split(
-            ","
-        )
+        excludes = config_utils.env_or_config(
+            config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "sentry_sdk"
+        ).split(",")
         for exclude in excludes:
             ignore_logger(exclude)
 

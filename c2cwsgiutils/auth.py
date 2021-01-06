@@ -5,7 +5,7 @@ import pyramid.request
 from pyramid.httpexceptions import HTTPForbidden
 
 # noinspection PyProtectedMember
-from c2cwsgiutils._utils import env_or_settings, env_or_config, config_bool
+from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 
 COOKIE_AGE = 7 * 24 * 3600
 SECRET_PROP = "c2c.secret"  # nosec  # noqa

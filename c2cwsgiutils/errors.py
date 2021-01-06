@@ -12,7 +12,7 @@ from cornice import cors
 from pyramid.httpexceptions import HTTPError, HTTPException, HTTPRedirection, HTTPSuccessful
 from webob.request import DisconnectionError
 
-from c2cwsgiutils import _utils, auth
+from c2cwsgiutils import auth, config_utils
 
 DEVELOPMENT = os.environ.get("DEVELOPMENT", "0") != "0"
 DEPRECATED_CONFIG_KEY = "c2c.error_details_secret"
@@ -153,7 +153,9 @@ def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> 
 
 def init(config: pyramid.config.Configurator) -> None:
     if (
-        _utils.env_or_config(config, "C2C_ENABLE_EXCEPTION_HANDLING", "c2c.enable_exception_handling", "0")
+        config_utils.env_or_config(
+            config, "C2C_ENABLE_EXCEPTION_HANDLING", "c2c.enable_exception_handling", "0"
+        )
         != "0"
     ):
         for exception in (HTTPSuccessful, HTTPRedirection):

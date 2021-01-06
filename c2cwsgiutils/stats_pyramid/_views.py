@@ -2,12 +2,12 @@ from typing import cast
 
 import pyramid.config
 
-from c2cwsgiutils import _utils, stats
+from c2cwsgiutils import stats, config_utils
 
 
 def init(config: pyramid.config.Configurator) -> None:
     config.add_route(
-        "c2c_read_stats_json", _utils.get_base_path(config) + r"/stats.json", request_method="GET"
+        "c2c_read_stats_json", config_utils.get_base_path(config) + r"/stats.json", request_method="GET"
     )
     memory_backend = cast(stats.MemoryBackend, stats.BACKENDS["memory"])
     config.add_view(

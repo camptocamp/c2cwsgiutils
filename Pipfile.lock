@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b529a545d888979ae43ad86fb678dbf0140fa4f4d1c3a3df99efb270791ace8e"
+            "sha256": "d5e642062989a37f1bc9f1e771318240d39946002724e157b4f167052ca10b40"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -622,10 +622,10 @@
         },
         "gitpython": {
             "hashes": [
-                "sha256:6eea89b655917b500437e9668e4a12eabdcf00229a0df1762aabd692ef9b746b",
-                "sha256:befa4d101f91bad1b632df4308ec64555db684c360bd7d2130b4807d49ce86b8"
+                "sha256:42dbefd8d9e2576c496ed0059f3103dcef7125b9ce16f9d5f9c834aed44a1dac",
+                "sha256:867ec3dfb126aac0f8296b19fb63b8c4a399f32b4b6fafe84c4b10af5fa9f7b5"
             ],
-            "version": "==3.1.11"
+            "version": "==3.1.12"
         },
         "iniconfig": {
             "hashes": [
@@ -650,11 +650,11 @@
         },
         "junit2html": {
             "hashes": [
-                "sha256:4e80bee5fe7ea5b4d7f262c36142d6d05ec681115f924a332d4bb505fa9df9fc",
-                "sha256:7a1e6e3a59b6eeb3ba2084a45be9769984f60ddb7203089beff67d2d39b4fe3f"
+                "sha256:9b3967c92142abd5fb94e2cbb938c51cc6c2689ec1c7fd348c6ba4ddab92da14",
+                "sha256:aa108c6f3fc101045b29a2e8770bcf6c85fa8b7b1c797fa3957b23c38c8dd548"
             ],
             "index": "pypi",
-            "version": "==30.0.3"
+            "version": "==30.0.4"
         },
         "lazy-object-proxy": {
             "hashes": [

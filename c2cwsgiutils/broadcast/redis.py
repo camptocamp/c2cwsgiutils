@@ -18,7 +18,9 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     Implement broadcasting messages using Redis
     """
 
-    def __init__(self, broadcast_prefix: str, master: redis.Redis, slave: redis.Redis) -> None:
+    def __init__(
+        self, broadcast_prefix: str, master: redis.client.Redis[str], slave: redis.client.Redis[str]
+    ) -> None:
         from c2cwsgiutils import redis_utils
 
         self._master = master

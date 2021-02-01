@@ -48,6 +48,7 @@ jobs:
 
       - name: Acceptance
         run: make acceptance
+        if: matrix.branch != release_2 && matrix.branch != release_3
 
       - name: Install GDAL
         # with .sh for release <= 3

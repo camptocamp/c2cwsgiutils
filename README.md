@@ -4,7 +4,8 @@
 |---|---|---|
 | master | ![Master Build Badge](https://github.com/camptocamp/c2cwsgiutils/workflows/Build/badge.svg?branch=master) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c47d09a059ca410cbc325f94d7993518)](https://www.codacy.com/app/camptocamp/c2cwsgiutils?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=camptocamp/c2cwsgiutils&amp;utm_campaign=Badge_Grade) |
 | release_4 | ![Rebuild of release_4 Badge](https://github.com/camptocamp/c2cwsgiutils/workflows/Rebuild/badge.svg) |
-| release_3 (deprecated)| ![Rebuild of release_3 Badge](https://github.com/camptocamp/c2cwsgiutils/workflows/Rebuild/badge.svg) |
+| release_3 (obsolete)| Not rebuilt anymore |
+| release_2 (obsolete)| Not rebuilt anymore |
 
 This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
 applications:

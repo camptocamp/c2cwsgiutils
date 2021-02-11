@@ -1,4 +1,4 @@
-FROM redis:5
+FROM redis:6
 
 RUN apt-get update && \
     apt-get install --yes curl && \

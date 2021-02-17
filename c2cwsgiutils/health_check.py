@@ -298,10 +298,10 @@ class HealthCheck:
         :return:
         """
 
-        def check(request: pyramid.request.Request) -> Any:
-            versions = _get_all_versions()
-            versions = list(filter(lambda x: x is not None, versions))
-            assert versions
+        def check(request: pyramid.request.Request) -> Dict[str, Any]:
+            all_versions = _get_all_versions()
+            assert all_versions
+            versions = [e for e in all_versions if e is not None]
             # Output the versions we see on the monitoring
             v: Optional[str]
             for v, count in Counter(versions).items():

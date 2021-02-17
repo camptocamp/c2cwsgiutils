@@ -3,7 +3,7 @@ Broadcast messages to all the processes of Gunicorn in every containers.
 """
 import functools
 import logging
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 import pyramid.config
 
@@ -77,17 +77,22 @@ def broadcast(
     )
 
 
+# We can also templatise the argument with Python 3.10
+# See: https://www.python.org/dev/peps/pep-0612/
+_DECORATOR_RETURN = TypeVar("_DECORATOR_RETURN")
+
+
 def decorator(
     channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
-) -> Callable[..., Any]:
+) -> Callable[[Callable[..., _DECORATOR_RETURN]], Callable[..., Optional[List[_DECORATOR_RETURN]]]]:
     """
     The decorated function will be called through the broadcast functionality. If expect_answers is set to
     True, the returned value will be a list of all the answers.
     """
 
-    def impl(func: Callable[..., Any]) -> Callable[..., Any]:
+    def impl(func: Callable[..., _DECORATOR_RETURN]) -> Callable[..., Optional[List[_DECORATOR_RETURN]]]:
         @functools.wraps(func)
-        def wrapper(**kwargs: Any) -> Any:
+        def wrapper(**kwargs: Any) -> Optional[List[_DECORATOR_RETURN]]:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
         if channel is None:

@@ -70,6 +70,8 @@ def _check_roundtrip() -> None:
         r.raise_for_status()
         json = r.json()
         found = json["hits"]["total"]
+        if isinstance(dict, found):
+            found = found["value"]
         if found > 0:
             LOG.info("Found the test log line.")
             stats.set_gauge(["roundtrip"], time.monotonic() - start)

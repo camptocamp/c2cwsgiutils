@@ -6,7 +6,7 @@ import threading
 import time
 from typing import Any, Callable, List, Mapping, Optional
 
-import redis
+import redis  # pylint: disable=unused-import
 
 from c2cwsgiutils.broadcast import interface, local, utils
 
@@ -18,7 +18,12 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     Implement broadcasting messages using Redis
     """
 
-    def __init__(self, broadcast_prefix: str, master: redis.Redis, slave: redis.Redis) -> None:
+    def __init__(
+        self,
+        broadcast_prefix: str,
+        master: "redis.client.Redis[str]",  # pylint: disable=unsubscriptable-object
+        slave: "redis.client.Redis[str]",  # pylint: disable=unsubscriptable-object
+    ) -> None:
         from c2cwsgiutils import redis_utils
 
         self._master = master

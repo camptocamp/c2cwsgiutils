@@ -24,14 +24,18 @@ REDIS_SENTINELS_KEY_PROP = "c2c.redis_sentinels"
 REDIS_SERVICENAME_KEY_PROP = "c2c.redis_servicename"
 REDIS_DB_KEY_PROP = "c2c.redis_db"
 
-_master: Optional[redis.Redis] = None
-_slave: Optional[redis.Redis] = None
+_master: Optional["redis.client.Redis[str]"] = None  # pylint: disable=unsubscriptable-object
+_slave: Optional["redis.client.Redis[str]"] = None  # pylint: disable=unsubscriptable-object
 _sentinel: Optional[redis.sentinel.Sentinel] = None
 
 
 def get(
-    settings: Optional[Mapping[str, Any]] = None,
-) -> Tuple[Optional[redis.Redis], Optional[redis.Redis], Optional[redis.sentinel.Sentinel]]:
+    settings: Optional[Mapping[str, bytes]] = None,
+) -> Tuple[
+    Optional["redis.client.Redis[str]"],  # pylint: disable=unsubscriptable-object
+    Optional["redis.client.Redis[str]"],  # pylint: disable=unsubscriptable-object
+    Optional[redis.sentinel.Sentinel],
+]:
     if _master is None:
         _init(settings)
     return _master, _slave, _sentinel
@@ -82,7 +86,7 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
             url = "redis://" + url
 
         LOG.info("Redis setup using: %s, with options: %s", url, redis_options_)
-        _master = redis.Redis.from_url(url, decode_responses=True, **redis_options)
+        _master = redis.client.Redis.from_url(url, decode_responses=True, **redis_options)
         _slave = _master
     else:
         LOG.info(

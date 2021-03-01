@@ -71,11 +71,11 @@ build_test_app: build_docker
 .PHONY: pull
 pull:
 	for image in `find -name "Dockerfile*" | xargs grep --no-filename FROM | awk '{print $$2}' | sort -u | grep -v c2cwsgiutils`; do docker pull $$image; done
-	for image in `find -name "docker-compose*.yml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do docker pull $$image; done
+	for image in `find -name "docker-compose*.yaml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do docker pull $$image; done
 
 .PHONY: run
 run: build_test_app
-	TEST_IP=172.17.0.1 docker-compose -f acceptance_tests/tests/docker-compose.yaml up
+	TEST_IP=172.17.0.1 docker-compose --file=acceptance_tests/tests/docker-compose.yaml up
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp

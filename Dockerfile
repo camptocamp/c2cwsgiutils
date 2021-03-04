@@ -19,7 +19,7 @@ RUN apt update && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/* && \
     python3 -m pip install --no-cache-dir --requirement=/opt/c2cwsgiutils/requirements.txt && \
-    (cd /opt/c2cwsgiutils/ && pipenv install --system --clear) && \
+    (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear) && \
     strip /usr/local/lib/python3.*/dist-packages/*/*.so && \
     apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
@@ -38,7 +38,7 @@ ENV TERM=linux \
 
 
 FROM base-all AS base-lint
-RUN (cd /opt/c2cwsgiutils/ && pipenv install --system --clear --dev)
+RUN (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear --dev)
 
 
 FROM base-all AS base

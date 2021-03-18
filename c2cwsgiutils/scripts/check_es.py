@@ -66,7 +66,10 @@ def _check_roundtrip() -> None:
     query = {"query": {"match_phrase": {"log.logger": logger_name}}}
     start = time.monotonic()
     while time.monotonic() < start + LOG_TIMEOUT:
-        r = requests.post(SEARCH_URL, json=query, headers=SEARCH_HEADERS)
+        for _ in range(10):
+            r = requests.post(SEARCH_URL, json=query, headers=SEARCH_HEADERS)
+            if r.ok:
+                continue
         r.raise_for_status()
         json = r.json()
         found = json["hits"]["total"]

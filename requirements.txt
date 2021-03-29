@@ -7,6 +7,7 @@ cornice==3.5.1
 coverage==4.5.2
 flake8==3.7.5
 gunicorn==19.9.0
+importlib-metadata==3.8.1
 junit2html==022
 lxml==4.6.2
 mypy==0.670

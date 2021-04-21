@@ -30,6 +30,7 @@ setup(
         "Intended Audience :: Information Technology",
         "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: GIS",
+        "Typed",
     ],
     keywords="geo gis sqlalchemy orm wsgi",
     author="Camptocamp",

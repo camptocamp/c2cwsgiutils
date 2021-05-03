@@ -3,7 +3,7 @@ version:
     - from: release_([0-9]+)
       to: \1
     - from: master
-      to: '5'
+      to: "5"
 
 checks:
   versions: False
@@ -12,6 +12,7 @@ checks:
   required_workflows: False
   codespell: False
   isort: False
+  dependabot_config: False
   black:
     ignore_patterns_re:
       - .*\.html

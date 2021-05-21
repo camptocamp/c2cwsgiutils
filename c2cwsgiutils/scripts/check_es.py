@@ -2,6 +2,7 @@
 import datetime
 import logging
 import os
+import sys
 import time
 import uuid
 from typing import Any, List, Optional
@@ -92,17 +93,21 @@ def deprecated() -> None:
 
 
 def main() -> None:
-    c2cwsgiutils.setup_process.init()
+    try:
+        c2cwsgiutils.setup_process.init()
 
-    with stats.outcome_timer_context(["get_max_timestamp"]):
-        max_ts = _max_timestamp()
-    now = datetime.datetime.now(max_ts.tzinfo)
-    age = round((now - max_ts).total_seconds())
-    LOG.info("Last log age: %ss", age)
-    stats.set_gauge(["max_age"], age)
+        with stats.outcome_timer_context(["get_max_timestamp"]):
+            max_ts = _max_timestamp()
+        now = datetime.datetime.now(max_ts.tzinfo)
+        age = round((now - max_ts).total_seconds())
+        LOG.info("Last log age: %ss", age)
+        stats.set_gauge(["max_age"], age)
 
-    if "LOG_TIMEOUT" in os.environ:
-        _check_roundtrip()
+        if "LOG_TIMEOUT" in os.environ:
+            _check_roundtrip()
+    except:
+        LOG.exception("Exception durring run")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

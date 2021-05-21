@@ -27,7 +27,8 @@ pep8:
   options:
     max-line-length: 110
   disable:
-    - E203
+    - E203 # Whitespace before ':', duplicated with black, with error in array
+    - E722 # do not use bare 'except', duplicated with pylint
 
 mypy:
   run: true

@@ -2,12 +2,14 @@
 import datetime
 import logging
 import os
+import sys
 import time
 import uuid
 from typing import Any, List, Optional
 
 import requests
 from dateutil import parser as dp
+from urllib3.connection import HTTPConnection
 
 import c2cwsgiutils.setup_process
 from c2cwsgiutils import stats
@@ -66,10 +68,19 @@ def _check_roundtrip() -> None:
     query = {"query": {"match_phrase": {"log.logger": logger_name}}}
     start = time.monotonic()
     while time.monotonic() < start + LOG_TIMEOUT:
-        for _ in range(10):
-            r = requests.post(SEARCH_URL, json=query, headers=SEARCH_HEADERS)
+        exception = None
+        for _ in range(int(os.environ.get("C2CWSGIUTILS_CHECK_ES_TRYNUMBER", 10))):
+            try:
+                r = requests.post(SEARCH_URL, json=query, headers=SEARCH_HEADERS)
+                exception = None
+            except HTTPConnection as e:
+                logger.exception("Error on querying Elasticsearch")
+                exception = e
             if r.ok:
                 continue
+            time.sleep(float(os.environ.get("C2CWSGIUTILS_CHECK_ES_SLEEP", 1)))
+        if exception is not None:
+            raise exception
         r.raise_for_status()
         json = r.json()
         found = json["hits"]["total"]
@@ -92,17 +103,21 @@ def deprecated() -> None:
 
 
 def main() -> None:
-    c2cwsgiutils.setup_process.init()
+    try:
+        c2cwsgiutils.setup_process.init()
 
-    with stats.outcome_timer_context(["get_max_timestamp"]):
-        max_ts = _max_timestamp()
-    now = datetime.datetime.now(max_ts.tzinfo)
-    age = round((now - max_ts).total_seconds())
-    LOG.info("Last log age: %ss", age)
-    stats.set_gauge(["max_age"], age)
+        with stats.outcome_timer_context(["get_max_timestamp"]):
+            max_ts = _max_timestamp()
+        now = datetime.datetime.now(max_ts.tzinfo)
+        age = round((now - max_ts).total_seconds())
+        LOG.info("Last log age: %ss", age)
+        stats.set_gauge(["max_age"], age)
 
-    if "LOG_TIMEOUT" in os.environ:
-        _check_roundtrip()
+        if "LOG_TIMEOUT" in os.environ:
+            _check_roundtrip()
+    except:  # pylint: disable=bare-except
+        LOG.exception("Exception during run")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

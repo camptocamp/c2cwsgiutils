@@ -4,7 +4,9 @@ Emits statsd gauges for every tables of a database.
 """
 import argparse
 import logging
-
+import os
+import sys
+import time
 import sqlalchemy
 import sqlalchemy.exc
 import sqlalchemy.orm
@@ -161,10 +163,7 @@ def do_extra(session, extra, reporter):
         reporter.do_report(str(metric).split("."), count, kind="count", tags=dict(metric=metric))
 
 
-def main():
-    c2cwsgiutils.setup_process.init()
-    sentry.init()
-
+def _do_dtats_db():
     args = _parse_args()
     reporter = Reporter(args)
     try:
@@ -199,6 +198,25 @@ def main():
     reporter.commit()
     transaction.abort()
     reporter.report_error()
+
+
+def main():
+    c2cwsgiutils.setup_process.init()
+    sentry.init()
+
+    success = False
+    for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", 10))):
+        try:
+            _do_dtats_db()
+            success = True
+            continue
+        except:  # pylint: disable=bare-except
+            LOG.exception("Exception during run")
+        time.sleep(float(os.environ.get("C2CWSGIUTILS_STATS_DB_SLEEP", 1)))
+
+    if not success:
+        LOG.error("Not in success, exiting")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

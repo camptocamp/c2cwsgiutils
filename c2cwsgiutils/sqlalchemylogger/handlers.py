@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.exc import InvalidRequestError, OperationalError
+from sqlalchemy.exc import InvalidRequestError, OperationalError, ProgrammingError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
@@ -76,7 +76,7 @@ class SQLAlchemyHandler(logging.Handler):
         try:
             self.session.bulk_save_objects(logs)
             self.session.commit()
-        except (OperationalError, InvalidRequestError):
+        except (OperationalError, InvalidRequestError, ProgrammingError):
             try:
                 self.create_db()
                 self.session.rollback()

@@ -9,6 +9,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.wsgi import SentryWsgiMiddleware
+from sentry_sdk.integrations.pyramid import PyramidIntegration
 
 from c2cwsgiutils import config_utils
 
@@ -49,7 +50,7 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
         )
         sentry_sdk.init(
             dsn=sentry_url,
-            integrations=[sentry_logging, SqlalchemyIntegration(), RedisIntegration()],
+            integrations=[sentry_logging, PyramidIntegration(), SqlalchemyIntegration(), RedisIntegration()],
             before_send=_create_before_send_filter(tags),
             **client_info,
         )

@@ -6,10 +6,10 @@ from typing import Any, Callable, Generator, MutableMapping, Optional  # noqa  #
 import pyramid.config
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
+from sentry_sdk.integrations.pyramid import PyramidIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.wsgi import SentryWsgiMiddleware
-from sentry_sdk.integrations.pyramid import PyramidIntegration
 
 from c2cwsgiutils import config_utils
 
@@ -36,6 +36,28 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
         client_info: MutableMapping[str, Any] = {
             key[14:].lower(): value for key, value in os.environ.items() if key.startswith("SENTRY_CLIENT_")
         }
+        # Parse bool
+        for key in (
+            "with_locals",
+            "default_integrations",
+            "send_default_pii",
+            "debug",
+            "attach_stacktrace",
+            "propagate_traces",
+            "auto_enabling_integrations",
+            "auto_session_tracking",
+        ):
+            if key in client_info:
+                client_info[key] = client_info[key].lower() in ("1", "t", "true")
+        # Parse int
+        for key in ("max_breadcrumbs", "shutdown_timeout", "transport_queue_size"):
+            if key in client_info:
+                client_info[key] = int(client_info[key])
+        # Parse float
+        for key in ("sample_rate", "traces_sample_rate"):
+            if key in client_info:
+                client_info[key] = float(client_info[key])
+
         git_hash = config_utils.env_or_config(config, "GIT_HASH", "c2c.git_hash")
         if git_hash is not None and not ("release" in client_info and client_info["release"] != "latest"):
             client_info["release"] = git_hash

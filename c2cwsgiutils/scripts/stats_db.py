@@ -67,7 +67,7 @@ class Reporter:
     def do_report(
         self, metric: List[str], value: int, kind: str, tags: Optional[Dict[str, str]] = None
     ) -> None:
-        LOG.info("%s.%s -> %d", kind, ".".join(metric), value)
+        LOG.debug("%s.%s -> %d", kind, ".".join(metric), value)
         if value > 0:  # Don't export 0 values. We can always set null=0 in grafana...
             if self.statsd is not None:
                 if stats.USE_TAGS and tags is not None:
@@ -193,6 +193,7 @@ def _do_dtats_db() -> None:
         params={"schemas": tuple(args.schema)},
     )
     for schema, table in tables:
+        LOG.info("Process table %s.%s.", schema, table)
         try:
             do_table(session, schema, table, reporter)
         except Exception as e:  # pylint: disable=broad-except

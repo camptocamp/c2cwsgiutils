@@ -197,13 +197,16 @@ def _do_dtats_db() -> None:
         try:
             do_table(session, schema, table, reporter)
         except Exception as e:  # pylint: disable=broad-except
+            LOG.exception("Process table %s.%s error.", schema, table)
             reporter.error([schema, table], e)
 
     if args.extra:
         for pos, extra in enumerate(args.extra):
+            LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, extra, reporter)
             except Exception as e:  # pylint: disable=broad-except
+                LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(pos + 1)], e)
 
     reporter.commit()

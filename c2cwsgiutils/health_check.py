@@ -286,7 +286,7 @@ class HealthCheck:
             name = self.name
 
             if name is None:
-                raise RuntimeError("Redis should be confgured")
+                raise RuntimeError("Redis should be configured")
 
         self._checks.append((name, check, level))
 

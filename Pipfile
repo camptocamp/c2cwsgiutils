@@ -17,7 +17,7 @@ pytest-cov = "==2.12.1"
 pytest-html = "==3.1.1"
 types-pyyaml = "==5.4.2"
 types-requests = "==0.1.12"
-types-redis = "==3.5.1"
+types-redis = "==3.5.2"
 types-ujson = "==0.1.1"
 types-python-dateutil = "==0.1.3"
 

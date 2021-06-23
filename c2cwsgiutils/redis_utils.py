@@ -5,7 +5,7 @@ from typing import Any, Mapping, Optional, Tuple
 
 import redis.client
 import redis.exceptions
-import redis.sentinel  # type: ignore
+import redis.sentinel
 import yaml
 
 import c2cwsgiutils.config_utils

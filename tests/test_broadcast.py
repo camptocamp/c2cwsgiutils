@@ -4,7 +4,7 @@ from c2cwsgiutils import broadcast
 from c2cwsgiutils.broadcast import local
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def local_broadcaster():
     broadcast._broadcaster = local.LocalBroadcaster()  # pylint: disable=W0212
     try:

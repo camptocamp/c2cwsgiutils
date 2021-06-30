@@ -31,6 +31,9 @@ services:
       C2C_REDIS_SENTINELS: redis:26379
       PYTHONMALLOC: debug
       GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
+      # Test problematic environment variable (values contains % and duplicated with different cass)
+      TEST: '%1'
+      test: '%2'
     links:
       - db
       - db_slave

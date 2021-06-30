@@ -97,7 +97,7 @@ class Connection:
             r.raw.decode_content = True
             doc = etree.parse(r.raw)  # nosec
             if schema is not None:
-                with open(schema, "r") as schema_file:
+                with open(schema) as schema_file:
                     xml_schema = etree.XMLSchema(etree.parse(schema_file))  # nosec
                 xml_schema.assertValid(doc)
             return doc

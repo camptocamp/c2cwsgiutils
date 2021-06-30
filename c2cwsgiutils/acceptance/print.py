@@ -54,7 +54,7 @@ class PrintConnection(connection.Connection):
         return report
 
     def _check_completion(self, ref: str) -> Optional[Any]:
-        status = self.get_json("status/{ref}.json".format(ref=ref))
+        status = self.get_json(f"status/{ref}.json")
         if status["done"]:
             return status
         return None

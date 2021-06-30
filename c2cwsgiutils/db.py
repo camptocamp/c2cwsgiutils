@@ -156,7 +156,7 @@ def _add_tween(
         def db_chooser_tween(request: pyramid.request.Request) -> Any:
             session = db_session()
             old = session.bind
-            method_path: Any = "%s %s" % (request.method, request.path)
+            method_path: Any = f"{request.method} {request.path}"
             has_force_master = any(r.match(method_path) for r in master_paths)
             if force_readonly or (
                 not has_force_master

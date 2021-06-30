@@ -285,17 +285,17 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         the_key = self._key(key)
         ms_duration = int(round(duration * 1000.0))
         ms_duration = max(ms_duration, 1)  # collectd would ignore events with zero durations
-        message = "%s:%s|ms" % (the_key, ms_duration)
+        message = f"{the_key}:{ms_duration}|ms"
         self._send(message, tags)
 
     def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
         the_key = self._key(key)
-        message = "%s:%s|g" % (the_key, value)
+        message = f"{the_key}:{value}|g"
         self._send(message, tags)
 
     def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
         the_key = self._key(key)
-        message = "%s:%s|c" % (the_key, increment)
+        message = f"{the_key}:{increment}|c"
         self._send(message, tags)
 
 

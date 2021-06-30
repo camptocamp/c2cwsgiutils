@@ -189,7 +189,7 @@ class HealthCheck:
                             stats.increment_counter(["alembic_version", name, actual_version], 1)
                         if actual_version != version_:
                             raise Exception(
-                                "Invalid alembic version (db: %s, code: %s)" % (actual_version, version_)
+                                f"Invalid alembic version (db: {actual_version}, code: {version_})"
                             )
                 finally:
                     session.bind = prev_bind

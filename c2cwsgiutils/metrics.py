@@ -45,8 +45,8 @@ def _metrics() -> pyramid.response.Response:
 
     for provider in _PROVIDERS:
         result += [
-            "# HELP {} {}".format(provider.name, provider.help),
-            "# TYPE {} {}".format(provider.name, provider.type),
+            f"# HELP {provider.name} {provider.help}",
+            f"# TYPE {provider.name} {provider.type}",
         ]
         for attributes, value in provider.get_data():
             attrib = {}
@@ -81,8 +81,8 @@ class MemoryMapProvider(Provider):
         pids: the list of pids or none
         """
         super().__init__(
-            "pod_process_smap_{}_kb".format(memory_type),
-            "Container smap used {}".format(memory_type.capitalize()),
+            f"pod_process_smap_{memory_type}_kb",
+            f"Container smap used {memory_type.capitalize()}",
         )
         self.memory_type = memory_type
         self.pids = pids

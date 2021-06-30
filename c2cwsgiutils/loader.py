@@ -13,4 +13,4 @@ class Loader(BaseLoader):  # type: ignore
         return cast(Dict[str, str], settings)
 
     def __repr__(self) -> str:
-        return 'c2cwsgiutils.loader.Loader(uri="{0}")'.format(self.uri)
+        return f'c2cwsgiutils.loader.Loader(uri="{self.uri}")'

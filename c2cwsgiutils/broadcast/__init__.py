@@ -96,7 +96,7 @@ def decorator(
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
         if channel is None:
-            _channel = "c2c_decorated_%s.%s" % (func.__module__, func.__name__)
+            _channel = f"c2c_decorated_{func.__module__}.{func.__name__}"
         else:
             _channel = channel
         subscribe(_channel, func)

@@ -186,7 +186,7 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
     if request.params.get("min_size_kb", "") != "":
         args["filter"] = lambda obj: get_size(obj) > (int(request.params["min_size_kb"]) * 1024)
     if request.params.get("no_extra_info", "") == "":
-        args["extra_info"] = lambda obj: "{:.3f} kb\n{}".format(get_size(obj) / 1024, id(obj))
+        args["extra_info"] = lambda obj: f"{get_size(obj) / 1024:.3f} kb\n{id(obj)}"
 
     result = StringIO()
     if request.params.get("backrefs", "") != "":

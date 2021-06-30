@@ -15,7 +15,7 @@ class PushgatewayGroupPublisher:
     ) -> None:
         if not base_url.endswith("/"):
             base_url += "/"
-        self._url = "%smetrics/job/%s" % (base_url, job)
+        self._url = f"{base_url}metrics/job/{job}"
         if instance is not None:
             self._url += "/instance/" + instance
         self._labels = labels
@@ -43,11 +43,11 @@ class PushgatewayGroupPublisher:
                 raise ValueError("Cannot change the type of a given metric")
         else:
             self._types[metric_name] = metric_type
-            self._to_send += "# TYPE %s %s\n" % (metric_name, metric_type)
+            self._to_send += f"# TYPE {metric_name} {metric_type}\n"
         self._to_send += metric_name
         labels = self._merge_labels(metric_labels)
         if labels is not None:
-            self._to_send += "{" + ", ".join('%s="%s"' % (k, v) for k, v in sorted(labels.items())) + "}"
+            self._to_send += "{" + ", ".join(f'{k}="{v}"' for k, v in sorted(labels.items())) + "}"
         self._to_send += " %s\n" % metric_value
 
     def commit(self) -> None:

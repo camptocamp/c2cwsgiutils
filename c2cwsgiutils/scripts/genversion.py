@@ -14,7 +14,9 @@ LOG = logging.getLogger(__name__)
 
 def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
     """
-    Parse plain and editable versions. See test_genversion.py for examples.
+    Parse plain and editable versions.
+
+    See test_genversion.py for examples.
     """
     src_matcher = SRC_VERSION_RE.match(comp)
     matcher = src_matcher or VERSION_RE.match(comp)

@@ -1,5 +1,5 @@
 """
-Used to publish metrics to Prometheus
+Used to publish metrics to Prometheus.
 """
 
 import re
@@ -22,7 +22,7 @@ class Provider:
 
     def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
         """
-        Should be defined in the specific provider
+        Should be defined in the specific provider.
         """
         return []
 
@@ -89,7 +89,7 @@ class MemoryMapProvider(Provider):
 
     def get_data(self) -> List[Tuple[Dict[str, Any], Union[int, float]]]:
         """
-        Should be defined in the specific provider
+        Should be defined in the specific provider.
         """
         results: List[Tuple[Dict[str, Any], Union[int, float]]] = []
         for pid in [p for p in listdir("/proc/") if NUMBER_RE.match(p)] if self.pids is None else self.pids:

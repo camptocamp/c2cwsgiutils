@@ -214,7 +214,7 @@ class HealthCheck:
         level: int = 1,
     ) -> None:
         """
-        Check that a GET on an URL returns 2xx
+        Check that a GET on an URL returns 2xx.
 
         :param url: the URL to query or a function taking the request and returning it
         :param params: the parameters or a function taking the request and returning them
@@ -243,8 +243,8 @@ class HealthCheck:
 
     def add_redis_check(self, name: Optional[str] = None, level: int = 1) -> None:
         """
-        Check that the given redis server is reachable. One such check is automatically added if
-        the broadcaster is configured with redis.
+        Check that the given redis server is reachable. One such check is automatically added if the
+        broadcaster is configured with redis.
 
         :param name: the name of the check (defaults to url)
         :param level: the level of the health check
@@ -292,7 +292,8 @@ class HealthCheck:
 
     def add_version_check(self, name: str = "version", level: int = 2) -> None:
         """
-        Check that the version matches across all instances
+        Check that the version matches across all instances.
+
         :param name: the name of the check (defaults to "version")
         :param level: the level of the health check
         :return:

@@ -1,5 +1,6 @@
 """
 Implement parts of the Prometheus Pushgateway protocol, as defined here:
+
 https://github.com/prometheus/pushgateway
 """
 from typing import Any, Mapping, MutableMapping, Optional  # noqa  # pylint: disable=unused-import

@@ -1,9 +1,9 @@
-"""Initial version
+"""
+Initial version.
 
 Revision ID: 4a8c1bb4e775
 Revises:
 Create Date: 2016-09-14 09:23:27.466418
-
 """
 from alembic import op
 

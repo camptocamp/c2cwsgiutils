@@ -31,7 +31,7 @@ def ping(_):
 @hello_service.get()
 def hello_get(_):
     """
-    Will use the slave
+    Will use the slave.
     """
     with timer_context(["sql", "read_hello"]):
         hello = models.DBSession.query(models.Hello).first()
@@ -43,7 +43,7 @@ def hello_get(_):
 @hello_service.put()
 def hello_put(_):
     """
-    Will use the master
+    Will use the master.
     """
     with sentry.capture_exceptions():
         hello = models.DBSession.query(models.Hello).first()

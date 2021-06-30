@@ -1,5 +1,6 @@
 """
 Install a filter on the logging handler to add some info about requests:
+
   * client_addr
   * method
   * matched_route
@@ -42,9 +43,10 @@ _PYRAMID_FILTER = _PyramidFilter()
 
 def _un_underscore(message: MutableMapping[str, Any]) -> Mapping[str, Any]:
     """
-    Elasticsearch is not indexing the fields starting with underscore and cee_syslog_handler is starting
-    a lot of interesting fields with underscore. Therefore, it's a good idea to remove all those underscore
-    prefixes.
+    Elasticsearch is not indexing the fields starting with underscore and cee_syslog_handler is starting a lot
+    of interesting fields with underscore.
+
+    Therefore, it's a good idea to remove all those underscore prefixes.
     """
     for key, value in list(message.items()):
         if key.startswith("_"):

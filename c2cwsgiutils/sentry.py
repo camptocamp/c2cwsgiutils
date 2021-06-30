@@ -19,7 +19,7 @@ _client_setup = False
 
 def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any, Any], Any]:
     """
-    A filter that adds tags to every events
+    A filter that adds tags to every events.
     """
 
     def do_filter(event: Any, hint: Any) -> Any:
@@ -108,7 +108,7 @@ def capture_exceptions() -> Generator[None, None, None]:
 
 def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     """
-    If sentry is configured, add a Sentry filter around the application
+    If sentry is configured, add a Sentry filter around the application.
     """
     global _client_setup
     if _client_setup:

@@ -1,6 +1,6 @@
 """
-A view (URL=/sql_provider) allowing to enabled/disable a SQL spy that runs an "EXPLAIN ANALYZE" on
-every SELECT query going through SQLAlchemy.
+A view (URL=/sql_provider) allowing to enabled/disable a SQL spy that runs an "EXPLAIN ANALYZE" on every
+SELECT query going through SQLAlchemy.
 """
 import logging
 import re
@@ -88,7 +88,7 @@ def _indent(statement: str, indent: str = "  ") -> str:
 
 def init(config: pyramid.config.Configurator) -> None:
     """
-    Install a pyramid  event handler that adds the request information
+    Install a pyramid  event handler that adds the request information.
     """
     broadcast.subscribe("c2c_sql_profiler", _setup_profiler)
 

@@ -26,7 +26,7 @@ class PrintConnection(connection.Connection):
 
     def wait_ready(self, timeout: int = 60, app: str = "default") -> None:
         """
-        Wait the print instance to be ready
+        Wait the print instance to be ready.
         """
         utils.retry_timeout(functools.partial(self.get_capabilities, app=app), timeout=timeout)
 

@@ -21,7 +21,7 @@ SPACE_RE = re.compile(r" +")
 
 def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
     """
-    Group the identical stacks together along with a list of threads sporting them
+    Group the identical stacks together along with a list of threads sporting them.
     """
     results: List[Mapping[str, Any]] = []
     for host_stacks in source:

@@ -23,8 +23,10 @@ def init(config: pyramid.config.Configurator) -> None:
 
 def init_daemon(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
-    Initialize the debug broadcast listeners. Used mostly for headless processes that depend on a master
-    providing a normal REST API and broadcasting those requests.
+    Initialize the debug broadcast listeners.
+
+    Used mostly for headless processes that depend on a master providing a normal REST API and broadcasting
+    those requests.
     """
     if config_utils.env_or_config(config, ENV_KEY, CONFIG_KEY, type_=config_utils.config_bool):
         from c2cwsgiutils.debug import _listeners

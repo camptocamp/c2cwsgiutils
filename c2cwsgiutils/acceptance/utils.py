@@ -55,7 +55,9 @@ skipIfCI = pytest.mark.skipif(os.environ.get("CI", "0") == "true", reason="Not r
 
 def approx(struct: Any, **kwargs: Any) -> Any:
     """
-    Make float values in deep structures approximative. See pytest.approx
+    Make float values in deep structures approximative.
+
+    See pytest.approx
     """
     if isinstance(struct, float):
         return pytest.approx(struct, **kwargs)

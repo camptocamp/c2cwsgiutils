@@ -1,5 +1,5 @@
 """
-Module used by c2cwsgiutils-run to provide a WSGI application when starting gunicorn
+Module used by c2cwsgiutils-run to provide a WSGI application when starting gunicorn.
 """
 from typing import Any, Callable
 

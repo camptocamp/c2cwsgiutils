@@ -148,12 +148,12 @@ def _do_table_size(reporter, schema, session, table):
 
 def _do_table_count(reporter, schema, session, table):
     quote = session.bind.dialect.identifier_preparer.quote
+    # We request and estimation of the count as a real count is very slow on big tables
+    # and seems to cause replicatin lags. This esimate is updated on ANALYZE and VACCUM.
     (count,) = session.execute(
-        """
-    SELECT count(*) FROM {schema}.{table}
-    """.format(
-            schema=quote(schema), table=quote(table)
-        )
+        f"""
+    SELECT reltuples::bigint AS count FROM pg_class WHERE oid = '{quote(schema)}.{quote(table)}'::regclass;
+    """
     ).fetchone()  # nosec
     reporter.do_report([schema, table], count, kind="count", tags=dict(schema=schema, table=table))
 

@@ -7,9 +7,8 @@ import time
 import uuid
 from typing import Any, List, Optional
 
-import requests
+import requests.exceptions
 from dateutil import parser as dp
-from urllib3.connection import HTTPConnection
 
 import c2cwsgiutils.setup_process
 from c2cwsgiutils import stats
@@ -73,7 +72,7 @@ def _check_roundtrip() -> None:
             try:
                 r = requests.post(SEARCH_URL, json=query, headers=SEARCH_HEADERS)
                 exception = None
-            except HTTPConnection as e:
+            except requests.exceptions.RequestException as e:
                 logger.exception("Error on querying Elasticsearch")
                 exception = e
             if r.ok:

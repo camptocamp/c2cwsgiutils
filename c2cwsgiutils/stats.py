@@ -53,7 +53,7 @@ BACKENDS: MutableMapping[str, _BaseBackend] = {}
 
 class Timer:
     """
-    Allow to measure the duration of some activity
+    Allow to measure the duration of some activity.
     """
 
     def __init__(self, key: Optional[Sequence[Any]], tags: TagType) -> None:
@@ -76,7 +76,7 @@ class Timer:
 @contextlib.contextmanager
 def timer_context(key: Sequence[Any], tags: TagType = None) -> Generator[None, None, None]:
     """
-    Add a duration measurement to the stats using the duration the context took to run
+    Add a duration measurement to the stats using the duration the context took to run.
 
     :param key: The path of the key, given as a list.
     :param tags: Some tags to attach to the metric.
@@ -89,7 +89,7 @@ def timer_context(key: Sequence[Any], tags: TagType = None) -> Generator[None, N
 @contextlib.contextmanager
 def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[None, None, None]:
     """
-    Add a duration measurement to the stats using the duration the context took to run
+    Add a duration measurement to the stats using the duration the context took to run.
 
     The given key is prepended with 'success' or 'failure' according to the context's outcome.
 
@@ -117,8 +117,8 @@ def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[Non
 
 def timer(key: Optional[Sequence[Any]] = None, tags: TagType = None) -> Timer:
     """
-    Create a timer for the given key. The key can be omitted, but then need to be specified
-    when stop is called.
+    Create a timer for the given key. The key can be omitted, but then need to be specified when stop is
+    called.
 
     :param key: The path of the key, given as a list.
     :param tags: Some tags to attach to the metric.
@@ -130,7 +130,7 @@ def timer(key: Optional[Sequence[Any]] = None, tags: TagType = None) -> Timer:
 
 def set_gauge(key: Sequence[Any], value: float, tags: TagType = None) -> None:
     """
-    Set a gauge value
+    Set a gauge value.
 
     :param key: The path of the key, given as a list.
     :param value: The new value of the gauge
@@ -142,7 +142,7 @@ def set_gauge(key: Sequence[Any], value: float, tags: TagType = None) -> None:
 
 def increment_counter(key: Sequence[Any], increment: int = 1, tags: TagType = None) -> None:
     """
-    Increment a counter value
+    Increment a counter value.
 
     :param key: The path of the key, given as a list.
     :param increment: The increment
@@ -285,17 +285,17 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         the_key = self._key(key)
         ms_duration = int(round(duration * 1000.0))
         ms_duration = max(ms_duration, 1)  # collectd would ignore events with zero durations
-        message = "%s:%s|ms" % (the_key, ms_duration)
+        message = f"{the_key}:{ms_duration}|ms"
         self._send(message, tags)
 
     def gauge(self, key: Sequence[Any], value: float, tags: TagType = None) -> None:
         the_key = self._key(key)
-        message = "%s:%s|g" % (the_key, value)
+        message = f"{the_key}:{value}|g"
         self._send(message, tags)
 
     def counter(self, key: Sequence[Any], increment: int, tags: TagType = None) -> None:
         the_key = self._key(key)
-        message = "%s:%s|c" % (the_key, increment)
+        message = f"{the_key}:{increment}|c"
         self._send(message, tags)
 
 

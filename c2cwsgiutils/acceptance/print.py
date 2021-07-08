@@ -26,7 +26,7 @@ class PrintConnection(connection.Connection):
 
     def wait_ready(self, timeout: int = 60, app: str = "default") -> None:
         """
-        Wait the print instance to be ready
+        Wait the print instance to be ready.
         """
         utils.retry_timeout(functools.partial(self.get_capabilities, app=app), timeout=timeout)
 
@@ -54,7 +54,7 @@ class PrintConnection(connection.Connection):
         return report
 
     def _check_completion(self, ref: str) -> Optional[Any]:
-        status = self.get_json("status/{ref}.json".format(ref=ref))
+        status = self.get_json(f"status/{ref}.json")
         if status["done"]:
             return status
         return None

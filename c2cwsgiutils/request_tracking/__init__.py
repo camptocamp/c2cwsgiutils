@@ -1,6 +1,7 @@
 """
-Allows to track the request_id in the logs, the DB and others. Adds a c2c_request_id attribute
-to the Pyramid Request class to access it.
+Allows to track the request_id in the logs, the DB and others.
+
+Adds a c2c_request_id attribute to the Pyramid Request class to access it.
 """
 import logging
 import urllib.parse

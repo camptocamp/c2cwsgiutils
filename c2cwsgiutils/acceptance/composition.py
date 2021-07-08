@@ -98,8 +98,8 @@ class Composition:
     @staticmethod
     def _get_env() -> Mapping[str, str]:
         """
-        Make sure the DOCKER_TAG environment variable, used in the docker-compose.yaml file
-        is correctly set when we call docker-compose.
+        Make sure the DOCKER_TAG environment variable, used in the docker-compose.yaml file is correctly set
+        when we call docker-compose.
         """
         env = dict(os.environ)
         if "DOCKER_TAG" not in env:

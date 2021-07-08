@@ -36,8 +36,8 @@ def setup_session(
     sqlalchemy.engine.Engine,
 ]:
     """
-    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
-    DB connection. Uses prefixed entries in the application's settings.
+    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave DB
+    connection. Uses prefixed entries in the application's settings.
 
     The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
     all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
@@ -87,8 +87,8 @@ def create_session(
     **engine_config: Any,
 ) -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
     """
-    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave
-    DB connection.
+    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave DB
+    connection.
 
     The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
     all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
@@ -149,14 +149,14 @@ def _add_tween(
     ) -> Callable[[pyramid.request.Request], Any]:
         """
         Tween factory to route to a slave DB for read-only queries.
-        Must be put over the pyramid_tm tween and share_config must have a "slave" engine
-        configured.
+
+        Must be put over the pyramid_tm tween and share_config must have a "slave" engine configured.
         """
 
         def db_chooser_tween(request: pyramid.request.Request) -> Any:
             session = db_session()
             old = session.bind
-            method_path: Any = "%s %s" % (request.method, request.path)
+            method_path: Any = f"{request.method} {request.path}"
             has_force_master = any(r.match(method_path) for r in master_paths)
             if force_readonly or (
                 not has_force_master

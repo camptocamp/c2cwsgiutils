@@ -1,6 +1,5 @@
 """
-Used by standalone (non-wsgi) processes to setup all the bits and pieces of c2cwsgiutils that
-could be useful.
+Used by standalone (non-wsgi) processes to setup all the bits and pieces of c2cwsgiutils that could be useful.
 
 Must be imported at the very beginning of the process' life, before any other module is imported.
 """

@@ -18,7 +18,9 @@ LOG = logging.getLogger(__name__)
 
 
 def get_size(obj: Any) -> int:
-    """sum size of object & members."""
+    """
+    sum size of object & members.
+    """
     if isinstance(obj, BLACKLIST):
         return 0
     seen_ids: Set[int] = set()

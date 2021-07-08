@@ -95,7 +95,7 @@ def input_(
 
 
 def button(label: str) -> str:
-    return '<button class="btn btn-primary" type="submit">{label}</button>'.format(label=label)
+    return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
 def _index(request: pyramid.request.Request) -> pyramid.response.Response:

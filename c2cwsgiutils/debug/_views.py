@@ -21,7 +21,7 @@ SPACE_RE = re.compile(r" +")
 
 def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
     """
-    Group the identical stacks together along with a list of threads sporting them
+    Group the identical stacks together along with a list of threads sporting them.
     """
     results: List[Mapping[str, Any]] = []
     for host_stacks in source:
@@ -186,7 +186,7 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
     if request.params.get("min_size_kb", "") != "":
         args["filter"] = lambda obj: get_size(obj) > (int(request.params["min_size_kb"]) * 1024)
     if request.params.get("no_extra_info", "") == "":
-        args["extra_info"] = lambda obj: "{:.3f} kb\n{}".format(get_size(obj) / 1024, id(obj))
+        args["extra_info"] = lambda obj: f"{get_size(obj) / 1024:.3f} kb\n{id(obj)}"
 
     result = StringIO()
     if request.params.get("backrefs", "") != "":

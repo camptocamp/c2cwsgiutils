@@ -40,13 +40,13 @@ def _generate_model_graph(module: Any, base: Any) -> None:
 
 
 def _print_node(symbol: Any, interesting: Set[Any]) -> None:
-    print('%s [label="%s", shape=box];' % (symbol.__name__, _get_table_desc(symbol)))
+    print(f'{symbol.__name__} [label="{_get_table_desc(symbol)}", shape=box];')
     for parent in symbol.__bases__:
         if parent != object:
             if parent not in interesting:
                 _print_node(parent, interesting)
                 interesting.add(parent)
-            print("%s -> %s;" % (symbol.__name__, parent.__name__))
+            print(f"{symbol.__name__} -> {parent.__name__};")
 
 
 def _is_interesting(what: Any, base: type) -> bool:

@@ -26,7 +26,7 @@ def _hash_secret(secret: str) -> str:
 
 def is_auth(request: pyramid.request.Request) -> bool:
     """
-    Check if the client is authenticated with the C2C_SECRET
+    Check if the client is authenticated with the C2C_SECRET.
     """
     expected = get_expected_secret(request)
     secret = request.params.get("secret")

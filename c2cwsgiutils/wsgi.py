@@ -16,8 +16,8 @@ def _escape_variables(environ: Mapping[str, str]) -> Mapping[str, str]:
 
 def create_application(configfile: Optional[str] = None) -> Any:
     """
-    Create a standard WSGI application with the capabilities to use environment variables in the
-    configuration file (use %(ENV_VAR)s place holders)
+    Create a standard WSGI application with the capabilities to use environment variables in the configuration
+    file (use %(ENV_VAR)s place holders)
 
     :param configfile: The configuration file to use
     :return: The application

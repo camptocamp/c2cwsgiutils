@@ -19,7 +19,9 @@ _broadcaster: Optional[interface.BaseBroadcaster] = None
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
-    Initialize the broadcaster with Redis, if configured. Otherwise, fall back to a fake local implementation.
+    Initialize the broadcaster with Redis, if configured.
+
+    Otherwise, fall back to a fake local implementation.
     """
     global _broadcaster
     broadcast_prefix = config_utils.env_or_config(
@@ -69,8 +71,9 @@ def broadcast(
     channel: str, params: Optional[Dict[str, Any]] = None, expect_answers: bool = False, timeout: float = 10
 ) -> Optional[List[Any]]:
     """
-    Broadcast a message to the given channel. If answers are expected, it will wait up to "timeout" seconds
-    to get all the answers.
+    Broadcast a message to the given channel.
+
+    If answers are expected, it will wait up to "timeout" seconds to get all the answers.
     """
     return _get(need_init=True).broadcast(
         channel, params if params is not None else {}, expect_answers, timeout
@@ -86,8 +89,9 @@ def decorator(
     channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
 ) -> Callable[[Callable[..., _DECORATOR_RETURN]], Callable[..., Optional[List[_DECORATOR_RETURN]]]]:
     """
-    The decorated function will be called through the broadcast functionality. If expect_answers is set to
-    True, the returned value will be a list of all the answers.
+    The decorated function will be called through the broadcast functionality.
+
+    If expect_answers is set to True, the returned value will be a list of all the answers.
     """
 
     def impl(func: Callable[..., _DECORATOR_RETURN]) -> Callable[..., Optional[List[_DECORATOR_RETURN]]]:
@@ -96,7 +100,7 @@ def decorator(
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
         if channel is None:
-            _channel = "c2c_decorated_%s.%s" % (func.__module__, func.__name__)
+            _channel = f"c2c_decorated_{func.__module__}.{func.__name__}"
         else:
             _channel = channel
         subscribe(_channel, func)

@@ -26,18 +26,18 @@ updates:
     ignore:
       - dependency-name: none
   - package-ecosystem: docker
-    directory: "/acceptance_tests/tests"
+    directory: '/acceptance_tests/tests'
     schedule:
       interval: daily
-      time: "02:00"
+      time: '02:00'
     open-pull-requests-limit: 99
     ignore:
-        - dependency-name: none
+      - dependency-name: none
   - package-ecosystem: docker
-    directory: "/acceptance_tests/app"
+    directory: '/acceptance_tests/app'
     schedule:
       interval: daily
-      time: "02:00"
+      time: '02:00'
     open-pull-requests-limit: 99
     ignore:
-        - dependency-name: none
+      - dependency-name: none

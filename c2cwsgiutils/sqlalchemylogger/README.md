@@ -2,7 +2,6 @@ This module is used to ship logging records to an SQL database.
 
 Currently only `sqlite` and `postgres_psycopg2` are fully supported.
 
-
 To add the logger in a pyramid ini file use something like:
 
 ```

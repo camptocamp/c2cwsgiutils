@@ -159,7 +159,7 @@ def _do_table_count(
 ) -> None:
     quote = session.bind.dialect.identifier_preparer.quote
     # We request and estimation of the count as a real count is very slow on big tables
-    # and seems to cause replicatin lags. This esimate is updated on ANALYZE and VACCUM.
+    # and seems to cause replicatin lags. This esimate is updated on ANALYZE and VACUUM.
     (count,) = session.execute(
         f"""
     SELECT reltuples::bigint AS count FROM pg_class WHERE oid = '{quote(schema)}.{quote(table)}'::regclass;

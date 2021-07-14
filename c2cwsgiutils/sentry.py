@@ -70,9 +70,15 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
                 config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR"
             ).upper(),
         )
+        traces_sample_rate = float(
+            config_utils.env_or_config(
+                config, "SENTRY_TRACES_SAMPLE_RATE", "c2c.sentry_traces_sample_rate", "0.0"
+            )
+        )
         sentry_sdk.init(
             dsn=sentry_url,
             integrations=[sentry_logging, PyramidIntegration(), SqlalchemyIntegration(), RedisIntegration()],
+            traces_sample_rate=traces_sample_rate,
             before_send=_create_before_send_filter(tags),
             **client_info,
         )

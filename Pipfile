@@ -19,7 +19,7 @@ types-pyyaml = "==5.4.6"
 types-requests = "==2.25.2"
 types-redis = "==3.5.6"
 types-ujson = "==0.1.1"
-types-python-dateutil = "==0.1.4"
+types-python-dateutil = "==0.1.6"
 
 [packages]
 alembic = "==1.6.5"

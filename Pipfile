@@ -22,7 +22,7 @@ types-ujson = "==0.1.1"
 types-python-dateutil = "==0.1.6"
 
 [packages]
-alembic = "==1.6.5"
+alembic = "==1.7.1"
 boltons = "==21.0.0"
 cornice = "==5.2.0"
 redis = "==3.5.3"

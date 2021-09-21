@@ -6,7 +6,12 @@ updates:
     directory: '/'
     schedule:
       interval: daily
-      time: '02:00'
+    ignore:
+      - dependency-name: none
+  - package-ecosystem: pip
+    directory: '/acceptance_tests/app'
+    schedule:
+      interval: daily
     ignore:
       - dependency-name: none
 
@@ -14,30 +19,23 @@ updates:
     directory: '/'
     schedule:
       interval: weekly
-      time: '02:00'
     ignore:
       - dependency-name: none
   - package-ecosystem: docker
     directory: '/acceptance_tests/tests/redis'
     schedule:
       interval: daily
-      time: '02:00'
-    open-pull-requests-limit: 99
     ignore:
       - dependency-name: none
   - package-ecosystem: docker
     directory: '/acceptance_tests/tests'
     schedule:
       interval: daily
-      time: '02:00'
-    open-pull-requests-limit: 99
     ignore:
       - dependency-name: none
   - package-ecosystem: docker
     directory: '/acceptance_tests/app'
     schedule:
       interval: daily
-      time: '02:00'
-    open-pull-requests-limit: 99
     ignore:
       - dependency-name: none

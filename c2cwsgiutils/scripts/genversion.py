@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import re
-import subprocess
+import subprocess  # nosec
 import sys
 from typing import Dict, Optional, Tuple, cast
 
@@ -32,7 +32,7 @@ def _get_packages_version() -> Dict[str, str]:
     result = {}
     with open(os.devnull, "w") as devnull:
         for comp in (
-            subprocess.check_output(["python3", "-m", "pip", "freeze"], stderr=devnull)
+            subprocess.check_output(["python3", "-m", "pip", "freeze"], stderr=devnull)  # nosec
             .decode()
             .strip()
             .split("\n")

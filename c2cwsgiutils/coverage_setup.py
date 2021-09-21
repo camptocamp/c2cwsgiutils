@@ -13,7 +13,7 @@ def init() -> None:
     import coverage
 
     LOG.warning("Setting up code coverage")
-    report_dir = "/tmp/coverage/api"
+    report_dir = "/tmp/coverage/api"  # nosec
     os.makedirs(report_dir, exist_ok=True)
     cov = coverage.Coverage(
         data_file=os.path.join(report_dir, "coverage"),

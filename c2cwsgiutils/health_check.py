@@ -9,7 +9,7 @@ import copy
 import logging
 import os
 import re
-import subprocess
+import subprocess  # nosec
 import time
 import traceback
 from collections import Counter
@@ -74,7 +74,7 @@ def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     env["PYTHONPATH"] = pythonpath
     dirname = os.path.abspath(os.path.dirname(alembic_ini_path))
 
-    out = subprocess.check_output(
+    out = subprocess.check_output(  # nosec
         ["alembic", "--config", alembic_ini_path, "--name", name, "heads"], cwd=dirname, env=env
     ).decode("utf-8")
     out_match = ALEMBIC_HEAD_RE.match(out)

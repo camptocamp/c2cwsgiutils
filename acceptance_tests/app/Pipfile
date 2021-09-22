@@ -7,9 +7,8 @@ name = "pypi"
 pipenv = "==2020.5.28"
 
 [dev-packages]
-prospector = "==1.5.0.1"
+prospector = {extras = ["with_bandit", "with_mypy"], version = "==1.6.1"}
 coverage = "==5.5"
-flake8 = "==3.8.4"
 
 [requires]
 python_version = "3.8"

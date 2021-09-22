@@ -1,6 +1,6 @@
 import logging
 import os
-import subprocess
+import subprocess  # nosec
 import sys
 import time
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
@@ -45,7 +45,7 @@ class Composition:
             self.dc_try(["up", "-d"], fail=False)
 
         # Setup something that redirects the docker container logs to the test output
-        log_watcher = subprocess.Popen(
+        log_watcher = subprocess.Popen(  # nosec
             self.docker_compose + ["logs", "--follow", "--no-color"],
             env=env,
             stderr=subprocess.STDOUT,
@@ -57,7 +57,7 @@ class Composition:
     def dc(self, args: List[str], **kwargs: Any) -> str:
         return cast(
             str,
-            subprocess.check_output(
+            subprocess.check_output(  # nosec
                 self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
             ).decode(),
         )
@@ -75,7 +75,9 @@ class Composition:
             os.makedirs(target_dir, exist_ok=True)
             for path in self.coverage_paths:
                 try:
-                    subprocess.check_call(["docker", "cp", path, target_dir], stderr=subprocess.STDOUT)
+                    subprocess.check_call(  # nosec
+                        ["docker", "cp", path, target_dir], stderr=subprocess.STDOUT
+                    )
                 except Exception:
                     self.dc(["ps"])
                     raise

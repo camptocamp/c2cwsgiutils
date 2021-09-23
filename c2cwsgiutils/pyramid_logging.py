@@ -101,7 +101,7 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ign
             self._facility,
             self._static_fields,
         )
-        return ": @cee: %s" % json.dumps(message)
+        return f": @cee: {json.dumps(message)}"
 
 
 class JsonLogHandler(logging.StreamHandler):

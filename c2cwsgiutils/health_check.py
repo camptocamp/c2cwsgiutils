@@ -62,7 +62,7 @@ def _get_bindings(session: Any, engine_type: EngineType) -> List[sqlalchemy.engi
         return [session.c2c_ro_bind]
     if engine_type == EngineType.WRITE_ONLY:
         return [session.c2c_rw_bind]
-    raise NotImplementedError("Unhandled engine type %s" % engine_type)
+    raise NotImplementedError(f"Unhandled engine type {engine_type}")
 
 
 def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
@@ -177,9 +177,7 @@ class HealthCheck:
                     with stats.timer_context(key, tags):
                         quote = session.bind.dialect.identifier_preparer.quote
                         (actual_version,) = session.execute(
-                            "SELECT version_num FROM {schema}.{table}".format(  # nosec
-                                schema=quote(version_schema), table=quote(version_table)
-                            )
+                            f"SELECT version_num FROM {quote(version_schema)}.{quote(version_table)}"  # nosec
                         ).fetchone()
                         if stats.USE_TAGS:
                             stats.increment_counter(

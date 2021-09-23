@@ -97,7 +97,7 @@ class Connection:
             r.raw.decode_content = True
             doc = etree.parse(r.raw)  # nosec
             if schema is not None:
-                with open(schema) as schema_file:
+                with open(schema, encoding="utf-8") as schema_file:
                     xml_schema = etree.XMLSchema(etree.parse(schema_file))  # nosec
                 xml_schema.assertValid(doc)
             return doc
@@ -239,9 +239,9 @@ def check_response(
     cache_expected: CacheExpected = CacheExpected.DONT_CARE,
 ) -> None:
     if isinstance(expected_status, tuple):
-        assert r.status_code in expected_status, "status=%d\n%s" % (r.status_code, r.text)
+        assert r.status_code in expected_status, f"status={r.status_code:d}\n{r.text}"
     else:
-        assert r.status_code == expected_status, "status=%d\n%s" % (r.status_code, r.text)
+        assert r.status_code == expected_status, f"status={r.status_code:d}\n{r.text}"
 
     if cache_expected == CacheExpected.NO:
         # Cache is the root of all evil. Must never be enabled

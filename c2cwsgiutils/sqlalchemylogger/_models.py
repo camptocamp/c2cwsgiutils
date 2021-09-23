@@ -33,6 +33,6 @@ def create_log_class(tablename: str = "logs", tableargs: Union[str, Dict[str, st
             return self.__repr__()
 
         def __repr__(self) -> str:
-            return "<Log: {} - {}>".format(self.created_at.strftime("%m/%d/%Y-%H:%M:%S"), self.msg[:50])
+            return f"<Log: {self.created_at.strftime('%m/%d/%Y-%H:%M:%S')} - {self.msg[:50]}>"
 
     return Log

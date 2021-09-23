@@ -21,16 +21,15 @@ def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
 
 
 def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
-    result = """
+    printable_content = "\n".join(content)
+    result = f"""
     <div class="row">
       <div class="col-sm-3"><h2>{title}</h2></div>
       <div class="col-lg">
-      {content}
+      {printable_content}
       </div>
     </div>
-    """.format(
-        title=title, content="\n".join(content)
-    )
+    """
     if sep:
         result += "<hr>"
     return result
@@ -46,9 +45,7 @@ def paragraph(*content: str, title: Optional[str] = None) -> str:
 
 def link(url: Optional[str], label: str) -> str:
     if url is not None:
-        return '<a class="btn btn-primary" href="{url}" target="_blank">{label}</a>'.format(
-            url=url, label=label
-        )
+        return f'<a class="btn btn-primary" href="{url}" target="_blank">{label}</a>'
     else:
         return ""
 
@@ -58,13 +55,12 @@ def form(url: Optional[str], *content: str, method: str = "get", target: str = "
     method_attrs = ""
     if method == "post":
         method_attrs = ' method="post" enctype="multipart/form-data"'
-    return """
+    printable_content = "\n".join(content)
+    return f"""
     <form class="form-inline" action="{url}" target="{target}"{method_attrs}>
-      {content}
+      {printable_content}
     </form>
-    """.format(
-        url=url, content="\n".join(content), method_attrs=method_attrs, target=target
-    )
+    """
 
 
 def input_(
@@ -83,12 +79,8 @@ def input_(
             type_ = "text"
     result = ""
     if label is not None:
-        result += '<div class="form-group form-inline"><label for="{id}">{label}:</label>'.format(
-            label=label, id=id_
-        )
-    result += '<input class="form-control" type="{type}" name="{name}" value="{value}" id="{id}">'.format(
-        name=name, type=type_, value=value, id=id_
-    )
+        result += f'<div class="form-group form-inline"><label for="{id_}">{label}:</label>'
+    result += f'<input class="form-control" type="{type_}" name="{name}" value="{value}" id="{id_}">'
     if label is not None:
         result += "</div>"
     return result

@@ -23,7 +23,7 @@ def _dump_stacks_impl() -> Dict[str, Any]:
             if line:
                 cur["code"] = line.strip()
             frames.append(cur)
-        threads["%s(%d)" % (id2name.get(thread_id, ""), thread_id)] = frames
+        threads[f"{id2name.get(thread_id, '')}({thread_id:d})"] = frames
     return {"threads": threads}
 
 

@@ -30,7 +30,7 @@ def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
 
 def _get_packages_version() -> Dict[str, str]:
     result = {}
-    with open(os.devnull, "w") as devnull:
+    with open(os.devnull, "w", encoding="utf-8") as devnull:
         for comp in (
             subprocess.check_output(["python3", "-m", "pip", "freeze"], stderr=devnull)  # nosec
             .decode()
@@ -58,7 +58,7 @@ def main() -> None:
     report = {"main": {"git_hash": git_hash}, "packages": _get_packages_version()}
     if git_tag is not None:
         report["main"]["git_tag"] = git_tag
-    with open("versions.json", "w") as file:
+    with open("versions.json", "w", encoding="utf-8") as file:
         json.dump(report, file, indent=2)
 
 

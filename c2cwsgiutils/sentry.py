@@ -101,7 +101,6 @@ def capture_exceptions() -> Generator[None, None, None]:
     You don't need to use that for exception terminating the process (those not caught). Sentry does that
     already.
     """
-    global _client_setup
     if _client_setup:
         try:
             yield
@@ -116,7 +115,6 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     """
     If sentry is configured, add a Sentry filter around the application.
     """
-    global _client_setup
     if _client_setup:
         try:
             LOG.info("Enable WSGI filter for Sentry")

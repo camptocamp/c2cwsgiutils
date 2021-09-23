@@ -1,2 +1,4 @@
-ignore:
-  - DL3008
+ignored:
+  - DL3008 # Pin versions in apt get install.
+  - DL3059 # Multiple consecutive `RUN` instructions. Consider consolidation.
+  - DL3003 # Use WORKDIR to switch to a directory

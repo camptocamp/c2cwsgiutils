@@ -2,9 +2,10 @@ FROM ubuntu:20.04 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
-RUN apt update && \
+# hadolint ignore=SC2086
+RUN apt-get update && \
     DEV_PACKAGES="libpq-dev build-essential python3-dev" && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
     libpq5 \
     python3 \
     curl \
@@ -13,7 +14,7 @@ RUN apt update && \
     gnupg \
     apt-transport-https \
     $DEV_PACKAGES && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
     python3-pip \
     python3-pkgconfig && \
     apt-get clean && \
@@ -21,7 +22,7 @@ RUN apt update && \
     python3 -m pip install --no-cache-dir --requirement=/opt/c2cwsgiutils/requirements.txt && \
     (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear) && \
     strip /usr/local/lib/python3.*/dist-packages/*/*.so && \
-    apt remove --purge --autoremove --yes $DEV_PACKAGES binutils
+    apt-get remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
 COPY scripts/install-docker /usr/bin/
 
@@ -84,7 +85,7 @@ FROM base-lint as tests
 COPY . /opt/c2cwsgiutils/
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
     --editable=/opt/c2cwsgiutils
-RUN (cd /opt/c2cwsgiutils/ && prospector)
+RUN (cd /opt/c2cwsgiutils/ && prospector -X --output=pylint)
 RUN echo "from pickle import *" > /usr/lib/python3.8/cPickle.py
 RUN (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests)
 

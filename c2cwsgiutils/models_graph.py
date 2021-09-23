@@ -11,7 +11,7 @@ def generate_model_graph(module: Any) -> None:
     elif len(sys.argv) == 2:
         base_name = sys.argv[1]
     else:
-        print("Invalid parameters\nUsage: %s [base_class]" % sys.argv[0])
+        print(f"Invalid parameters\nUsage: {sys.argv[0]} [base_class]")
         sys.exit(1)
 
     _generate_model_graph(module, getattr(module, base_name))

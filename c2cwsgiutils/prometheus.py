@@ -49,7 +49,7 @@ class PushgatewayGroupPublisher:
         labels = self._merge_labels(metric_labels)
         if labels is not None:
             self._to_send += "{" + ", ".join(f'{k}="{v}"' for k, v in sorted(labels.items())) + "}"
-        self._to_send += " %s\n" % metric_value
+        self._to_send += f" {metric_value}\n"
 
     def commit(self) -> None:
         requests.put(self._url, data=self._to_send.encode("utf-8")).raise_for_status()

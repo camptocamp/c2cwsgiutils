@@ -24,16 +24,16 @@ REDIS_SENTINELS_KEY_PROP = "c2c.redis_sentinels"
 REDIS_SERVICENAME_KEY_PROP = "c2c.redis_servicename"
 REDIS_DB_KEY_PROP = "c2c.redis_db"
 
-_master: Optional["redis.client.Redis[str]"] = None  # pylint: disable=unsubscriptable-object
-_slave: Optional["redis.client.Redis[str]"] = None  # pylint: disable=unsubscriptable-object
+_master: Optional["redis.client.Redis[str]"] = None
+_slave: Optional["redis.client.Redis[str]"] = None
 _sentinel: Optional[redis.sentinel.Sentinel] = None
 
 
 def get(
     settings: Optional[Mapping[str, bytes]] = None,
 ) -> Tuple[
-    Optional["redis.client.Redis[str]"],  # pylint: disable=unsubscriptable-object
-    Optional["redis.client.Redis[str]"],  # pylint: disable=unsubscriptable-object
+    Optional["redis.client.Redis[str]"],
+    Optional["redis.client.Redis[str]"],
     Optional[redis.sentinel.Sentinel],
 ]:
     if _master is None:
@@ -78,9 +78,9 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
             _master = _sentinel.master_for(service_name)
             _slave = _sentinel.slave_for(service_name)
             return
-        except redis.sentinel.MasterNotFoundError:
+        except redis.sentinel.MasterNotFoundError as error:
             print(_sentinel.sentinels[0].sentinel_masters())
-            raise Exception(_sentinel.sentinels[0].sentinel_masters())
+            raise Exception(_sentinel.sentinels[0].sentinel_masters()) from error
     if url:
         if not url.startswith("redis://"):
             url = "redis://" + url

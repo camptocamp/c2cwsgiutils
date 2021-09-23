@@ -51,7 +51,6 @@ class _Repository:
 
 
 def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
-    global repository
     auth.auth_view(request)
     enable = request.params.get("enable")
     if enable is not None:

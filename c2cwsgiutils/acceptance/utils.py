@@ -50,9 +50,6 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
         time.sleep(interval)
 
 
-skipIfCI = pytest.mark.skipif(os.environ.get("CI", "0") == "true", reason="Not running on CI")
-
-
 def approx(struct: Any, **kwargs: Any) -> Any:
     """
     Make float values in deep structures approximative.

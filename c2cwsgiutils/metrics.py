@@ -35,12 +35,10 @@ SERVICE_NAME = re.match("^(.+)-[0-9a-f]+-[0-9a-z]+$", POD_NAME)
 
 
 def add_provider(provider: Provider) -> None:
-    global _PROVIDERS
     _PROVIDERS.append(provider)
 
 
 def _metrics() -> pyramid.response.Response:
-    global _PROVIDERS, POD_NAME, SERVICE_NAME
     result: List[str] = []
 
     for provider in _PROVIDERS:
@@ -55,13 +53,9 @@ def _metrics() -> pyramid.response.Response:
                 if SERVICE_NAME is not None:
                     attrib["service_name"] = SERVICE_NAME.group(1)
             attrib.update(attributes)
-            result.append(
-                "{}{{{}}} {}".format(
-                    provider.name,
-                    ",".join(['{}="{}"'.format(k, v.replace('"', "_")) for k, v in attrib.items()]),
-                    value,
-                )
-            )
+            dbl_quote = '"'
+            printable_attribs = ",".join([f'{k}="{v.replace(dbl_quote, "_")}"' for k, v in attrib.items()])
+            result.append(f"{provider.name}{{{printable_attribs}}} {value}")
 
     return "\n".join(result)
 

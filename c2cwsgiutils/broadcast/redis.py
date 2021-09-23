@@ -21,8 +21,8 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def __init__(
         self,
         broadcast_prefix: str,
-        master: "redis.client.Redis[str]",  # pylint: disable=unsubscriptable-object
-        slave: "redis.client.Redis[str]",  # pylint: disable=unsubscriptable-object
+        master: "redis.client.Redis[str]",
+        slave: "redis.client.Redis[str]",
     ) -> None:
         from c2cwsgiutils import redis_utils
 

@@ -25,7 +25,7 @@ def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]
     """
     results: List[Mapping[str, Any]] = []
     for host_stacks in source:
-        host_id = "%s/%d" % (host_stacks["hostname"], host_stacks["pid"])
+        host_id = f"{host_stacks['hostname']}/{host_stacks['pid']:d}"
         for thread, frames in host_stacks["threads"].items():
             full_id = host_id + "/" + thread
             for existing in results:

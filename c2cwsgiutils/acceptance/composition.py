@@ -45,7 +45,7 @@ class Composition:
             self.dc_try(["up", "-d"], fail=False)
 
         # Setup something that redirects the docker container logs to the test output
-        log_watcher = subprocess.Popen(  # nosec
+        log_watcher = subprocess.Popen(  # nosec, pylint: disable=consider-using-with
             self.docker_compose + ["logs", "--follow", "--no-color"],
             env=env,
             stderr=subprocess.STDOUT,

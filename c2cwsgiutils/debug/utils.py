@@ -41,7 +41,7 @@ def dump_memory_maps(pid: str = "self") -> List[Dict[str, Any]]:
     filename = os.path.join("/proc", pid, "smaps")
     if not os.path.exists(filename):
         return []
-    with open(filename) as input_:
+    with open(filename, encoding="utf-8") as input_:
         cur_dict: Dict[str, int] = defaultdict(int)
         sizes: Dict[str, Any] = {}
         for line in input_:

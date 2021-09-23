@@ -35,7 +35,7 @@ def init(config: pyramid.config.Configurator) -> None:
 
 
 def _read_versions() -> Dict[str, Dict[str, str]]:
-    with open(VERSIONS_PATH) as file:
+    with open(VERSIONS_PATH, encoding="utf-8") as file:
         versions = json.load(file)
     return cast(Dict[str, Dict[str, str]], versions)
 

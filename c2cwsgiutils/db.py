@@ -135,8 +135,6 @@ def _add_tween(
     force_master: Optional[Iterable[str]],
     force_slave: Optional[Iterable[str]],
 ) -> None:
-    global tweens
-
     master_paths: Iterable[Pattern[str]] = (
         list(map(RE_COMPILE, force_master)) if force_master is not None else []
     )

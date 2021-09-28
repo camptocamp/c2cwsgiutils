@@ -9,6 +9,7 @@ ignore-paths:
 
 pylint:
   disable:
+    - too-many-return-statements
     - global-statement
     - line-too-long
     - import-outside-toplevel

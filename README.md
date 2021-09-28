@@ -45,7 +45,7 @@ Or (preferred) as a base Docker image:
 [ghcr.io/camptocamp/c2cwsgiutils:release_4](https://github.com/orgs/camptocamp/packages/container/package/c2cwsgiutils)
 
 If you need an image with a smaller foot print, use the tags prefixed with `-light`. Those are without
-gdal and without the build tools.
+GDAL and without the build tools.
 
 ## General config
 
@@ -62,9 +62,58 @@ Some APIs are protected by a secret. This secret is specified in the `C2C_SECRET
 property. It is either passed as the `secret` query parameter or the `X-API-Key` header. Once
 accessed with a good secret, a cookie is stored and the secret can be omitted.
 
+An alternative of using `C2C_SECRET` is to use an authentication on GitHub,
+[create the GitHub application](https://github.com/settings/applications/new).
+
+Then it will redirect the user to the github authentication form if not already authenticated
+(using `C2C_AUTH_GITHUB_CLIENT_ID`, `C2C_AUTH_GITHUB_CLIENT_SECRET` and `C2C_AUTH_GITHUB_SCOPE`).
+
+Then we will check if the user is allowed to access to the application, for that we check
+if the user has enough right on a GitHub repository (using `C2C_AUTH_GITHUB_REPOSITORY`
+and `C2C_AUTH_GITHUB_REPOSITORY_ACCESS_TYPE`).
+
+Finally we store the session information in an encrypted cookie (using `C2C_AUTH_SECRET`
+and `C2C_AUTH_COOKIE`).
+
+Configuration details:
+
+Using the environment variable `C2C_AUTH_GITHUB_REPOSITORY` or the config key `c2c.auth.github.repository`
+to define the related GitHub repository (required).
+
+Using the environment variable `C2C_AUTH_GITHUB_ACCESS_TYPE` or the config key
+`c2c.auth.github.access_type` to define the type of required access can be `pull`, `push` or
+`admin` (default is `push`)
+
+Using the environment variable `C2C_AUTH_GITHUB_CLIENT_ID` or the config key `c2c.auth.github.client_id` to
+define the GitHub application ID (required)
+
+Using the environment variable `C2C_AUTH_GITHUB_CLIENT_SECRET` or the config key
+`c2c.auth.github.client_secret` to define the GitHub application secret (required)
+
+Using the environment variable `C2C_AUTH_GITHUB_SCOPE` or the config key `c2c.auth.github.scope` to define
+the GitHub scope (default is `read:user`)
+
+Using the environment variable `C2C_AUTH_GITHUB_SECRET` or the config key `c2c.auth.github.auth.secret` to
+define the used secret for JWD encryption (required, with a length at least of 16)
+
+Using the environment variable `C2C_AUTH_GITHUB_COOKIE` or the config key `c2c.auth.github.auth.cookie` to
+define the used cookie name (default is `c2c-auth-jwt`)
+
+Using the environment variable `C2C_AUTH_GITHUB_AUTH_URL` or the config key `c2c.auth.github.auth_url` to
+define the GitHub auth URL (default is `https://github.com/login/oauth/authorize`)
+
+Using the environment variable `C2C_AUTH_GITHUB_TOKEN_URL` or the config key `c2c.auth.github.token_url` to
+define the GitHub auth URL (default is `https://github.com/login/oauth/access_token`)
+
+Using the environment variable `C2C_AUTH_GITHUB_USER_URL` or the config key `c2c.auth.github.user_url` to
+define the GitHub auth URL (default is `https://api.github.com/user`)
+
+Using the environment variable `C2C_AUTH_GITHUB_REPO_URL` or the config key `c2c.auth.github.repo_url` to
+define the GitHub auth URL (default is `https://api.github.com/repo`)
+
 ## Pyramid
 
-A command line (`c2cwsgiutils-run`) is provided to start an HTTP server (gunicorn) with a WSGI application.
+A command line (`c2cwsgiutils-run`) is provided to start an HTTP server (Gunicorn) with a WSGI application.
 By default, it will load the application configured in `/app/production.ini`, but you can change that with
 the `C2CWSGIUTILS_CONFIG` environment variable. All the environment variables are usable in the configuration
 file using stuff like `%(ENV_NAME)s`.

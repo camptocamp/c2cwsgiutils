@@ -1,11 +1,46 @@
-from typing import List, Optional, Union  # noqa  # pylint: disable=unused-import
+import logging
+from typing import Any, Dict, List, Optional, Union, cast
 
+import jwt
 import pyramid.config
 import pyramid.request
 import pyramid.response
+from pyramid.httpexceptions import HTTPFound
+from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils import config_utils, profiler
-from c2cwsgiutils.auth import is_auth
+from c2cwsgiutils.auth import (
+    GITHUB_ACCESS_TYPE_ENV,
+    GITHUB_ACCESS_TYPE_PROP,
+    GITHUB_AUTH_COOKIE_ENV,
+    GITHUB_AUTH_COOKIE_PROP,
+    GITHUB_AUTH_SECRET_ENV,
+    GITHUB_AUTH_SECRET_PROP,
+    GITHUB_AUTH_URL_ENV,
+    GITHUB_AUTH_URL_PROP,
+    GITHUB_CLIENT_ID_ENV,
+    GITHUB_CLIENT_ID_PROP,
+    GITHUB_CLIENT_SECRET_ENV,
+    GITHUB_CLIENT_SECRET_PROP,
+    GITHUB_REPO_URL_ENV,
+    GITHUB_REPO_URL_PROP,
+    GITHUB_REPOSITORY_ENV,
+    GITHUB_REPOSITORY_PROP,
+    GITHUB_SCOPE_ENV,
+    GITHUB_SCOPE_PROP,
+    GITHUB_TOKEN_URL_ENV,
+    GITHUB_TOKEN_URL_PROP,
+    GITHUB_USER_URL_ENV,
+    GITHUB_USER_URL_PROP,
+    SECRET_ENV,
+    AuthenticationType,
+    UserDetails,
+    auth_type,
+    is_auth_user,
+)
+from c2cwsgiutils.config_utils import env_or_settings
+
+LOG = logging.getLogger(__name__)
 
 additional_title: Optional[str] = None
 additional_noauth: List[str] = []
@@ -45,10 +80,15 @@ def paragraph(*content: str, title: Optional[str] = None) -> str:
     return "<p>" + body + "</p>"
 
 
-def link(url: Optional[str], label: str) -> str:
+def link(url: Optional[str], label: str, cssclass: str = "btn btn-primary", target: str = "_blank") -> str:
     """Get an HTML link."""
+    attrs = ""
+    if cssclass:
+        attrs += f' class="{cssclass}"'
+    if target:
+        attrs += f' target="{target}"'
     if url is not None:
-        return f'<a class="btn btn-primary" href="{url}" target="_blank">{label}</a>'
+        return f'<a href="{url}"{attrs}>{label}</a>'
     else:
         return ""
 
@@ -99,7 +139,7 @@ def button(label: str) -> str:
 def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response = request.response
 
-    auth = is_auth(request)
+    auth, user = is_auth_user(request)
 
     response.content_type = "text/html"
     response.text = """
@@ -159,15 +199,31 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
 
     response.text += "\n".join(additional_noauth)
 
-    if not auth:
-        auth_fields = [input_("secret", type_="password"), button("Login")]
-    else:
-        auth_fields = [input_("secret", type_="hidden"), button("Logout")]
-    response.text += section(
-        "Authentication",
-        form(_url(request, "c2c_index"), *auth_fields, method="post", target="_self"),
-        sep=False,
-    )
+    settings = request.registry.settings
+    auth_type_ = auth_type(settings)
+    if auth_type_ == AuthenticationType.SECRET:
+        if not auth:
+            auth_fields = [input_("secret", type_="password"), button("Login")]
+        else:
+            auth_fields = [input_("secret", type_="hidden"), button("Logout")]
+        response.text += section(
+            "Authentication",
+            form(_url(request, "c2c_index"), *auth_fields, method="post", target="_self"),
+            sep=False,
+        )
+    elif not auth and auth_type_ == AuthenticationType.GITHUB:
+        response.text += section(
+            "Authentication",
+            link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
+            sep=False,
+        )
+    elif auth_type_:
+        response.text += section(
+            "Authentication",
+            f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
+            f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}",
+            sep=False,
+        )
 
     response.text += """
         </div>
@@ -305,6 +361,140 @@ def _health_check(request: pyramid.request.Request) -> str:
         return ""
 
 
+def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
+    """Get the view that start the authentication on GitHub."""
+    settings = request.registry.settings
+    oauth = OAuth2Session(
+        env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
+        redirect_uri=_url(request, "c2c_github_callback"),
+    )
+    authorization_url, state = oauth.authorization_url(
+        env_or_settings(
+            settings, GITHUB_AUTH_URL_ENV, GITHUB_AUTH_URL_PROP, "https://github.com/login/oauth/authorize"
+        ),
+    )
+    # State is used to prevent CSRF, keep this for later.
+    request.session["oauth_state"] = state
+    if "came_from" in request.params:
+        request.session["came_from"] = request.params.get("came_from")
+    elif "came_from" in request.session:
+        del request.session["came_from"]
+    raise HTTPFound(location=authorization_url, headers=request.response.headers)
+
+
+def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
+    """
+    Do the post login operation authentication on GitHub.
+
+    This will use the oauth token to get the user details from GitHub.
+    And ask the GitHub rest API the information related to the configured repository
+    to know witch kind of access the user have.
+    """
+    settings = request.registry.settings
+
+    oauth = OAuth2Session(
+        env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
+        redirect_uri=_url(request, "c2c_github_callback"),
+        state=request.session["oauth_state"],
+    )
+
+    if "error" in request.GET:
+        LOG.error(request.GET)
+        return dict(request.GET)
+
+    token = oauth.fetch_token(
+        token_url=env_or_settings(
+            settings,
+            GITHUB_TOKEN_URL_ENV,
+            GITHUB_TOKEN_URL_PROP,
+            "https://github.com/login/oauth/access_token",
+        ),
+        authorization_response=request.current_route_url(_query=request.GET),
+        client_secret=env_or_settings(settings, GITHUB_CLIENT_SECRET_ENV, GITHUB_CLIENT_SECRET_PROP, ""),
+    )
+
+    user = oauth.get(
+        env_or_settings(
+            settings,
+            GITHUB_USER_URL_ENV,
+            GITHUB_USER_URL_PROP,
+            "https://api.github.com/user",
+        )
+    ).json()
+    repo_url = env_or_settings(
+        settings,
+        GITHUB_REPO_URL_ENV,
+        GITHUB_REPO_URL_PROP,
+        "https://api.github.com/repos",
+    )
+    repo = env_or_settings(
+        settings,
+        GITHUB_REPOSITORY_ENV,
+        GITHUB_REPOSITORY_PROP,
+        "",
+    )
+
+    repository = oauth.get(f"{repo_url}/{repo}").json()
+    if (
+        repository["permissions"][
+            env_or_settings(
+                settings,
+                GITHUB_ACCESS_TYPE_ENV,
+                GITHUB_ACCESS_TYPE_PROP,
+                "push",
+            )
+        ]
+        is not True
+    ):
+        return {"access": "no"}
+
+    user_information: UserDetails = {
+        "login": user["login"],
+        "name": user["name"],
+        "url": user["html_url"],
+        "token": token,
+    }
+    request.response.set_cookie(
+        env_or_settings(
+            settings,
+            GITHUB_AUTH_COOKIE_ENV,
+            GITHUB_AUTH_COOKIE_PROP,
+            "c2c-auth-jwt",
+        ),
+        jwt.encode(
+            cast(Dict[str, Any], user_information),
+            env_or_settings(
+                settings,
+                GITHUB_AUTH_SECRET_ENV,
+                GITHUB_AUTH_SECRET_PROP,
+            ),
+            algorithm="HS256",
+        ),
+    )
+    raise HTTPFound(
+        location=request.session.get("came_from", _url(request, "c2c_index")),
+        headers=request.response.headers,
+    )
+
+
+def _github_logout(request: pyramid.request.Request) -> Dict[str, Any]:
+    """Logout the user."""
+    request.response.delete_cookie(SECRET_ENV)
+    request.response.delete_cookie(
+        env_or_settings(
+            request.registry.settings,
+            GITHUB_AUTH_COOKIE_ENV,
+            GITHUB_AUTH_COOKIE_PROP,
+            "c2c-auth-jwt",
+        ),
+    )
+    raise HTTPFound(
+        location=request.params.get("came_from", _url(request, "c2c_index")), headers=request.response.headers
+    )
+
+
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the index page."""
     base_path = config_utils.get_base_path(config)
@@ -313,3 +503,15 @@ def init(config: pyramid.config.Configurator) -> None:
         config.add_view(_index, route_name="c2c_index", http_cache=0)
         config.add_route("c2c_index_slash", base_path + "/", request_method=("GET", "POST"))
         config.add_view(_index, route_name="c2c_index_slash", http_cache=0)
+
+        settings = config.get_settings()
+        auth_type_ = auth_type(settings)
+        if auth_type_ == AuthenticationType.GITHUB:
+            config.add_route("c2c_github_login", base_path + "/github-login", request_method=("GET",))
+            config.add_view(_github_login, route_name="c2c_github_login", http_cache=0)
+            config.add_route("c2c_github_callback", base_path + "/github-callback", request_method=("GET",))
+            config.add_view(
+                _github_login_callback, route_name="c2c_github_callback", http_cache=0, renderer="fast_json"
+            )
+            config.add_route("c2c_github_logout", base_path + "/github-logout", request_method=("GET",))
+            config.add_view(_github_logout, route_name="c2c_github_logout", http_cache=0)

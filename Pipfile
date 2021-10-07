@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-coverage = "==6.0"
+coverage = "==6.0.1"
 junit2html = "==30.0.6"
 prospector = {extras = ["with_bandit", "with_mypy"], version = "==1.5.1"}
 pytest = "==6.2.5"

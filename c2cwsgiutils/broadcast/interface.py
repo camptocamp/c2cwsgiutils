@@ -3,9 +3,7 @@ from typing import Any, Callable, List, Mapping, Optional
 
 
 class BaseBroadcaster:
-    """
-    Interface definition for message broadcasting implementation.
-    """
+    """Interface definition for message broadcasting implementation."""
 
     @abstractmethod
     def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:

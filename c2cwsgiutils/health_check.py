@@ -30,15 +30,15 @@ ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
 
 
 class EngineType(Enum):
+    """The type of engine."""
+
     READ_ONLY = 1
     WRITE_ONLY = 2
     READ_AND_WRITE = 3
 
 
 class JsonCheckException(Exception):
-    """
-    Checker exception used to add some structured content to a failure.
-    """
+    """Checker exception used to add some structured content to a failure."""
 
     def __init__(self, message: str, json: Any):
         super().__init__()
@@ -119,11 +119,13 @@ class HealthCheck:
         """
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
 
-        :param session: a DB session created by c2cwsgiutils.db.setup_session()
-        :param query_cb: a callable that take a session as parameter and check it works
-        :param at_least_one_model: a model that must have at least one entry in the DB
-        :param level: the level of the health check
-        :param engine_type: whether to check only the RW, RO or both engines
+        Arguments:
+
+            session: a DB session created by c2cwsgiutils.db.setup_session()
+            query_cb: a callable that take a session as parameter and check it works
+            at_least_one_model: a model that must have at least one entry in the DB
+            level: the level of the health check
+            engine_type: whether to check only the RW, RO or both engines
         """
         if query_cb is None:
             query_cb = self._at_least_one(at_least_one_model)
@@ -144,13 +146,15 @@ class HealthCheck:
         """
         Check the DB version against the HEAD version of Alembic.
 
-        :param session: A DB session created by c2cwsgiutils.db.setup_session() giving access to the DB \
+        Arguments:
+
+            session: A DB session created by c2cwsgiutils.db.setup_session() giving access to the DB \
                         managed by Alembic
-        :param alembic_ini_path: Path to the Alembic INI file
-        :param level: the level of the health check
-        :param name: the name of the configuration section in the Alembic INI file
-        :param version_schema: override the schema where the version table is
-        :param version_table: override the table name for the version
+            alembic_ini_path: Path to the Alembic INI file
+            level: the level of the health check
+            name: the name of the configuration section in the Alembic INI file
+            version_schema: override the schema where the version table is
+            version_table: override the table name for the version
         """
         version_ = _get_alembic_version(alembic_ini_path, name)
 
@@ -214,14 +218,16 @@ class HealthCheck:
         """
         Check that a GET on an URL returns 2xx.
 
-        :param url: the URL to query or a function taking the request and returning it
-        :param params: the parameters or a function taking the request and returning them
-        :param headers: the headers or a function taking the request and returning them
-        :param name: the name of the check (defaults to url)
-        :param check_cb: an optional CB to do additional checks on the response (takes the request and the \
+        Arguments:
+
+            url: the URL to query or a function taking the request and returning it
+            params: the parameters or a function taking the request and returning them
+            headers: the headers or a function taking the request and returning them
+            name: the name of the check (defaults to url)
+            check_cb: an optional CB to do additional checks on the response (takes the request and the \
                          response as parameters)
-        :param timeout: the timeout
-        :param level: the level of the health check
+            timeout: the timeout
+            level: the level of the health check
         """
 
         def check(request: pyramid.request.Request) -> Any:
@@ -241,12 +247,14 @@ class HealthCheck:
 
     def add_redis_check(self, name: Optional[str] = None, level: int = 1) -> None:
         """
-        Check that the given redis server is reachable. One such check is automatically added if the
-        broadcaster is configured with redis.
+        Check that the given redis server is reachable.
 
-        :param name: the name of the check (defaults to url)
-        :param level: the level of the health check
-        :return:
+        One such check is automatically added if the broadcaster is configured with redis.
+
+        Arguments:
+
+            name: the name of the check (defaults to url)
+            level: the level of the health check
         """
 
         def check(request: pyramid.request.Request) -> Any:
@@ -292,8 +300,10 @@ class HealthCheck:
         """
         Check that the version matches across all instances.
 
-        :param name: the name of the check (defaults to "version")
-        :param level: the level of the health check
+        Arguments:
+
+            name: the name of the check (defaults to "version")
+            level: the level of the health check
         :return:
         """
 
@@ -325,9 +335,11 @@ class HealthCheck:
         In case of success the callback can return a result (must be serializable to JSON) that will show up
         in the response. In case of failure it must raise an exception.
 
-        :param name: the name of the check
-        :param check_cb: the callback to call (takes the request as parameter)
-        :param level: the level of the health check
+        Arguments:
+
+            name: the name of the check
+            check_cb: the callback to call (takes the request as parameter)
+            level: the level of the health check
         """
         assert name
         self._checks.append((name, check_cb, level))

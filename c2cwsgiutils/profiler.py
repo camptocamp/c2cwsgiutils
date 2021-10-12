@@ -9,6 +9,7 @@ _MODULES = os.environ.get("C2C_PROFILER_MODULES", "")
 
 
 def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
+    """Add lineman to profile the WSGI requests."""
     if PATH != "":
         try:
             import linesman.middleware

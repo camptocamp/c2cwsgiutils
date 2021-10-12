@@ -1,5 +1,7 @@
 """
-Install a filter on the logging handler to add some info about requests:
+Install a filter on the logging handler.
+
+To add some info about requests:
 
   * client_addr
   * method
@@ -23,9 +25,7 @@ LOG = logging.getLogger(__name__)
 
 
 class _PyramidFilter(logging.Filter):
-    """
-    A logging filter that adds request information to CEE logs.
-    """
+    """A logging filter that adds request information to CEE logs."""
 
     def filter(self, record: Any) -> bool:
         request = get_current_request()
@@ -45,7 +45,9 @@ _PYRAMID_FILTER = _PyramidFilter()
 
 def _un_underscore(message: MutableMapping[str, Any]) -> Mapping[str, Any]:
     """
-    Elasticsearch is not indexing the fields starting with underscore and cee_syslog_handler is starting a lot
+    Elasticsearch is not indexing the fields starting with underscore.
+
+    And cee_syslog_handler is starting a lot
     of interesting fields with underscore.
 
     Therefore, it's a good idea to remove all those underscore prefixes.
@@ -66,9 +68,7 @@ def _rename_field(dico: MutableMapping[str, Any], source: str, dest: str) -> Non
 
 
 def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
-    """
-    patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog.
-    """
+    """Patch cee_syslog_handler to rename message->full_message otherwise this part is dropped by syslog."""
     msg = cee_syslog_handler.make_message_dict(*args, **kargv)
     if msg["message"] != msg["short_message"]:
         # only output full_message if it's different from short message
@@ -84,9 +84,7 @@ def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
 
 
 class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ignore
-    """
-    A CEE (JSON format) log handler with additional information about the current request.
-    """
+    """A CEE (JSON format) log handler with additional information about the current request."""
 
     def __init__(self, *args: Any, **kargv: Any) -> None:
         super().__init__(*args, **kargv)
@@ -105,9 +103,7 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ign
 
 
 class JsonLogHandler(logging.StreamHandler):
-    """
-    Log to stdout in JSON.
-    """
+    """Log to stdout in JSON."""
 
     def __init__(self, stream: Optional[IO[str]] = None):
         super().__init__(stream)
@@ -122,9 +118,7 @@ class JsonLogHandler(logging.StreamHandler):
 
 
 def get_defaults() -> Dict[str, str]:
-    """
-    Get the logging configuration variables
-    """
+    """Get the logging configuration variables."""
     results = {}
     lowercase_keys: Set[str] = set()
     for key, value in os.environ.items():
@@ -137,6 +131,7 @@ def get_defaults() -> Dict[str, str]:
 
 
 def init(configfile: Optional[str] = None) -> Optional[str]:
+    """Initialize the pyramid logging."""
     logging.captureWarnings(True)
     configfile_ = (
         configfile if configfile is not None else os.environ.get("C2CWSGIUTILS_CONFIG", "/app/production.ini")

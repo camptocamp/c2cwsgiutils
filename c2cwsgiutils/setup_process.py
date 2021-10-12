@@ -37,6 +37,7 @@ _init = False
 
 
 def init() -> None:
+    """Initialize all the c2cwsgiutils components."""
     global _init
     if not _init:
         _first()

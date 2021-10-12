@@ -1,6 +1,4 @@
-"""
-Generate statsd metrics for pyramid and SQLAlchemy events.
-"""
+"""Generate statsd metrics for pyramid and SQLAlchemy events."""
 import pyramid.config
 import pyramid.request
 
@@ -11,7 +9,9 @@ def init(config: pyramid.config.Configurator) -> None:
     """
     Initialize the whole stats module.
 
-    :param config: The Pyramid config
+    Arguments:
+
+        config: The Pyramid config
     """
     stats.init_backends(config.get_settings())
     if stats.BACKENDS:  # pragma: nocover
@@ -26,6 +26,7 @@ def init(config: pyramid.config.Configurator) -> None:
 
 
 def init_db_spy() -> None:
+    """Initialize the database spy."""
     from . import _db_spy
 
     _db_spy.init()

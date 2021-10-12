@@ -9,9 +9,7 @@ LOG = logging.getLogger(__name__)
 
 
 def create(name: str, path: str, *args: Any, **kwargs: Any) -> Service:
-    """
-    Create a cornice service with all the default configuration.
-    """
+    """Create a cornice service with all the default configuration."""
     kwargs.setdefault("cors_origins", "*")
     kwargs.setdefault("cors_max_age", 86400)
     kwargs.setdefault("depth", 2)  # to make venusian find the good frame
@@ -22,9 +20,7 @@ def create(name: str, path: str, *args: Any, **kwargs: Any) -> Service:
 
 
 def _cache_cors(response: Response, request: Request) -> Response:
-    """
-    Cornice filter that fixes the Cache-Control header for pre-flight requests (OPTIONS)
-    """
+    """Cornice filter that fixes the Cache-Control header for pre-flight requests (OPTIONS)."""
     try:
         if request.method == "OPTIONS" and "Access-Control-Max-Age" in response.headers:
             response.cache_control = {"max-age": int(response.headers["Access-Control-Max-Age"])}

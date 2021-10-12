@@ -59,17 +59,13 @@ def _create_finished_cb(
 
 
 def _request_callback(event: pyramid.events.NewRequest) -> None:  # pragma: nocover
-    """
-    Callback called when a new HTTP request is incoming.
-    """
+    """Finish the callback called when a new HTTP request is incoming."""
     measure = stats.timer()
     event.request.add_finished_callback(_create_finished_cb("route", measure))
 
 
 def _before_rendered_callback(event: pyramid.events.BeforeRender) -> None:  # pragma: nocover
-    """
-    Callback called when the rendering is starting.
-    """
+    """Finish the callback called when the rendering is starting."""
     request = event.get("request", None)
     if request:
         measure = stats.timer()
@@ -80,7 +76,9 @@ def init(config: pyramid.config.Configurator) -> None:  # pragma: nocover
     """
     Subscribe to Pyramid events in order to get some stats on route time execution.
 
-    :param config: The Pyramid config
+    Arguments:
+
+        config: The Pyramid config
     """
     config.add_subscriber(_request_callback, pyramid.events.NewRequest)
     config.add_subscriber(_before_rendered_callback, pyramid.events.BeforeRender)

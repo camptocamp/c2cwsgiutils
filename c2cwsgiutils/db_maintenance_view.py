@@ -12,9 +12,7 @@ REDIS_PREFIX = "c2c_db_maintenance_"
 
 
 def install_subscriber(config: pyramid.config.Configurator) -> None:
-    """
-    Install the view to configure the loggers, if configured to do so.
-    """
+    """Install the view to configure the loggers, if configured to do so."""
     if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         config.add_route(
             "c2c_db_maintenance",

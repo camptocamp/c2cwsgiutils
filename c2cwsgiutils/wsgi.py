@@ -8,19 +8,22 @@ from c2cwsgiutils import pyramid_logging
 
 
 def _escape_variables(environ: Mapping[str, str]) -> Mapping[str, str]:
-    """
-    Escape environment variables so that they can be interpreted correctly by python configparser.
-    """
+    """Escape environment variables so that they can be interpreted correctly by python configparser."""
     return {key: environ[key].replace("%", "%%") for key in environ}
 
 
 def create_application(configfile: Optional[str] = None) -> Any:
     """
-    Create a standard WSGI application with the capabilities to use environment variables in the configuration
-    file (use %(ENV_VAR)s place holders)
+    Create a standard WSGI application.
 
-    :param configfile: The configuration file to use
-    :return: The application
+    With the capabilities to use environment variables in the configuration file
+    (use %(ENV_VAR)s place holders).
+
+    Arguments:
+
+        configfile: The configuration file to use
+
+    Returns: The application
     """
     configfile_ = pyramid_logging.init(configfile)
     # Load the logging config without using pyramid to be able to use environment variables in there.

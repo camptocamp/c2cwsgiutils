@@ -22,6 +22,7 @@ def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+    """Initialize the Redis tracking."""
     global ORIG
     if config_utils.env_or_config(
         config, "C2C_TRACK_REDIS", "c2c.track_redis", True, config_utils.config_bool

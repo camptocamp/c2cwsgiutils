@@ -1,8 +1,3 @@
-"""
-Implement parts of the Prometheus Pushgateway protocol, as defined here:
-
-https://github.com/prometheus/pushgateway
-"""
 from typing import Any, Mapping, MutableMapping, Optional  # noqa  # pylint: disable=unused-import
 
 import requests
@@ -11,6 +6,14 @@ LabelsType = Optional[Mapping[str, Any]]
 
 
 class PushgatewayGroupPublisher:
+    """
+    Implement parts of the Prometheus Pushgateway protocol.
+
+    As defined here:
+
+    https://github.com/prometheus/pushgateway
+    """
+
     def __init__(
         self, base_url: str, job: str, instance: Optional[str] = None, labels: LabelsType = None
     ) -> None:

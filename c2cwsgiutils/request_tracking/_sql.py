@@ -12,4 +12,5 @@ def _add_session_id(session: Session, _transaction: Any, _connection: Any) -> No
 
 
 def init() -> None:
+    """Initialize the SQL alchemy session selector."""
     sqlalchemy.event.listen(Session, "after_begin", _add_session_id)

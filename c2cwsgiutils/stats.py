@@ -1,6 +1,4 @@
-"""
-Generate statsd metrics.
-"""
+"""Generate statsd metrics."""
 
 import contextlib
 import logging
@@ -52,9 +50,7 @@ BACKENDS: MutableMapping[str, _BaseBackend] = {}
 
 
 class Timer:
-    """
-    Allow to measure the duration of some activity.
-    """
+    """Allow to measure the duration of some activity."""
 
     def __init__(self, key: Optional[Sequence[Any]], tags: TagType) -> None:
         self._key = key
@@ -78,8 +74,10 @@ def timer_context(key: Sequence[Any], tags: TagType = None) -> Generator[None, N
     """
     Add a duration measurement to the stats using the duration the context took to run.
 
-    :param key: The path of the key, given as a list.
-    :param tags: Some tags to attach to the metric.
+    Arguments:
+
+        key: The path of the key, given as a list.
+        tags: Some tags to attach to the metric.
     """
     measure = timer(key, tags)
     yield
@@ -93,8 +91,10 @@ def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[Non
 
     The given key is prepended with 'success' or 'failure' according to the context's outcome.
 
-    :param key: The path of the key, given as a list.
-    :param tags: Some tags to attach to the metric.
+    Arguments:
+
+        key: The path of the key, given as a list.
+        tags: Some tags to attach to the metric.
     """
     measure = timer()
     try:
@@ -117,12 +117,16 @@ def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[Non
 
 def timer(key: Optional[Sequence[Any]] = None, tags: TagType = None) -> Timer:
     """
-    Create a timer for the given key. The key can be omitted, but then need to be specified when stop is
-    called.
+    Create a timer for the given key.
 
-    :param key: The path of the key, given as a list.
-    :param tags: Some tags to attach to the metric.
-    :return: An instance of _Timer
+    The key can be omitted, but then need to be specified when stop is called.
+
+    Arguments:
+
+        key: The path of the key, given as a list.
+        tags: Some tags to attach to the metric.
+
+    Returns: An instance of _Timer
     """
     assert key is None or isinstance(key, list)
     return Timer(key, tags)
@@ -132,9 +136,11 @@ def set_gauge(key: Sequence[Any], value: float, tags: TagType = None) -> None:
     """
     Set a gauge value.
 
-    :param key: The path of the key, given as a list.
-    :param value: The new value of the gauge
-    :param tags: Some tags to attach to the metric.
+    Arguments:
+
+        key: The path of the key, given as a list.
+        value: The new value of the gauge
+        tags: Some tags to attach to the metric.
     """
     for backend in BACKENDS.values():
         backend.gauge(key, value, tags)
@@ -144,15 +150,19 @@ def increment_counter(key: Sequence[Any], increment: int = 1, tags: TagType = No
     """
     Increment a counter value.
 
-    :param key: The path of the key, given as a list.
-    :param increment: The increment
-    :param tags: Some tags to attach to the metric.
+    Arguments:
+
+        key: The path of the key, given as a list.
+        increment: The increment
+        tags: Some tags to attach to the metric.
     """
     for backend in BACKENDS.values():
         backend.counter(key, increment, tags)
 
 
 class MemoryBackend(_BaseBackend):
+    """Store stats in the memors."""
+
     def __init__(self) -> None:
         self._timers: MutableMapping[str, Tuple[int, float, float, float]] = {}
         self._gauges: MutableMapping[str, float] = {}
@@ -178,9 +188,7 @@ class MemoryBackend(_BaseBackend):
         return result
 
     def timer(self, key: Sequence[Any], duration: float, tags: TagType = None) -> None:
-        """
-        Add a duration measurement to the stats.
-        """
+        """Add a duration measurement to the stats."""
         the_key = self._key(key, tags)
         with self._stats_lock:
             cur = self._timers.get(the_key, None)
@@ -229,6 +237,8 @@ INVALID_TAG_VALUE_CHARS = re.compile(r"[,#|]")
 
 
 class StatsDBackend(_BaseBackend):  # pragma: nocover
+    """Abstraction of the statd backend to sent some metrics."""
+
     def __init__(self, address: str, prefix: str, tags: Optional[Dict[str, str]] = None) -> None:
         self._prefix = prefix
         self._tags = tags
@@ -238,12 +248,12 @@ class StatsDBackend(_BaseBackend):  # pragma: nocover
         host, port = address.rsplit(":")
         host = host.strip("[]")
         addrinfo = socket.getaddrinfo(host, port, 0, 0, socket.IPPROTO_UDP)
-        family, socktype, proto, _canonname, sockaddr = addrinfo[0]
-        LOG.info("Starting a StatsDBackend for %s stats: %s -> %s", prefix, address, repr(sockaddr))
+        family, socktype, protocol, _canonname, sock_addr = addrinfo[0]
+        LOG.info("Starting a StatsDBackend for %s stats: %s -> %s", prefix, address, repr(sock_addr))
 
-        self._socket = socket.socket(family, socktype, proto)
+        self._socket = socket.socket(family, socktype, protocol)
         self._socket.setblocking(False)
-        self._socket.connect(sockaddr)
+        self._socket.connect(sock_addr)
 
     @staticmethod
     def _key_entry(key_entry: Any) -> str:
@@ -303,7 +313,9 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
     """
     Initialize the backends according to the configuration.
 
-    :param settings: The Pyramid config
+    Arguments:
+
+        settings: The Pyramid config
     """
     if config_utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
         BACKENDS["memory"] = MemoryBackend()
@@ -335,6 +347,7 @@ def _format_tags(
 
 
 def get_env_tags() -> Dict[str, str]:
+    """Get the tag from the environment variable."""
     tags = {}
     for name, value in os.environ.items():
         if name.startswith(TAG_PREFIX_ENV):

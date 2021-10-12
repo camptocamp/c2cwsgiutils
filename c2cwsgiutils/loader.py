@@ -5,6 +5,8 @@ from plaster_pastedeploy import Loader as BaseLoader
 
 
 class Loader(BaseLoader):  # type: ignore
+    """The application loader."""
+
     def _get_defaults(self, defaults: Optional[Dict[str, str]] = None) -> Dict[str, str]:
         d: Dict[str, str] = {}
         d.update(os.environ)

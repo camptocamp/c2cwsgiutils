@@ -105,5 +105,6 @@ def _dump_memory_impl(
 
 
 def init() -> None:
+    """Initialize the debug listeners."""
     broadcast.subscribe("c2c_dump_memory", _dump_memory_impl)
     broadcast.subscribe("c2c_dump_stacks", _dump_stacks_impl)

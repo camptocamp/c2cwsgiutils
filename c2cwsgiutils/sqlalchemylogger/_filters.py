@@ -4,9 +4,7 @@ from typing import Any
 
 
 class ContainsExpression(logging.Filter):
-    """
-    Returns True if the regex is matched in the log message.
-    """
+    """Returns True if the regex is matched in the log message."""
 
     def __init__(self, regex: str) -> None:
         super().__init__(name="ContainsExpression")
@@ -17,9 +15,7 @@ class ContainsExpression(logging.Filter):
 
 
 class DoesNotContainExpression(logging.Filter):
-    """
-    Returns True if the regex is NOT matched in the log message.
-    """
+    """Returns True if the regex is NOT matched in the log message."""
 
     def __init__(self, regex: str) -> None:
         super().__init__(name="DoesNotContainExpression")

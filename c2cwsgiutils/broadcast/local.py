@@ -5,9 +5,7 @@ from c2cwsgiutils.broadcast import interface, utils
 
 
 class LocalBroadcaster(interface.BaseBroadcaster):
-    """
-    Fake implementation of broadcasting messages (will just answer locally)
-    """
+    """Fake implementation of broadcasting messages (will just answer locally)."""
 
     def __init__(self) -> None:
         self._subscribers: MutableMapping[str, Callable[..., Any]] = {}

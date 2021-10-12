@@ -44,9 +44,7 @@ def _eat_parenthesis(content: str) -> str:
 
 
 def _simplify_sql(sql: str) -> str:
-    """
-    Simplify SQL statements to make them easier on the eye and shorter for the stats.
-    """
+    """Simplify SQL statements to make them easier on the eye and shorter for the stats."""
     sql = " ".join(sql.split("\n"))
     sql = re.sub(r"  +", " ", sql)
     sql = re.sub(r"SELECT .*? FROM", "SELECT FROM", sql)
@@ -88,8 +86,6 @@ def _before_commit(session: Session) -> None:  # pragma: nocover
 
 
 def init() -> None:  # pragma: nocover
-    """
-    Subscribe to SQLAlchemy events in order to get some stats on DB interactions.
-    """
+    """Subscribe to SQLAlchemy events in order to get some stats on DB interactions."""
     sqlalchemy.event.listen(Engine, "before_cursor_execute", _before_cursor_execute)
     sqlalchemy.event.listen(Session, "before_commit", _before_commit)

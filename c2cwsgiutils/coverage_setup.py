@@ -5,9 +5,7 @@ LOG = logging.getLogger(__name__)
 
 
 def init() -> None:
-    """
-    Maybe setup code coverage.
-    """
+    """Initialise the code coverage."""
     if os.environ.get("COVERAGE", "0") != "1":
         return
     import coverage

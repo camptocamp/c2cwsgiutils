@@ -11,23 +11,22 @@ LOG = logging.getLogger(__name__)
 
 
 class PrintConnection(connection.Connection):
-    """
-    A Connection with specialized methods to interact with a Mapfish Print server.
-    """
+    """A Connection with specialized methods to interact with a Mapfish Print server."""
 
     def __init__(self, base_url: str, origin: str) -> None:
         """
-        :param base_url: The base URL to the print server (including the /print)
-        :param app: The name of the application to use
-        :param origin: The origin and referer to include in the requests
+        Initialize.
+
+        Arguments:
+            base_url: The base URL to the print server (including the /print)
+            app: The name of the application to use
+            origin: The origin and referrer to include in the requests
         """
         super().__init__(base_url=base_url, origin=origin)
         self.session.headers["Referer"] = origin
 
     def wait_ready(self, timeout: int = 60, app: str = "default") -> None:
-        """
-        Wait the print instance to be ready.
-        """
+        """Wait the print instance to be ready."""
         utils.retry_timeout(functools.partial(self.get_capabilities, app=app), timeout=timeout)
 
     def get_capabilities(self, app: str) -> Any:

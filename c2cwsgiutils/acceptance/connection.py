@@ -9,12 +9,16 @@ COLON_SPLIT_RE = re.compile(r"\s*,\s*")
 
 
 class CacheExpected(Enum):
+    """The cache expiry."""
+
     NO = 0  # no-cache
     YES = 1  # max-age>0
     DONT_CARE = 2
 
 
 class Connection:
+    """The connection."""
+
     def __init__(self, base_url: str, origin: str) -> None:
         self.base_url = base_url
         if not self.base_url.endswith("/"):
@@ -31,9 +35,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Optional[str]:
-        """
-        get the given URL (relative to the root of API).
-        """
+        """Get the given URL (relative to the root of API)."""
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
@@ -48,9 +50,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> requests.Response:
-        """
-        get the given URL (relative to the root of API).
-        """
+        """Get the given URL (relative to the root of API)."""
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
@@ -65,9 +65,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
-        """
-        get the given URL (relative to the root of API).
-        """
+        """Get the given URL (relative to the root of API)."""
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
@@ -83,9 +81,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
-        """
-        get the given URL (relative to the root of API).
-        """
+        """Get the given URL (relative to the root of API)."""
         with self.session.get(
             self.base_url + url,
             headers=self._merge_headers(headers, cors),
@@ -111,9 +107,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
-        """
-        POST the given URL (relative to the root of API).
-        """
+        """POST the given URL (relative to the root of API)."""
         with self.session.post(
             self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
         ) as r:
@@ -130,9 +124,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
-        """
-        POST files to the the given URL (relative to the root of API).
-        """
+        """POST files to the the given URL (relative to the root of API)."""
         with self.session.post(
             self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
         ) as r:
@@ -149,9 +141,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Optional[str]:
-        """
-        POST the given URL (relative to the root of API).
-        """
+        """POST the given URL (relative to the root of API)."""
         with self.session.post(
             self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
         ) as r:
@@ -168,9 +158,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
-        """
-        POST the given URL (relative to the root of API).
-        """
+        """POST the given URL (relative to the root of API)."""
         with self.session.put(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
@@ -185,9 +173,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> requests.Response:
-        """
-        DELETE the given URL (relative to the root of API).
-        """
+        """DELETE the given URL (relative to the root of API)."""
         with self.session.delete(
             self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
         ) as r:
@@ -203,9 +189,7 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> requests.Response:
-        """
-        get the given URL (relative to the root of API).
-        """
+        """Get the given URL (relative to the root of API)."""
         with self.session.options(
             self.base_url + url, headers=self._merge_headers(headers, False), **kwargs
         ) as r:
@@ -238,6 +222,7 @@ def check_response(
     expected_status: int = 200,
     cache_expected: CacheExpected = CacheExpected.DONT_CARE,
 ) -> None:
+    """Check the response."""
     if isinstance(expected_status, tuple):
         assert r.status_code in expected_status, f"status={r.status_code:d}\n{r.text}"
     else:

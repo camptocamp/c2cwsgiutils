@@ -8,6 +8,7 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 
 
 def long_description() -> str:
+    """Get the long description."""
     try:
         with open("README.md", encoding="utf-8") as f:
             return f.read()

@@ -18,9 +18,7 @@ _client_setup = False
 
 
 def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any, Any], Any]:
-    """
-    A filter that adds tags to every events.
-    """
+    """Create a filter that adds tags to every events."""
 
     def do_filter(event: Any, hint: Any) -> Any:
         event.setdefault("tags", {}).update(tags)
@@ -30,6 +28,7 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+    """Initialize the Sentry intergation."""
     global _client_setup
     sentry_url = config_utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
     if sentry_url is not None and not _client_setup:
@@ -112,9 +111,7 @@ def capture_exceptions() -> Generator[None, None, None]:
 
 
 def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
-    """
-    If sentry is configured, add a Sentry filter around the application.
-    """
+    """If sentry is configured, add a Sentry filter around the application."""
     if _client_setup:
         try:
             LOG.info("Enable WSGI filter for Sentry")

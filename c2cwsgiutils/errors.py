@@ -1,6 +1,4 @@
-"""
-Install exception views to have nice JSON error pages.
-"""
+"""Install exception views to have nice JSON error pages."""
 import logging
 import os
 import traceback
@@ -152,6 +150,7 @@ def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> 
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the error views."""
     if (
         config_utils.env_or_config(
             config, "C2C_ENABLE_EXCEPTION_HANDLING", "c2c.enable_exception_handling", "0"

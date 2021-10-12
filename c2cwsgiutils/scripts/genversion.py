@@ -44,11 +44,13 @@ def _get_packages_version() -> Dict[str, str]:
 
 
 def deprecated() -> None:
+    """Run the command and print a deprecated notice."""
     LOG.warning("c2cwsgiutils_genversion.py is deprecated; use c2cwsgiutils-genversion instead")
     return main()
 
 
 def main() -> None:
+    """Run the command."""
     if len(sys.argv) == 2:
         git_tag = None
         git_hash = sys.argv[1]

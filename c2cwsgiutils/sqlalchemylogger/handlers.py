@@ -18,6 +18,7 @@ LOG = logging.getLogger(__name__)
 
 
 class SQLAlchemyHandler(logging.Handler):
+    """Write the logs into a database."""
 
     MAX_NB_LOGS = 100
     MAX_TIMEOUT = 1

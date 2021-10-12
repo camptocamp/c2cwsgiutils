@@ -10,11 +10,13 @@ LOG = logging.getLogger(__name__)
 
 
 def deprecated() -> None:
+    """Run the command and print a deprecated notice."""
     LOG.warning("c2cwsgiutils_coverage_report.py is deprecated; use c2cwsgiutils-coverage-report instead")
     return main()
 
 
 def main() -> None:
+    """Run the command."""
     sources = sys.argv[1:]
     report_dir = "/reports/coverage/api"
     dest_dir = "/tmp/coverage/api"  # nosec

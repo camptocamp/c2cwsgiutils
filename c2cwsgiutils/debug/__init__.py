@@ -14,6 +14,7 @@ dump_memory_maps = utils.dump_memory_maps
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the debug tools."""
     if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         from c2cwsgiutils.debug import _views
 

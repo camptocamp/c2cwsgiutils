@@ -12,6 +12,7 @@ LOG = logging.getLogger(__name__)
 
 
 def in_docker() -> bool:
+    """Is in Docker mode."""
     return os.environ.get("DOCKER_RUN", "0") == "1"
 
 
@@ -20,6 +21,8 @@ DEFAULT_TIMEOUT = 60
 
 
 def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
+    """Wait the the URL is available without any error."""
+
     def what() -> bool:
         LOG.info("Trying to connect to %s... ", url)
         r = requests.get(url, timeout=timeout)
@@ -33,6 +36,15 @@ def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
 
 
 def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, interval: float = 0.5) -> Any:
+    """
+    Retry the function until the timeout.
+
+    Arguments:
+
+        what: the function to try
+        timeout: the timeout to get a success
+        interval: the interval between try
+    """
     timeout = time.monotonic() + timeout
     while True:
         error = ""

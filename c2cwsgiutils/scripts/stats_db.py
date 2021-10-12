@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Emits statsd gauges for every tables of a database.
-"""
+"""Emits statsd gauges for every tables of a database."""
 import argparse
 import logging
 import os
@@ -45,6 +43,8 @@ def _parse_args() -> argparse.Namespace:
 
 
 class Reporter:
+    """The stats reporter."""
+
     def __init__(self, args: argparse.Namespace) -> None:
         self._error: Optional[Exception] = None
         if args.statsd_address:
@@ -93,6 +93,7 @@ class Reporter:
 
 
 def do_table(session: sqlalchemy.orm.scoped_session, schema: str, table: str, reporter: Reporter) -> None:
+    """Do the stats on a table."""
     _do_table_count(reporter, schema, session, table)
     _do_table_size(reporter, schema, session, table)
     _do_indexes(reporter, schema, session, table)
@@ -168,6 +169,7 @@ def _do_table_count(
 
 
 def do_extra(session: sqlalchemy.orm.scoped_session, extra: str, reporter: Reporter) -> None:
+    """Do an extra report."""
     for metric, count in session.execute(extra):
         reporter.do_report(str(metric).split("."), count, kind="count", tags=dict(metric=metric))
 
@@ -214,6 +216,7 @@ def _do_dtats_db() -> None:
 
 
 def main() -> None:
+    """Run the command."""
     c2cwsgiutils.setup_process.init()
     sentry.init()
 

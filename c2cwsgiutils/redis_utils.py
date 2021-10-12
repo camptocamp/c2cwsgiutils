@@ -36,6 +36,7 @@ def get(
     Optional["redis.client.Redis[str]"],
     Optional[redis.sentinel.Sentinel],
 ]:
+    """Get the redis connection instances."""
     if _master is None:
         _init(settings)
     return _master, _slave, _sentinel
@@ -95,9 +96,7 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
 
 
 class PubSubWorkerThread(threading.Thread):
-    """
-    A clone of redis.client.PubSubWorkerThread that doesn't die when the connections are broken.
-    """
+    """A clone of redis.client.PubSubWorkerThread that doesn't die when the connections are broken."""
 
     def __init__(self, pubsub: redis.client.PubSub, name: Optional[str] = None) -> None:
         super().__init__(name=name, daemon=True)

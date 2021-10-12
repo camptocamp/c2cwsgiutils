@@ -1,6 +1,3 @@
-"""
-Small WSGI filter that interprets headers added by proxies to fix some values available in the request.
-"""
 import re
 from typing import Any, Callable, Dict
 
@@ -8,6 +5,13 @@ SEP_RE = re.compile(r", *")
 
 
 class Filter:
+    """
+    Small WSGI filter that interprets headers added by proxies.
+
+    To fix some values available in the request.
+    Concerned headers: Forwarded and the X_Forwarded_* Headers.
+    """
+
     def __init__(self, application: Callable[[Dict[str, str], Any], Any]):
         self._application = application
 

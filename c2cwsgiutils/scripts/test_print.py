@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test a MapfishPrint server.
-"""
+"""Test a MapfishPrint server."""
 import argparse
 import logging
 import pprint
@@ -12,21 +10,23 @@ from c2cwsgiutils.acceptance.print import PrintConnection
 LOG = logging.getLogger(__name__)
 
 
-def _parse_args():
+def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", required=True, help="The base URL of the print, including the '/print'")
     parser.add_argument("--app", default=None, help="The app name")
-    parser.add_argument("--referer", default=None, help="The referer (defaults to --url)")
+    parser.add_argument("--referrer", default=None, help="The referrer (defaults to --url)")
     parser.add_argument("--verbose", default=False, action="store_true", help="Enable debug output")
     return parser.parse_args()
 
 
 def deprecated() -> None:
+    """Run the command and print a deprecated notice."""
     LOG.warning("c2cwsgiutils_test_print.py is deprecated; use c2cwsgiutils-test-print instead")
     return main()
 
 
-def main():
+def main() -> None:
+    """Run the command."""
     c2cwsgiutils.setup_process.init()
 
     args = _parse_args()
@@ -43,7 +43,8 @@ def main():
         test_app(print_, args.app)
 
 
-def test_app(print_, app):
+def test_app(print_: PrintConnection, app: str) -> None:
+    """Test the application."""
     capabilities = print_.get_capabilities(app)
     LOG.debug("Capabilities:\n%s", pprint.pformat(capabilities))
     examples = print_.get_example_requests(app)

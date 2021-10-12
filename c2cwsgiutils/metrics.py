@@ -1,6 +1,4 @@
-"""
-Used to publish metrics to Prometheus.
-"""
+"""Used to publish metrics to Prometheus."""
 
 import re
 import socket
@@ -14,6 +12,8 @@ from c2cwsgiutils.debug.utils import dump_memory_maps
 
 
 class Provider:
+    """The provider interface."""
+
     def __init__(self, name: str, help_: str, type_: str = "gauge", extend: bool = True):
         self.name = name
         self.help = help_
@@ -21,9 +21,7 @@ class Provider:
         self.extend = extend
 
     def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
-        """
-        Should be defined in the specific provider.
-        """
+        """Get empty response, should be defined in the specific provider."""
         return []
 
 
@@ -35,6 +33,7 @@ SERVICE_NAME = re.match("^(.+)-[0-9a-f]+-[0-9a-z]+$", POD_NAME)
 
 
 def add_provider(provider: Provider) -> None:
+    """Add the provider."""
     _PROVIDERS.append(provider)
 
 
@@ -69,10 +68,16 @@ NUMBER_RE = re.compile(r"^[0-9]+$")
 
 
 class MemoryMapProvider(Provider):
+    """The Linux memory map provider."""
+
     def __init__(self, memory_type: str = "pss", pids: Optional[List[str]] = None):
         """
-        memory_type: can be rss, pss or size
-        pids: the list of pids or none
+        Initialize.
+
+        Arguments:
+
+            memory_type: can be rss, pss or size
+            pids: the list of pids or none
         """
         super().__init__(
             f"pod_process_smap_{memory_type}_kb",
@@ -82,9 +87,7 @@ class MemoryMapProvider(Provider):
         self.pids = pids
 
     def get_data(self) -> List[Tuple[Dict[str, Any], Union[int, float]]]:
-        """
-        Should be defined in the specific provider.
-        """
+        """Get empty response, should be defined in the specific provider."""
         results: List[Tuple[Dict[str, Any], Union[int, float]]] = []
         for pid in [p for p in listdir("/proc/") if NUMBER_RE.match(p)] if self.pids is None else self.pids:
             results += [
@@ -94,6 +97,7 @@ class MemoryMapProvider(Provider):
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the metrics view."""
     config.add_route("c2c_metrics", r"/metrics", request_method="GET")
     config.add_view(_view, route_name="c2c_metrics", http_cache=0)
     add_provider(MemoryMapProvider())

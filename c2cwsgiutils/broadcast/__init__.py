@@ -1,6 +1,4 @@
-"""
-Broadcast messages to all the processes of Gunicorn in every containers.
-"""
+"""Broadcast messages to all the processes of Gunicorn in every containers."""
 import functools
 import logging
 from typing import Any, Callable, Dict, List, Optional, TypeVar
@@ -52,7 +50,9 @@ def _get(need_init: bool = False) -> interface.BaseBroadcaster:
 
 def subscribe(channel: str, callback: Callable[..., Any]) -> None:
     """
-    Subscribe to a broadcast channel with the given callback. The callback will be called with its parameters
+    Subscribe to a broadcast channel with the given callback.
+
+    The callback will be called with its parameters
     taken from the dict provided in the _broadcaster.broadcast "params" parameter.
 
     A channel can be subscribed only once.
@@ -61,9 +61,7 @@ def subscribe(channel: str, callback: Callable[..., Any]) -> None:
 
 
 def unsubscribe(channel: str) -> None:
-    """
-    Unsubscribe from a channel.
-    """
+    """Unsubscribe from a channel."""
     _get().unsubscribe(channel)
 
 
@@ -89,7 +87,7 @@ def decorator(
     channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
 ) -> Callable[[Callable[..., _DECORATOR_RETURN]], Callable[..., Optional[List[_DECORATOR_RETURN]]]]:
     """
-    The decorated function will be called through the broadcast functionality.
+    Decorate function will be called through the broadcast functionality.
 
     If expect_answers is set to True, the returned value will be a list of all the answers.
     """

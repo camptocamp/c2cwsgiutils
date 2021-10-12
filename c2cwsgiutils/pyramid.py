@@ -22,9 +22,11 @@ from c2cwsgiutils import (
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """
-    Setup all the pyramid services and event handlers provided by this library.
+    Initialize all the pyramid services and event handlers provided by this library.
 
-    :param config: The pyramid Configuration
+    Arguments:
+
+        config: The pyramid Configuration
     """
     sentry.init(config)
     config.add_settings(handle_exceptions=False)

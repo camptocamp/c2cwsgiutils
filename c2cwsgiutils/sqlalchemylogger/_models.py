@@ -13,7 +13,11 @@ Base = declarative_base()
 
 
 def create_log_class(tablename: str = "logs", tableargs: Union[str, Dict[str, str]] = "") -> Any:
+    """Get the sqlalchemy lgo class."""
+
     class Log(Base):  # type: ignore
+        """The SQLAlchemy class that represent the log table."""
+
         __table_args__ = tableargs
         __tablename__ = tablename
         id = Column(Integer, primary_key=True)  # auto incrementing

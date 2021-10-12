@@ -1,6 +1,4 @@
-"""
-SQLalchemy models.
-"""
+"""SQLalchemy models."""
 import logging
 import re
 from typing import Pattern  # noqa  # pylint: disable=unused-import
@@ -18,7 +16,7 @@ force_readonly = False
 
 
 class Tweens:
-    pass
+    """The tween base class."""
 
 
 tweens = Tweens()
@@ -36,7 +34,9 @@ def setup_session(
     sqlalchemy.engine.Engine,
 ]:
     """
-    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave DB
+    Create a SQLAlchemy session.
+
+    With an accompanying tween that switches between the master and the slave DB
     connection. Uses prefixed entries in the application's settings.
 
     The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
@@ -44,14 +44,17 @@ def setup_session(
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
 
-    :param config: The pyramid Configuration object
-    :param master_prefix: The prefix for the master connection configuration entries in the application \
+    Arguments:
+
+        config: The pyramid Configuration object
+        master_prefix: The prefix for the master connection configuration entries in the application \
                           settings
-    :param slave_prefix: The prefix for the slave connection configuration entries in the application \
+        slave_prefix: The prefix for the slave connection configuration entries in the application \
                          settings
-    :param force_master: The method/paths that needs to use the master
-    :param force_slave: The method/paths that needs to use the slave
-    :return: The SQLAlchemy session, the R/W engine and the R/O engine
+        force_master: The method/paths that needs to use the master
+        force_slave: The method/paths that needs to use the slave
+
+    Returns: The SQLAlchemy session, the R/W engine and the R/O engine
     """
     if slave_prefix is None:
         slave_prefix = master_prefix
@@ -87,7 +90,9 @@ def create_session(
     **engine_config: Any,
 ) -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
     """
-    Create a SQLAlchemy session with an accompanying tween that switches between the master and the slave DB
+    Create a SQLAlchemy session.
+
+    With an accompanying tween that switches between the master and the slave DB
     connection.
 
     The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
@@ -95,14 +100,17 @@ def create_session(
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
 
-    :param config: The pyramid Configuration object. If None, only master is used
-    :param name: The name of the check
-    :param url: The URL for the master DB
-    :param slave_url: The URL for the slave DB
-    :param force_master: The method/paths that needs to use the master
-    :param force_slave: The method/paths that needs to use the slave
-    :param engine_config: The rest of the parameters are passed as is to the sqlalchemy.create_engine function
-    :return: The SQLAlchemy session
+    Arguments:
+
+        config: The pyramid Configuration object. If None, only master is used
+        name: The name of the check
+        url: The URL for the master DB
+        slave_url: The URL for the slave DB
+        force_master: The method/paths that needs to use the master
+        force_slave: The method/paths that needs to use the slave
+        engine_config: The rest of the parameters are passed as is to the sqlalchemy.create_engine function
+
+    Returns: The SQLAlchemy session
     """
     if slave_url is None:
         slave_url = url

@@ -12,6 +12,7 @@ LOG = logging.getLogger(__name__)
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the versions view."""
     if os.path.isfile(VERSIONS_PATH):
         versions = _read_versions()
         config.add_route(
@@ -35,12 +36,14 @@ def init(config: pyramid.config.Configurator) -> None:
 
 
 def _read_versions() -> Dict[str, Dict[str, str]]:
+    """Read the version."""
     with open(VERSIONS_PATH, encoding="utf-8") as file:
         versions = json.load(file)
     return cast(Dict[str, Dict[str, str]], versions)
 
 
 def get_version() -> Optional[str]:
+    """Get the version."""
     if not os.path.isfile(VERSIONS_PATH):
         return None
     versions = _read_versions()

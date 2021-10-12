@@ -6,6 +6,7 @@ from c2cwsgiutils import config_utils, stats
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the statistic view."""
     config.add_route(
         "c2c_read_stats_json", config_utils.get_base_path(config) + r"/stats.json", request_method="GET"
     )

@@ -97,11 +97,13 @@ def _check_roundtrip() -> None:
 
 
 def deprecated() -> None:
+    """Run the command and print a deprecated notice."""
     LOG.warning("c2cwsgiutils_check_es.py is deprecated; use c2cwsgiutils-check-es instead")
     return main()
 
 
 def main() -> None:
+    """Run the command."""
     try:
         c2cwsgiutils.setup_process.init()
 

@@ -32,6 +32,8 @@ def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: int 
 
 
 class Composition:
+    """The Docker composition."""
+
     def __init__(
         self, request: Request, project_name: str, composition: str, coverage_paths: Optional[str] = None
     ) -> None:
@@ -100,8 +102,9 @@ class Composition:
     @staticmethod
     def _get_env() -> Mapping[str, str]:
         """
-        Make sure the DOCKER_TAG environment variable, used in the docker-compose.yaml file is correctly set
-        when we call docker-compose.
+        Make sure the DOCKER_TAG environment variable.
+
+        Used in the docker-compose.yaml file is correctly set when we call docker-compose.
         """
         env = dict(os.environ)
         if "DOCKER_TAG" not in env:

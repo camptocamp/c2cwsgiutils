@@ -20,9 +20,7 @@ SPACE_RE = re.compile(r" +")
 
 
 def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
-    """
-    Group the identical stacks together along with a list of threads sporting them.
-    """
+    """Group the identical stacks together along with a list of threads sporting them."""
     results: List[Mapping[str, Any]] = []
     for host_stacks in source:
         host_id = f"{host_stacks['hostname']}/{host_stacks['pid']:d}"
@@ -201,6 +199,7 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize all the development view."""
     _add_view(config, "stacks", "stacks", _dump_stacks)
     _add_view(config, "memory", "memory", _dump_memory)
     _add_view(config, "memory_diff", "memory_diff", _dump_memory_diff)

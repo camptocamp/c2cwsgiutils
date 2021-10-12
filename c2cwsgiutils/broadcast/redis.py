@@ -14,9 +14,7 @@ LOG = logging.getLogger(__name__)
 
 
 class RedisBroadcaster(interface.BaseBroadcaster):
-    """
-    Implement broadcasting messages using Redis.
-    """
+    """Implement broadcasting messages using Redis."""
 
     def __init__(
         self,

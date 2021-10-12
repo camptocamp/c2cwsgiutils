@@ -21,6 +21,7 @@ def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
 
 
 def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
+    """Get an HTML section."""
     printable_content = "\n".join(content)
     result = f"""
     <div class="row">
@@ -36,6 +37,7 @@ def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
 
 
 def paragraph(*content: str, title: Optional[str] = None) -> str:
+    """Get an HTML paragraph."""
     body = ""
     if title:
         body = title + ": "
@@ -44,6 +46,7 @@ def paragraph(*content: str, title: Optional[str] = None) -> str:
 
 
 def link(url: Optional[str], label: str) -> str:
+    """Get an HTML link."""
     if url is not None:
         return f'<a class="btn btn-primary" href="{url}" target="_blank">{label}</a>'
     else:
@@ -51,6 +54,7 @@ def link(url: Optional[str], label: str) -> str:
 
 
 def form(url: Optional[str], *content: str, method: str = "get", target: str = "_blank") -> str:
+    """Get an HTML form."""
     assert url is not None
     method_attrs = ""
     if method == "post":
@@ -66,6 +70,7 @@ def form(url: Optional[str], *content: str, method: str = "get", target: str = "
 def input_(
     name: str, label: Optional[str] = None, type_: Optional[str] = None, value: Union[str, int] = ""
 ) -> str:
+    """Get an HTML input."""
     global ELEM_ID
     id_ = ELEM_ID
     ELEM_ID += 1
@@ -87,6 +92,7 @@ def input_(
 
 
 def button(label: str) -> str:
+    """Get en HTML button."""
     return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
@@ -300,6 +306,7 @@ def _health_check(request: pyramid.request.Request) -> str:
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the index page."""
     base_path = config_utils.get_base_path(config)
     if base_path != "":
         config.add_route("c2c_index", base_path, request_method=("GET", "POST"))

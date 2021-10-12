@@ -18,9 +18,7 @@ LOG = logging.getLogger(__name__)
 
 
 def get_size(obj: Any) -> int:
-    """
-    sum size of object & members.
-    """
+    """Get the sum size of object & members."""
     if isinstance(obj, BLACKLIST):
         return 0
     seen_ids: Set[int] = set()
@@ -38,6 +36,7 @@ def get_size(obj: Any) -> int:
 
 
 def dump_memory_maps(pid: str = "self") -> List[Dict[str, Any]]:
+    """Get the Linux memory maps."""
     filename = os.path.join("/proc", pid, "smaps")
     if not os.path.exists(filename):
         return []

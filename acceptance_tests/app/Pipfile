@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pipenv = "==2021.5.29"
+pipenv = "==2021.11.23"
 
 [dev-packages]
 prospector = {extras = ["with_bandit", "with_mypy"], version = "==1.6.1"}

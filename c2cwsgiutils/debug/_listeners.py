@@ -91,10 +91,10 @@ def _dump_memory_impl(
         elif analyze_type == "linecache":
             import linecache
 
-            cache = linecache.cache  # type: ignore
+            cache = linecache.cache
             result[analyze_type]["biggest_objects"] = sorted(
                 (dict(filename=k, size_kb=get_size(v)) for k, v in cache.items()),
-                key=lambda i: cast(int, -i["size"]),
+                key=lambda i: -(cast(int, i["size_kb"])),
             )
         else:
             biggest_objects.reverse()

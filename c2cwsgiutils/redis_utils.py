@@ -74,9 +74,9 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
             _master = _sentinel.master_for(service_name)
             _slave = _sentinel.slave_for(service_name)
             return
-        except redis.sentinel.MasterNotFoundError:
+        except redis.sentinel.MasterNotFoundError as exception:
             print(_sentinel.sentinels[0].sentinel_masters())
-            raise Exception(_sentinel.sentinels[0].sentinel_masters())
+            raise Exception(_sentinel.sentinels[0].sentinel_masters()) from exception
     if url:
         if not url.startswith("redis://"):
             url = "redis://" + url

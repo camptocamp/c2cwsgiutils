@@ -105,7 +105,7 @@ def outcome_timer_context(key: List[Any], tags: TagType = None) -> Generator[Non
             measure.stop(key, opt_tags)
         else:
             measure.stop(key + ["success"], tags)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:
         if USE_TAGS:
             opt_tags = dict(tags) if tags is not None else {}
             opt_tags["success"] = 0

@@ -17,7 +17,7 @@ logging.basicConfig(
 logging.getLogger("requests.packages.urllib3.connectionpool").setLevel(logging.WARN)
 
 
-def _try(what, fail=True, times=5, delay=10) -> None:
+def _try(what, fail=True, times=5, delay=10) -> Any:
     for i in range(times):
         try:
             return what()
@@ -26,6 +26,7 @@ def _try(what, fail=True, times=5, delay=10) -> None:
             if i + 1 == times and fail:
                 raise
             time.sleep(delay)
+    return None
 
 
 class Composition:
@@ -40,7 +41,7 @@ class Composition:
             self.dc_try(["up", "-d"], fail=False)
 
         # Setup something that redirects the docker container logs to the test output
-        log_watcher = subprocess.Popen(
+        log_watcher = subprocess.Popen(  # pylint: disable=consider-using-with
             self.docker_compose + ["logs", "--follow", "--no-color"],
             env=env,
             stderr=subprocess.STDOUT,

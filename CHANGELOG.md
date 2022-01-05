@@ -1,3 +1,8 @@
+# Release 6
+
+- Remove the script `c2cwsgiutils-run`.
+- Remove the environment variable `GUNICORN_PARAMS` we will use the standard one `GUNICORN_CMD_ARGS`.
+
 # Release 4
 
 - Rename the scripts:

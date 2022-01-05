@@ -44,10 +44,9 @@ RUN (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear --dev)
 
 FROM base-all AS base
 
-CMD ["c2cwsgiutils-run"]
+CMD ["/usr/local/bin/gunicorn", "c2cwsgiutils.wsgi_app:application"]
 
 COPY scripts/install-gdal /usr/bin/
-COPY scripts/c2cwsgiutils-run /opt/c2cwsgiutils/scripts/
 COPY setup.py setup.cfg /opt/c2cwsgiutils/
 COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \

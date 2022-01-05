@@ -3,7 +3,8 @@ version: '2.2'
 services:
   app:
     image: camptocamp/c2cwsgiutils_test_app
-    environment: &app_env
+    environment:
+      &app_env
       SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
       SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
       PGOPTIONS: -c statement_timeout=1500
@@ -30,7 +31,7 @@ services:
       SENTRY_TAG_SERVICE: app
       C2C_REDIS_SENTINELS: redis:26379
       PYTHONMALLOC: debug
-      GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
+      GUNICORN_CMD_ARGS: --bind=:8080 --worker-class=gthread --threads=10 --workers=1
       # Test problematic environment variable (values contains % and duplicated with different cass)
       TEST: '%1'
       test: '%2'

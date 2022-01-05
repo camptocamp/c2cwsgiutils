@@ -75,6 +75,5 @@ setup(
             "c2c+egg=c2cwsgiutils.loader:Loader",
         ],
     },
-    scripts=["scripts/c2cwsgiutils-run"],
     package_data={"c2cwsgiutils": ["py.typed"]},
 )

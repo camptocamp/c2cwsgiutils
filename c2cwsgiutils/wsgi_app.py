@@ -1,4 +1,4 @@
-"""Module used by c2cwsgiutils-run to provide a WSGI application when starting gunicorn."""
+"""Module used to provide a WSGI application when starting gunicorn."""
 from typing import Any, Callable
 
 from c2cwsgiutils import coverage_setup  # pragma: no cover

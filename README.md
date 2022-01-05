@@ -113,7 +113,6 @@ define the GitHub auth URL (default is `https://api.github.com/repo`)
 
 ## Pyramid
 
-A command line (`c2cwsgiutils-run`) is provided to start an HTTP server (Gunicorn) with a WSGI application.
 By default, it will load the application configured in `/app/production.ini`, but you can change that with
 the `C2CWSGIUTILS_CONFIG` environment variable. All the environment variables are usable in the configuration
 file using stuff like `%(ENV_NAME)s`.
@@ -397,16 +396,18 @@ have dumps of a few things:
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
 to have a specially tweaked `docker-compose.yaml`:
 
-```yml
+```yaml
 services:
   api:
-    environment:
-      GUNICORN_PARAMS: '-b :80 --threads 10 --timeout 60 --reload'
+    command:
+      - pserve
+      - --reload
+      - c2c://development.ini
   volumes:
     - ./api/somepath:/app/somepath:ro
 ```
 
-The GUNICORN_PARAMS has the `--reload` parameter and your local python code is
+The `pserve` has the `--reload` parameter and your local python code is
 mounted (read only) into the container.
 
 ### Broadcast

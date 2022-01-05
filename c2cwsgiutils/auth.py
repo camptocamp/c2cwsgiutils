@@ -63,16 +63,20 @@ def _is_auth_secret(request: pyramid.request.Request) -> bool:
     secret = request.params.get("secret")
     if secret is None:
         secret = request.headers.get("X-API-Key")
+    if secret is None:
+        secret_hash = request.cookies.get(SECRET_ENV)
+    else:
+        secret_hash = _hash_secret(secret)
 
-    if secret is not None:
-        if secret == "":  # nosec
+    if secret_hash is not None:
+        if secret_hash == "" or secret == "":  # nosec
             # logout
             request.response.delete_cookie(SECRET_ENV)
             return False
-        if secret != expected:
+        if secret_hash != _hash_secret(expected):
             return False
         # login or refresh the cookie
-        request.response.set_cookie(SECRET_ENV, _hash_secret(secret), max_age=COOKIE_AGE, httponly=True)
+        request.response.set_cookie(SECRET_ENV, secret_hash, max_age=COOKIE_AGE, httponly=True)
         # since this could be used from outside c2cwsgiutils views, we cannot set the path to c2c
         return True
     return False

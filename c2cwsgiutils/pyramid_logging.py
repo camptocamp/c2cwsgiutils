@@ -16,10 +16,12 @@ import logging.config
 import os
 import socket
 import sys
-from typing import IO, TYPE_CHECKING, Any, Dict, Mapping, MutableMapping, Optional, Set
+from typing import IO, TYPE_CHECKING, Any, Mapping, MutableMapping, Optional
 
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
+
+from c2cwsgiutils import get_unique_env
 
 LOG = logging.getLogger(__name__)
 
@@ -123,19 +125,6 @@ class JsonLogHandler(Base):
         return json.dumps(message)
 
 
-def get_defaults() -> Dict[str, str]:
-    """Get the logging configuration variables."""
-    results = {}
-    lowercase_keys: Set[str] = set()
-    for key, value in os.environ.items():
-        if key.lower() in lowercase_keys:
-            LOG.warning("The environment variable '%s' is duplicated with different case, ignoring", key)
-            continue
-        lowercase_keys.add(key.lower())
-        results[key] = value
-    return results
-
-
 def init(configfile: Optional[str] = None) -> Optional[str]:
     """Initialize the pyramid logging."""
     logging.captureWarnings(True)
@@ -143,7 +132,7 @@ def init(configfile: Optional[str] = None) -> Optional[str]:
         configfile if configfile is not None else os.environ.get("C2CWSGIUTILS_CONFIG", "/app/production.ini")
     )
     if os.path.isfile(configfile_):
-        logging.config.fileConfig(configfile_, defaults=get_defaults())
+        logging.config.fileConfig(configfile_, defaults=get_unique_env())
         return configfile_
     else:
         level = os.environ.get("LOG_LEVEL", os.environ.get("OTHER_LOG_LEVEL", "INFO"))

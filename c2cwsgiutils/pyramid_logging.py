@@ -21,7 +21,7 @@ from typing import IO, TYPE_CHECKING, Any, Mapping, MutableMapping, Optional
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import get_unique_env
+from c2cwsgiutils import get_config_defaults
 
 LOG = logging.getLogger(__name__)
 
@@ -132,7 +132,7 @@ def init(configfile: Optional[str] = None) -> Optional[str]:
         configfile if configfile is not None else os.environ.get("C2CWSGIUTILS_CONFIG", "/app/production.ini")
     )
     if os.path.isfile(configfile_):
-        logging.config.fileConfig(configfile_, defaults=get_unique_env())
+        logging.config.fileConfig(configfile_, defaults=get_config_defaults())
         return configfile_
     else:
         level = os.environ.get("LOG_LEVEL", os.environ.get("OTHER_LOG_LEVEL", "INFO"))

@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import uuid
+import warnings
 from typing import Any, List, Optional
 
 import requests.exceptions
@@ -98,7 +99,7 @@ def _check_roundtrip() -> None:
 
 def deprecated() -> None:
     """Run the command and print a deprecated notice."""
-    LOG.warning("c2cwsgiutils_check_es.py is deprecated; use c2cwsgiutils-check-es instead")
+    warnings.warn("c2cwsgiutils_check_es.py is deprecated; use c2cwsgiutils-check-es instead")
     return main()
 
 

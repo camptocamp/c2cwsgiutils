@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import warnings
 from typing import Dict, Optional, cast
 
 import pyramid.config
@@ -12,6 +13,12 @@ LOG = logging.getLogger(__name__)
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the versions view, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view."""
     if os.path.isfile(VERSIONS_PATH):
         versions = _read_versions()

@@ -7,4 +7,3 @@ omit=
     /opt/c2cwsgiutils/c2cwsgiutils/acceptance/*
     /opt/c2cwsgiutils/c2cwsgiutils/models_graph.py
     /opt/c2cwsgiutils/c2cwsgiutils/coverage_setup.py
-    /opt/c2cwsgiutils/c2cwsgiutils/wsgi_app.py

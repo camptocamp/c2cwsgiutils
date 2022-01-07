@@ -13,15 +13,12 @@ A pyramid event handler is installed to setup this filter for the current reques
 import json
 import logging
 import logging.config
-import os
 import socket
-import sys
-from typing import IO, TYPE_CHECKING, Any, Mapping, MutableMapping, Optional
+from typing import IO, TYPE_CHECKING, Any, Mapping, MutableMapping
 
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import get_config_defaults
 
 LOG = logging.getLogger(__name__)
 
@@ -123,27 +120,3 @@ class JsonLogHandler(Base):
             record, self._fqdn, debugging_fields=True, extra_fields=True, facility=None, static_fields={}
         )
         return json.dumps(message)
-
-
-def init(configfile: Optional[str] = None) -> Optional[str]:
-    """Initialize the pyramid logging."""
-    logging.captureWarnings(True)
-    configfile_ = (
-        configfile if configfile is not None else os.environ.get("C2CWSGIUTILS_CONFIG", "/app/production.ini")
-    )
-    if os.path.isfile(configfile_):
-        logging.config.fileConfig(configfile_, defaults=get_config_defaults())
-        return configfile_
-    else:
-        level = os.environ.get("LOG_LEVEL", os.environ.get("OTHER_LOG_LEVEL", "INFO"))
-        if os.environ.get("LOG_TYPE") == "json":
-            root = logging.getLogger()
-            handler = JsonLogHandler(stream=sys.stdout)
-            handler.setLevel(logging.NOTSET)
-            root.addHandler(handler)
-            root.setLevel(level)
-        else:
-            logging.basicConfig(
-                level=level, format="%(asctime)-15s %(levelname)5s %(name)s %(message)s", stream=sys.stderr
-            )
-        return None

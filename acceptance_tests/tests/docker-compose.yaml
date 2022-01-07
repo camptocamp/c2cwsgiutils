@@ -3,38 +3,38 @@ version: '2.2'
 services:
   app:
     image: camptocamp/c2cwsgiutils_test_app
-    environment:
-      &app_env
-      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-      SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
-      PGOPTIONS: -c statement_timeout=1500
-      STATS_VIEW: 1
-      STATSD_ADDRESS: ${TEST_IP}:8125
-      STATSD_PREFIX: acceptance
-      STATSD_TAG_XYZ: zyx
-      STATSD_USE_TAGS: 1
-      C2C_SECRET: changeme
-      C2C_LOG_VIEW_ENABLED: 1
-      C2C_DB_MAINTENANCE_VIEW_ENABLED: 1
-      C2C_SQL_PROFILER_ENABLED: 1
-      C2C_DEBUG_VIEW_ENABLED: 1
-      C2C_PROFILER_PATH: /api_profiler
-      C2C_PROFILER_MODULES: c2cwsgiutils c2cwsgiutils_app sqlalchemy request
-      C2C_ENABLE_EXCEPTION_HANDLING: 1
-      LOG_TYPE: console,json
-      SQL_LOG_LEVEL: DEBUG
-      OTHER_LOG_LEVEL: DEBUG
-      COVERAGE: 1
-      SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      SENTRY_CLIENT_ENVIRONMENT: local
-      SENTRY_CLIENT_RELEASE: latest
-      SENTRY_TAG_SERVICE: app
-      C2C_REDIS_SENTINELS: redis:26379
-      PYTHONMALLOC: debug
-      GUNICORN_CMD_ARGS: --bind=:8080 --worker-class=gthread --threads=10 --workers=1
+    environment: &app_env
+      - SQLALCHEMY_URL
+      - SQLALCHEMY_SLAVE_URL
+      - PGOPTIONS=-c statement_timeout=1500
+      - STATS_VIEW=1
+      - STATSD_ADDRESS=${TEST_IP}:8125
+      - STATSD_PREFIX=acceptance
+      - STATSD_TAG_XYZ=zyx
+      - STATSD_USE_TAGS=1
+      - C2C_SECRET=changeme
+      - C2C_LOG_VIEW_ENABLED=1
+      - C2C_DB_MAINTENANCE_VIEW_ENABLED=1
+      - C2C_SQL_PROFILER_ENABLED=1
+      - C2C_DEBUG_VIEW_ENABLED=1
+      - C2C_PROFILER_PATH=/api_profiler
+      - C2C_PROFILER_MODULES=c2cwsgiutils c2cwsgiutils_app sqlalchemy request
+      - C2C_ENABLE_EXCEPTION_HANDLING=1
+      - LOG_TYPE=json
+      - SQL_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=DEBUG
+      - COVERAGE=1
+      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      - SENTRY_CLIENT_ENVIRONMENT=local
+      - SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=app
+      - C2C_REDIS_SENTINELS=redis:26379
+      - PYTHONMALLOC=debug
+      - GUNICORN_WORKERS=1
+      - GUNICORN_THREADS=10
       # Test problematic environment variable (values contains % and duplicated with different cass)
-      TEST: '%1'
-      test: '%2'
+      - TEST='%1'
+      - test='%2'
     links:
       - db
       - db_slave
@@ -45,15 +45,14 @@ services:
   alembic_master:
     image: camptocamp/c2cwsgiutils_test_app
     environment:
-      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-      SQL_LOG_LEVEL: DEBUG
-      OTHER_LOG_LEVEL: DEBUG
-      SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      SENTRY_CLIENT_ENVIRONMENT: local
-      SENTRY_CLIENT_RELEASE: latest
-      SENTRY_TAG_SERVICE: alembic_master
-      STATSD_ADDRESS: ${TEST_IP}:8125
-      STATSD_PREFIX: alembic_master
+      - SQLALCHEMY_URL
+      - SQLALCHEMY_SLAVE_URL
+      - SQL_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=DEBUG
+      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      - SENTRY_CLIENT_ENVIRONMENT=local SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=alembic_master STATSD_ADDRESS=${TEST_IP}:8125
+      - STATSD_PREFIX=alembic_master
     links:
       - db
     command: /bin/true # will use execute with another script from the tests to actually do it
@@ -61,15 +60,14 @@ services:
   alembic_slave:
     image: camptocamp/c2cwsgiutils_test_app
     environment:
-      SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
-      SQL_LOG_LEVEL: DEBUG
-      OTHER_LOG_LEVEL: DEBUG
-      SENTRY_URL: https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      SENTRY_CLIENT_ENVIRONMENT: local
-      SENTRY_CLIENT_RELEASE: latest
-      SENTRY_TAG_SERVICE: alembic_slave
-      STATSD_ADDRESS: ${TEST_IP}:8125
-      STATSD_PREFIX: alembic_slave
+      - SQLALCHEMY_URL
+      - SQLALCHEMY_SLAVE_URL
+      - SQL_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=DEBUG
+      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      - SENTRY_CLIENT_ENVIRONMENT=local SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=alembic_slave STATSD_ADDRESS=${TEST_IP}:8125
+      - STATSD_PREFIX=alembic_slave
     links:
       - db_slave:db
     command: /bin/true # will use execute with another script from the tests to actually do it

@@ -1,4 +1,5 @@
 import logging
+import warnings
 from typing import Any, Generator, Mapping, Tuple
 
 import pyramid.request
@@ -12,6 +13,12 @@ REDIS_PREFIX = "c2c_logging_level_"
 
 
 def install_subscriber(config: pyramid.config.Configurator) -> None:
+    """Install the view to configure the loggers, if configured to do so, for backward compatibility."""
+    warnings.warn("install_subscriber function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """Install the view to configure the loggers, if configured to do so."""
     if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         config.add_route(

@@ -63,12 +63,12 @@ def _setup_profiler(enable: str) -> None:
     global repository
     if config_utils.config_bool(enable):
         if repository is None:
-            LOG.warning("Enabling the SQL profiler")
+            LOG.info("Enabling the SQL profiler")
             repository = _Repository()
             sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute", repository.profile)
     else:
         if repository is not None:
-            LOG.warning("Disabling the SQL profiler")
+            LOG.info("Disabling the SQL profiler")
             sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute", repository.profile)
             repository = None
 

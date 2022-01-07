@@ -1,0 +1,8 @@
+version: '2.2'
+
+services:
+  app:
+    command:
+      - pserve
+      - --reload
+      - c2c:///app/development.ini

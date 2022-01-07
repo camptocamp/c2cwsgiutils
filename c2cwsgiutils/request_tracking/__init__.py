@@ -6,6 +6,7 @@ Adds a c2c_request_id attribute to the Pyramid Request class to access it.
 import logging
 import urllib.parse
 import uuid
+import warnings
 from typing import Any, Dict, List, Optional, Sequence  # noqa  # pylint: disable=unused-import
 
 import pyramid.request
@@ -74,6 +75,12 @@ def _patch_requests() -> None:
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+    """Initialize the request tracking, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
     Initialize the request tracking.
 

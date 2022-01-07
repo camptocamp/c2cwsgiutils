@@ -1,10 +1,20 @@
 import logging
 import os
+import warnings
+from typing import Optional
+
+import pyramid.config
 
 LOG = logging.getLogger(__name__)
 
 
 def init() -> None:
+    """Initialise the code coverage, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme()
+
+
+def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialise the code coverage."""
     if os.environ.get("COVERAGE", "0") != "1":
         return

@@ -1,4 +1,5 @@
 import logging
+import warnings
 from typing import Any, Callable, Dict, Optional  # noqa  # pylint: disable=unused-import
 
 import pyramid.config
@@ -22,6 +23,12 @@ def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+    """Initialize the Redis tracking, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the Redis tracking."""
     global ORIG
     if config_utils.env_or_config(

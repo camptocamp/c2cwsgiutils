@@ -39,6 +39,10 @@ jobs:
       - name: Acceptance
         run: make acceptance
 
+      - run: cp acceptance_tests/tests/docker-compose.override.sample.yaml acceptance_tests/tests/docker-compose.override.yaml
+      - name: Acceptance Dev
+        run: WAITRESS=TRUE make -e acceptance
+
       - name: Install GDAL
         run: docker run --rm camptocamp/c2cwsgiutils install-gdal
 

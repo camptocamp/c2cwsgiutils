@@ -1,3 +1,4 @@
+import warnings
 from typing import Optional
 
 import pyramid.config
@@ -14,6 +15,12 @@ dump_memory_maps = utils.dump_memory_maps
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the debug tools, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the debug tools."""
     if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
         from c2cwsgiutils.debug import _views

@@ -1,9 +1,12 @@
+import logging
+
 import cornice
 import pyramid.config
 import pyramid_tm
 
 from c2cwsgiutils import (
     broadcast,
+    coverage_setup,
     db_maintenance_view,
     debug,
     errors,
@@ -28,20 +31,22 @@ def includeme(config: pyramid.config.Configurator) -> None:
 
         config: The pyramid Configuration
     """
-    sentry.init(config)
+    logging.captureWarnings(True)
+    config.include(coverage_setup.includeme)
+    config.include(sentry.includeme)
     config.add_settings(handle_exceptions=False)
     config.include(pyramid_tm.includeme)
     config.include(cornice.includeme)
-    pretty_json.init(config)
-    broadcast.init(config)
-    stats_pyramid.init(config)
-    request_tracking.init(config)
-    redis_stats.init(config)
-    db_maintenance_view.install_subscriber(config)
-    logging_view.install_subscriber(config)
-    sql_profiler.init(config)
-    version.init(config)
-    debug.init(config)
-    metrics.init(config)
-    errors.init(config)
-    index.init(config)
+    config.include(pretty_json.includeme)
+    config.include(broadcast.includeme)
+    config.include(stats_pyramid.includeme)
+    config.include(request_tracking.includeme)
+    config.include(redis_stats.includeme)
+    config.include(db_maintenance_view.includeme)
+    config.include(logging_view.includeme)
+    config.include(sql_profiler.includeme)
+    config.include(version.includeme)
+    config.include(debug.includeme)
+    config.include(metrics.includeme)
+    config.include(errors.includeme)
+    config.include(index.includeme)

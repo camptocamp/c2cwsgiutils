@@ -5,41 +5,33 @@ Must be imported at the very beginning of the process' life, before any other mo
 """
 
 
-def _first() -> None:
-    from c2cwsgiutils import pyramid_logging
+from plaster.loaders import setup_logging
 
-    pyramid_logging.init()
-
-
-def _second() -> None:
-    from c2cwsgiutils import (
-        broadcast,
-        coverage_setup,
-        debug,
-        redis_stats,
-        request_tracking,
-        sentry,
-        stats,
-        stats_pyramid,
-    )
-
-    coverage_setup.init()
-    sentry.init()
-    broadcast.init()
-    stats.init_backends()
-    request_tracking.init()
-    redis_stats.init()
-    stats_pyramid.init_db_spy()
-    debug.init_daemon()
-
+from c2cwsgiutils import (
+    broadcast,
+    coverage_setup,
+    debug,
+    redis_stats,
+    request_tracking,
+    sentry,
+    stats,
+    stats_pyramid,
+)
 
 _init = False
 
 
-def init() -> None:
+def init(config_file: str = "c2c:///app/development.ini") -> None:
     """Initialize all the c2cwsgiutils components."""
     global _init
     if not _init:
-        _first()
-        _second()
+        setup_logging(config_file)
+        coverage_setup.includeme()
+        sentry.includeme()
+        broadcast.includeme()
+        stats.init_backends()
+        request_tracking.includeme()
+        redis_stats.includeme()
+        stats_pyramid.init_db_spy()
+        debug.init_daemon()
         _init = True

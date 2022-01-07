@@ -1,6 +1,7 @@
 """Broadcast messages to all the processes of Gunicorn in every containers."""
 import functools
 import logging
+import warnings
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 import pyramid.config
@@ -16,6 +17,12 @@ _broadcaster: Optional[interface.BaseBroadcaster] = None
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+    """Initialize the broadcaster with Redis, if configured, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
     Initialize the broadcaster with Redis, if configured.
 

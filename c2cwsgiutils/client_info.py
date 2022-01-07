@@ -67,3 +67,8 @@ def _handle_forwarded(environ: Dict[str, str]) -> None:
         environ["HTTP_HOST"] = fields["host"]
     if "proto" in fields:
         environ["wsgi.url_scheme"] = fields["proto"]
+
+
+def filter_factory(*args: Any, **kwargs: Any) -> Callable[..., Any]:
+    """Get the filter."""
+    return Filter

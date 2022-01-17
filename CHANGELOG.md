@@ -3,8 +3,11 @@
 - Remove the script `c2cwsgiutils-run`.
 - The Pyramid initializing module functions are renamed from `init` to `includeme`.
 - Remove the environment variable `GUNICORN_PARAMS` we will use the standard one `GUNICORN_CMD_ARGS`.
-- Remove the `C2CWSGIUTILS_CONFIG` environment variable, we should use the standard way to specify the config file.
-- The filter will or anymore added automatically, you should add the following lines in your project `development.ini`:
+- Remove the `C2CWSGIUTILS_CONFIG` environment variable, we should use the standard way to specify the
+  config file (with the argument `--parse` of gunicorn, or the `config_uri` argument or `pserve` prefixed
+  by `c2c://`).
+- Filters like `sentry`, `profiler`, `client_info` will not be added automatically anymore, you should add
+  the following lines in your project `development.ini`:
 
   ```ini
   [pipeline:main]

@@ -25,24 +25,22 @@ To see how to test such an application, look at [acceptance_tests/tests](accepta
 
 ## Install
 
-### PYPI
+### Custom Docker image (from PYPI library)
 
 Here we didn't do a minimal install of c2cwsgiutils, but be put in place everything needed to
-monitor the application in Kubernetes.
+monitor the application in integration and production environment.
 
 The library is available in PYPI:
 [https://pypi.python.org/pypi/c2cwsgiutils](https://pypi.python.org/pypi/c2cwsgiutils)
 
-With pip:
+Copy and adapt these template configuration file into your project:
 
-```
-pip install c2cwsgiutils
-```
+- [production.ini](acceptance_tests/app/production.ini);
+- [development.ini](acceptance_tests/app/development.ini);
+- [gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py).
+  Then replace `c2cwsgiutils_app` by your package name.
 
-Get the [production.ini](acceptance_tests/app/production.ini),
-[development.ini](acceptance_tests/app/development.ini) and
-[gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py) in your project and replace
-`c2cwsgiutils_app` by your package name.
+You should install `c2cwsgiutils` with the tool you use to manage your pip dependencies.
 
 In the `Dockerfile` you should add the following lines:
 
@@ -52,7 +50,7 @@ RUN c2cwsgiutils-genversion $(git rev-parse HEAD)
 
 CMD ["gunicorn", "--paste=/app/production.ini"]
 
-# Default valued for the environment variables
+# Default values for the environment variables
 ENV \
     DEVELOPMENT=0 \
     SQLALCHEMY_POOL_RECYCLE=30 \

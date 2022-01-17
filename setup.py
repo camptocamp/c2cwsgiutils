@@ -80,5 +80,6 @@ setup(
             "sentry=c2cwsgiutils.sentry:filter_factory",
         ],
     },
+    scripts=["scripts/c2cwsgiutils-run"],
     package_data={"c2cwsgiutils": ["py.typed"]},
 )

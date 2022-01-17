@@ -50,8 +50,10 @@ services:
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=DEBUG
       - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      - SENTRY_CLIENT_ENVIRONMENT=local SENTRY_CLIENT_RELEASE=latest
-      - SENTRY_TAG_SERVICE=alembic_master STATSD_ADDRESS=${TEST_IP}:8125
+      - SENTRY_CLIENT_ENVIRONMENT=local
+      - SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=alembic_master
+      - STATSD_ADDRESS=${TEST_IP}:8125
       - STATSD_PREFIX=alembic_master
     links:
       - db
@@ -65,8 +67,10 @@ services:
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=DEBUG
       - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      - SENTRY_CLIENT_ENVIRONMENT=local SENTRY_CLIENT_RELEASE=latest
-      - SENTRY_TAG_SERVICE=alembic_slave STATSD_ADDRESS=${TEST_IP}:8125
+      - SENTRY_CLIENT_ENVIRONMENT=local
+      - SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=alembic_slave
+      - STATSD_ADDRESS=${TEST_IP}:8125
       - STATSD_PREFIX=alembic_slave
     links:
       - db_slave:db

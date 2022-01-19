@@ -30,7 +30,7 @@ acceptance: build_acceptance build_test_app
 	docker run --rm $(DOCKER_BASE):tests cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
 	# Run the tests
 	docker run $(DOCKER_TTY) --volume=/var/run/docker.sock:/var/run/docker.sock \
-		--name=c2cwsgiutils_acceptance_$$PPID $(DOCKER_BASE)_acceptance \
+		--name=c2cwsgiutils_acceptance_$$PPID --env=WAITRESS $(DOCKER_BASE)_acceptance \
 	    py.test -vv --color=yes --junitxml /reports/acceptance.xml --html /reports/acceptance.html \
 			--self-contained-html $(PYTEST_OPTS) tests
 	# Copy the reports locally
@@ -75,7 +75,7 @@ pull:
 
 .PHONY: run
 run: build_test_app
-	TEST_IP=172.17.0.1 docker-compose --file=acceptance_tests/tests/docker-compose.yaml up
+	cd acceptance_tests/tests/; TEST_IP=172.17.0.1 docker-compose up
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp

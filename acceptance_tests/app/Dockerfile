@@ -5,10 +5,6 @@ WORKDIR /app
 
 EXPOSE 8080
 
-ENV SQLALCHEMY_URL=postgresql://www-data:www-data@db:5432/test \
-    SQLALCHEMY_URL_SLAVE=postgresql://www-data:www-data@db_slave:5432/test \
-    GUNICORN_PARAMS="-b :8080 --worker-class gthread --threads 10 --workers 5"
-
 COPY Pipfile Pipfile.lock /tmp/
 # hadolint ignore=DL3003
 RUN \
@@ -27,6 +23,22 @@ RUN ./models_graph.py > models.dot && \
     c2cwsgiutils-genversion $GIT_HASH && \
     prospector && \
     python3 -m compileall -q .
+
+ENV \
+    DEVELOPMENT=0 \
+    SQLALCHEMY_POOL_RECYCLE=30 \
+    SQLALCHEMY_POOL_SIZE=5 \
+    SQLALCHEMY_MAX_OVERFLOW=25 \
+    SQLALCHEMY_SLAVE_POOL_RECYCLE=30 \
+    SQLALCHEMY_SLAVE_POOL_SIZE=5 \
+    SQLALCHEMY_SLAVE_MAX_OVERFLOW=25\
+    LOG_TYPE=console \
+    OTHER_LOG_LEVEL=WARNING \
+    GUNICORN_LOG_LEVEL=WARNING \
+    GUNICORN_ACCESS_LOG_LEVEL=INFO \
+    SQL_LOG_LEVEL=WARNING \
+    C2CWSGIUTILS_LOG_LEVEL=WARNING \
+    LOG_LEVEL=INFO
 
 # www-data
 USER 33

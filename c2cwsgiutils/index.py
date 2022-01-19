@@ -1,4 +1,5 @@
 import logging
+import warnings
 from typing import Any, Dict, List, Optional, Union, cast
 
 import jwt
@@ -496,6 +497,12 @@ def _github_logout(request: pyramid.request.Request) -> Dict[str, Any]:
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the index page, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the index page."""
     base_path = config_utils.get_base_path(config)
     if base_path != "":

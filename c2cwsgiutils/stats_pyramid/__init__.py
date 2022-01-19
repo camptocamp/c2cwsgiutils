@@ -1,4 +1,6 @@
 """Generate statsd metrics for pyramid and SQLAlchemy events."""
+import warnings
+
 import pyramid.config
 import pyramid.request
 
@@ -6,6 +8,12 @@ from c2cwsgiutils import stats
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the whole stats module, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """
     Initialize the whole stats module.
 

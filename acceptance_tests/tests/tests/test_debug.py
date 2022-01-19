@@ -1,5 +1,8 @@
 import json
+import os
 import time
+
+import pytest
 
 
 def test_stacks(app_connection):
@@ -105,6 +108,7 @@ def test_memory_maps(app_connection):
     assert len(memory) > 0
 
 
+@pytest.mark.skipif(os.environ.get("WAITRESS", "FALSE") == "TRUE", reason="Not working on waitress")
 def test_show_refs(app_connection):
     refs = app_connection.get(
         "c2c/debug/show_refs.dot",

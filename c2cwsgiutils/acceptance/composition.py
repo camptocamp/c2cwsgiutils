@@ -34,10 +34,12 @@ def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: int 
 class Composition:
     """The Docker composition."""
 
-    def __init__(
-        self, request: Request, project_name: str, composition: str, coverage_paths: Optional[str] = None
-    ) -> None:
-        self.docker_compose = ["docker-compose", "--file=" + composition, "--project-name=" + project_name]
+    def __init__(self, request: Request, composition: str, coverage_paths: Optional[str] = None) -> None:
+        self.cwd = os.path.dirname(composition)
+        filename = os.path.basename(composition)
+        self.docker_compose = ["docker-compose"]
+        if filename != "docker-compose.yaml":
+            self.docker_compose.append("--file=" + filename)
         self.coverage_paths = coverage_paths
         env = Composition._get_env()
         if os.environ.get("docker_start", "1") == "1":
@@ -49,6 +51,7 @@ class Composition:
         # Setup something that redirects the docker container logs to the test output
         log_watcher = subprocess.Popen(  # nosec, pylint: disable=consider-using-with
             self.docker_compose + ["logs", "--follow", "--no-color"],
+            cwd=self.cwd,
             env=env,
             stderr=subprocess.STDOUT,
         )
@@ -60,7 +63,11 @@ class Composition:
         return cast(
             str,
             subprocess.check_output(  # nosec
-                self.docker_compose + args, env=Composition._get_env(), stderr=subprocess.STDOUT, **kwargs
+                self.docker_compose + args,
+                cwd=self.cwd,
+                env=Composition._get_env(),
+                stderr=subprocess.STDOUT,
+                **kwargs,
             ).decode(),
         )
 

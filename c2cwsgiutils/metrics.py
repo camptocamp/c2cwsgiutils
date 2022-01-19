@@ -2,6 +2,7 @@
 
 import re
 import socket
+import warnings
 from os import listdir
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -97,6 +98,12 @@ class MemoryMapProvider(Provider):
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the metrics view, , for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the metrics view."""
     config.add_route("c2c_metrics", r"/metrics", request_method="GET")
     config.add_view(_view, route_name="c2c_metrics", http_cache=0)

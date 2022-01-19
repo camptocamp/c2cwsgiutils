@@ -74,6 +74,11 @@ setup(
             "c2c+ini=c2cwsgiutils.loader:Loader",
             "c2c+egg=c2cwsgiutils.loader:Loader",
         ],
+        "paste.filter_factory": [
+            "client_info=c2cwsgiutils.client_info:filter_factory",
+            "profiler=c2cwsgiutils.profiler:filter_factory",
+            "sentry=c2cwsgiutils.sentry:filter_factory",
+        ],
     },
     scripts=["scripts/c2cwsgiutils-run"],
     package_data={"c2cwsgiutils": ["py.typed"]},

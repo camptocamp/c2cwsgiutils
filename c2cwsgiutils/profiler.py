@@ -23,10 +23,12 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
                 filename=os.path.join(gettempdir(), "linesman-graph-sessions.db"),
             )
         except ModuleNotFoundError:
-            LOG.error("'linesman' not installer. Continuing without profiler.")
-            return application
+            LOG.error("'linesman' not installed. Continuing without profiler.")
         except Exception:  # pragma: no cover  # pylint: disable=broad-except
             LOG.error("Failed enabling the profiler. Continuing without it.", exc_info=True)
-            return application
-    else:  # pragma: no cover
-        return application
+    return application
+
+
+def filter_factory(*args: Any, **kwargs: Any) -> Callable[..., Any]:
+    """Get the filter."""
+    return filter_wsgi_app

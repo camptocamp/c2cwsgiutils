@@ -44,7 +44,7 @@ RUN (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear --dev)
 
 FROM base-all AS base
 
-CMD ["c2cwsgiutils-run"]
+CMD ["/usr/local/bin/gunicorn", "--paste=/app/production.ini"]
 
 COPY scripts/install-gdal /usr/bin/
 COPY scripts/c2cwsgiutils-run /opt/c2cwsgiutils/scripts/
@@ -59,7 +59,6 @@ RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps 
 
 ENV C2C_BASE_PATH=/c2c \
     C2C_SECRET=c2crulez \
-    C2CWSGIUTILS_CONFIG=/app/production.ini \
     C2C_REDIS_URL= \
     C2C_REDIS_SENTINELS= \
     C2C_REDIS_SERVICENAME=mymaster \

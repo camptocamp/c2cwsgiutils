@@ -3,6 +3,7 @@
 import argparse
 import logging
 import pprint
+import warnings
 
 import c2cwsgiutils.setup_process
 from c2cwsgiutils.acceptance.print import PrintConnection
@@ -21,7 +22,7 @@ def _parse_args() -> argparse.Namespace:
 
 def deprecated() -> None:
     """Run the command and print a deprecated notice."""
-    LOG.warning("c2cwsgiutils_test_print.py is deprecated; use c2cwsgiutils-test-print instead")
+    warnings.warn("c2cwsgiutils_test_print.py is deprecated; use c2cwsgiutils-test-print instead")
     return main()
 
 

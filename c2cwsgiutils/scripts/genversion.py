@@ -5,6 +5,7 @@ import os
 import re
 import subprocess  # nosec
 import sys
+import warnings
 from typing import Dict, Optional, Tuple, cast
 
 SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
@@ -45,7 +46,7 @@ def _get_packages_version() -> Dict[str, str]:
 
 def deprecated() -> None:
     """Run the command and print a deprecated notice."""
-    LOG.warning("c2cwsgiutils_genversion.py is deprecated; use c2cwsgiutils-genversion instead")
+    warnings.warn("c2cwsgiutils_genversion.py is deprecated; use c2cwsgiutils-genversion instead")
     return main()
 
 

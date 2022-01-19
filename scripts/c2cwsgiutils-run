@@ -1,8 +1,6 @@
 #!/bin/bash
-if [ -z "$GUNICORN_PARAMS" ]
-then
-    GUNICORN_PARAMS="-b :8080 --worker-class gthread --threads 10 --workers 5 --max-requests 1000 --max-requests-jitter 50"
-fi
+
+echo "Not for production usage!"
 
 _term() {
     echo "Caught SIGTERM signal!"
@@ -23,7 +21,7 @@ trap _int SIGINT
 
 while true
 do
-    /usr/local/bin/gunicorn $GUNICORN_PARAMS c2cwsgiutils.wsgi_app:application &
+    /usr/local/bin/gunicorn --paste=/app/production.ini &
     child=$!
     wait "$child"
     exit_status=$?

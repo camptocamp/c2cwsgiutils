@@ -1,11 +1,5 @@
 # Camptocamp WSGI utilities
 
-| branch                 | CI                                                                                                        | static analysis                                                                                                                                                                                                                                           |
-| ---------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| master                 | ![Master Build Badge](https://github.com/camptocamp/c2cwsgiutils/workflows/Build/badge.svg?branch=master) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c47d09a059ca410cbc325f94d7993518)](https://www.codacy.com/app/camptocamp/c2cwsgiutils?utm_source=github.com&utm_medium=referral&utm_content=camptocamp/c2cwsgiutils&utm_campaign=Badge_Grade) |
-| release_4              | ![Rebuild of release_4 Badge](https://github.com/camptocamp/c2cwsgiutils/workflows/Rebuild/badge.svg)     |
-| release_3 (deprecated) | ![Rebuild of release_3 Badge](https://github.com/camptocamp/c2cwsgiutils/workflows/Rebuild/badge.svg)     |
-
 This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
 applications:
 
@@ -31,21 +25,95 @@ To see how to test such an application, look at [acceptance_tests/tests](accepta
 
 ## Install
 
+### Custom Docker image (from PYPI library)
+
+Here we didn't do a minimal install of c2cwsgiutils, but be put in place everything needed to
+monitor the application in integration and production environment.
+
 The library is available in PYPI:
 [https://pypi.python.org/pypi/c2cwsgiutils](https://pypi.python.org/pypi/c2cwsgiutils)
 
-With pip:
+Copy and adapt these template configuration file into your project:
+
+- [production.ini](acceptance_tests/app/production.ini);
+- [development.ini](acceptance_tests/app/development.ini);
+- [gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py).
+  Then replace `c2cwsgiutils_app` by your package name.
+
+You should install `c2cwsgiutils` with the tool you use to manage your pip dependencies.
+
+In the `Dockerfile` you should add the following lines:
 
 ```
-pip install c2cwsgiutils
+# Generate the version file.
+RUN c2cwsgiutils-genversion $(git rev-parse HEAD)
+
+CMD ["gunicorn", "--paste=/app/production.ini"]
+
+# Default values for the environment variables
+ENV \
+    DEVELOPMENT=0 \
+    SQLALCHEMY_POOL_RECYCLE=30 \
+    SQLALCHEMY_POOL_SIZE=5 \
+    SQLALCHEMY_MAX_OVERFLOW=25 \
+    SQLALCHEMY_SLAVE_POOL_RECYCLE=30 \
+    SQLALCHEMY_SLAVE_POOL_SIZE=5 \
+    SQLALCHEMY_SLAVE_MAX_OVERFLOW=25\
+    LOG_TYPE=console \
+    OTHER_LOG_LEVEL=WARNING \
+    GUNICORN_LOG_LEVEL=WARNING \
+    GUNICORN_ACCESS_LOG_LEVEL=INFO \
+    SQL_LOG_LEVEL=WARNING \
+    C2CWSGIUTILS_LOG_LEVEL=WARNING \
+    LOG_LEVEL=INFO
 ```
 
-Or (preferred) as a base Docker image:
-[camptocamp/c2cwsgiutils:release_4](https://hub.docker.com/r/camptocamp/c2cwsgiutils/) or
-[ghcr.io/camptocamp/c2cwsgiutils:release_4](https://github.com/orgs/camptocamp/packages/container/package/c2cwsgiutils)
+Add in your `main` function.
+
+```python
+config.include("c2cwsgiutils.pyramid")
+db.setup_session(config, "sqlalchemy", "sqlalchemy_slave")
+```
+
+The related environment variables:
+
+- `DEVELOPMENT`: set to `1` to enable the development mode, default is `0`.
+- `SQLALCHEMY_URL`: SQL alchemy URL, like `postgresql://user:password@host:port/dbname`.
+- `SQLALCHEMY_POOL_RECYCLE`: The SQL alchemy pool recycle, default is `30`.
+- `SQLALCHEMY_POOL_SIZE`: The SQL alchemy pool size, default is `5`.
+- `SQLALCHEMY_MAX_OVERFLOW`: SQL alchemy max overflow, default is `25`.
+- `SQLALCHEMY_SLAVE_URL`: The SQL alchemy slave (read only) URL, like `postgresql://user:password@host:port/dbname`.
+- `SQLALCHEMY_SLAVE_POOL_RECYCLE`: The SQL alchemy slave pool recycle, default is `30`.
+- `SQLALCHEMY_SLAVE_POOL_SIZE`: The SQL alchemy slave pool size, default is `5`.
+- `SQLALCHEMY_SLAVE_MAX_OVERFLOW`: The SQL alchemy slave max overflow, default is `25`.
+- `GUNICORN_WORKERS`: The number of workers, default is `2`.
+- `GUNICORN_THREADS`: The number of threads per worker, default is `10`.
+- `LOG_TYPE`: The types of logs, default is `console`, should be `json` on kubernetes to work well with
+  [elk](https://www.elastic.co/fr/what-is/elk-stack).
+- `LOG_LEVEL`: The application log level, default is `INFO`.
+- `SQL_LOG_LEVEL`: The SQL query log level, `WARNING`: no logs, `INFO`: logs the queries,
+  `DEBUG` also logs the results, default is `WARNING`.
+- `GUNICORN_ERROR_LOG_LEVEL`: The Gunicorn error log level, default is `WARNING`.
+- `GUNICORN_ACCESS_LOG_LEVEL`: The Gunicorn access log level, the logs have the level `INFO`,
+  default is `WARNING`.
+- `C2CWSGIUTILS_LOG_LEVEL`: The c2c WSGI utils log level, default is `WARNING`.
+- `OTHER_LOG_LEVEL`: The log level for all the other logger, default is `WARNING`.
+
+Those environment variables can be useful for investigation on production environments.
+
+### Docker (deprecated)
+
+Or (deprecated) as a base Docker image:
+[camptocamp/c2cwsgiutils:release_5](https://hub.docker.com/r/camptocamp/c2cwsgiutils/) or
+[ghcr.io/camptocamp/c2cwsgiutils:release_5](https://github.com/orgs/camptocamp/packages/container/package/c2cwsgiutils)
 
 If you need an image with a smaller foot print, use the tags prefixed with `-light`. Those are without
 GDAL and without the build tools.
+
+We deprecate the Docker image because:
+
+- The project wants to choose the base image.
+- The project pin different versions of the dependencies.
 
 ## General config
 
@@ -113,10 +181,7 @@ define the GitHub auth URL (default is `https://api.github.com/repo`)
 
 ## Pyramid
 
-A command line (`c2cwsgiutils-run`) is provided to start an HTTP server (Gunicorn) with a WSGI application.
-By default, it will load the application configured in `/app/production.ini`, but you can change that with
-the `C2CWSGIUTILS_CONFIG` environment variable. All the environment variables are usable in the configuration
-file using stuff like `%(ENV_NAME)s`.
+All the environment variables are usable in the configuration file using stuff like `%(ENV_NAME)s`.
 
 To enable most of the features of c2cwsgiutils, you need to add this line to your WSGI main:
 
@@ -147,7 +212,10 @@ Two new logging backends are provided:
 - `c2cwsgiutils.pyramid_logging.JsonLogHandler`: to output (on stdout or stderr) JSON formatted logs.
 
 Look at the logging configuration part of
-[acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for a usage example.
+[acceptance_tests/app/development.ini](acceptance_tests/app/development.ini) for paste and commands line.
+
+Look at the logging configuration part of
+[acceptance_tests/app/gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py) for gunicorn.
 
 You can enable a view to configure the logging level on a live system using the `C2C_LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on
@@ -240,15 +308,28 @@ Don't enable that on a busy production system. It will kill your performances.
 
 ## Profiler
 
-If you set the `C2C_PROFILER_PATH` environment variable, you'll enable a profiler that will be available at
-the given path. Due to limitations in the library used, the path must be at the root of the application (it
-cannot contain slashes). You can also define the `C2C_PROFILER_MODULES`, a space separated list of Python
+### Setup
+
+You should add the filter `egg:c2cwsgiutils#profiler` to your application in your `development.ini` file.
+
+```ini
+[pipeline:main]
+pipeline = egg:c2cwsgiutils#profiler ... app
+```
+
+If you want to use this feature, you must have the `linesman` package installed.
+
+### Configuration
+
+`C2C_PROFILER_PATH`: the path to the profiler. Defaults is `/c2c_profile`.
+Due to limitations in the library used, the path must be at the root of the application (it
+cannot contain slashes).
+
+You can also define the `C2C_PROFILER_MODULES`, a space separated list of Python
 packages to have a pie chart of how much time is spent in the given packages.
 
 The profiler, even if configured, is actually disabled when the application starts. To enable it you must
 visit its page.
-
-If you want to use this feature, you must have the `linesman` package installed.
 
 ## DB sessions
 
@@ -256,18 +337,18 @@ The `c2cwsgiutils.db.setup_session` allows you to setup a DB session that has tw
 master/slave PostgresQL setup. The slave engine (read only) will be used automatically for `GET` and `OPTIONS`
 requests and the master engine (read write) will be used for the other queries.
 
-To use that, your production.ini must look like that:
+To use that, your `production.ini` must look like that:
 
 ```ini
 sqlalchemy.url = %(SQLALCHEMY_URL)s
-sqlalchemy.pool_recycle = 30
-sqlalchemy.pool_size = 5
-sqlalchemy.max_overflow = 25
+sqlalchemy.pool_recycle = %(SQLALCHEMY_POOL_RECYCLE)s
+sqlalchemy.pool_size = %(SQLALCHEMY_POOL_SIZE)s
+sqlalchemy.max_overflow = %(SQLALCHEMY_MAX_OVERFLOW)s
 
-sqlalchemy_slave.url = %(SQLALCHEMY_URL_SLAVE)s
-sqlalchemy_slave.pool_recycle = 30
-sqlalchemy_slave.pool_size = 5
-sqlalchemy_slave.max_overflow = 25
+sqlalchemy_slave.url = %(SQLALCHEMY_SLAVE_URL)s
+sqlalchemy_slave.pool_recycle = %(SQLALCHEMY_SLAVE_POOL_RECYCLE)s
+sqlalchemy_slave.pool_size = %(SQLALCHEMY_SLAVE_POOL_SIZE)s
+sqlalchemy_slave.max_overflow = %(SQLALCHEMY_SLAVE_MAX_OVERFLOW)s
 ```
 
 And your code that initializes the DB connection must look like that:
@@ -397,16 +478,18 @@ have dumps of a few things:
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
 to have a specially tweaked `docker-compose.yaml`:
 
-```yml
+```yaml
 services:
   api:
-    environment:
-      GUNICORN_PARAMS: '-b :80 --threads 10 --timeout 60 --reload'
+    command:
+      - pserve
+      - --reload
+      - c2c://development.ini
   volumes:
     - ./api/somepath:/app/somepath:ro
 ```
 
-The GUNICORN_PARAMS has the `--reload` parameter and your local python code is
+The `pserve` has the `--reload` parameter and your local python code is
 mounted (read only) into the container.
 
 ### Broadcast

@@ -1,6 +1,7 @@
 import contextlib
 import logging
 import os
+import warnings
 from typing import Any, Callable, Generator, MutableMapping, Optional  # noqa  # pylint: disable=unused-import
 
 import pyramid.config
@@ -28,6 +29,12 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+    """Initialize the Sentry intergation, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the Sentry intergation."""
     global _client_setup
     sentry_url = config_utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
@@ -121,3 +128,8 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
             return application
     else:
         return application
+
+
+def filter_factory(*args: Any, **kwargs: Any) -> Callable[..., Any]:
+    """Get the filter."""
+    return filter_wsgi_app

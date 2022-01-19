@@ -1,4 +1,7 @@
 import json
+import os
+
+import pytest
 
 EXPECTED = {
     "client_addr": "1.1.1.1",
@@ -15,6 +18,7 @@ EXPECTED = {
 }
 
 
+@pytest.mark.skipif(os.environ.get("WAITRESS", "FALSE") == "TRUE", reason="Not working on waitress")
 def test_forwarded_openshift(app_connection):
     response = app_connection.get_json(
         "c2c/debug/headers",
@@ -30,6 +34,7 @@ def test_forwarded_openshift(app_connection):
     assert response["client_info"] == EXPECTED
 
 
+@pytest.mark.skipif(os.environ.get("WAITRESS", "FALSE") == "TRUE", reason="Not working on waitress")
 def test_forwarded_haproxy(app_connection):
     response = app_connection.get_json(
         "c2c/debug/headers",

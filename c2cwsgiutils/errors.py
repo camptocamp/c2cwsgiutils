@@ -2,6 +2,7 @@
 import logging
 import os
 import traceback
+import warnings
 from typing import Any, Callable
 
 import pyramid.request
@@ -150,6 +151,12 @@ def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> 
 
 
 def init(config: pyramid.config.Configurator) -> None:
+    """Initialize the error views, for backward compatibility."""
+    warnings.warn("init function is deprecated; use includeme instead")
+    includeme(config)
+
+
+def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the error views."""
     if (
         config_utils.env_or_config(

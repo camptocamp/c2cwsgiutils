@@ -1,3 +1,28 @@
+# Release 5
+
+- Remove the script `c2cwsgiutils-run`.
+- The Pyramid initializing module functions are renamed from `init` to `includeme`.
+- Remove the environment variable `GUNICORN_PARAMS` we will use the standard one `GUNICORN_CMD_ARGS`.
+- Remove the `C2CWSGIUTILS_CONFIG` environment variable, we should use the standard way to specify the
+  config file (with the argument `--parse` of gunicorn, or the `config_uri` argument or `pserve` prefixed
+  by `c2c://`).
+- Filters like `sentry`, `profiler`, `client_info` will not be added automatically anymore, you should add
+  the following lines in your project `development.ini`:
+
+  ```ini
+  [pipeline:main]
+  pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#sentry app
+  ```
+
+  and in your `production.ini`:
+
+  ```ini
+  [pipeline:main]
+  pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#profiler egg:c2cwsgiutils#sentry app
+  ```
+
+- The Usage of the Docker image is deprecated, read the start of the (Readme)[./README.md] to update your setup.
+
 # Release 4
 
 - Rename the scripts:

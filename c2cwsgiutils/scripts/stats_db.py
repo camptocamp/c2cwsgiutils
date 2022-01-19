@@ -35,10 +35,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--prometheus_instance", type=str, help="Instance name for the Prometheus Pushgateway"
     )
-    parser.add_argument("--verbosity", type=str, default="INFO")
+    parser.add_argument("--verbosity", type=str)
 
     args = parser.parse_args()
-    logging.root.setLevel(args.verbosity)
+    if args.verbosity:
+        logging.root.setLevel(args.verbosity)
     return args
 
 
@@ -218,7 +219,7 @@ def _do_dtats_db() -> None:
 def main() -> None:
     """Run the command."""
     c2cwsgiutils.setup_process.init()
-    sentry.init()
+    sentry.includeme()
 
     success = False
     for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", 10))):

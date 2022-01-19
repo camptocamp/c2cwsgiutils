@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import sys
+import warnings
 
 import coverage
 
@@ -11,7 +12,7 @@ LOG = logging.getLogger(__name__)
 
 def deprecated() -> None:
     """Run the command and print a deprecated notice."""
-    LOG.warning("c2cwsgiutils_coverage_report.py is deprecated; use c2cwsgiutils-coverage-report instead")
+    warnings.warn("c2cwsgiutils_coverage_report.py is deprecated; use c2cwsgiutils-coverage-report instead")
     return main()
 
 

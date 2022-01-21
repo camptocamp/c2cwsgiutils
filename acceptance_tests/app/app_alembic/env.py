@@ -63,7 +63,7 @@ def run_migrations_online():
             context.run_migrations()
 
 
-c2cwsgiutils.setup_process.init()
+c2cwsgiutils.setup_process.bootstrap_application()
 if context.is_offline_mode():
     run_migrations_offline()
 else:

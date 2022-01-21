@@ -6,3 +6,18 @@ services:
       - pserve
       - --reload
       - c2c:///app/development.ini
+    # volumes:
+    #   - ../app/c2cwsgiutils_app/:/app/c2cwsgiutils_app/
+    #   - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/
+
+  # alembic_master:
+  #   volumes:
+  #     - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/
+
+  # alembic_slave:
+  #   volumes:
+  #     - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/
+
+  # run_test:
+  #   volumes:
+  #     - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/

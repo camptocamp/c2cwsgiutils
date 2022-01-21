@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import datetime
 import logging
 import os
@@ -106,7 +107,10 @@ def deprecated() -> None:
 def main() -> None:
     """Run the command."""
     try:
-        c2cwsgiutils.setup_process.init()
+        argparser = argparse.ArgumentParser(description="Check logs on Elasticsearch")
+        c2cwsgiutils.setup_process.fill_arguments(argparser)
+        args = argparser.parse_args()
+        c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
 
         with stats.outcome_timer_context(["get_max_timestamp"]):
             max_ts = _max_timestamp()

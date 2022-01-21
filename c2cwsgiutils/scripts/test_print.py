@@ -13,8 +13,9 @@ LOG = logging.getLogger(__name__)
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    c2cwsgiutils.setup_process.fill_arguments(parser)
     parser.add_argument("--url", required=True, help="The base URL of the print, including the '/print'")
-    parser.add_argument("--app", default=None, help="The app name")
+    parser.add_argument("--app", default=None, help="The print application name")
     parser.add_argument("--referrer", default=None, help="The referrer (defaults to --url)")
     parser.add_argument("--verbose", default=False, action="store_true", help="Enable debug output")
     return parser.parse_args()
@@ -28,9 +29,8 @@ def deprecated() -> None:
 
 def main() -> None:
     """Run the command."""
-    c2cwsgiutils.setup_process.init()
-
     args = _parse_args()
+    c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
     if not args.verbose:
         logging.root.setLevel(logging.INFO)
     print_ = PrintConnection(base_url=args.url, origin=args.referer if args.referer else args.url)

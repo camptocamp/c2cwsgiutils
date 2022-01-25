@@ -14,7 +14,7 @@ import transaction
 from zope.sqlalchemy import register
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import sentry, stats
+from c2cwsgiutils import stats
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 
 LOG = logging.getLogger(__name__)
@@ -22,6 +22,7 @@ LOG = logging.getLogger(__name__)
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    c2cwsgiutils.setup_process.fill_arguments(parser)
     parser.add_argument("--db", type=str, required=True, help="DB connection string")
     parser.add_argument(
         "--schema", type=str, action="append", required=True, default=["public"], help="schema to dump"
@@ -35,12 +36,8 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--prometheus_instance", type=str, help="Instance name for the Prometheus Pushgateway"
     )
-    parser.add_argument("--verbosity", type=str)
 
-    args = parser.parse_args()
-    if args.verbosity:
-        logging.root.setLevel(args.verbosity)
-    return args
+    return parser.parse_args()
 
 
 class Reporter:
@@ -175,8 +172,7 @@ def do_extra(session: sqlalchemy.orm.scoped_session, extra: str, reporter: Repor
         reporter.do_report(str(metric).split("."), count, kind="count", tags=dict(metric=metric))
 
 
-def _do_dtats_db() -> None:
-    args = _parse_args()
+def _do_dtats_db(args: argparse.Namespace) -> None:
     reporter = Reporter(args)
     try:
         engine = sqlalchemy.create_engine(args.db)
@@ -218,13 +214,12 @@ def _do_dtats_db() -> None:
 
 def main() -> None:
     """Run the command."""
-    c2cwsgiutils.setup_process.init()
-    sentry.includeme()
-
     success = False
+    args = _parse_args()
+    c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
     for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", 10))):
         try:
-            _do_dtats_db()
+            _do_dtats_db(args)
             success = True
             continue
         except:  # pylint: disable=bare-except

@@ -19,7 +19,6 @@ from typing import IO, TYPE_CHECKING, Any, Mapping, MutableMapping
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-
 LOG = logging.getLogger(__name__)
 
 

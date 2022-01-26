@@ -3,6 +3,7 @@ import os
 import subprocess  # nosec
 import sys
 import time
+import warnings
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 import netifaces
@@ -35,6 +36,7 @@ class Composition:
     """The Docker composition."""
 
     def __init__(self, request: Request, composition: str, coverage_paths: Optional[str] = None) -> None:
+        warnings.warn("The c2cwsgiutils.acceptance.composition should be used only if it's relay needed.")
         self.cwd = os.path.dirname(composition)
         filename = os.path.basename(composition)
         self.docker_compose = ["docker-compose"]
@@ -97,14 +99,14 @@ class Composition:
     def restart(self, container: str) -> None:
         self.dc_try(["restart", container])
 
-    def run(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> None:
-        self.dc(
+    def run(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> str:
+        return self.dc(
             ["run", "--rm", container] + list(command),
             **kwargs,
         )
 
-    def exec(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> None:
-        self.dc(["exec", "-T", container] + list(command), **kwargs)
+    def exec(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> str:
+        return self.dc(["exec", "-T", container] + list(command), **kwargs)
 
     @staticmethod
     def _get_env() -> Mapping[str, str]:

@@ -72,7 +72,14 @@ Add in your `main` function.
 
 ```python
 config.include("c2cwsgiutils.pyramid")
-db.setup_session(config, "sqlalchemy", "sqlalchemy_slave")
+dbsession = c2cwsgiutils.db.init(config, "sqlalchemy", "sqlalchemy_slave")
+
+config.scan(...)
+
+# Initialize the health checks
+health_check = c2cwsgiutils.health_check.HealthCheck(config)
+health_check.add_db_session_check(dbsession)
+health_check.add_alembic_check(dbsession, "/app/alembic.ini", 1)
 ```
 
 The related environment variables:
@@ -333,7 +340,7 @@ visit its page.
 
 ## DB sessions
 
-The `c2cwsgiutils.db.setup_session` allows you to setup a DB session that has two engines for accessing a
+The `c2cwsgiutils.db.init` allows you to setup a DB session that has two engines for accessing a
 master/slave PostgresQL setup. The slave engine (read only) will be used automatically for `GET` and `OPTIONS`
 requests and the master engine (read write) will be used for the other queries.
 
@@ -354,10 +361,10 @@ sqlalchemy_slave.max_overflow = %(SQLALCHEMY_SLAVE_MAX_OVERFLOW)s
 And your code that initializes the DB connection must look like that:
 
 ```python
-from c2cwsgiutils.db import setup_session
-def init(config):
-    global DBSession
-    DBSession = setup_session(config, 'sqlalchemy', 'sqlalchemy_slave', force_slave=[
+import c2cwsgiutils.db
+
+def main(config):
+    c2cwsgiutils.db.init(config, 'sqlalchemy', 'sqlalchemy_slave', force_slave=[
         "POST /api/hello"
     ])[0]
 ```
@@ -455,6 +462,49 @@ class CustomProvider(Provider):
 
 add_provider(MemoryMapProvider('rss'))
 add_provider(CustomProvider())
+```
+
+## Custom scripts
+
+To have the application initialized in a script you should use the
+`c2cwsgiutils.setup_process.bootstrap_application_from_options` function.
+
+Example of `main` function:
+
+```python
+def main() -> None:
+    parser = argparse.ArgumentParser(description="My scrypt.")
+    # Add your argument here
+    c2cwsgiutils.setup_process.fill_arguments(parser)
+    args = parser.parse_args()
+    env = c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
+    settings = env["registry"].settings
+
+    # Add your code here
+```
+
+If you need an access to the database you should add:
+
+```python
+    engine = c2cwsgiutils.db.get_engine(settings)
+    session_factory = c2cwsgiutils.db.get_session_factory(engine)
+    with transaction.manager:
+        # Add your code here
+```
+
+If you need the database connection without the application context, you can replace:
+
+```python
+    env = c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
+    settings = env["registry"].settings
+```
+
+by:
+
+```python
+    loader = pyramid.scripts.common.get_config_loader(args.config_uri)
+    loader.setup_logging(parse_vars(args.config_vars) if args.config_vars else None)
+    settings = loader.get_settings()
 ```
 
 ## Debugging

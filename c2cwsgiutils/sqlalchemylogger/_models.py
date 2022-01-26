@@ -2,13 +2,9 @@ from typing import Any, Dict, Union
 
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql import func
 from sqlalchemy.types import DateTime, Integer, String
-from zope.sqlalchemy import register
 
-DBSession = scoped_session(sessionmaker())
-register(DBSession)
 Base = declarative_base()
 
 

@@ -37,8 +37,7 @@ class SQLAlchemyHandler(logging.Handler):
             tableargs=sqlalchemy_url.get("tableargs", None),  # type: ignore
         )
         Base.metadata.bind = self.engine
-        DBSession = sessionmaker(bind=self.engine)  # noqa
-        self.session = DBSession()
+        self.session = sessionmaker(bind=self.engine)()  # noqa
         # initialize log queue
         self.log_queue: Any = queue.Queue()
         # initialize a thread to process the logs Asynchronously

@@ -30,11 +30,20 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--extra", type=str, action="append", help="A SQL query that returns a metric name and a value"
     )
-    parser.add_argument("--statsd_address", type=str, help="address:port for the statsd daemon")
-    parser.add_argument("--statsd_prefix", type=str, default="c2c", help="prefix for the statsd metrics")
-    parser.add_argument("--prometheus_url", type=str, help="Base URL for the Prometheus Pushgateway")
     parser.add_argument(
-        "--prometheus_instance", type=str, help="Instance name for the Prometheus Pushgateway"
+        "--statsd-address", "--statsd_address", type=str, help="address:port for the statsd daemon"
+    )
+    parser.add_argument(
+        "--statsd-prefix", "--statsd_prefix", type=str, default="c2c", help="prefix for the statsd metrics"
+    )
+    parser.add_argument(
+        "--prometheus-url", "--prometheus_url", type=str, help="Base URL for the Prometheus Pushgateway"
+    )
+    parser.add_argument(
+        "--prometheus-instance",
+        "--prometheus_instance",
+        type=str,
+        help="Instance name for the Prometheus Pushgateway",
     )
 
     return parser.parse_args()

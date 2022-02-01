@@ -3,7 +3,7 @@ from pyramid.config import Configurator
 from pyramid.httpexceptions import HTTPInternalServerError
 
 import c2cwsgiutils.pyramid
-from c2cwsgiutils import broadcast
+from c2cwsgiutils import broadcast, db
 from c2cwsgiutils.health_check import HealthCheck, JsonCheckException
 
 
@@ -34,14 +34,14 @@ def main(_, **settings):
     )
 
     config.include(c2cwsgiutils.pyramid.includeme)
-    models.init(config)
+    dbsession = db.init(config, "sqlalchemy", "sqlalchemy_slave", force_slave=["POST /api/hello"])
     config.scan("c2cwsgiutils_app.services")
     health_check = HealthCheck(config)
-    health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
+    health_check.add_db_session_check(dbsession, at_least_one_model=models.Hello)
     health_check.add_url_check("http://localhost:8080/api/hello")
     health_check.add_url_check(name="fun_url", url=lambda _request: "http://localhost:8080/api/hello")
     health_check.add_custom_check("fail", _failure, 2)
     health_check.add_custom_check("fail_json", _failure_json, 2)
-    health_check.add_alembic_check(models.DBSession, "/app/alembic.ini", 1)
+    health_check.add_alembic_check(dbsession, "/app/alembic.ini", 1)
 
     return config.make_wsgi_app()

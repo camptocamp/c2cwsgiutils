@@ -22,8 +22,8 @@ setup(
     zip_safe=False,
     install_requires=requires,
     tests_require=requires,
-    entry_points="""\
-      [paste.app_factory]
-      main = c2cwsgiutils_app:main
-      """,
+    entry_points={
+        "console_scripts": ["get-hello = c2cwsgiutils_app.get_hello:main"],
+        "paste.app_factory": ["main = c2cwsgiutils_app:main"],
+    },
 )

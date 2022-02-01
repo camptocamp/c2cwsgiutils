@@ -14,7 +14,8 @@ import time
 import traceback
 from collections import Counter
 from enum import Enum
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
+from types import TracebackType
+from typing import Any, Callable, Dict, List, Literal, Mapping, Optional, Tuple, Type, Union, cast
 
 import pyramid.config
 import pyramid.request
@@ -23,6 +24,7 @@ import sqlalchemy.engine
 import sqlalchemy.orm
 from pyramid.httpexceptions import HTTPNotFound
 
+import c2cwsgiutils.db
 from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
 
 LOG = logging.getLogger(__name__)
@@ -52,16 +54,94 @@ class JsonCheckException(Exception):
         return self.json
 
 
-def _get_bindings(session: Any, engine_type: EngineType) -> List[sqlalchemy.engine.Engine]:
-    if session.c2c_rw_bind == session.c2c_ro_bind:
+class _Binding:
+    def name(self) -> str:
+        raise NotImplementedError()
+
+    def __enter__(self) -> sqlalchemy.orm.Session:
+        raise NotImplementedError()
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        exc_traceback: Optional[TracebackType],
+    ) -> Literal[False]:
+        return False
+
+
+class _NewBinding(_Binding):
+    def __init__(self, session: c2cwsgiutils.db.SessionFactory, readwrite: bool):
+        self.session = session
+        self.readwrite = readwrite
+
+    def name(self) -> str:
+        return self.session.engine_name(self.readwrite)
+
+    def __enter__(self) -> sqlalchemy.orm.Session:
+        return self.session(None, self.readwrite)
+
+
+class _OldBinding(_Binding):
+    def __init__(self, session: sqlalchemy.orm.scoping.scoped_session, engine: sqlalchemy.engine.Engine):
+        self.session = session
+        self.engine = engine
+        self.prev_bind = None
+
+    def name(self) -> str:
+        return cast(str, self.engine.c2c_name)
+
+    def __enter__(self) -> sqlalchemy.orm.Session:
+        self.prev_bind = self.session.bind
+        self.session.bind = self.engine
+        return self.session
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        exc_traceback: Optional[TracebackType],
+    ) -> Literal[False]:
+        self.session.bind = self.prev_bind
+        return False
+
+
+def _get_binding_class(
+    session: Union[sqlalchemy.orm.scoping.scoped_session, c2cwsgiutils.db.SessionFactory],
+    ro_engin: sqlalchemy.engine.Engine,
+    rw_engin: sqlalchemy.engine.Engine,
+    readwrite: bool,
+) -> _Binding:
+    if isinstance(session, c2cwsgiutils.db.SessionFactory):
+        return _NewBinding(session, readwrite)
+    else:
+        return _OldBinding(session, ro_engin if readwrite else rw_engin)
+
+
+def _get_bindings(
+    session: Union[sqlalchemy.orm.scoping.scoped_session, c2cwsgiutils.db.SessionFactory],
+    engine_type: EngineType,
+) -> List[sqlalchemy.engine.Engine]:
+    if isinstance(session, c2cwsgiutils.db.SessionFactory):
+        ro_engin = session.ro_engine
+        rw_engin = session.rw_engine
+    else:
+        ro_engin = session.c2c_ro_bind
+        rw_engin = session.c2c_rw_bind
+
+    if rw_engin == ro_engin:
         engine_type = EngineType.WRITE_ONLY
 
     if engine_type == EngineType.READ_AND_WRITE:
-        return [session.c2c_rw_bind, session.c2c_ro_bind]
+        return [
+            _get_binding_class(session, ro_engin, rw_engin, False),
+            _get_binding_class(session, ro_engin, rw_engin, True),
+        ]
     if engine_type == EngineType.READ_ONLY:
-        return [session.c2c_ro_bind]
+        return [_get_binding_class(session, ro_engin, ro_engin, False)]
     if engine_type == EngineType.WRITE_ONLY:
-        return [session.c2c_rw_bind]
+        return [_get_binding_class(session, rw_engin, rw_engin, True)]
+
     raise NotImplementedError(f"Unhandled engine type {engine_type}")
 
 
@@ -110,7 +190,7 @@ class HealthCheck:
 
     def add_db_session_check(
         self,
-        session: sqlalchemy.orm.scoping.scoped_session,
+        session: Union[sqlalchemy.orm.scoping.scoped_session, c2cwsgiutils.db.SessionFactory],
         query_cb: Optional[Callable[[sqlalchemy.orm.scoping.scoped_session], Any]] = None,
         at_least_one_model: Optional[object] = None,
         level: int = 1,
@@ -121,22 +201,24 @@ class HealthCheck:
 
         Arguments:
 
-            session: a DB session created by c2cwsgiutils.db.setup_session()
+            session: a DB session created by c2cwsgiutils.db.init()
             query_cb: a callable that take a session as parameter and check it works
             at_least_one_model: a model that must have at least one entry in the DB
             level: the level of the health check
             engine_type: whether to check only the RW, RO or both engines
+            rw_engin: the RW engine to use (if None, use the session one)
+            ro_engin: the RO engine to use (if None, use the session one)
         """
         if query_cb is None:
             query_cb = self._at_least_one(at_least_one_model)
         for binding in _get_bindings(session, engine_type):
-            name, cb = self._create_db_engine_check(session, binding, query_cb)
+            name, cb = self._create_db_engine_check(binding, query_cb)
             assert name
             self._checks.append((name, cb, level))
 
     def add_alembic_check(
         self,
-        session: sqlalchemy.orm.scoping.scoped_session,
+        session: Union[sqlalchemy.orm.scoping.scoped_session, c2cwsgiutils.db.SessionFactory],
         alembic_ini_path: str,
         level: int = 2,
         name: str = "alembic",
@@ -148,13 +230,15 @@ class HealthCheck:
 
         Arguments:
 
-            session: A DB session created by c2cwsgiutils.db.setup_session() giving access to the DB \
+            session: A DB session created by c2cwsgiutils.db.init() giving access to the DB \
                         managed by Alembic
             alembic_ini_path: Path to the Alembic INI file
             level: the level of the health check
             name: the name of the configuration section in the Alembic INI file
             version_schema: override the schema where the version table is
             version_table: override the table name for the version
+            rw_engin: the RW engine to use (if None, use the session one)
+            ro_engin: the RO engine to use (if None, use the session one)
         """
         version_ = _get_alembic_version(alembic_ini_path, name)
 
@@ -167,38 +251,46 @@ class HealthCheck:
         if version_table is None:
             version_table = config.get(name, "version_table", fallback="alembic_version")
 
-        def check(_request: Any) -> str:
-            for binding in _get_bindings(session, EngineType.READ_AND_WRITE):
-                prev_bind = session.bind
-                try:
-                    session.bind = binding
-                    if stats.USE_TAGS:
-                        key = ["sql", "manual", "health_check", "alembic"]
-                        tags: Optional[Dict[str, str]] = dict(conf=alembic_ini_path, con=binding.c2c_name)
-                    else:
-                        key = ["sql", "manual", "health_check", "alembic", alembic_ini_path, binding.c2c_name]
-                        tags = None
-                    with stats.timer_context(key, tags):
-                        quote = session.bind.dialect.identifier_preparer.quote
-                        (actual_version,) = session.execute(
-                            f"SELECT version_num FROM {quote(version_schema)}.{quote(version_table)}"  # nosec
-                        ).fetchone()
+        class _Check:
+            def __init__(self, session: sqlalchemy.orm.scoping.scoped_session) -> None:
+                self.session = session
+
+            def __call__(self, request: pyramid.request.Request) -> str:
+                for binding in _get_bindings(self.session, EngineType.READ_AND_WRITE):
+                    with binding as session:
                         if stats.USE_TAGS:
-                            stats.increment_counter(
-                                ["alembic_version"], 1, tags=dict(version=actual_version, name=name)
-                            )
+                            key = ["sql", "manual", "health_check", "alembic"]
+                            tags: Optional[Dict[str, str]] = dict(conf=alembic_ini_path, con=binding.name())
                         else:
-                            stats.increment_counter(["alembic_version", name, actual_version], 1)
-                        if actual_version != version_:
-                            raise Exception(
-                                f"Invalid alembic version (db: {actual_version}, code: {version_})"
-                            )
-                finally:
-                    session.bind = prev_bind
-            return version_
+                            key = [
+                                "sql",
+                                "manual",
+                                "health_check",
+                                "alembic",
+                                alembic_ini_path,
+                                binding.c2c_name,
+                            ]
+                            tags = None
+                        with stats.timer_context(key, tags):
+                            quote = session.bind.dialect.identifier_preparer.quote
+                            (actual_version,) = session.execute(
+                                "SELECT version_num FROM "  # nosec
+                                f"{quote(version_schema)}.{quote(version_table)}"
+                            ).fetchone()
+                            if stats.USE_TAGS:
+                                stats.increment_counter(
+                                    ["alembic_version"], 1, tags=dict(version=actual_version, name=name)
+                                )
+                            else:
+                                stats.increment_counter(["alembic_version", name, actual_version], 1)
+                            if actual_version != version_:
+                                raise Exception(
+                                    f"Invalid alembic version (db: {actual_version}, code: {version_})"
+                                )
+                return version_
 
         self._checks.append(
-            ("alembic_" + alembic_ini_path.replace("/", "_").strip("_") + "_" + name, check, level)
+            ("alembic_" + alembic_ini_path.replace("/", "_").strip("_") + "_" + name, _Check(session), level)
         )
 
     def add_url_check(
@@ -398,26 +490,21 @@ class HealthCheck:
 
     @staticmethod
     def _create_db_engine_check(
-        session: sqlalchemy.orm.scoping.scoped_session,
-        bind: sqlalchemy.engine.Engine,
+        binding: _Binding,
         query_cb: Callable[[sqlalchemy.orm.scoping.scoped_session], None],
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
-        def check(_request: pyramid.request.Request) -> None:
-            prev_bind = session.bind
-            try:
-                session.bind = bind
+        def check(request: pyramid.request.Request) -> None:
+            with binding as session:
                 if stats.USE_TAGS:
                     key = ["sql", "manual", "health_check", "db"]
-                    tags: Optional[Dict[str, str]] = dict(con=bind.c2c_name)
+                    tags: Optional[Dict[str, str]] = dict(con=session.bind.c2c_name)
                 else:
-                    key = ["sql", "manual", "health_check", "db", bind.c2c_name]
+                    key = ["sql", "manual", "health_check", "db", session.bind.c2c_name]
                     tags = None
                 with stats.timer_context(key, tags):
                     return query_cb(session)
-            finally:
-                session.bind = prev_bind
 
-        return "db_engine_" + bind.c2c_name, check
+        return "db_engine_" + binding.name(), check
 
     @staticmethod
     def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.scoping.scoped_session], Any]:

@@ -21,7 +21,9 @@
   pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#profiler egg:c2cwsgiutils#sentry app
   ```
 
-- The Usage of the Docker image is deprecated, read the start of the (Readme)[./README.md] to update your setup.
+- The usage of the Docker image is deprecated, read the start of the (Readme)[./README.md] to update your setup.
+- The usage of the global `DBSession` is deprecated, use the session on the request instead, should be
+  initialized with the function `c2cwsgiutils.db.init`. see the (Readme)[./README.md] for more information.
 
 # Release 4
 

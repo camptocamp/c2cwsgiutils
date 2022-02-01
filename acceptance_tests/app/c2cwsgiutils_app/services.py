@@ -28,24 +28,24 @@ def ping(_):
 
 
 @hello_service.get()
-def hello_get(_):
+def hello_get(request):
     """
     Will use the slave.
     """
     with timer_context(["sql", "read_hello"]):
-        hello = models.DBSession.query(models.Hello).first()
+        hello = request.dbsession.query(models.Hello).first()
     increment_counter(["test", "counter"])
     set_gauge(["test", "gauge/s"], 42, tags={"value": 24, "toto": "tutu"})
     return {"value": hello.value}
 
 
 @hello_service.put()
-def hello_put(_):
+def hello_put(request):
     """
     Will use the master.
     """
     with sentry.capture_exceptions():
-        hello = models.DBSession.query(models.Hello).first()
+        hello = request.dbsession.query(models.Hello).first()
         return {"value": hello.value}
 
 
@@ -72,9 +72,9 @@ def error(request):
         raise HTTPNoContent()
     if request.params.get("db", "0") == "dup":
         for _ in range(2):
-            models.DBSession.add(models.Hello(value="toto"))
+            request.dbsession.add(models.Hello(value="toto"))
     elif request.params.get("db", "0") == "data":
-        models.DBSession.add(models.Hello(id="abcd", value="toto"))
+        request.dbsession.add(models.Hello(id="abcd", value="toto"))
     else:
         raise Exception("boom")
     return {"status": 200}
@@ -97,6 +97,6 @@ def empty(request):
 
 @timeout_service.get(match_param="where=sql")
 def timeout_sql(request):
-    models.DBSession.execute("SELECT pg_sleep(2)")
+    request.dbsession.execute("SELECT pg_sleep(2)")
     request.response.status_code = 204
     return request.response

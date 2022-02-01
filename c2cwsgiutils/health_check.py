@@ -268,7 +268,7 @@ class HealthCheck:
                                 "health_check",
                                 "alembic",
                                 alembic_ini_path,
-                                binding.c2c_name,
+                                binding.name(),
                             ]
                             tags = None
                         with stats.timer_context(key, tags):
@@ -497,9 +497,9 @@ class HealthCheck:
             with binding as session:
                 if stats.USE_TAGS:
                     key = ["sql", "manual", "health_check", "db"]
-                    tags: Optional[Dict[str, str]] = dict(con=session.bind.c2c_name)
+                    tags: Optional[Dict[str, str]] = dict(con=binding.name())
                 else:
-                    key = ["sql", "manual", "health_check", "db", session.bind.c2c_name]
+                    key = ["sql", "manual", "health_check", "db", binding.name()]
                     tags = None
                 with stats.timer_context(key, tags):
                     return query_cb(session)

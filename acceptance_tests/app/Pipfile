@@ -4,12 +4,45 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pipenv = "==2020.5.28"
+pipenv = "==2022.1.8"
+setuptools = "==45.2.0"
+# Lock dependencies
+"backports.entry-points-selectable" = "==1.1.0"
+certifi = "==2021.5.30"
+distlib = "==0.3.2"
+filelock = "==3.0.12"
+platformdirs = "==2.3.0"
+six = "==1.16.0"
+virtualenv = "==20.8.0"
+virtualenv-clone = "==0.5.7"
 
 [dev-packages]
 prospector = "==1.5.0.1"
 coverage = "==5.5"
 flake8 = "==3.8.4"
+# Lock dependencies
+astroid = "==2.7.3"
+dodgy = "==0.2.1"
+flake8-polyfill = "==1.0.2"
+isort = "==5.9.3"
+lazy-object-proxy = "==1.6.0"
+mccabe = "==0.6.1"
+pep8-naming = "==0.10.0"
+platformdirs = "==2.3.0"
+pycodestyle = "==2.6.0"
+pydocstyle = "==6.1.1"
+pyflakes = "==2.2.0"
+pylint = "==2.10.2"
+pylint-celery = "==0.3"
+pylint-django = "==2.4.4"
+pylint-flask = "==0.6"
+pylint-plugin-utils = "==0.6"
+pyyaml = "==5.4.1"
+requirements-detector = "==0.7"
+setoptconf = "==0.2.0"
+snowballstemmer = "==2.1.0"
+toml = "==0.10.2"
+wrapt = "==1.12.1"
 
 [requires]
 python_version = "3.8"

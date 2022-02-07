@@ -1,7 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/camptocamp/c2cciutils/master/c2cciutils/schema.json
+
 version:
   branch_to_version_re:
     - from: release_([0-9]+)
       to: \1
+  version_to_branch:
+    - from: '2'
+      to: release_2
+    - from: '3'
+      to: release_3
+    - from: '4'
+      to: release_4
 
 checks:
   black:

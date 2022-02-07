@@ -11,15 +11,17 @@
 
   ```ini
   [pipeline:main]
-  pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#sentry app
+  pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#profiler egg:c2cwsgiutils#sentry app
   ```
 
   and in your `production.ini`:
 
   ```ini
   [pipeline:main]
-  pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#profiler egg:c2cwsgiutils#sentry app
+  pipeline = egg:c2cwsgiutils#client_info egg:c2cwsgiutils#sentry app
   ```
+
+  and in booth `development.ini` and `production.ini`, rename `[app:main]` to `[app:app]`.
 
 - The usage of the Docker image is deprecated, read the start of the (Readme)[./README.md] to update your setup.
 - The usage of the global `DBSession` is deprecated, use the session on the request instead, should be

@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 coverage = "==6.3.2"
 junit2html = "==30.0.6"
-prospector = {extras = ["with_bandit", "with_mypy"], version = "==1.6.0"}
+prospector = {extras = ["with_bandit", "with_mypy"], version = "==1.7.0"}
 pytest = "==7.0.1"
 pytest-cov = "==3.0.0"
 pytest-html = "==3.1.1"

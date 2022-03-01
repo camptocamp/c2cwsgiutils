@@ -8,6 +8,11 @@ ignore-paths:
   - tests
 
 pylint:
+  options:
+    extension-pkg-allow-list:
+      - ujson
+      - netifaces
+      - lxml
   disable:
     - too-many-return-statements
     - global-statement
@@ -28,14 +33,14 @@ pylint:
     - missing-module-docstring
     - missing-function-docstring
 
-pep8:
+pycodestyle:
   options:
     max-line-length: 110
   disable:
     - E203 # Whitespace before ':', duplicated with black, with error in array
     - E722 # do not use bare 'except', duplicated with pylint
 
-pep257:
+pydocstyle:
   disable:
     - D100 # Missing docstring in public module
     - D102 # Missing docstring in public method

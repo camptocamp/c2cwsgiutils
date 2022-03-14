@@ -14,7 +14,7 @@ import json
 import logging
 import logging.config
 import socket
-from typing import IO, TYPE_CHECKING, Any, Mapping, MutableMapping
+from typing import TYPE_CHECKING, Any, Mapping, MutableMapping, Optional, TextIO
 
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
@@ -101,7 +101,7 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ign
 
 
 if TYPE_CHECKING:
-    Base = logging.StreamHandler[IO[str]]  # pylint: disable=unsubscriptable-object
+    Base = logging.StreamHandler[TextIO]  # pylint: disable=unsubscriptable-object
 else:
     Base = logging.StreamHandler
 
@@ -109,7 +109,7 @@ else:
 class JsonLogHandler(Base):
     """Log to stdout in JSON."""
 
-    def __init__(self, stream: IO[str]):
+    def __init__(self, stream: Optional[TextIO] = None):
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
         self._fqdn = socket.getfqdn()

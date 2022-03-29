@@ -36,7 +36,6 @@ The library is available in PYPI:
 Copy and adapt these template configuration file into your project:
 
 - [production.ini](acceptance_tests/app/production.ini);
-- [development.ini](acceptance_tests/app/development.ini);
 - [gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py).
   Then replace `c2cwsgiutils_app` by your package name.
 
@@ -219,10 +218,9 @@ Two new logging backends are provided:
 - `c2cwsgiutils.pyramid_logging.JsonLogHandler`: to output (on stdout or stderr) JSON formatted logs.
 
 Look at the logging configuration part of
-[acceptance_tests/app/development.ini](acceptance_tests/app/development.ini) for paste and commands line.
+[acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for paste and commands line.
 
-Look at the logging configuration part of
-[acceptance_tests/app/gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py) for gunicorn.
+The logging configuration is imported automatically by gunicorn.
 
 You can enable a view to configure the logging level on a live system using the `C2C_LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on
@@ -317,7 +315,7 @@ Don't enable that on a busy production system. It will kill your performances.
 
 ### Setup
 
-You should add the filter `egg:c2cwsgiutils#profiler` to your application in your `development.ini` file.
+You should add the filter `egg:c2cwsgiutils#profiler` to your application in your `production.ini` file.
 
 ```ini
 [pipeline:main]
@@ -534,7 +532,7 @@ services:
     command:
       - pserve
       - --reload
-      - c2c://development.ini
+      - c2c://production.ini
   volumes:
     - ./api/somepath:/app/somepath:ro
 ```

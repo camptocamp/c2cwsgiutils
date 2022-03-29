@@ -5,7 +5,7 @@ services:
     command:
       - pserve
       - --reload
-      - c2c:///app/development.ini
+      - c2c:///app/production.ini
     # volumes:
     #   - ../app/c2cwsgiutils_app/:/app/c2cwsgiutils_app/
     #   - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/

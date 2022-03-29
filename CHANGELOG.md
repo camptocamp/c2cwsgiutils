@@ -1,3 +1,11 @@
+# Release 5.1
+
+- Restore the `C2CWSGIUTILS_CONFIG` environment variable, you can still use the standard way to specify the
+  config file (with the argument `--paste` of gunicorn, or the `config_uri` argument or `pserve` prefixed
+  by `c2c://`).
+- Move back the logging configuration to `production.ini`. It will be read from `gunicorn.conf.py` at startup.
+- Remove the `development.ini` file to simplify the default application template; restore `production.ini` has the default configuration file.
+
 # Release 5
 
 - Remove the script `c2cwsgiutils-run`.

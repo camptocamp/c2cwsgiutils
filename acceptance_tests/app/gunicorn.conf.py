@@ -2,18 +2,36 @@
 # app configuration
 # https://docs.gunicorn.org/en/stable/settings.html
 ###
-
 import os
+import sys
+import json
+import pprint
 
-from c2cwsgiutils import get_config_defaults
+from c2cwsgiutils import get_config_defaults, get_logconfig_dict
+
+
+def _get_paste_config() -> str:
+    next_one = False
+    for val in sys.argv:
+        if next_one:
+            return val
+        if val in ['--paste', '--paster']:
+            next_one = True
+
+    fallback = os.environ.get("C2CWSGIUTILS_CONFIG", "production.ini")
+    return fallback
+
+
 
 bind = ":8080"
 
 worker_class = "gthread"
 workers = os.environ.get("GUNICORN_WORKERS", 2)
 threads = os.environ.get("GUNICORN_THREADS", 10)
-
 preload = "true"
+
+paste = _get_paste_config()
+wsgi_app = paste
 
 accesslog = "-"
 access_log_format = os.environ.get(
@@ -25,41 +43,8 @@ access_log_format = os.environ.get(
 # logging configuration
 # https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
 ###
-logconfig_dict = {
-    "version": 1,
-    "root": {
-        "level": os.environ["OTHER_LOG_LEVEL"],
-        "handlers": [os.environ["LOG_TYPE"]],
-    },
-    "loggers": {
-        "gunicorn.error": {"level": os.environ["GUNICORN_LOG_LEVEL"]},
-        "gunicorn.access": {"level": os.environ["GUNICORN_ACCESS_LOG_LEVEL"]},
-        # "level = INFO" logs SQL queries.
-        # "level = DEBUG" logs SQL queries and results.
-        # "level = WARN" logs neither.  (Recommended for production systems.)
-        "sqlalchemy.engine": {"level": os.environ["SQL_LOG_LEVEL"]},
-        "c2cwsgiutils": {"level": os.environ["C2CWSGIUTILS_LOG_LEVEL"]},
-        "c2cwsgiutils_app": {"level": os.environ["LOG_LEVEL"]},
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "generic",
-            "stream": "ext://sys.stdout",
-        },
-        "json": {
-            "class": "c2cwsgiutils.pyramid_logging.JsonLogHandler",
-            "formatter": "generic",
-            "stream": "ext://sys.stdout",
-        },
-    },
-    "formatters": {
-        "generic": {
-            "format": "%(asctime)s [%(process)d] [%(levelname)-5.5s] %(message)s",
-            "datefmt": "[%Y-%m-%d %H:%M:%S %z]",
-            "class": "logging.Formatter",
-        }
-    },
-}
+logconfig_dict = get_logconfig_dict(paste)
+print('logconfig_dict')
+pprint.pprint(logconfig_dict)
 
 raw_paste_global_conf = ["=".join(e) for e in get_config_defaults().items()]

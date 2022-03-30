@@ -4,8 +4,6 @@
 ###
 import os
 import sys
-import json
-import pprint
 
 from c2cwsgiutils import get_config_defaults, get_logconfig_dict
 
@@ -44,7 +42,7 @@ access_log_format = os.environ.get(
 # https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
 ###
 logconfig_dict = get_logconfig_dict(paste)
-print('logconfig_dict')
-pprint.pprint(logconfig_dict)
+# print('logconfig_dict')
+# pprint.pprint(logconfig_dict)
 
 raw_paste_global_conf = ["=".join(e) for e in get_config_defaults().items()]

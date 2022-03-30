@@ -82,5 +82,10 @@ run: build_test_app
 mypy_local: .venv/timestamp
 	.venv/bin/mypy --ignore-missing-imports --strict-optional --strict c2cwsgiutils
 
+.PHONY: clean
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache
+
+.PHONY: c2cciutils
+c2cciutils: .venv/timestamp
+	.venv/bin/c2cciutils-checks --fix

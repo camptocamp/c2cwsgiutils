@@ -1,7 +1,7 @@
+import configparser
 import logging
 import os
-import configparser
-from typing import Dict, Set, Any
+from typing import Any, Dict, Set
 
 LOG = logging.getLogger(__name__)
 

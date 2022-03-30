@@ -27,19 +27,19 @@ def get_config_defaults() -> Dict[str, str]:
 
 
 def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
-    handlers = [k.strip() for k in config['handlers']['keys'].split(',')]
+    handlers = [k.strip() for k in config["handlers"]["keys"].split(",")]
     d_handlers: Dict[str, Any] = {}
     for hh in handlers:
-        block = config[f'handler_{hh}']
-        c = block['class']
-        if c == 'StreamHandler':
-            c = 'logging.StreamHandler'
+        block = config[f"handler_{hh}"]
+        c = block["class"]
+        if c == "StreamHandler":
+            c = "logging.StreamHandler"
         conf = {
-            'class': c,
-            'stream': block['args'].replace('(sys.stdout,)', 'ext://sys.stdout'),
+            "class": c,
+            "stream": block["args"].replace("(sys.stdout,)", "ext://sys.stdout"),
         }
-        if 'formatter' in block:
-            conf['formatter'] = block['formatter']
+        if "formatter" in block:
+            conf["formatter"] = block["formatter"]
         d_handlers[hh] = conf
     return d_handlers
 
@@ -56,36 +56,31 @@ def get_logconfig_dict(filename: str) -> Dict[str, Any]:
     """
     config = configparser.ConfigParser(defaults=get_config_defaults())
     config.read(filename)
-    loggers = [k.strip() for k in config['loggers']['keys'].split(',')]
-    formatters = [k.strip() for k in config['formatters']['keys'].split(',')]
+    loggers = [k.strip() for k in config["loggers"]["keys"].split(",")]
+    formatters = [k.strip() for k in config["formatters"]["keys"].split(",")]
 
     d_loggers: Dict[str, Any] = {}
     root: Dict[str, Any] = {}
     for ll in loggers:
-        block = config[f'logger_{ll}']
-        if ll == 'root':
-            root = {
-                'level': block['level'],
-                'handlers': [block['handlers']]
-            }
+        block = config[f"logger_{ll}"]
+        if ll == "root":
+            root = {"level": block["level"], "handlers": [block["handlers"]]}
             continue
-        qualname = block['qualname']
-        d_loggers[qualname] = {
-            "level": block['level']
-        }
+        qualname = block["qualname"]
+        d_loggers[qualname] = {"level": block["level"]}
 
     d_formatters: Dict[str, Any] = {}
     for ff in formatters:
-        block = config[f'formatter_{ff}']
+        block = config[f"formatter_{ff}"]
         d_formatters[ff] = {
-            'format': block.get('format', raw=True),
+            "format": block.get("format", raw=True),
             "datefmt": "[%Y-%m-%d %H:%M:%S %z]",
-            "class": "logging.Formatter"
+            "class": "logging.Formatter",
         }
     return {
         "version": 1,
         "root": root,
         "loggers": d_loggers,
         "handlers": _create_handlers(config),
-        "formatters": d_formatters
+        "formatters": d_formatters,
     }

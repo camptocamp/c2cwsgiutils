@@ -13,12 +13,11 @@ def _get_paste_config() -> str:
     for val in sys.argv:
         if next_one:
             return val
-        if val in ['--paste', '--paster']:
+        if val in ["--paste", "--paster"]:
             next_one = True
 
     fallback = os.environ.get("C2CWSGIUTILS_CONFIG", "production.ini")
     return fallback
-
 
 
 bind = ":8080"

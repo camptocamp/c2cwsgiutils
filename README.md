@@ -102,6 +102,7 @@ The related environment variables:
 - `GUNICORN_ERROR_LOG_LEVEL`: The Gunicorn error log level, default is `WARNING`.
 - `GUNICORN_ACCESS_LOG_LEVEL`: The Gunicorn access log level, the logs have the level `INFO`,
   default is `WARNING`.
+- `C2CWSGIUTILS_CONFIG`: The fallback ini file to use by gunicorn, default is `production.ini`.
 - `C2CWSGIUTILS_LOG_LEVEL`: The c2c WSGI utils log level, default is `WARNING`.
 - `OTHER_LOG_LEVEL`: The log level for all the other logger, default is `WARNING`.
 

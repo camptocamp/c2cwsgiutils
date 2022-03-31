@@ -1,9 +1,9 @@
 import configparser
-from configparser import SectionProxy
 import logging
 import os
 import re
 import sys
+from configparser import SectionProxy
 from typing import Any, Dict, Set
 
 LOG = logging.getLogger(__name__)
@@ -35,12 +35,12 @@ def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
     stream_re = re.compile(r"\((.*?),\)")
     for hh in handlers:
         block = config[f"handler_{hh}"]
-        stream_match = stream_re.match(block['args'])
+        stream_match = stream_re.match(block["args"])
         if stream_match is None:
             raise Exception(f"Could not parse args of handler {hh}")
         args = stream_match.groups()[0]
         c = block["class"]
-        if '.' not in c:
+        if "." not in c:
             # classes like StreamHandler does not need the prefix in the ini so we add it here
             c = f"logging.{c}"
         conf = {
@@ -55,8 +55,8 @@ def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
 
 def _filter_logger(block: SectionProxy) -> Dict[str, Any]:
     out: Dict[str, Any] = {"level": block["level"]}
-    handlers = block.get('handlers', '')
-    if handlers != '':
+    handlers = block.get("handlers", "")
+    if handlers != "":
         out["handlers"] = [block["handlers"]]
     return out
 
@@ -92,7 +92,7 @@ def get_logconfig_dict(filename: str) -> Dict[str, Any]:
         d_formatters[ff] = {
             "format": block.get("format", raw=True),
             "datefmt": block.get("datefmt", fallback="[%Y-%m-%d %H:%M:%S %z]", raw=True),
-            "class": block.get("class", fallback="logging.Formatter", raw=True)
+            "class": block.get("class", fallback="logging.Formatter", raw=True),
         }
     return {
         "version": 1,
@@ -114,7 +114,7 @@ def get_paste_config() -> str:
         if next_one:
             return val
         if val.startswith("--paste=") or val.startswith("--paster="):
-            return val.split('=')[1]
+            return val.split("=")[1]
         if val in ["--paste", "--paster"]:
             next_one = True
 

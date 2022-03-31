@@ -6,6 +6,7 @@ Must be imported at the very beginning of the process' life, before any other mo
 
 
 import argparse
+import warnings
 from typing import Any, Callable, Dict, Optional, TypedDict, cast
 
 import pyramid.registry
@@ -13,7 +14,6 @@ import pyramid.request
 import pyramid.router
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
-import warnings
 
 
 def fill_arguments(

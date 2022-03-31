@@ -6,7 +6,6 @@ import os
 
 from c2cwsgiutils import get_config_defaults, get_logconfig_dict, get_paste_config
 
-
 bind = ":8080"
 
 worker_class = "gthread"
@@ -28,8 +27,8 @@ access_log_format = os.environ.get(
 # https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
 ###
 logconfig_dict = get_logconfig_dict(paste)
-if os.environ.get('DEBUG_LOGCONFIG', '0') == '1':
-    print('LOGCONFIG')
+if os.environ.get("DEBUG_LOGCONFIG", "0") == "1":
+    print("LOGCONFIG")
     print(logconfig_dict)
 
 raw_paste_global_conf = ["=".join(e) for e in get_config_defaults().items()]

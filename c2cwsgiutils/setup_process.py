@@ -13,6 +13,7 @@ import pyramid.request
 import pyramid.router
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
+import warnings
 
 
 def fill_arguments(
@@ -40,6 +41,12 @@ def fill_arguments(
 
 def init(config_file: str = "c2c:///app/production.ini") -> None:
     """Initialize the non-WSGI application, for backward compatibility."""
+    warnings.warn("init function is deprecated; use init_logging instead")
+    init_logging((config_file))
+
+
+def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
+    """Initialize the non-WSGI application."""
     loader = get_config_loader(config_file)
     loader.setup_logging(None)
 

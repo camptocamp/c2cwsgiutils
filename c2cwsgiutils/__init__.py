@@ -1,6 +1,9 @@
 import configparser
+from configparser import SectionProxy
 import logging
 import os
+import re
+import sys
 from typing import Any, Dict, Set
 
 LOG = logging.getLogger(__name__)
@@ -29,19 +32,33 @@ def get_config_defaults() -> Dict[str, str]:
 def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
     handlers = [k.strip() for k in config["handlers"]["keys"].split(",")]
     d_handlers: Dict[str, Any] = {}
+    stream_re = re.compile(r"\((.*?),\)")
     for hh in handlers:
         block = config[f"handler_{hh}"]
+        stream_match = stream_re.match(block['args'])
+        if stream_match is None:
+            raise Exception(f"Could not parse args of handler {hh}")
+        args = stream_match.groups()[0]
         c = block["class"]
-        if c == "StreamHandler":
-            c = "logging.StreamHandler"
+        if '.' not in c:
+            # classes like StreamHandler does not need the prefix in the ini so we add it here
+            c = f"logging.{c}"
         conf = {
             "class": c,
-            "stream": block["args"].replace("(sys.stdout,)", "ext://sys.stdout"),
+            "stream": f"ext://{args}",  # like ext://sys.stdout
         }
         if "formatter" in block:
             conf["formatter"] = block["formatter"]
         d_handlers[hh] = conf
     return d_handlers
+
+
+def _filter_logger(block: SectionProxy) -> Dict[str, Any]:
+    out: Dict[str, Any] = {"level": block["level"]}
+    handlers = block.get('handlers', '')
+    if handlers != '':
+        out["handlers"] = [block["handlers"]]
+    return out
 
 
 ###
@@ -64,18 +81,18 @@ def get_logconfig_dict(filename: str) -> Dict[str, Any]:
     for ll in loggers:
         block = config[f"logger_{ll}"]
         if ll == "root":
-            root = {"level": block["level"], "handlers": [block["handlers"]]}
+            root = _filter_logger(block)
             continue
         qualname = block["qualname"]
-        d_loggers[qualname] = {"level": block["level"]}
+        d_loggers[qualname] = _filter_logger(block)
 
     d_formatters: Dict[str, Any] = {}
     for ff in formatters:
         block = config[f"formatter_{ff}"]
         d_formatters[ff] = {
             "format": block.get("format", raw=True),
-            "datefmt": "[%Y-%m-%d %H:%M:%S %z]",
-            "class": "logging.Formatter",
+            "datefmt": block.get("datefmt", fallback="[%Y-%m-%d %H:%M:%S %z]", raw=True),
+            "class": block.get("class", fallback="logging.Formatter", raw=True)
         }
     return {
         "version": 1,

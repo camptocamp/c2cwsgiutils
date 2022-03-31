@@ -88,4 +88,4 @@ clean:
 
 .PHONY: c2cciutils
 c2cciutils: .venv/timestamp
-	.venv/bin/c2cciutils-checks --fix
+	bash -c ". .venv/bin/activate; .venv/bin/c2cciutils-checks --fix"

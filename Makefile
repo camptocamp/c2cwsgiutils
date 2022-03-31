@@ -66,7 +66,7 @@ build_test_app: build_docker
 .venv/timestamp: ci/requirements.txt Pipfile.lock
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
 	.venv/bin/pip3 install --upgrade -r $<
-	.venv/bin/pipenv sync
+	.venv/bin/pipenv sync --dev
 	touch $@
 
 .PHONY: pull
@@ -88,4 +88,4 @@ clean:
 
 .PHONY: c2cciutils
 c2cciutils: .venv/timestamp
-	bash -c ". .venv/bin/activate; .venv/bin/c2cciutils-checks --fix"
+	.venv/bin/pipenv run .venv/bin/c2cciutils-checks --fix

@@ -221,7 +221,7 @@ Two new logging backends are provided:
 Look at the logging configuration part of
 [acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for paste and commands line.
 
-The logging configuration is imported automatically by gunicorn.
+The logging configuration is imported automatically by gunicorn, it is possible to visualize the dict config by setting the environment variable `DEBUG_LOGCONFIG=1`.
 
 You can enable a view to configure the logging level on a live system using the `C2C_LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on

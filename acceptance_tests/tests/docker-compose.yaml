@@ -30,6 +30,7 @@ services:
       - SENTRY_TAG_SERVICE=app
       - C2C_REDIS_SENTINELS=redis:26379
       - PYTHONMALLOC=debug
+      - DEBUG_LOGCONFIG
       - GUNICORN_WORKERS=1
       - GUNICORN_THREADS=10
       # Test problematic environment variable (values contains % and duplicated with different cass)

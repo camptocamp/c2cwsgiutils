@@ -84,3 +84,22 @@ def get_logconfig_dict(filename: str) -> Dict[str, Any]:
         "handlers": _create_handlers(config),
         "formatters": d_formatters,
     }
+
+
+def get_paste_config() -> str:
+    """
+    Resolve the ini file configuration.
+
+    The value is taken first on command argument and fallback to C2CWSGIUTILS_CONFIG.
+    """
+    next_one = False
+    for val in sys.argv:
+        if next_one:
+            return val
+        if val.startswith("--paste=") or val.startswith("--paster="):
+            return val.split('=')[1]
+        if val in ["--paste", "--paster"]:
+            next_one = True
+
+    fallback = os.environ.get("C2CWSGIUTILS_CONFIG", "production.ini")
+    return fallback

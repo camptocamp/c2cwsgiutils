@@ -36,7 +36,6 @@ The library is available in PYPI:
 Copy and adapt these template configuration file into your project:
 
 - [production.ini](acceptance_tests/app/production.ini);
-- [development.ini](acceptance_tests/app/development.ini);
 - [gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py).
   Then replace `c2cwsgiutils_app` by your package name.
 
@@ -103,6 +102,7 @@ The related environment variables:
 - `GUNICORN_ERROR_LOG_LEVEL`: The Gunicorn error log level, default is `WARNING`.
 - `GUNICORN_ACCESS_LOG_LEVEL`: The Gunicorn access log level, the logs have the level `INFO`,
   default is `WARNING`.
+- `C2CWSGIUTILS_CONFIG`: The fallback ini file to use by gunicorn, default is `production.ini`.
 - `C2CWSGIUTILS_LOG_LEVEL`: The c2c WSGI utils log level, default is `WARNING`.
 - `OTHER_LOG_LEVEL`: The log level for all the other logger, default is `WARNING`.
 
@@ -219,10 +219,9 @@ Two new logging backends are provided:
 - `c2cwsgiutils.pyramid_logging.JsonLogHandler`: to output (on stdout or stderr) JSON formatted logs.
 
 Look at the logging configuration part of
-[acceptance_tests/app/development.ini](acceptance_tests/app/development.ini) for paste and commands line.
+[acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for paste and commands line.
 
-Look at the logging configuration part of
-[acceptance_tests/app/gunicorn.conf.py](acceptance_tests/app/gunicorn.conf.py) for gunicorn.
+The logging configuration is imported automatically by gunicorn, it is possible to visualize the dict config by setting the environment variable `DEBUG_LOGCONFIG=1`.
 
 You can enable a view to configure the logging level on a live system using the `C2C_LOG_VIEW_ENABLED` environment
 variable. Then, the current status of a logger can be queried with a GET on
@@ -317,7 +316,7 @@ Don't enable that on a busy production system. It will kill your performances.
 
 ### Setup
 
-You should add the filter `egg:c2cwsgiutils#profiler` to your application in your `development.ini` file.
+You should add the filter `egg:c2cwsgiutils#profiler` to your application in your `production.ini` file.
 
 ```ini
 [pipeline:main]
@@ -534,7 +533,7 @@ services:
     command:
       - pserve
       - --reload
-      - c2c://development.ini
+      - c2c://production.ini
   volumes:
     - ./api/somepath:/app/somepath:ro
 ```

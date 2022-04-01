@@ -19,7 +19,7 @@ from pyramid.scripts.common import get_config_loader, parse_vars
 def fill_arguments(
     parser: argparse.ArgumentParser,
     use_attribute: bool = False,
-    default_config_uri: str = "c2c:///app/development.ini",
+    default_config_uri: str = "c2c:///app/production.ini",
 ) -> None:
     """Add the needed arguments to the parser like it's done in pshell."""
 
@@ -39,10 +39,16 @@ def fill_arguments(
     )
 
 
-def init(config_file: str = "c2c:///app/development.ini") -> None:
-    """Initialize all the application, for backward compatibility."""
-    warnings.warn("init function is deprecated; use bootstrap_application instead")
-    bootstrap_application(config_file)
+def init(config_file: str = "c2c:///app/production.ini") -> None:
+    """Initialize the non-WSGI application, for backward compatibility."""
+    warnings.warn("init function is deprecated; use init_logging instead")
+    init_logging((config_file))
+
+
+def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
+    """Initialize the non-WSGI application."""
+    loader = get_config_loader(config_file)
+    loader.setup_logging(None)
 
 
 PyramidEnv = TypedDict(
@@ -72,7 +78,7 @@ def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEn
 
 
 def bootstrap_application(
-    config_uri: str = "c2c:///app/development.ini",
+    config_uri: str = "c2c:///app/production.ini",
     options: Optional[Dict[str, Any]] = None,
 ) -> PyramidEnv:
     """

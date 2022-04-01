@@ -63,9 +63,10 @@ build_acceptance: build_docker_test
 build_test_app: build_docker
 	docker build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
-.venv/timestamp: ci/requirements.txt
+.venv/timestamp: requirements.txt ci/requirements.txt Pipfile.lock
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
-	.venv/bin/pip3 install --upgrade -r $<
+	.venv/bin/pip3 install --upgrade -r requirements.txt -r ci/requirements.txt
+	.venv/bin/pipenv sync --dev
 	touch $@
 
 .PHONY: pull
@@ -81,5 +82,10 @@ run: build_test_app
 mypy_local: .venv/timestamp
 	.venv/bin/mypy --ignore-missing-imports --strict-optional --strict c2cwsgiutils
 
+.PHONY: clean
 clean:
 	rm -rf dist c2cwsgiutils.egg-info .venv .mypy_cache
+
+.PHONY: c2cciutils
+c2cciutils: .venv/timestamp
+	.venv/bin/pipenv run .venv/bin/c2cciutils-checks --fix

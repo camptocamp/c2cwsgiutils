@@ -1,0 +1,26 @@
+version: '2.2'
+
+services:
+  app:
+    # Uncomment to use pserve
+    # command:
+    #   - pserve
+    #   - --reload
+    #   - c2c:///app/production.ini
+    volumes:
+      # This mounts the local filesystem inside the container so that
+      # the views are automatically reloaded when a file change
+      - ../app/c2cwsgiutils_app/:/app/c2cwsgiutils_app/:ro
+      - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/:ro
+
+  # alembic_master:
+  #   volumes:
+  #     - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/
+
+  # alembic_slave:
+  #   volumes:
+  #     - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/
+
+  # run_test:
+  #   volumes:
+  #     - ../../c2cwsgiutils/:/opt/c2cwsgiutils/c2cwsgiutils/

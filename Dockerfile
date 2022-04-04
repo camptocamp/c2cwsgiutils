@@ -77,8 +77,7 @@ ENV C2C_BASE_PATH=/c2c \
     SENTRY_CLIENT_RELEASE=latest \
     SENTRY_TAG_SERVICE=app
 
-CMD ["/usr/local/bin/gunicorn", "--reload"]
-# CMD ["/usr/local/bin/pserve", "--reload", "c2c://production.ini"]
+CMD ["/usr/local/bin/gunicorn"]
 
 FROM base-lint as tests
 

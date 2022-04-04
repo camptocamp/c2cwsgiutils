@@ -524,22 +524,7 @@ have dumps of a few things:
 - see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={C2C_SECRET}&status=500`
 - return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={C2C_SECRET}&status=500`
 
-It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
-to have a specially tweaked `docker-compose.yaml`:
-
-```yaml
-services:
-  api:
-    command:
-      - pserve
-      - --reload
-      - c2c://production.ini
-  volumes:
-    - ./api/somepath:/app/somepath:ro
-```
-
-The `pserve` has the `--reload` parameter and your local python code is
-mounted (read only) into the container.
+To ease local development, the views are automatically reloaded when files change. In addition, the filesystem is mounted by the `docker-compose.override.yaml` file. Make sure not to use such file / mechanism in production.
 
 ### Broadcast
 
@@ -603,10 +588,10 @@ c2c.enable_exception_handling = 0
 
 # JSON pretty print
 
-Four JSON renderers are available:
+Some JSON renderers are available:
 
 - `json`: the normal JSON renderer (default).
-- `fast_json`: a faster JSON renderer is tuned differently.
+- `fast_json`: a faster JSON renderer using ujson.
 - `cornice_json`: the normal JSON renderer wrapped around cornice CorniceRenderer.
 - `cornice_fast_json`: a faster JSON renderer wrapped around cornice CorniceRenderer.
 

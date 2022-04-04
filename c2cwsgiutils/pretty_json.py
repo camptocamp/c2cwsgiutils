@@ -4,6 +4,7 @@ from typing import Any
 import pyramid.config
 import ujson
 from pyramid.renderers import JSON
+from cornice.renderer import CorniceRenderer
 
 
 def fast_dumps(v: Any, **_kargv: Any) -> str:
@@ -21,3 +22,5 @@ def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize json and fast_json renderer."""
     config.add_renderer("json", JSON(indent=2, sort_keys=True))
     config.add_renderer("fast_json", JSON(serializer=fast_dumps))
+    config.add_renderer("cornice_json", CorniceRenderer(indent=2, sort_keys=True))
+    config.add_renderer("cornice_fast_json", CorniceRenderer(serializer=fast_dumps))

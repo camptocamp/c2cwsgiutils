@@ -603,17 +603,20 @@ c2c.enable_exception_handling = 0
 
 # JSON pretty print
 
-Two JSON renderers are available:
+Four JSON renderers are available:
 
-- `json`: the normal JSON renderer (default)
-- `fast_json`: a faster JSON renderer
-  is tuned differently.
+- `json`: the normal JSON renderer (default).
+- `fast_json`: a faster JSON renderer is tuned differently.
+- `cornice_json`: the normal JSON renderer wrapped around cornice CorniceRenderer.
+- `cornice_fast_json`: a faster JSON renderer wrapped around cornice CorniceRenderer.
 
 Both pretty prints the rendered JSON. While this adds significant amount of whitespace, the difference in
 bytes transmitted on the network is negligible thanks to gzip compression.
 
 The `fast_json` renderer is using ujson which is faster, but doesn't offer the ability to change the rendering
 of some types (the `default` parameter of json.dumps). This will interact badly with `papyrus` and such.
+
+The cornice versions should be used to avoid the "'JSON' object has no attribute 'render_errors'" error.
 
 ## Sentry integration
 

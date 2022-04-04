@@ -22,6 +22,7 @@ services:
       - C2C_ENABLE_EXCEPTION_HANDLING=1
       - LOG_TYPE=json
       - SQL_LOG_LEVEL=DEBUG
+      - GUNICORN_CMD_ARGS="--reload"
       - OTHER_LOG_LEVEL=DEBUG
       - COVERAGE=1
       - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5

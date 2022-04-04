@@ -8,10 +8,10 @@ from c2cwsgiutils import get_config_defaults, get_logconfig_dict, get_paste_conf
 
 bind = ":8080"
 
+reload = "true"
 worker_class = "gthread"
 workers = os.environ.get("GUNICORN_WORKERS", 2)
 threads = os.environ.get("GUNICORN_THREADS", 10)
-preload = "true"
 
 paste = get_paste_config()
 wsgi_app = paste

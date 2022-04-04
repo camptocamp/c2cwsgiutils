@@ -44,8 +44,6 @@ RUN (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear --dev)
 
 FROM base-all AS base
 
-CMD ["/usr/local/bin/gunicorn", "--paste=/app/production.ini"]
-
 COPY scripts/install-gdal /usr/bin/
 COPY scripts/c2cwsgiutils-run /opt/c2cwsgiutils/scripts/
 COPY setup.py setup.cfg /opt/c2cwsgiutils/
@@ -78,6 +76,9 @@ ENV C2C_BASE_PATH=/c2c \
     SENTRY_CLIENT_ENVIRONMENT=dev \
     SENTRY_CLIENT_RELEASE=latest \
     SENTRY_TAG_SERVICE=app
+
+CMD ["/usr/local/bin/gunicorn", "--reload"]
+# CMD ["/usr/local/bin/pserve", "--reload", "c2c://production.ini"]
 
 FROM base-lint as tests
 

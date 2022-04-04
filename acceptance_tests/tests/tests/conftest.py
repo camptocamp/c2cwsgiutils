@@ -1,4 +1,5 @@
 import logging
+import os
 
 import psycopg2
 import pytest
@@ -16,6 +17,9 @@ def composition(request):
     """
     Fixture that start/stop the Docker composition used for all the tests.
     """
+    if os.environ.get('DOCKER_RUN') == '0':
+        print('Bypassing composition')
+        return None
     result = Composition(
         request,
         "/acceptance_tests/docker-compose.yaml",

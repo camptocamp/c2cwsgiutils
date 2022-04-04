@@ -25,6 +25,7 @@ RUN ./models_graph.py > models.dot && \
     python3 -m compileall -q .
 
 ENV \
+    DOCKER_RUN=1 \
     DEVELOPMENT=0 \
     SQLALCHEMY_POOL_RECYCLE=30 \
     SQLALCHEMY_POOL_SIZE=5 \

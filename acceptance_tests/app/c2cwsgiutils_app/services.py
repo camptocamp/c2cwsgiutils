@@ -2,7 +2,9 @@ import logging
 
 import requests
 from c2cwsgiutils_app import models
-from pyramid.httpexceptions import HTTPForbidden, HTTPMovedPermanently, HTTPNoContent, HTTPUnauthorized
+from pyramid.httpexceptions import (
+    HTTPForbidden, HTTPMovedPermanently, HTTPNoContent, HTTPUnauthorized, HTTPBadRequest
+)
 
 from c2cwsgiutils import sentry, services
 from c2cwsgiutils.stats import increment_counter, set_gauge, timer_context
@@ -60,6 +62,8 @@ def hello_post(request):
 @error_service.get()
 def error(request):
     code = int(request.params.get("code", "500"))
+    if code == 400:
+        raise HTTPBadRequest("arg")
     if code == 403:
         raise HTTPForbidden("bam")
     if code == 401:

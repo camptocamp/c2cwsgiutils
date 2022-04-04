@@ -101,6 +101,7 @@ def test_error(app_connection):
         "c2c/debug/error", params={"secret": "changeme", "status": "500"}, expected_status=500, cors=False
     )
 
+
 def test_error_service(app_connection):
     app_connection.get_json(
         "error", params={"secret": "changeme", "code": "500"}, expected_status=500, cors=False

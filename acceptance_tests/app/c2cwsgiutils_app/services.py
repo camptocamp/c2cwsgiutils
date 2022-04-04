@@ -3,7 +3,11 @@ import logging
 import requests
 from c2cwsgiutils_app import models
 from pyramid.httpexceptions import (
-    HTTPForbidden, HTTPMovedPermanently, HTTPNoContent, HTTPUnauthorized, HTTPBadRequest
+    HTTPBadRequest,
+    HTTPForbidden,
+    HTTPMovedPermanently,
+    HTTPNoContent,
+    HTTPUnauthorized,
 )
 
 from c2cwsgiutils import sentry, services

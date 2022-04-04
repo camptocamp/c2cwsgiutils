@@ -3,8 +3,8 @@ from typing import Any
 
 import pyramid.config
 import ujson
-from pyramid.renderers import JSON
 from cornice.renderer import CorniceRenderer
+from pyramid.renderers import JSON
 
 
 def fast_dumps(v: Any, **_kargv: Any) -> str:

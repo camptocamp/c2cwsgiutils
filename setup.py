@@ -1,6 +1,6 @@
+import configparser
 import os
 
-import configparser
 from setuptools import find_packages, setup
 
 VERSION = "5.1.0"
@@ -18,9 +18,7 @@ def long_description() -> str:
 
 config = configparser.ConfigParser()
 config.read(os.path.join(HERE, "Pipfile"))
-INSTALL_REQUIRES = [
-    pkg.strip('"') for pkg, version in config["packages"].items() if pkg != "setuptools"
-]
+INSTALL_REQUIRES = [pkg.strip('"') for pkg, version in config["packages"].items() if pkg != "setuptools"]
 
 setup(
     name="c2cwsgiutils",

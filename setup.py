@@ -1,6 +1,6 @@
+import configparser
 import os
 
-import pipfile
 from setuptools import find_packages, setup
 
 VERSION = "5.1.0"
@@ -15,6 +15,10 @@ def long_description() -> str:
     except FileNotFoundError:
         return ""
 
+
+config = configparser.ConfigParser()
+config.read(os.path.join(HERE, "Pipfile"))
+INSTALL_REQUIRES = [pkg.strip('"') for pkg, version in config["packages"].items() if pkg != "setuptools"]
 
 setup(
     name="c2cwsgiutils",
@@ -46,7 +50,7 @@ setup(
     zip_safe=False,
     install_requires=[],
     extras_require={
-        "standard": [e[0] for e in pipfile.load().data["default"].items() if e[0] != "redis"],
+        "standard": [e for e in INSTALL_REQUIRES if e != "redis"],
         "profiler": ["linesman"],
         "broadcast": ["redis"],
     },

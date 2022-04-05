@@ -102,6 +102,15 @@ def test_error(app_connection):
     )
 
 
+def test_error_service(app_connection):
+    app_connection.get_json(
+        "error", params={"secret": "changeme", "code": "500"}, expected_status=500, cors=False
+    )
+    app_connection.get_json(
+        "error", params={"secret": "changeme", "code": "400"}, expected_status=400, cors=False
+    )
+
+
 def test_memory_maps(app_connection):
     memory = app_connection.get_json("c2c/debug/memory_maps", params={"secret": "changeme"}, cors=False)
     print("memory_maps=" + json.dumps(memory, indent=4))

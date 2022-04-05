@@ -67,6 +67,7 @@ build_test_app: build_docker
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
 	.venv/bin/pip3 install --upgrade -r requirements.txt -r ci/requirements.txt
 	.venv/bin/pipenv sync --dev
+	.venv/bin/pip install -e .
 	touch $@
 
 .PHONY: pull
@@ -76,7 +77,7 @@ pull:
 
 .PHONY: run
 run: build_test_app
-	cd acceptance_tests/tests/; TEST_IP=172.17.0.1 docker-compose up
+	cd acceptance_tests/tests/; TEST_IP=172.17.0.1 docker-compose -f docker-compose.yaml -f docker-compose.override.manual.yaml up
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp
@@ -89,3 +90,9 @@ clean:
 .PHONY: c2cciutils
 c2cciutils: .venv/timestamp
 	.venv/bin/pipenv run .venv/bin/c2cciutils-checks --fix
+
+.PHONY: acceptance_local
+acceptance_local: .venv/timestamp
+	DOCKER_RUN=0 ./.venv/bin/pytest \
+	-vv --color=yes --junitxml reports/acceptance.xml --html reports/acceptance.html \
+	--self-contained-html $(PYTEST_OPTS) acceptance_tests/tests

@@ -14,7 +14,7 @@ def create(name: str, path: str, *args: Any, **kwargs: Any) -> Service:
     kwargs.setdefault("cors_max_age", 86400)
     kwargs.setdefault("depth", 2)  # to make venusian find the good frame
     kwargs.setdefault("http_cache", 0)  # disable client side and proxy caching by default
-    kwargs.setdefault("renderer", "fast_json")
+    kwargs.setdefault("renderer", "cornice_fast_json")
     kwargs.setdefault("filters", []).append(_cache_cors)
     return Service(name, path, *args, **kwargs)
 

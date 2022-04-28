@@ -1,4 +1,4 @@
-FROM redis:6
+FROM redis:7
 
 COPY entrypoint /
 

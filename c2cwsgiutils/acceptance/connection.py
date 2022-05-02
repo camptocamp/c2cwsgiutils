@@ -1,6 +1,6 @@
 import re
 from enum import Enum
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping, MutableMapping, Optional
 
 import requests
 from lxml import etree  # nosec
@@ -209,7 +209,7 @@ class Connection:
             else:
                 assert r.headers["Access-Control-Allow-Origin"] == "*"
 
-    def _merge_headers(self, headers: Optional[Mapping[str, str]], cors: bool) -> Mapping[str, str]:
+    def _merge_headers(self, headers: Optional[Mapping[str, str]], cors: bool) -> MutableMapping[str, str]:
         merged = dict(headers) if headers is not None else {}
         if self.session.headers is not None:
             merged.update(self.session.headers)

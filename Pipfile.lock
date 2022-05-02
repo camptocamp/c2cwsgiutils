@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "00811e0c76af2f099a57e825d576a648f5875e0ee0c5c6f2e4c262fa2234097b"
+            "sha256": "79e0a2d90d6b0505082c45134d568f2959ef540a2348d6555104e9117bb509b8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -838,11 +838,11 @@
     "develop": {
         "astroid": {
             "hashes": [
-                "sha256:4e5ba10571e197785e312966ea5efb2f5783176d4c1a73fa922d474ae2be59f7",
-                "sha256:f1af57483cd17e963b2eddce8361e00fc593d1520fe19948488e94ff6476bd71"
+                "sha256:561dc6015eecce7e696ff7e3b40434bc56831afeff783f0ea853e19c4f635c06",
+                "sha256:da0632b7c046d8361dfe1b1abb2e085a38624961fabe2997565a9c06c1be9d9a"
             ],
             "markers": "python_full_version >= '3.6.2'",
-            "version": "==2.11.3"
+            "version": "==2.11.4"
         },
         "attrs": {
             "hashes": [
@@ -1199,11 +1199,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:13ddbbd8872c804574149e81197c28877eba75224ba6b76cd8652fc31df55c1c",
-                "sha256:911d3a97c808f7554643bcc5416028cfdc42eae34ed129b150741888c688d5d5"
+                "sha256:ced8968c3b699df0615e2a709554dec3ddac2f5cd06efadb69554a69eeca364a",
+                "sha256:f87e863a0b08f64b5230e7e779bcb75276346995737b2c0dc2793070487b1ff6"
             ],
             "markers": "python_full_version >= '3.6.2'",
-            "version": "==2.13.7"
+            "version": "==2.13.8"
         },
         "pylint-celery": {
             "hashes": [
@@ -1397,11 +1397,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:5501ec6bcc164c54a6598e7ee6581827ea0ac0472e9d33b9456d202892f8d94c",
-                "sha256:e1cde99e92d5fb7afa0ee53924b211f4c47639516434d86dc84d53ec84fcfa8a"
+                "sha256:2444905c89731dbcb6bbcd6d873a04252445df7623917c640e463b2b28d2a708",
+                "sha256:805ae7e38fd9d157153066dc4381cf585fd34dfa212f2fc1fece248c05aac571"
             ],
             "index": "pypi",
-            "version": "==2.27.24"
+            "version": "==2.27.25"
         },
         "types-ujson": {
             "hashes": [

@@ -1,5 +1,6 @@
 # Release 5.1
 
+- `setup.process.init` initialize all non-wsgi features in a similar way as the `pyramid.includeme` function.
 - Restore the `C2CWSGIUTILS_CONFIG` environment variable, you can still use the standard way to specify the
   config file (with the argument `--paste` of gunicorn, or the `config_uri` argument or `pserve` prefixed
   by `c2c://`).

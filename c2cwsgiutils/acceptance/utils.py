@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 
 def in_docker() -> bool:
     """Is in Docker mode."""
-    return os.environ.get("DOCKER_RUN", "0") == "1"
+    return os.environ.get("DOCKER_RUN") != "0"
 
 
 DOCKER_GATEWAY = netifaces.gateways()[netifaces.AF_INET][0][0] if in_docker() else "localhost"

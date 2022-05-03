@@ -12,8 +12,19 @@ from typing import Any, Callable, Dict, Optional, TypedDict, cast
 import pyramid.registry
 import pyramid.request
 import pyramid.router
+import pyramid.config
+
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
+
+from c2cwsgiutils import (
+    broadcast,
+    coverage_setup,
+    redis_stats,
+    sentry,
+    stats,
+    sql_profiler,
+)
 
 
 def fill_arguments(
@@ -41,12 +52,21 @@ def fill_arguments(
 
 def init(config_file: str = "c2c:///app/production.ini") -> None:
     """Initialize the non-WSGI application, for backward compatibility."""
-    warnings.warn("init function is deprecated; use init_logging instead")
-    init_logging((config_file))
+    loader = get_config_loader(config_file)
+    loader.setup_logging(None)
+    settings = loader.get_settings()
+    config = pyramid.config.Configurator(settings=settings)
+    coverage_setup.includeme()
+    sentry.includeme(config)
+    broadcast.includeme(config)
+    stats.init_backends(settings)
+    redis_stats.includeme(config)
+    sql_profiler.includeme(config)
 
 
 def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
     """Initialize the non-WSGI application."""
+    warnings.warn("init_logging function is deprecated; use init instead so that all features are enabled")
     loader = get_config_loader(config_file)
     loader.setup_logging(None)
 

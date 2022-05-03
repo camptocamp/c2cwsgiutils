@@ -101,7 +101,7 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ign
 
 
 if TYPE_CHECKING:
-    Base = logging.StreamHandler[TextIO]  # pylint: disable=unsubscriptable-object
+    Base = logging.StreamHandler[TextIO]
 else:
     Base = logging.StreamHandler
 

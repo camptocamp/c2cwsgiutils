@@ -1,7 +1,13 @@
-def test_get_hello(composition):
+def test_get_hello(composition, master_db_setup, slave_db_setup):
     logs = composition.exec("app", "get-hello").splitlines()
-    logs = [o for o in logs if not o.startswith("{")]
-    logs = [
-        o for o in logs if o != "The environment variable 'test' is duplicated with different case, ignoring"
-    ]
-    assert logs[0] == "master"
+    filtered = []
+    for line in logs:
+        if line.startswith("{"):
+            continue
+        if line == "The environment variable 'test' is duplicated with different case, ignoring":
+            continue
+        if "Blowfish" in line:
+            continue
+        filtered.append(line)
+
+    assert filtered == ["master"]

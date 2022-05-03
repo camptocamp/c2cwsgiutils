@@ -5,6 +5,12 @@ WORKDIR /app
 
 EXPOSE 8080
 
+RUN \
+    apt-get update && \
+    apt-get install -y docker.io && \
+    apt-get clean && \
+    rm --force --recursive /var/lib/apt/lists/*
+
 COPY Pipfile Pipfile.lock /tmp/
 # hadolint ignore=DL3003
 RUN \

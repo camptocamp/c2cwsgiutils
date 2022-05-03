@@ -36,7 +36,7 @@ class Composition:
     """The Docker composition."""
 
     def __init__(self, request: Request, composition: str, coverage_paths: Optional[str] = None) -> None:
-        warnings.warn("The c2cwsgiutils.acceptance.composition should be used only if it's relay needed.")
+        warnings.warn("The c2cwsgiutils.acceptance.composition should be used only if it is really needed.")
         self.cwd = os.path.dirname(composition)
         filename = os.path.basename(composition)
         self.docker_compose = ["docker-compose"]

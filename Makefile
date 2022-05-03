@@ -32,7 +32,7 @@ acceptance: build_acceptance build_test_app
 	docker run $(DOCKER_TTY) --volume=/var/run/docker.sock:/var/run/docker.sock \
 		--name=c2cwsgiutils_acceptance_$$PPID --env=WAITRESS $(DOCKER_BASE)_acceptance \
 	    py.test -vv --color=yes --junitxml /reports/acceptance.xml --html /reports/acceptance.html \
-			--self-contained-html $(PYTEST_OPTS) tests
+			--self-contained-html $(PYTEST_ADDOPTS) tests
 	# Copy the reports locally
 	docker cp c2cwsgiutils_acceptance_$$PPID:/reports ./
 	docker rm c2cwsgiutils_acceptance_$$PPID

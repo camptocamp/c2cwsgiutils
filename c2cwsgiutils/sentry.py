@@ -81,7 +81,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
                 config, "SENTRY_TRACES_SAMPLE_RATE", "c2c.sentry_traces_sample_rate", "0.0"
             )
         )
-        sentry_sdk.init(  # type: ignore
+        sentry_sdk.init(
             dsn=sentry_url,
             integrations=[sentry_logging, PyramidIntegration(), SqlalchemyIntegration(), RedisIntegration()],
             traces_sample_rate=traces_sample_rate,

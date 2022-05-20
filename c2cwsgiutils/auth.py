@@ -6,6 +6,7 @@ from typing import Any, Mapping, Optional, Tuple, TypedDict, cast
 import jwt
 import pyramid.request
 from pyramid.httpexceptions import HTTPForbidden
+from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 
@@ -180,6 +181,59 @@ def auth_type(settings: Optional[Mapping[str, Any]]) -> Optional[AuthenticationT
         return AuthenticationType.GITHUB
 
     return AuthenticationType.NONE
+
+
+def check_access(
+    request: pyramid.request.Request, repo: Optional[str] = None, access_type: Optional[str] = None
+) -> bool:
+    """
+    Check if the user has access to the resource.
+
+    If the authentication type is not GitHub, this function is equivalent to is_auth.
+
+    `repo` is the repository to check access to.
+    `access_type` is the type of access to check.
+    """
+
+    auth, user = is_auth_user(request)
+    if not auth:
+        return False
+
+    settings = request.registry.settings
+    if auth_type(settings) != AuthenticationType.GITHUB:
+        return True
+
+    oauth = OAuth2Session(
+        env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
+        redirect_uri=request.route_url("c2c_github_callback"),
+        token=user["token"],
+    )
+
+    repo_url = env_or_settings(
+        settings,
+        GITHUB_REPO_URL_ENV,
+        GITHUB_REPO_URL_PROP,
+        "https://api.github.com/repos",
+    )
+    if repo is None:
+        repo = env_or_settings(
+            settings,
+            GITHUB_REPOSITORY_ENV,
+            GITHUB_REPOSITORY_PROP,
+            "",
+        )
+    if access_type is None:
+        access_type = env_or_settings(
+            settings,
+            GITHUB_ACCESS_TYPE_ENV,
+            GITHUB_ACCESS_TYPE_PROP,
+            "pull",
+        )
+    repository = oauth.get(f"{repo_url}/{repo}").json()
+    if repository["permissions"][access_type] is not True:
+        return False
+    return True
 
 
 def is_enabled(

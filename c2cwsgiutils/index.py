@@ -12,8 +12,6 @@ from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils import config_utils, profiler
 from c2cwsgiutils.auth import (
-    GITHUB_ACCESS_TYPE_ENV,
-    GITHUB_ACCESS_TYPE_PROP,
     GITHUB_AUTH_COOKIE_ENV,
     GITHUB_AUTH_COOKIE_PROP,
     GITHUB_AUTH_PROXY_URL_ENV,
@@ -26,10 +24,6 @@ from c2cwsgiutils.auth import (
     GITHUB_CLIENT_ID_PROP,
     GITHUB_CLIENT_SECRET_ENV,
     GITHUB_CLIENT_SECRET_PROP,
-    GITHUB_REPO_URL_ENV,
-    GITHUB_REPO_URL_PROP,
-    GITHUB_REPOSITORY_ENV,
-    GITHUB_REPOSITORY_PROP,
     GITHUB_SCOPE_ENV,
     GITHUB_SCOPE_PROP,
     GITHUB_TOKEN_URL_ENV,
@@ -42,6 +36,7 @@ from c2cwsgiutils.auth import (
     AuthenticationType,
     UserDetails,
     auth_type,
+    check_access,
     is_auth_user,
 )
 from c2cwsgiutils.config_utils import env_or_settings
@@ -148,6 +143,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response = request.response
 
     auth, user = is_auth_user(request)
+    has_access = check_access(request)
 
     response.content_type = "text/html"
     response.text = """
@@ -191,17 +187,17 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response.text += _health_check(request)
     response.text += _stats(request)
     response.text += _versions(request)
-    if auth:
+    if has_access:
         response.text += _debug(request)
         response.text += _db_maintenance(request)
         response.text += _logging(request)
         response.text += _profiler(request)
 
-    if additional_title is not None and (auth or additional_noauth):
+    if additional_title is not None and (has_access or additional_noauth):
         response.text += additional_title
         response.text += "\n"
 
-    if auth:
+    if has_access:
         response.text += "\n".join(additional_auth)
         response.text += "\n"
 
@@ -225,7 +221,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
             link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
             sep=False,
         )
-    elif auth_type_:
+    elif auth_type_ == AuthenticationType.GITHUB:
         response.text += section(
             "Authentication",
             f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
@@ -456,32 +452,6 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
             "https://api.github.com/user",
         )
     ).json()
-    repo_url = env_or_settings(
-        settings,
-        GITHUB_REPO_URL_ENV,
-        GITHUB_REPO_URL_PROP,
-        "https://api.github.com/repos",
-    )
-    repo = env_or_settings(
-        settings,
-        GITHUB_REPOSITORY_ENV,
-        GITHUB_REPOSITORY_PROP,
-        "",
-    )
-
-    repository = oauth.get(f"{repo_url}/{repo}").json()
-    if (
-        repository["permissions"][
-            env_or_settings(
-                settings,
-                GITHUB_ACCESS_TYPE_ENV,
-                GITHUB_ACCESS_TYPE_PROP,
-                "push",
-            )
-        ]
-        is not True
-    ):
-        return {"access": "no"}
 
     user_information: UserDetails = {
         "login": user["login"],

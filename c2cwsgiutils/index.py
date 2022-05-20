@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 import warnings
 from typing import Any, Dict, List, Optional, Union, cast
 
@@ -15,6 +16,8 @@ from c2cwsgiutils.auth import (
     GITHUB_ACCESS_TYPE_PROP,
     GITHUB_AUTH_COOKIE_ENV,
     GITHUB_AUTH_COOKIE_PROP,
+    GITHUB_AUTH_PROXY_URL_ENV,
+    GITHUB_AUTH_PROXY_URL_PROP,
     GITHUB_AUTH_SECRET_ENV,
     GITHUB_AUTH_SECRET_PROP,
     GITHUB_AUTH_URL_ENV,
@@ -34,6 +37,8 @@ from c2cwsgiutils.auth import (
     GITHUB_USER_URL_ENV,
     GITHUB_USER_URL_PROP,
     SECRET_ENV,
+    USE_SESSION_ENV,
+    USE_SESSION_PROP,
     AuthenticationType,
     UserDetails,
     auth_type,
@@ -49,9 +54,11 @@ additional_auth: List[str] = []
 ELEM_ID = 0
 
 
-def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
+def _url(
+    request: pyramid.request.Request, route: str, params: Optional[Dict[str, str]] = None
+) -> Optional[str]:
     try:
-        return request.route_url(route)  # type: ignore
+        return request.route_url(route, _query=params)  # type: ignore
     except KeyError:
         return None
 
@@ -365,22 +372,35 @@ def _health_check(request: pyramid.request.Request) -> str:
 def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
     """Get the view that start the authentication on GitHub."""
     settings = request.registry.settings
+    params = dict(request.params)
+    callback_url = _url(
+        request,
+        "c2c_github_callback",
+        {"came_from": params["came_from"]} if "came_from" in params else None,
+    )
+    proxy_url = env_or_settings(settings, GITHUB_AUTH_PROXY_URL_ENV, GITHUB_AUTH_PROXY_URL_PROP, "")
+    if proxy_url:
+        url = (
+            proxy_url
+            + ("&" if "?" in proxy_url else "?")
+            + urllib.parse.urlencode({"came_from": callback_url})
+        )
+    else:
+        url = callback_url
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
         scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
-        redirect_uri=_url(request, "c2c_github_callback"),
+        redirect_uri=url,
     )
     authorization_url, state = oauth.authorization_url(
         env_or_settings(
             settings, GITHUB_AUTH_URL_ENV, GITHUB_AUTH_URL_PROP, "https://github.com/login/oauth/authorize"
         ),
     )
+    use_session = env_or_settings(settings, USE_SESSION_ENV, USE_SESSION_PROP, "").lower() == "true"
     # State is used to prevent CSRF, keep this for later.
-    request.session["oauth_state"] = state
-    if "came_from" in request.params:
-        request.session["came_from"] = request.params.get("came_from")
-    elif "came_from" in request.session:
-        del request.session["came_from"]
+    if use_session:
+        request.session["oauth_state"] = state
     raise HTTPFound(location=authorization_url, headers=request.response.headers)
 
 
@@ -394,15 +414,27 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
     """
     settings = request.registry.settings
 
+    use_session = env_or_settings(settings, USE_SESSION_ENV, USE_SESSION_PROP, "").lower() == "true"
+    state = request.session["oauth_state"] if use_session else None
+
+    callback_url = _url(request, "c2c_github_callback")
+    proxy_url = env_or_settings(settings, GITHUB_AUTH_PROXY_URL_ENV, GITHUB_AUTH_PROXY_URL_PROP, "")
+    if proxy_url:
+        url = (
+            proxy_url
+            + ("&" if "?" in proxy_url else "?")
+            + urllib.parse.urlencode({"came_from": callback_url})
+        )
+    else:
+        url = callback_url
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
-        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
-        redirect_uri=_url(request, "c2c_github_callback"),
-        state=request.session["oauth_state"],
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, GITHUB_SCOPE_DEFAULT)],
+        redirect_uri=url,
+        state=state,
     )
 
     if "error" in request.GET:
-        LOG.error(request.GET)
         return dict(request.GET)
 
     token = oauth.fetch_token(

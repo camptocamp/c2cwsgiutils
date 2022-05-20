@@ -34,6 +34,10 @@ GITHUB_AUTH_COOKIE_PROP = "c2c.auth.github.auth.cookie"
 GITHUB_AUTH_COOKIE_ENV = "C2C_AUTH_GITHUB_COOKIE"
 GITHUB_AUTH_SECRET_PROP = "c2c.auth.github.auth.secret"  # nosec # noqa
 GITHUB_AUTH_SECRET_ENV = "C2C_AUTH_GITHUB_SECRET"  # nosec # noqa
+GITHUB_AUTH_PROXY_URL_PROP = "c2c.auth.github.auth.proxy_url"
+GITHUB_AUTH_PROXY_URL_ENV = "C2C_AUTH_GITHUB_PROXY_URL"
+USE_SESSION_PROP = "c2c.use_session"
+USE_SESSION_ENV = "C2C_USE_SESSION"
 
 
 LOG = logging.getLogger(__name__)

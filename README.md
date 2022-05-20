@@ -186,6 +186,12 @@ define the GitHub auth URL (default is `https://api.github.com/user`)
 Using the environment variable `C2C_AUTH_GITHUB_REPO_URL` or the config key `c2c.auth.github.repo_url` to
 define the GitHub auth URL (default is `https://api.github.com/repo`)
 
+Using the environment variable `C2C_AUTH_GITHUB_PROXY_URL` or the config key `c2c.auth.github.auth.proxy_url` to
+define a redirect proxy between GitHub and our application to be able to share an OAuth2 application on GitHub (default is no proxy)
+
+Using the environment variable `C2C_USE_SESSION` or the config key `c2c.use_session` to
+define if we use a session. Currently we can use the session to store a state, used to prevent CSRF, during OAuth2 login (default is `false`)
+
 ## Pyramid
 
 All the environment variables are usable in the configuration file using stuff like `%(ENV_NAME)s`.

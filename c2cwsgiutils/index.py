@@ -478,7 +478,7 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
         ),
     )
     raise HTTPFound(
-        location=request.session.get("came_from", _url(request, "c2c_index")),
+        location=request.params.get("came_from", _url(request, "c2c_index")),
         headers=request.response.headers,
     )
 

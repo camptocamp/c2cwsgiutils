@@ -193,8 +193,8 @@ def check_access(
 
     If the authentication type is not GitHub, this function is equivalent to is_auth.
 
-    `repo` is the repository to check access to.
-    `access_type` is the type of access to check.
+    `repo` is the repository to check access to (<organization>/<repository>).
+    `access_type` is the type of access to check (admin|push|pull).
     """
 
     auth, user = is_auth_user(request)

@@ -24,6 +24,7 @@ from c2cwsgiutils.auth import (
     GITHUB_CLIENT_ID_PROP,
     GITHUB_CLIENT_SECRET_ENV,
     GITHUB_CLIENT_SECRET_PROP,
+    GITHUB_SCOPE_DEFAULT,
     GITHUB_SCOPE_ENV,
     GITHUB_SCOPE_PROP,
     GITHUB_TOKEN_URL_ENV,
@@ -385,7 +386,7 @@ def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
         url = callback_url
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
-        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, GITHUB_SCOPE_DEFAULT)],
         redirect_uri=url,
     )
     authorization_url, state = oauth.authorization_url(

@@ -166,7 +166,7 @@ Using the environment variable `C2C_AUTH_GITHUB_CLIENT_SECRET` or the config key
 `c2c.auth.github.client_secret` to define the GitHub application secret (required)
 
 Using the environment variable `C2C_AUTH_GITHUB_SCOPE` or the config key `c2c.auth.github.scope` to define
-the GitHub scope (default is `read:user`)
+the GitHub scope (default is `repo`)
 
 Using the environment variable `C2C_AUTH_GITHUB_SECRET` or the config key `c2c.auth.github.auth.secret` to
 define the used secret for JWD encryption (required, with a length at least of 16)

@@ -31,6 +31,8 @@ GITHUB_CLIENT_SECRET_PROP = "c2c.auth.github.client_secret"  # nosec # noqa
 GITHUB_CLIENT_SECRET_ENV = "C2C_AUTH_GITHUB_CLIENT_SECRET"  # nosec # noqa
 GITHUB_SCOPE_PROP = "c2c.auth.github.scope"
 GITHUB_SCOPE_ENV = "C2C_AUTH_GITHUB_SCOPE"
+# To be able to use private repository
+GITHUB_SCOPE_DEFAULT = "repo"
 GITHUB_AUTH_COOKIE_PROP = "c2c.auth.github.auth.cookie"
 GITHUB_AUTH_COOKIE_ENV = "C2C_AUTH_GITHUB_COOKIE"
 GITHUB_AUTH_SECRET_PROP = "c2c.auth.github.auth.secret"  # nosec # noqa
@@ -205,7 +207,7 @@ def check_access(
 
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
-        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, GITHUB_SCOPE_DEFAULT)],
         redirect_uri=request.route_url("c2c_github_callback"),
         token=user["token"],
     )
@@ -231,7 +233,7 @@ def check_access(
             "pull",
         )
     repository = oauth.get(f"{repo_url}/{repo}").json()
-    if repository["permissions"][access_type] is not True:
+    if "permissions" not in repository or repository["permissions"][access_type] is not True:
         return False
     return True
 

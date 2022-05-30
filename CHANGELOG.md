@@ -6,6 +6,8 @@
   by `c2c://`).
 - Move back the logging configuration to `production.ini`. It will be read from `gunicorn.conf.py` at startup.
 - Remove the `development.ini` file to simplify the default application template; restore `production.ini` has the default configuration file.
+- When the `auth_type` is GitHub the `is_auth` and the `has_access` can return different values, the `is_auth` will just check
+  the authentication on GitHub succeed, `has_access` also check that the user has the desired rights.
 
 # Release 5
 

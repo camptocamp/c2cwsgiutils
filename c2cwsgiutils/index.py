@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 import warnings
 from typing import Any, Dict, List, Optional, Union, cast
 
@@ -11,10 +12,10 @@ from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils import config_utils, profiler
 from c2cwsgiutils.auth import (
-    GITHUB_ACCESS_TYPE_ENV,
-    GITHUB_ACCESS_TYPE_PROP,
     GITHUB_AUTH_COOKIE_ENV,
     GITHUB_AUTH_COOKIE_PROP,
+    GITHUB_AUTH_PROXY_URL_ENV,
+    GITHUB_AUTH_PROXY_URL_PROP,
     GITHUB_AUTH_SECRET_ENV,
     GITHUB_AUTH_SECRET_PROP,
     GITHUB_AUTH_URL_ENV,
@@ -23,10 +24,7 @@ from c2cwsgiutils.auth import (
     GITHUB_CLIENT_ID_PROP,
     GITHUB_CLIENT_SECRET_ENV,
     GITHUB_CLIENT_SECRET_PROP,
-    GITHUB_REPO_URL_ENV,
-    GITHUB_REPO_URL_PROP,
-    GITHUB_REPOSITORY_ENV,
-    GITHUB_REPOSITORY_PROP,
+    GITHUB_SCOPE_DEFAULT,
     GITHUB_SCOPE_ENV,
     GITHUB_SCOPE_PROP,
     GITHUB_TOKEN_URL_ENV,
@@ -34,9 +32,12 @@ from c2cwsgiutils.auth import (
     GITHUB_USER_URL_ENV,
     GITHUB_USER_URL_PROP,
     SECRET_ENV,
+    USE_SESSION_ENV,
+    USE_SESSION_PROP,
     AuthenticationType,
     UserDetails,
     auth_type,
+    check_access,
     is_auth_user,
 )
 from c2cwsgiutils.config_utils import env_or_settings
@@ -49,9 +50,11 @@ additional_auth: List[str] = []
 ELEM_ID = 0
 
 
-def _url(request: pyramid.request.Request, route: str) -> Optional[str]:
+def _url(
+    request: pyramid.request.Request, route: str, params: Optional[Dict[str, str]] = None
+) -> Optional[str]:
     try:
-        return request.route_url(route)  # type: ignore
+        return request.route_url(route, _query=params)  # type: ignore
     except KeyError:
         return None
 
@@ -141,6 +144,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response = request.response
 
     auth, user = is_auth_user(request)
+    has_access = check_access(request)
 
     response.content_type = "text/html"
     response.text = """
@@ -184,17 +188,17 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
     response.text += _health_check(request)
     response.text += _stats(request)
     response.text += _versions(request)
-    if auth:
+    if has_access:
         response.text += _debug(request)
         response.text += _db_maintenance(request)
         response.text += _logging(request)
         response.text += _profiler(request)
 
-    if additional_title is not None and (auth or additional_noauth):
+    if additional_title is not None and (has_access or additional_noauth):
         response.text += additional_title
         response.text += "\n"
 
-    if auth:
+    if has_access:
         response.text += "\n".join(additional_auth)
         response.text += "\n"
 
@@ -218,7 +222,7 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
             link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
             sep=False,
         )
-    elif auth_type_:
+    elif auth_type_ == AuthenticationType.GITHUB:
         response.text += section(
             "Authentication",
             f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
@@ -365,22 +369,35 @@ def _health_check(request: pyramid.request.Request) -> str:
 def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
     """Get the view that start the authentication on GitHub."""
     settings = request.registry.settings
+    params = dict(request.params)
+    callback_url = _url(
+        request,
+        "c2c_github_callback",
+        {"came_from": params["came_from"]} if "came_from" in params else None,
+    )
+    proxy_url = env_or_settings(settings, GITHUB_AUTH_PROXY_URL_ENV, GITHUB_AUTH_PROXY_URL_PROP, "")
+    if proxy_url:
+        url = (
+            proxy_url
+            + ("&" if "?" in proxy_url else "?")
+            + urllib.parse.urlencode({"came_from": callback_url})
+        )
+    else:
+        url = callback_url
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
-        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
-        redirect_uri=_url(request, "c2c_github_callback"),
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, GITHUB_SCOPE_DEFAULT)],
+        redirect_uri=url,
     )
     authorization_url, state = oauth.authorization_url(
         env_or_settings(
             settings, GITHUB_AUTH_URL_ENV, GITHUB_AUTH_URL_PROP, "https://github.com/login/oauth/authorize"
         ),
     )
+    use_session = env_or_settings(settings, USE_SESSION_ENV, USE_SESSION_PROP, "").lower() == "true"
     # State is used to prevent CSRF, keep this for later.
-    request.session["oauth_state"] = state
-    if "came_from" in request.params:
-        request.session["came_from"] = request.params.get("came_from")
-    elif "came_from" in request.session:
-        del request.session["came_from"]
+    if use_session:
+        request.session["oauth_state"] = state
     raise HTTPFound(location=authorization_url, headers=request.response.headers)
 
 
@@ -394,15 +411,27 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
     """
     settings = request.registry.settings
 
+    use_session = env_or_settings(settings, USE_SESSION_ENV, USE_SESSION_PROP, "").lower() == "true"
+    state = request.session["oauth_state"] if use_session else None
+
+    callback_url = _url(request, "c2c_github_callback")
+    proxy_url = env_or_settings(settings, GITHUB_AUTH_PROXY_URL_ENV, GITHUB_AUTH_PROXY_URL_PROP, "")
+    if proxy_url:
+        url = (
+            proxy_url
+            + ("&" if "?" in proxy_url else "?")
+            + urllib.parse.urlencode({"came_from": callback_url})
+        )
+    else:
+        url = callback_url
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
-        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, "read:user")],
-        redirect_uri=_url(request, "c2c_github_callback"),
-        state=request.session["oauth_state"],
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, GITHUB_SCOPE_DEFAULT)],
+        redirect_uri=url,
+        state=state,
     )
 
     if "error" in request.GET:
-        LOG.error(request.GET)
         return dict(request.GET)
 
     token = oauth.fetch_token(
@@ -424,32 +453,6 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
             "https://api.github.com/user",
         )
     ).json()
-    repo_url = env_or_settings(
-        settings,
-        GITHUB_REPO_URL_ENV,
-        GITHUB_REPO_URL_PROP,
-        "https://api.github.com/repos",
-    )
-    repo = env_or_settings(
-        settings,
-        GITHUB_REPOSITORY_ENV,
-        GITHUB_REPOSITORY_PROP,
-        "",
-    )
-
-    repository = oauth.get(f"{repo_url}/{repo}").json()
-    if (
-        repository["permissions"][
-            env_or_settings(
-                settings,
-                GITHUB_ACCESS_TYPE_ENV,
-                GITHUB_ACCESS_TYPE_PROP,
-                "push",
-            )
-        ]
-        is not True
-    ):
-        return {"access": "no"}
 
     user_information: UserDetails = {
         "login": user["login"],
@@ -475,7 +478,7 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
         ),
     )
     raise HTTPFound(
-        location=request.session.get("came_from", _url(request, "c2c_index")),
+        location=request.params.get("came_from", _url(request, "c2c_index")),
         headers=request.response.headers,
     )
 

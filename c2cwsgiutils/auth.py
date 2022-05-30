@@ -6,6 +6,7 @@ from typing import Any, Mapping, Optional, Tuple, TypedDict, cast
 import jwt
 import pyramid.request
 from pyramid.httpexceptions import HTTPForbidden
+from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 
@@ -30,10 +31,16 @@ GITHUB_CLIENT_SECRET_PROP = "c2c.auth.github.client_secret"  # nosec # noqa
 GITHUB_CLIENT_SECRET_ENV = "C2C_AUTH_GITHUB_CLIENT_SECRET"  # nosec # noqa
 GITHUB_SCOPE_PROP = "c2c.auth.github.scope"
 GITHUB_SCOPE_ENV = "C2C_AUTH_GITHUB_SCOPE"
+# To be able to use private repository
+GITHUB_SCOPE_DEFAULT = "repo"
 GITHUB_AUTH_COOKIE_PROP = "c2c.auth.github.auth.cookie"
 GITHUB_AUTH_COOKIE_ENV = "C2C_AUTH_GITHUB_COOKIE"
 GITHUB_AUTH_SECRET_PROP = "c2c.auth.github.auth.secret"  # nosec # noqa
 GITHUB_AUTH_SECRET_ENV = "C2C_AUTH_GITHUB_SECRET"  # nosec # noqa
+GITHUB_AUTH_PROXY_URL_PROP = "c2c.auth.github.auth.proxy_url"
+GITHUB_AUTH_PROXY_URL_ENV = "C2C_AUTH_GITHUB_PROXY_URL"
+USE_SESSION_PROP = "c2c.use_session"
+USE_SESSION_ENV = "C2C_USE_SESSION"
 
 
 LOG = logging.getLogger(__name__)
@@ -176,6 +183,59 @@ def auth_type(settings: Optional[Mapping[str, Any]]) -> Optional[AuthenticationT
         return AuthenticationType.GITHUB
 
     return AuthenticationType.NONE
+
+
+def check_access(
+    request: pyramid.request.Request, repo: Optional[str] = None, access_type: Optional[str] = None
+) -> bool:
+    """
+    Check if the user has access to the resource.
+
+    If the authentication type is not GitHub, this function is equivalent to is_auth.
+
+    `repo` is the repository to check access to (<organization>/<repository>).
+    `access_type` is the type of access to check (admin|push|pull).
+    """
+
+    auth, user = is_auth_user(request)
+    if not auth:
+        return False
+
+    settings = request.registry.settings
+    if auth_type(settings) != AuthenticationType.GITHUB:
+        return True
+
+    oauth = OAuth2Session(
+        env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
+        scope=[env_or_settings(settings, GITHUB_SCOPE_ENV, GITHUB_SCOPE_PROP, GITHUB_SCOPE_DEFAULT)],
+        redirect_uri=request.route_url("c2c_github_callback"),
+        token=user["token"],
+    )
+
+    repo_url = env_or_settings(
+        settings,
+        GITHUB_REPO_URL_ENV,
+        GITHUB_REPO_URL_PROP,
+        "https://api.github.com/repos",
+    )
+    if repo is None:
+        repo = env_or_settings(
+            settings,
+            GITHUB_REPOSITORY_ENV,
+            GITHUB_REPOSITORY_PROP,
+            "",
+        )
+    if access_type is None:
+        access_type = env_or_settings(
+            settings,
+            GITHUB_ACCESS_TYPE_ENV,
+            GITHUB_ACCESS_TYPE_PROP,
+            "pull",
+        )
+    repository = oauth.get(f"{repo_url}/{repo}").json()
+    if "permissions" not in repository or repository["permissions"][access_type] is not True:
+        return False
+    return True
 
 
 def is_enabled(

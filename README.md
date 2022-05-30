@@ -166,7 +166,7 @@ Using the environment variable `C2C_AUTH_GITHUB_CLIENT_SECRET` or the config key
 `c2c.auth.github.client_secret` to define the GitHub application secret (required)
 
 Using the environment variable `C2C_AUTH_GITHUB_SCOPE` or the config key `c2c.auth.github.scope` to define
-the GitHub scope (default is `read:user`)
+the GitHub scope (default is `repo`), see [GitHub documentation](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/)
 
 Using the environment variable `C2C_AUTH_GITHUB_SECRET` or the config key `c2c.auth.github.auth.secret` to
 define the used secret for JWD encryption (required, with a length at least of 16)
@@ -185,6 +185,13 @@ define the GitHub auth URL (default is `https://api.github.com/user`)
 
 Using the environment variable `C2C_AUTH_GITHUB_REPO_URL` or the config key `c2c.auth.github.repo_url` to
 define the GitHub auth URL (default is `https://api.github.com/repo`)
+
+Using the environment variable `C2C_AUTH_GITHUB_PROXY_URL` or the config key `c2c.auth.github.auth.proxy_url` to
+define a redirect proxy between GitHub and our application to be able to share an OAuth2 application on GitHub (default is no proxy).
+Made to work with [this proxy](https://github.com/camptocamp/redirect/).
+
+Using the environment variable `C2C_USE_SESSION` or the config key `c2c.use_session` to
+define if we use a session. Currently, we can use the session to store a state, used to prevent CSRF, during OAuth2 login (default is `false`)
 
 ## Pyramid
 

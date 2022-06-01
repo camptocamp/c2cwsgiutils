@@ -2,7 +2,7 @@
 
 - `setup_process.init` initialize all non-wsgi features in a similar way as the `pyramid.includeme` function.
 - Restore the `C2CWSGIUTILS_CONFIG` environment variable, you can still use the standard way to specify the
-  config file (with the argument `--paste` of gunicorn, or the `config_uri` argument or `pserve` prefixed
+  config file (with the argument `--paste` of Gunicorn, or the `config_uri` argument or `pserve` prefixed
   by `c2c://`).
 - Move back the logging configuration to `production.ini`. It will be read from `gunicorn.conf.py` at startup.
 - Remove the `development.ini` file to simplify the default application template; restore `production.ini` has the default configuration file.
@@ -10,8 +10,10 @@
   the authentication on GitHub succeed, `has_access` also check that the user has the desired rights.
 - The base image is now Ubuntu 22.04.
 - The `install-docker` and `install-gdal` are removed.
+- It is recommended to use OAuth2 with GitHub login instead of the `C2C_SECRET` because it protects from
+  brute force attacks and the access grant is personal and can be revoked.
 
-# Release 5
+# Release 5.0
 
 - Remove the script `c2cwsgiutils-run`.
 - The Pyramid initializing module functions are renamed from `init` to `includeme`.
@@ -36,9 +38,9 @@
 
   and in both `development.ini` and `production.ini`, rename `[app:main]` to `[app:app]`.
 
-- The usage of the Docker image is deprecated, read the start of the (Readme)[./README.md] to update your setup.
+- The usage of the Docker image is deprecated, read the start of the [Readme](./README.md) to update your setup.
 - The usage of the global `DBSession` is deprecated, use the session on the request instead, should be
-  initialized with the function `c2cwsgiutils.db.init`. see the (Readme)[./README.md] for more information.
+  initialized with the function `c2cwsgiutils.db.init`. see the [Readme](./README.md) for more information.
 
 # Release 4
 

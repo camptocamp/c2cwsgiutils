@@ -56,7 +56,6 @@ RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps 
     python3 -c 'import c2cwsgiutils'
 
 ENV C2C_BASE_PATH=/c2c \
-    C2C_SECRET=c2crulez \
     C2C_REDIS_URL= \
     C2C_REDIS_SENTINELS= \
     C2C_REDIS_SERVICENAME=mymaster \

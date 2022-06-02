@@ -190,7 +190,7 @@ def _add_tween(
 
         return db_chooser_tween
 
-    tweens.__setattr__(name, db_chooser_tween_factory)
+    setattr(tweens, name, db_chooser_tween_factory)
     config.add_tween("c2cwsgiutils.db.tweens." + name, over="pyramid_tm.tm_tween_factory")
 
 

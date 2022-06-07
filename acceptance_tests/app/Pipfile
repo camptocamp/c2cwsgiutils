@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pipenv = "==2022.5.2"
+pipenv = "==2022.6.7"
 setuptools = "==62.3.3"
 
 [dev-packages]

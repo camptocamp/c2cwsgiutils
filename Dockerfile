@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS base-all
+FROM ubuntu:22.04 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
@@ -9,7 +9,7 @@ RUN apt-get update && \
     libpq5 \
     python3 \
     curl \
-    postgresql-client-12 \
+    postgresql-client \
     net-tools iputils-ping screen \
     gnupg \
     apt-transport-https \
@@ -23,8 +23,6 @@ RUN apt-get update && \
     (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear) && \
     strip /usr/local/lib/python3.*/dist-packages/*/*.so && \
     apt-get remove --purge --autoremove --yes $DEV_PACKAGES binutils
-
-COPY scripts/install-docker /usr/bin/
 
 ENV TERM=linux \
     LANG=C.UTF-8 \
@@ -44,7 +42,6 @@ RUN (cd /opt/c2cwsgiutils/ && pipenv sync --system --clear --dev)
 
 FROM base-all AS base
 
-COPY scripts/install-gdal /usr/bin/
 COPY scripts/c2cwsgiutils-run /opt/c2cwsgiutils/scripts/
 COPY setup.py setup.cfg /opt/c2cwsgiutils/
 COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
@@ -84,7 +81,6 @@ COPY . /opt/c2cwsgiutils/
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
     --editable=/opt/c2cwsgiutils
 RUN (cd /opt/c2cwsgiutils/ && prospector -X --output=pylint)
-RUN echo "from pickle import *" > /usr/lib/python3.8/cPickle.py
 RUN (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests)
 
 

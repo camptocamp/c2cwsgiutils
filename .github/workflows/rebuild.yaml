@@ -50,10 +50,5 @@ jobs:
       - name: Acceptance
         run: make acceptance
 
-      - name: Install GDAL
-        # with .sh for release <= 3
-        run: docker run --rm camptocamp/c2cwsgiutils install-gdal ||
-          docker run --rm camptocamp/c2cwsgiutils:latest-full /opt/c2cwsgiutils/install_gdal.sh
-
       - name: Publish
         run: c2cciutils-publish --type=rebuild --branch=${{ matrix.branch }}

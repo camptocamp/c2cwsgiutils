@@ -8,6 +8,8 @@
 - Remove the `development.ini` file to simplify the default application template; restore `production.ini` has the default configuration file.
 - When the `auth_type` is GitHub the `is_auth` and the `has_access` can return different values, the `is_auth` will just check
   the authentication on GitHub succeed, `has_access` also check that the user has the desired rights.
+- The base image is now Ubuntu 22.04.
+- The `install-docker` and `install-gdal` are removed.
 
 # Release 5
 
@@ -15,7 +17,7 @@
 - The Pyramid initializing module functions are renamed from `init` to `includeme`.
 - Remove the environment variable `GUNICORN_PARAMS` we will use the standard one `GUNICORN_CMD_ARGS`.
 - Remove the `C2CWSGIUTILS_CONFIG` environment variable, we should use the standard way to specify the
-  config file (with the argument `--paste` of gunicorn, or the `config_uri` argument or `pserve` prefixed
+  config file (with the argument `--paste` of Gunicorn, or the `config_uri` argument or `pserve` prefixed
   by `c2c://`).
 - Filters like `sentry`, `profiler`, `client_info` will not be added automatically anymore, you should add
   the following lines in your project `development.ini`:

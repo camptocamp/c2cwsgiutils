@@ -516,6 +516,12 @@ def includeme(config: pyramid.config.Configurator) -> None:
 
         settings = config.get_settings()
         auth_type_ = auth_type(settings)
+        if auth_type_ == AuthenticationType.SECRET:
+            LOG.warning(
+                "It is recommended to use OAuth2 with GitHub login instead of the `C2C_SECRET` because it "
+                "protects from brute force attacks and the access grant is personal and can be revoked."
+            )
+
         if auth_type_ == AuthenticationType.GITHUB:
             config.add_route("c2c_github_login", base_path + "/github-login", request_method=("GET",))
             config.add_view(_github_login, route_name="c2c_github_login", http_cache=0)

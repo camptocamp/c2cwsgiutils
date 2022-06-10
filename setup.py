@@ -1,6 +1,6 @@
 import os
-from setuptools import setup, find_packages
 
+from setuptools import find_packages, setup
 
 VERSION = '2.19.2'
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -44,7 +44,6 @@ setup(
     zip_safe=False,
     install_requires=INSTALL_REQUIRES,
     extras_require={
-        'profiler': ['linesman'],
         'broadcast': ['redis']
     },
     entry_points={

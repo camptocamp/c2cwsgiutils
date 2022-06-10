@@ -51,7 +51,6 @@ setup(
     install_requires=[],
     extras_require={
         "standard": [e for e in INSTALL_REQUIRES if e != "redis"],
-        "profiler": ["linesman"],
         "broadcast": ["redis"],
     },
     entry_points={
@@ -80,7 +79,6 @@ setup(
         ],
         "paste.filter_factory": [
             "client_info=c2cwsgiutils.client_info:filter_factory",
-            "profiler=c2cwsgiutils.profiler:filter_factory",
             "sentry=c2cwsgiutils.sentry:filter_factory",
         ],
     },

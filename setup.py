@@ -47,7 +47,6 @@ setup(
     install_requires=[],
     extras_require={
         "standard": [e[0] for e in pipfile.load().data["default"].items() if e[0] != "redis"],
-        "profiler": ["linesman"],
         "broadcast": ["redis"],
     },
     entry_points={
@@ -76,7 +75,6 @@ setup(
         ],
         "paste.filter_factory": [
             "client_info=c2cwsgiutils.client_info:filter_factory",
-            "profiler=c2cwsgiutils.profiler:filter_factory",
             "sentry=c2cwsgiutils.sentry:filter_factory",
         ],
     },

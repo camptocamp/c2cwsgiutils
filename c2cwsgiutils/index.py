@@ -1,10 +1,10 @@
-from typing import List, Optional, Union  # noqa  # pylint: disable=unused-import
+from typing import (List, Optional,  # noqa  # pylint: disable=unused-import
+                    Union)
 
 import pyramid.config
 import pyramid.request
 import pyramid.response
-
-from c2cwsgiutils import _utils, profiler
+from c2cwsgiutils import _utils
 from c2cwsgiutils.auth import is_auth
 
 additional_title: Optional[str] = None
@@ -183,25 +183,6 @@ def _stats(request: pyramid.request.Request) -> str:
     stats_url = _url(request, 'c2c_read_stats_json')
     if stats_url:
         return section("Statistics", paragraph(link(stats_url, 'Get')))
-    else:
-        return ""
-
-
-def _profiler(request: pyramid.request.Request) -> str:
-    sql_profiler_url = _url(request, 'c2c_sql_profiler')
-    if sql_profiler_url or profiler.PATH:
-        result = ""
-
-        if sql_profiler_url:
-            result += paragraph(
-                link(sql_profiler_url, 'Status'),
-                link(sql_profiler_url + "?enable=1", 'Enable'),
-                link(sql_profiler_url + "?enable=0", 'Disable'),
-                title='SQL')
-
-        if profiler.PATH:
-            result += paragraph(link(profiler.PATH, 'Profiler'), title='Python')
-        return section("Profiler", result)
     else:
         return ""
 

@@ -43,7 +43,6 @@ setup(
     zip_safe=False,
     install_requires=INSTALL_REQUIRES,
     extras_require={
-        'profiler': ['linesman'],
         'broadcast': ['redis']
     },
     entry_points={

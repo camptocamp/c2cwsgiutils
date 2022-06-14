@@ -321,28 +321,34 @@ Don't enable that on a busy production system. It will kill your performances.
 
 ## Profiler
 
-### Setup
+C2cwsgiutils provide an easy way to profile an application:
 
-You should add the filter `egg:c2cwsgiutils#profiler` to your application in your `production.ini` file.
+With a decorator:
 
-```ini
-[pipeline:main]
-pipeline = egg:c2cwsgiutils#profiler ... app
+```python
+from c2cwsgiutils.profile import Profiler
+
+@Profile('/my_file.prof')
+my_function():
+    ...
 ```
 
-If you want to use this feature, you must have the `linesman` package installed.
+Or with the `with` statement:
 
-### Configuration
+```python
+from c2cwsgiutils.profile import Profiler
 
-`C2C_PROFILER_PATH`: the path to the profiler. Defaults is `/c2c_profile`.
-Due to limitations in the library used, the path must be at the root of the application (it
-cannot contain slashes).
+with Profile('/my_file.prof'):
+    ...
+```
 
-You can also define the `C2C_PROFILER_MODULES`, a space separated list of Python
-packages to have a pie chart of how much time is spent in the given packages.
+Then open your file with SnakeViz:
 
-The profiler, even if configured, is actually disabled when the application starts. To enable it you must
-visit its page.
+```bash
+docker cp container_name:/my_file.prof .
+pip install --user snakeviz
+snakeviz my_file.prof
+```
 
 ## DB sessions
 

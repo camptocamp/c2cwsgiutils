@@ -1,2 +1,2 @@
-pipenv==2022.6.7
-wheel==0.37.1
+poetry==1.1.13
+poetry-plugin-tweak-dependencies-version==0.1.7

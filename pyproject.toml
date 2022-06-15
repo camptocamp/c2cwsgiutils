@@ -1,3 +1,179 @@
 [tool.black]
 line-length = 110
 target-version = ['py38']
+
+[tool.isort]
+known_third_party = "pyramid2"
+known_first_party = "c2cwsgiutils"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = false
+use_parentheses = true
+line_length = 110
+
+[tool.mypy]
+python_version = 3.8
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+strict = true
+
+[tool.poetry]
+name = "c2cwsgiutils"
+version = "0.1.0"
+description = "Common utilities for Camptocamp WSGI applications"
+readme = "README.md"
+authors = ["Camptocamp <info@camptocamp.com>"]
+keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
+repository = "https://github.com/camptocamp/c2cwsgiutils"
+license = "FreeBSD"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Plugins",
+  "Framework :: Pyramid",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Intended Audience :: Information Technology",
+  "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+  "Typing :: Typed",
+]
+packages = [{ include = "c2cwsgiutils" }]
+include = ["c2cwsgiutils/py.typed"]
+
+[tool.poetry.scripts]
+c2cwsgiutils-genversion = "c2cwsgiutils.scripts.genversion:main"
+c2cwsgiutils-coverage-report = "c2cwsgiutils.scripts.coverage_report:main"
+c2cwsgiutils-stats-db = "c2cwsgiutils.scripts.stats_db:main"
+c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
+c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
+
+[tool.poetry.plugins."plaster.loader_factory"]
+c2c = "c2cwsgiutils.loader:Loader"
+"c2c+ini" = "c2cwsgiutils.loader:Loader"
+"c2c+egg" = "c2cwsgiutils.loader:Loader"
+
+[tool.poetry.plugins."plaster.wsgi_loader_factory"]
+c2c = "c2cwsgiutils.loader:Loader"
+"c2c+ini" = "c2cwsgiutils.loader:Loader"
+"c2c+egg" = "c2cwsgiutils.loader:Loader"
+
+[tool.poetry.plugins."paste.filter_factory"]
+client_info = "c2cwsgiutils.client_info:filter_factory"
+sentry = "c2cwsgiutils.sentry:filter_factory"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+requests = { version = "2.27.1" }
+pyyaml = { version = "6.0" }
+alembic = { version = "1.8.0", optional = true }
+boltons = { version = "21.0.0", optional = true }
+cornice = { version = "6.0.1", optional = true }
+redis = { version = "4.3.3", optional = true }
+gunicorn = { version = "20.1.0", optional = true }
+lxml = { version = "4.9.0", optional = true }
+netifaces = { version = "0.11.0", optional = true }
+objgraph = { version = "3.5.0", optional = true }
+psycopg2 = { version = "2.9.3", optional = true }
+pyramid = { version = "2.0", optional = true }
+pyramid-tm = { version = "2.5", optional = true }
+sentry-sdk = { version = "1.5.12", optional = true }
+ujson = { version = "5.3.0", optional = true }
+cee_syslog_handler = { version = "0.6.0", optional = true }
+SQLAlchemy = { version = "1.4.37", optional = true }
+SQLAlchemy-Utils = { version = "0.38.2", optional = true }
+"zope.interface" = { version = "5.1.0", optional = true }
+"zope.sqlalchemy" = { version = "1.3", optional = true }
+pyjwt = { version = "2.4.0", optional = true }
+requests-oauthlib = { version = "1.3.1", optional = true }
+waitress = { version = "2.1.2", optional = true }
+
+[tool.poetry.extras]
+standard = [
+  "alembic",
+  "boltons",
+  "cornice",
+  "redis",
+  "gunicorn",
+  "lxml",
+  "netifaces",
+  "objgraph",
+  "psycopg2",
+  "pyramid",
+  "pyramid-tm",
+  "sentry-sdk",
+  "ujson",
+  "cee_syslog_handler",
+  "SQLAlchemy",
+  "SQLAlchemy-Utils",
+  "zope.interface",
+  "zope.sqlalchemy"
+]
+oauth2 = ["pyjwt", "requests-oauthlib"]
+dev = ["waitress"]
+broadcast = ["redis"]
+all = [
+  "alembic",
+  "boltons",
+  "cornice",
+  "redis",
+  "gunicorn",
+  "lxml",
+  "netifaces",
+  "objgraph",
+  "psycopg2",
+  "pyramid",
+  "pyramid-tm",
+  "sentry-sdk",
+  "ujson",
+  "cee_syslog_handler",
+  "SQLAlchemy",
+  "SQLAlchemy-Utils",
+  "zope.interface",
+  "zope.sqlalchemy",
+  "pyjwt",
+  "requests-oauthlib",
+  "waitress",
+  "redis"
+]
+
+[tool.poetry.dev-dependencies]
+prospector = { extras = [
+  "with_bandit",
+  "with_mypy",
+  "with_pyroma"
+], version = "1.7.7" }
+pylint = "2.14.1"
+mypy = "0.961"
+flake8 = "4.0.1"
+coverage = "6.4.1"
+junit2html = "30.1.3"
+pytest = "7.1.2"
+pytest-cov = "3.0.0"
+pytest-html = "3.1.1"
+types-pyyaml = "6.0.8"
+types-requests = "2.27.30"
+types-redis = "4.2.6"
+types-ujson = "5.2.0"
+types-python-dateutil = "2.8.17"
+typing_extensions = "4.2.0"
+
+[build-system]
+requires = [
+  "poetry-core>=1.0.0",
+  "poetry-dynamic-versioning",
+  "poetry-plugin-tweak-dependencies-version"
+]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry-dynamic-versioning]
+enable = true # disable on Docker
+vcs = "git"
+pattern = "^((?P<epoch>\\d+)!)?(?P<base>\\d+(\\.\\d+)*)"
+
+[tool.poetry-plugin-tweak-dependencies-version]
+default = "present"

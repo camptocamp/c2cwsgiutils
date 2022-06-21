@@ -1,4 +1,10 @@
-# Release 5.1
+# Changelog
+
+## Release 5.2
+
+- `c2cwsgiutils_run` is completely removes (not used from 5.0).
+
+## Release 5.1
 
 - `setup_process.init` initialize all non-wsgi features in a similar way as the `pyramid.includeme` function.
 - Restore the `C2CWSGIUTILS_CONFIG` environment variable, you can still use the standard way to specify the
@@ -13,7 +19,7 @@
 - It is recommended to use OAuth2 with GitHub login instead of the `C2C_SECRET` because it protects from
   brute force attacks and the access grant is personal and can be revoked.
 
-# Release 5.0
+## Release 5.0
 
 - Remove the script `c2cwsgiutils-run`.
 - The Pyramid initializing module functions are renamed from `init` to `includeme`.
@@ -42,7 +48,7 @@
 - The usage of the global `DBSession` is deprecated, use the session on the request instead, should be
   initialized with the function `c2cwsgiutils.db.init`. see the [Readme](./README.md) for more information.
 
-# Release 4
+## Release 4
 
 - Rename the scripts:
 

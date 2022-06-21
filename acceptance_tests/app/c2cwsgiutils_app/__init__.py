@@ -1,10 +1,10 @@
-from c2cwsgiutils_app import models
 from pyramid.config import Configurator
 from pyramid.httpexceptions import HTTPInternalServerError
 
 import c2cwsgiutils.pyramid
 from c2cwsgiutils import broadcast, db
 from c2cwsgiutils.health_check import HealthCheck, JsonCheckException
+from c2cwsgiutils_app import models
 
 
 def _failure(_request):

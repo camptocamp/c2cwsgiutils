@@ -1,26 +1,44 @@
-FROM ubuntu:22.04 AS base-all
-LABEL maintainer "info@camptocamp.org"
+FROM ubuntu:22.04 AS base-all-0
+LABEL maintainer Camptocamp "info@camptocamp.com"
+SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 
-COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
+RUN --mount=type=cache,target=/var/lib/apt/lists \
+  --mount=type=cache,target=/var/cache,sharing=locked \
+  apt-get update \
+  && apt-get upgrade --assume-yes \
+  && apt-get install --assume-yes --no-install-recommends python3-pip
+
+# Used to convert the locked packages by poetry to pip requirements format
+# We don't directly use `poetry install` because it force to use a virtual environment.
+FROM base-all-0 as poetry
+
+# Install Poetry
+WORKDIR /tmp
+COPY requirements.txt ./
+RUN --mount=type=cache,target=/root/.cache \
+  python3 -m pip install --disable-pip-version-check --requirement=requirements.txt
+
+# Do the conversion
+COPY poetry.lock pyproject.toml ./
+RUN poetry export --extras=all --output=requirements.txt \
+  && poetry export --extras=all --dev --output=requirements-dev.txt
+
+# Base, the biggest thing is to install the Python packages
+FROM base-all-0 as base-all
+
+# The /poetry/requirements.txt file is build with the command
+# poetry export --extras=all --output=requirements.txt, see above
 # hadolint ignore=SC2086
-RUN apt-get update \
+RUN --mount=type=cache,target=/var/lib/apt/lists \
+  --mount=type=cache,target=/var/cache,sharing=locked \
+  --mount=type=cache,target=/root/.cache \
+  --mount=type=bind,from=poetry,source=/tmp,target=/poetry \
+  apt-get update \
   && DEV_PACKAGES="libpq-dev build-essential python3-dev" \
-  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
-    libpq5 \
-    python3 \
-    curl \
-    postgresql-client \
-    net-tools iputils-ping screen \
-    gnupg \
-    apt-transport-https \
+  && apt-get install --yes --no-install-recommends \
+    libpq5 curl postgresql-client net-tools iputils-ping gnupg apt-transport-https \
     $DEV_PACKAGES \
-  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
-    python3-pip \
-    python3-pkgconfig \
-  && apt-get clean \
-  && rm -r /var/lib/apt/lists/* \
-  && python3 -m pip install --no-cache-dir --requirement=/opt/c2cwsgiutils/requirements.txt \
-  && cd /opt/c2cwsgiutils/ && pipenv sync --system --clear && cd - \
+  && python3 -m pip install --disable-pip-version-check --no-deps --requirement=/poetry/requirements.txt \
   && strip /usr/local/lib/python3.*/dist-packages/*/*.so \
   && apt-get remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
@@ -36,18 +54,23 @@ ENV TERM=linux \
   PKG_CONFIG_ALLOW_SYSTEM_LIBS=OHYESPLEASE
 
 FROM base-all AS base-lint
-RUN cd /opt/c2cwsgiutils/ && pipenv sync --system --clear --dev && cd -
+# The /poetry/requirements.txt file is build with the command
+# poetry export --extras=all --dev --output=requirements-dev.txt, see above
+RUN --mount=type=cache,target=/root/.cache \
+  --mount=type=bind,from=poetry,source=/tmp,target=/poetry \
+  python3 -m pip install --disable-pip-version-check --no-deps --requirement=/poetry/requirements-dev.txt
 
 FROM base-all AS base
 
-COPY scripts/c2cwsgiutils-run /opt/c2cwsgiutils/scripts/
-COPY setup.py setup.cfg /opt/c2cwsgiutils/
-COPY c2cwsgiutils /opt/c2cwsgiutils/c2cwsgiutils
-RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
-  --editable=/opt/c2cwsgiutils \
+WORKDIR /opt/c2cwsgiutils
+COPY c2cwsgiutils ./c2cwsgiutils
+COPY pyproject.toml README.md ./
+# The sed is to deactivate the poetry-dynamic-versioning plugin.
+RUN --mount=type=cache,target=/root/.cache \
+  sed --in-place 's/enable = true # disable on Docker/enable = false/g' pyproject.toml \
+  && python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m compileall -q \
-  && python3 -m compileall /usr/local/lib/python3.* /usr/lib/python3.* /opt/c2cwsgiutils -q \
-    -x '/usr/local/lib/python3.*/dist-packages/pipenv/' \
+  && python3 -m compileall /usr/local/lib/python3.* /usr/lib/python3.* . -q \
   && python3 -c 'import c2cwsgiutils'
 
 ENV C2C_BASE_PATH=/c2c \
@@ -75,10 +98,12 @@ CMD ["/usr/local/bin/gunicorn"]
 
 FROM base-lint as tests
 
-COPY . /opt/c2cwsgiutils/
-RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
-  --editable=/opt/c2cwsgiutils
-RUN cd /opt/c2cwsgiutils/ && prospector -X --output=pylint
-RUN cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests
+WORKDIR /opt/c2cwsgiutils
+COPY c2cwsgiutils ./c2cwsgiutils
+COPY pyproject.toml README.md ./
+# The sed is to deactivate the poetry-dynamic-versioning plugin.
+RUN --mount=type=cache,target=/root/.cache \
+  sed --in-place 's/enable = true # disable on Docker/enable = false/g' pyproject.toml \
+  && python3 -m pip install --disable-pip-version-check --no-deps --editable=.
 
 FROM base as standard

@@ -1,0 +1,56 @@
+[tool.black]
+line-length = 110
+target-version = ['py38']
+
+[tool.isort]
+known_third_party = "pyramid2"
+known_first_party = "c2cwsgiutils"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = false
+use_parentheses = true
+line_length = 110
+
+[tool.mypy]
+python_version = 3.8
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+strict = true
+
+[tool.poetry]
+name = "c2cwsgiutils_app"
+version = "0.1.0"
+description = "Test application for c2cwsgiutils"
+authors = ["Camptocamp <info@camptocamp.com>"]
+classifiers = [
+    "Programming Language :: Python",
+    "Framework :: Pyramid",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+]
+packages = [{ include = "c2cwsgiutils_app" }]
+
+[tool.poetry.scripts]
+get-hello = "c2cwsgiutils_app.get_hello:main"
+
+[tool.poetry.plugins."paste.app_factory"]
+main = "c2cwsgiutils_app:main"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+coverage = "6.4.1"
+
+[tool.poetry.dev-dependencies]
+prospector = { extras = [
+  "with_bandit",
+  "with_mypy"
+], version = "1.5.3.1" }
+pylint = "2.14.1"
+mypy = "0.961"
+flake8 = "3.9.2"
+
+[build-system]
+requires = [  "poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

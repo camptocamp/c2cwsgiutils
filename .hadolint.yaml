@@ -2,3 +2,4 @@ ignored:
   - DL3008 # Pin versions in apt get install.
   - DL3059 # Multiple consecutive `RUN` instructions. Consider consolidation.
   - DL3003 # Use WORKDIR to switch to a directory
+  - DL3042 # Avoid use of cache directory with pip. Use `pip install --no-cache-dir <package>`

@@ -1,15 +1,7 @@
 *
-!build_full.sh
-!.coveragerc
-!.prospector.yaml
-!.bandit.yaml
 !c2cwsgiutils
-!scripts
 !README.md
 !requirements.txt
-!Pipfile
-!Pipfile.lock
-!setup.py
-!setup.cfg
-!tests
+!pyproject.toml
+!poetry.lock
 **/__pycache__

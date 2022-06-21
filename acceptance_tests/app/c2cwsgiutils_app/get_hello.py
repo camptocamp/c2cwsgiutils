@@ -1,10 +1,10 @@
 import argparse
 
 import transaction
-from c2cwsgiutils_app import models
 
 import c2cwsgiutils.db
 import c2cwsgiutils.setup_process
+from c2cwsgiutils_app import models
 
 
 def main() -> None:

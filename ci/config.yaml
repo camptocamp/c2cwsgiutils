@@ -13,11 +13,3 @@ checks:
   black:
     ignore_patterns_re:
       - .*\.html
-
-publish:
-  pypi:
-    packages:
-      - path: .
-    versions:
-      - version_tag
-      - version_branch

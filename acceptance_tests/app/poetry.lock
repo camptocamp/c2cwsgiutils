@@ -203,11 +203,11 @@ test = ["appdirs (==1.4.4)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)", "pytes
 
 [[package]]
 name = "prospector"
-version = "1.5.3.1"
+version = "1.7.7"
 description = ""
 category = "dev"
 optional = false
-python-versions = ">=3.6.1,<4.0"
+python-versions = ">=3.6.2,<4.0"
 
 [package.dependencies]
 bandit = {version = ">=1.5.1", optional = true, markers = "extra == \"with_bandit\" or extra == \"with_everything\""}
@@ -217,12 +217,12 @@ mypy = {version = ">=0.600", optional = true, markers = "extra == \"with_mypy\" 
 pep8-naming = ">=0.3.3,<=0.10.0"
 pycodestyle = ">=2.6.0,<2.9.0"
 pydocstyle = ">=2.0.0"
-pyflakes = ">=2.2.0,<2.4.0"
+pyflakes = ">=2.2.0,<3"
 pylint = ">=2.8.3"
 pylint-celery = "0.3"
-pylint-django = ">=2.4.4,<3.0.0"
+pylint-django = ">=2.5,<2.6"
 pylint-flask = "0.6"
-pylint-plugin-utils = ">=0.6,<0.7"
+pylint-plugin-utils = ">=0.7,<0.8"
 PyYAML = "*"
 requirements-detector = ">=0.7,<0.8"
 setoptconf-tmp = ">=0.3.1,<0.4.0"
@@ -304,18 +304,18 @@ pylint-plugin-utils = ">=0.2.1"
 
 [[package]]
 name = "pylint-django"
-version = "2.4.4"
+version = "2.5.3"
 description = "A Pylint plugin to help Pylint understand the Django web framework"
 category = "dev"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-pylint = ">=2.0"
-pylint-plugin-utils = ">=0.5"
+pylint = ">=2.0,<3"
+pylint-plugin-utils = ">=0.7"
 
 [package.extras]
-for_tests = ["django-tables2", "factory-boy", "coverage", "pytest"]
+for_tests = ["django-tables2", "factory-boy", "coverage", "pytest", "wheel", "django-tastypie", "pylint (>=2.13)"]
 with_django = ["django"]
 
 [[package]]
@@ -331,11 +331,11 @@ pylint-plugin-utils = ">=0.2.1"
 
 [[package]]
 name = "pylint-plugin-utils"
-version = "0.6"
+version = "0.7"
 description = "Utilities and helpers for writing Pylint plugins"
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6.2"
 
 [package.dependencies]
 pylint = ">=1.7"
@@ -440,7 +440,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "e49f2e03bb5e67c41d5585ddd17461ffaf3b3f5c77cdb490f92fa325b34cd5ab"
+content-hash = "2fb37a4ea2c18df87ad1b7663b7aed46c3dd027d69598a35ae3c552119e16d9c"
 
 [metadata.files]
 astroid = [
@@ -611,8 +611,8 @@ platformdirs = [
     {file = "platformdirs-2.5.2.tar.gz", hash = "sha256:58c8abb07dcb441e6ee4b11d8df0ac856038f944ab98b7be6b27b2a3c7feef19"},
 ]
 prospector = [
-    {file = "prospector-1.5.3.1-py3-none-any.whl", hash = "sha256:812b01eb5bbad85f16d0b0efceb41385d35b3d4a928fa86f4085bf44f6077df4"},
-    {file = "prospector-1.5.3.1.tar.gz", hash = "sha256:c8d8d00e6806f7ece9829026ef8b7d3cbd901d473913f9bc5a389df4e8f435c6"},
+    {file = "prospector-1.7.7-py3-none-any.whl", hash = "sha256:2dec5dac06f136880a3710996c0886dcc99e739007bbc05afc32884973f5c058"},
+    {file = "prospector-1.7.7.tar.gz", hash = "sha256:c04b3d593e7c525cf9a742fed62afbe02e2874f0e42f2f56a49378fd94037360"},
 ]
 pycodestyle = [
     {file = "pycodestyle-2.7.0-py2.py3-none-any.whl", hash = "sha256:514f76d918fcc0b55c6680472f0a37970994e07bbb80725808c17089be302068"},
@@ -634,15 +634,15 @@ pylint-celery = [
     {file = "pylint-celery-0.3.tar.gz", hash = "sha256:41e32094e7408d15c044178ea828dd524beedbdbe6f83f712c5e35bde1de4beb"},
 ]
 pylint-django = [
-    {file = "pylint-django-2.4.4.tar.gz", hash = "sha256:f63f717169b0c2e4e19c28f1c32c28290647330184fcb7427805ae9b6994f3fc"},
-    {file = "pylint_django-2.4.4-py3-none-any.whl", hash = "sha256:aff49d9602a39c027b4ed7521a041438893205918f405800063b7ff692b7371b"},
+    {file = "pylint-django-2.5.3.tar.gz", hash = "sha256:0ac090d106c62fe33782a1d01bda1610b761bb1c9bf5035ced9d5f23a13d8591"},
+    {file = "pylint_django-2.5.3-py3-none-any.whl", hash = "sha256:56b12b6adf56d548412445bd35483034394a1a94901c3f8571980a13882299d5"},
 ]
 pylint-flask = [
     {file = "pylint-flask-0.6.tar.gz", hash = "sha256:f4d97de2216bf7bfce07c9c08b166e978fe9f2725de2a50a9845a97de7e31517"},
 ]
 pylint-plugin-utils = [
-    {file = "pylint-plugin-utils-0.6.tar.gz", hash = "sha256:57625dcca20140f43731311cd8fd879318bf45a8b0fd17020717a8781714a25a"},
-    {file = "pylint_plugin_utils-0.6-py3-none-any.whl", hash = "sha256:2f30510e1c46edf268d3a195b2849bd98a1b9433229bb2ba63b8d776e1fc4d0a"},
+    {file = "pylint-plugin-utils-0.7.tar.gz", hash = "sha256:ce48bc0516ae9415dd5c752c940dfe601b18fe0f48aa249f2386adfa95a004dd"},
+    {file = "pylint_plugin_utils-0.7-py3-none-any.whl", hash = "sha256:b3d43e85ab74c4f48bb46ae4ce771e39c3a20f8b3d56982ab17aa73b4f98d535"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},

@@ -46,7 +46,7 @@ coverage = "6.4.1"
 prospector = { extras = [
   "with_bandit",
   "with_mypy"
-], version = "1.5.3.1" }
+], version = "1.7.7" }
 pylint = "2.14.1"
 mypy = "0.961"
 flake8 = "3.9.2"

@@ -1,2 +1,2 @@
 poetry==1.1.13
-poetry-plugin-tweak-dependencies-version==0.1.7
+poetry-plugin-tweak-dependencies-version==0.2.1

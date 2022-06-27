@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pipenv = "==2022.6.7"
-setuptools = "==62.3.3"
+setuptools = "==62.3.4"
 
 [dev-packages]
 prospector = {extras = ["with_bandit", "with_mypy"], version = "==1.5.3.1"}

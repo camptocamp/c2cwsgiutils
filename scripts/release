@@ -5,24 +5,24 @@ VERSION=$1
 actual_version=$(python3 ./setup.py --version)
 
 if [[ "${VERSION}" != "${actual_version}" ]]; then
-    echo "Version mismatch: ${VERSION} != ${actual_version}"
-    exit 1
+  echo "Version mismatch: ${VERSION} != ${actual_version}"
+  exit 1
 fi
 
-if curl --silent --fail "https://pypi.org/project/c2cwsgiutils/${VERSION}/" >/dev/null; then
-    echo "Already released ${VERSION}"
-    exit 0
+if curl --silent --fail "https://pypi.org/project/c2cwsgiutils/${VERSION}/" > /dev/null; then
+  echo "Already released ${VERSION}"
+  exit 0
 fi
 
 set +x
 if twine upload dist/*.whl; then
-    echo "Upload to pypi successful"
+  echo "Upload to pypi successful"
 else
-    # maybe it was uploaded at the same time by another job
-    if curl --silent --fail "https://pypi.org/project/c2cwsgiutils/${VERSION}/" >/dev/null; then
-        echo "Already released ${VERSION} in another job"
-        exit 0
-    else
-        exit 1
-    fi
+  # maybe it was uploaded at the same time by another job
+  if curl --silent --fail "https://pypi.org/project/c2cwsgiutils/${VERSION}/" > /dev/null; then
+    echo "Already released ${VERSION} in another job"
+    exit 0
+  else
+    exit 1
+  fi
 fi

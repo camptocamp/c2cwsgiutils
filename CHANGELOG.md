@@ -10,10 +10,12 @@
 
 #### :wrench: Build, CI, Tests, Code style
 
+- Update the changelog [\#1497](https://github.com/camptocamp/c2cwsgiutils/pull/1497) ([github-actions[bot]](https://github.com/apps/github-actions))
 - Fix the changelog generation [\#1496](https://github.com/camptocamp/c2cwsgiutils/pull/1496) ([sbrunner](https://github.com/sbrunner))
 
 #### :package: Dependencies update
 
+- Update all minor versions \(master\) \(minor\) [\#1494](https://github.com/camptocamp/c2cwsgiutils/pull/1494) ([renovate[bot]](https://github.com/apps/renovate))
 - Update all patch versions \(master\) \(patch\) [\#1493](https://github.com/camptocamp/c2cwsgiutils/pull/1493) ([renovate[bot]](https://github.com/apps/renovate))
 - Lock file maintenance \(master\) [\#1492](https://github.com/camptocamp/c2cwsgiutils/pull/1492) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency lxml to v4.9.1 \[SECURITY\] \(master\) [\#1490](https://github.com/camptocamp/c2cwsgiutils/pull/1490) ([renovate[bot]](https://github.com/apps/renovate))
@@ -31,12 +33,12 @@
 - Update github/codeql-action action to v2 \(master\) [\#1458](https://github.com/camptocamp/c2cwsgiutils/pull/1458) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/checkout action to v3 \(master\) [\#1457](https://github.com/camptocamp/c2cwsgiutils/pull/1457) ([renovate[bot]](https://github.com/apps/renovate))
 - Update all minor versions \(master\) [\#1456](https://github.com/camptocamp/c2cwsgiutils/pull/1456) ([renovate[bot]](https://github.com/apps/renovate))
-- Bump pipenv from 2022.5.2 to 2022.6.7 in /acceptance\_tests/app [\#1453](https://github.com/camptocamp/c2cwsgiutils/pull/1453) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump setuptools from 59.5.0 to 62.3.3 in /acceptance\_tests/app [\#1452](https://github.com/camptocamp/c2cwsgiutils/pull/1452) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.5.2 to 2022.6.7 in /acceptance_tests/app [\#1453](https://github.com/camptocamp/c2cwsgiutils/pull/1453) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump setuptools from 59.5.0 to 62.3.3 in /acceptance_tests/app [\#1452](https://github.com/camptocamp/c2cwsgiutils/pull/1452) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump setuptools from 59.6.0 to 62.3.3 [\#1451](https://github.com/camptocamp/c2cwsgiutils/pull/1451) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.5.2 to 2022.6.7 [\#1450](https://github.com/camptocamp/c2cwsgiutils/pull/1450) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.2.dev20220601085126 to 1.2.dev20220607092206 [\#1449](https://github.com/camptocamp/c2cwsgiutils/pull/1449) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.4 to 6.4.1 in /acceptance\_tests/app [\#1447](https://github.com/camptocamp/c2cwsgiutils/pull/1447) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.4 to 6.4.1 in /acceptance_tests/app [\#1447](https://github.com/camptocamp/c2cwsgiutils/pull/1447) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.4 to 6.4.1 [\#1446](https://github.com/camptocamp/c2cwsgiutils/pull/1446) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump redis from 4.3.2 to 4.3.3 [\#1445](https://github.com/camptocamp/c2cwsgiutils/pull/1445) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump alembic from 1.7.7 to 1.8.0 [\#1444](https://github.com/camptocamp/c2cwsgiutils/pull/1444) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -52,7 +54,7 @@
 - Bump types-python-dateutil from 2.8.16 to 2.8.17 [\#1425](https://github.com/camptocamp/c2cwsgiutils/pull/1425) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.2.5 to 4.2.6 [\#1424](https://github.com/camptocamp/c2cwsgiutils/pull/1424) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.27 to 2.27.29 [\#1423](https://github.com/camptocamp/c2cwsgiutils/pull/1423) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.3.3 to 6.4 in /acceptance\_tests/app [\#1422](https://github.com/camptocamp/c2cwsgiutils/pull/1422) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.3.3 to 6.4 in /acceptance_tests/app [\#1422](https://github.com/camptocamp/c2cwsgiutils/pull/1422) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.3.3 to 6.4 [\#1421](https://github.com/camptocamp/c2cwsgiutils/pull/1421) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.2.4 to 4.2.5 [\#1420](https://github.com/camptocamp/c2cwsgiutils/pull/1420) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.2.3 to 4.2.4 [\#1418](https://github.com/camptocamp/c2cwsgiutils/pull/1418) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -61,7 +63,7 @@
 - Bump ujson from 5.2.0 to 5.3.0 [\#1414](https://github.com/camptocamp/c2cwsgiutils/pull/1414) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.25 to 2.27.26 [\#1410](https://github.com/camptocamp/c2cwsgiutils/pull/1410) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.2.2 to 4.2.3 [\#1409](https://github.com/camptocamp/c2cwsgiutils/pull/1409) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.3.2 to 6.3.3 in /acceptance\_tests/app [\#1407](https://github.com/camptocamp/c2cwsgiutils/pull/1407) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.3.2 to 6.3.3 in /acceptance_tests/app [\#1407](https://github.com/camptocamp/c2cwsgiutils/pull/1407) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.3.2 to 6.3.3 [\#1406](https://github.com/camptocamp/c2cwsgiutils/pull/1406) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pyjwt from 2.3.0 to 2.4.0 [\#1405](https://github.com/camptocamp/c2cwsgiutils/pull/1405) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.11 to 1.5.12 [\#1402](https://github.com/camptocamp/c2cwsgiutils/pull/1402) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -71,14 +73,14 @@
 - Bump types-redis from 4.2.1 to 4.2.2 [\#1398](https://github.com/camptocamp/c2cwsgiutils/pull/1398) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.2.dev20220414132101 to 1.2.dev20220506093925 [\#1397](https://github.com/camptocamp/c2cwsgiutils/pull/1397) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.2.0 to 4.2.1 [\#1396](https://github.com/camptocamp/c2cwsgiutils/pull/1396) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.4.30 to 2022.5.2 in /acceptance\_tests/app [\#1395](https://github.com/camptocamp/c2cwsgiutils/pull/1395) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.4.30 to 2022.5.2 in /acceptance_tests/app [\#1395](https://github.com/camptocamp/c2cwsgiutils/pull/1395) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.10 to 1.5.11 [\#1394](https://github.com/camptocamp/c2cwsgiutils/pull/1394) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.4.30 to 2022.5.2 [\#1393](https://github.com/camptocamp/c2cwsgiutils/pull/1393) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.4.20 to 2022.4.30 in /acceptance\_tests/app [\#1390](https://github.com/camptocamp/c2cwsgiutils/pull/1390) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.4.20 to 2022.4.30 in /acceptance_tests/app [\#1390](https://github.com/camptocamp/c2cwsgiutils/pull/1390) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.24 to 2.27.25 [\#1389](https://github.com/camptocamp/c2cwsgiutils/pull/1389) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.4.21 to 2022.4.30 [\#1388](https://github.com/camptocamp/c2cwsgiutils/pull/1388) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.20 to 2.27.24 [\#1387](https://github.com/camptocamp/c2cwsgiutils/pull/1387) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump redis from 6 to 7 in /acceptance\_tests/tests/redis [\#1386](https://github.com/camptocamp/c2cwsgiutils/pull/1386) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump redis from 6 to 7 in /acceptance_tests/tests/redis [\#1386](https://github.com/camptocamp/c2cwsgiutils/pull/1386) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.35 to 1.4.36 [\#1385](https://github.com/camptocamp/c2cwsgiutils/pull/1385) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-python-dateutil from 2.8.12 to 2.8.14 [\#1384](https://github.com/camptocamp/c2cwsgiutils/pull/1384) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.22 to 4.2.0 [\#1382](https://github.com/camptocamp/c2cwsgiutils/pull/1382) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -86,7 +88,7 @@
 - Bump junit2html from 30.0.6 to 30.1.3 [\#1380](https://github.com/camptocamp/c2cwsgiutils/pull/1380) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Ubuntu from 20.04 to 22.04 [\#1379](https://github.com/camptocamp/c2cwsgiutils/pull/1379) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.4.20 to 2022.4.21 [\#1378](https://github.com/camptocamp/c2cwsgiutils/pull/1378) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.4.8 to 2022.4.20 in /acceptance\_tests/app [\#1377](https://github.com/camptocamp/c2cwsgiutils/pull/1377) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.4.8 to 2022.4.20 in /acceptance_tests/app [\#1377](https://github.com/camptocamp/c2cwsgiutils/pull/1377) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.19 to 2.27.20 [\#1376](https://github.com/camptocamp/c2cwsgiutils/pull/1376) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.4.8 to 2022.4.20 [\#1375](https://github.com/camptocamp/c2cwsgiutils/pull/1375) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-pyyaml from 6.0.6 to 6.0.7 [\#1374](https://github.com/camptocamp/c2cwsgiutils/pull/1374) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -98,7 +100,7 @@
 - Bump types-python-dateutil from 2.8.10 to 2.8.11 [\#1368](https://github.com/camptocamp/c2cwsgiutils/pull/1368) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.9 to 1.5.10 [\#1367](https://github.com/camptocamp/c2cwsgiutils/pull/1367) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.2.dev20220331120018 to 1.2.dev20220414132101 [\#1366](https://github.com/camptocamp/c2cwsgiutils/pull/1366) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.3.28 to 2022.4.8 in /acceptance\_tests/app [\#1363](https://github.com/camptocamp/c2cwsgiutils/pull/1363) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.3.28 to 2022.4.8 in /acceptance_tests/app [\#1363](https://github.com/camptocamp/c2cwsgiutils/pull/1363) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.3.28 to 2022.4.8 [\#1362](https://github.com/camptocamp/c2cwsgiutils/pull/1362) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.8 to 1.5.9 [\#1360](https://github.com/camptocamp/c2cwsgiutils/pull/1360) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.34 to 1.4.35 [\#1357](https://github.com/camptocamp/c2cwsgiutils/pull/1357) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -109,12 +111,12 @@
 - Bump types-requests from 2.27.15 to 2.27.16 [\#1344](https://github.com/camptocamp/c2cwsgiutils/pull/1344) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.2.dev20220317100006 to 1.2.dev20220331120018 [\#1341](https://github.com/camptocamp/c2cwsgiutils/pull/1341) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump redis from 4.2.0 to 4.2.1 [\#1340](https://github.com/camptocamp/c2cwsgiutils/pull/1340) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.3.24 to 2022.3.28 in /acceptance\_tests/app [\#1338](https://github.com/camptocamp/c2cwsgiutils/pull/1338) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.3.24 to 2022.3.28 in /acceptance_tests/app [\#1338](https://github.com/camptocamp/c2cwsgiutils/pull/1338) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.3.24 to 2022.3.28 [\#1336](https://github.com/camptocamp/c2cwsgiutils/pull/1336) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.14 to 2.27.15 [\#1334](https://github.com/camptocamp/c2cwsgiutils/pull/1334) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.3.23 to 2022.3.24 in /acceptance\_tests/app [\#1331](https://github.com/camptocamp/c2cwsgiutils/pull/1331) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.3.23 to 2022.3.24 in /acceptance_tests/app [\#1331](https://github.com/camptocamp/c2cwsgiutils/pull/1331) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.3.23 to 2022.3.24 [\#1329](https://github.com/camptocamp/c2cwsgiutils/pull/1329) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2022.1.8 to 2022.3.23 in /acceptance\_tests/app [\#1327](https://github.com/camptocamp/c2cwsgiutils/pull/1327) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2022.1.8 to 2022.3.23 in /acceptance_tests/app [\#1327](https://github.com/camptocamp/c2cwsgiutils/pull/1327) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump redis from 4.1.4 to 4.2.0 [\#1326](https://github.com/camptocamp/c2cwsgiutils/pull/1326) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2022.1.8 to 2022.3.23 [\#1325](https://github.com/camptocamp/c2cwsgiutils/pull/1325) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.13 to 2.27.14 [\#1324](https://github.com/camptocamp/c2cwsgiutils/pull/1324) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -145,7 +147,7 @@
 - Bump types-redis from 4.1.16 to 4.1.17 [\#1294](https://github.com/camptocamp/c2cwsgiutils/pull/1294) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.5 to 1.5.6 [\#1293](https://github.com/camptocamp/c2cwsgiutils/pull/1293) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.10 to 2.27.11 [\#1292](https://github.com/camptocamp/c2cwsgiutils/pull/1292) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.3.1 to 6.3.2 in /acceptance\_tests/app [\#1291](https://github.com/camptocamp/c2cwsgiutils/pull/1291) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.3.1 to 6.3.2 in /acceptance_tests/app [\#1291](https://github.com/camptocamp/c2cwsgiutils/pull/1291) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.3.1 to 6.3.2 [\#1290](https://github.com/camptocamp/c2cwsgiutils/pull/1290) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.15 to 4.1.16 [\#1286](https://github.com/camptocamp/c2cwsgiutils/pull/1286) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump lxml from 4.7.1 to 4.8.0 [\#1285](https://github.com/camptocamp/c2cwsgiutils/pull/1285) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -170,7 +172,7 @@
 - Add version 5.1 [\#1461](https://github.com/camptocamp/c2cwsgiutils/pull/1461) ([sbrunner](https://github.com/sbrunner))
 - Configure Renovate [\#1454](https://github.com/camptocamp/c2cwsgiutils/pull/1454) ([sbrunner](https://github.com/sbrunner))
 - Use OAuth2 on GitHub [\#1437](https://github.com/camptocamp/c2cwsgiutils/pull/1437) ([sbrunner](https://github.com/sbrunner))
-- Remove default C2C\_SECRET [\#1428](https://github.com/camptocamp/c2cwsgiutils/pull/1428) ([sbrunner](https://github.com/sbrunner))
+- Remove default C2C_SECRET [\#1428](https://github.com/camptocamp/c2cwsgiutils/pull/1428) ([sbrunner](https://github.com/sbrunner))
 - OAuth2 improvements [\#1419](https://github.com/camptocamp/c2cwsgiutils/pull/1419) ([sbrunner](https://github.com/sbrunner))
 - Full features nonwsgi init [\#1391](https://github.com/camptocamp/c2cwsgiutils/pull/1391) ([gberaudo](https://github.com/gberaudo))
 - Use the commonly used name [\#1365](https://github.com/camptocamp/c2cwsgiutils/pull/1365) ([sbrunner](https://github.com/sbrunner))
@@ -201,7 +203,7 @@
 - Bump pytest from 6.2.5 to 7.0.0 [\#1257](https://github.com/camptocamp/c2cwsgiutils/pull/1257) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220202080326 to 1.1.dev20220203110559 [\#1253](https://github.com/camptocamp/c2cwsgiutils/pull/1253) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.14 to 4.1.15 [\#1252](https://github.com/camptocamp/c2cwsgiutils/pull/1252) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.3 to 6.3.1 in /acceptance\_tests/app [\#1250](https://github.com/camptocamp/c2cwsgiutils/pull/1250) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.3 to 6.3.1 in /acceptance_tests/app [\#1250](https://github.com/camptocamp/c2cwsgiutils/pull/1250) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.3 to 6.3.1 [\#1248](https://github.com/camptocamp/c2cwsgiutils/pull/1248) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.13 to 4.1.14 [\#1247](https://github.com/camptocamp/c2cwsgiutils/pull/1247) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220131090250 to 1.1.dev20220202080326 [\#1246](https://github.com/camptocamp/c2cwsgiutils/pull/1246) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -214,7 +216,7 @@
 - Bump c2cciutils from 1.1.dev20220124152826 to 1.1.dev20220131090250 [\#1235](https://github.com/camptocamp/c2cwsgiutils/pull/1235) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.10 to 4.1.11 [\#1234](https://github.com/camptocamp/c2cwsgiutils/pull/1234) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump redis from 4.1.1 to 4.1.2 [\#1232](https://github.com/camptocamp/c2cwsgiutils/pull/1232) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.2 to 6.3 in /acceptance\_tests/app [\#1230](https://github.com/camptocamp/c2cwsgiutils/pull/1230) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.2 to 6.3 in /acceptance_tests/app [\#1230](https://github.com/camptocamp/c2cwsgiutils/pull/1230) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.3 to 1.5.4 [\#1229](https://github.com/camptocamp/c2cwsgiutils/pull/1229) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.2 to 6.3 [\#1228](https://github.com/camptocamp/c2cwsgiutils/pull/1228) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220120144445 to 1.1.dev20220124152826 [\#1226](https://github.com/camptocamp/c2cwsgiutils/pull/1226) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -232,7 +234,7 @@
 - Bump types-redis from 4.1.7 to 4.1.8 [\#1211](https://github.com/camptocamp/c2cwsgiutils/pull/1211) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.5 to 2.27.6 [\#1210](https://github.com/camptocamp/c2cwsgiutils/pull/1210) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-python-dateutil from 2.8.5 to 2.8.6 [\#1207](https://github.com/camptocamp/c2cwsgiutils/pull/1207) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2021.11.23 to 2022.1.8 in /acceptance\_tests/app [\#1206](https://github.com/camptocamp/c2cwsgiutils/pull/1206) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2021.11.23 to 2022.1.8 in /acceptance_tests/app [\#1206](https://github.com/camptocamp/c2cwsgiutils/pull/1206) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-pyyaml from 6.0.2 to 6.0.3 [\#1205](https://github.com/camptocamp/c2cwsgiutils/pull/1205) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.2 to 2.27.5 [\#1204](https://github.com/camptocamp/c2cwsgiutils/pull/1204) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.1 to 1.5.2 [\#1203](https://github.com/camptocamp/c2cwsgiutils/pull/1203) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -270,14 +272,14 @@
 - Bump lxml from 4.6.4 to 4.6.5 [\#1153](https://github.com/camptocamp/c2cwsgiutils/pull/1153) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.27 to 1.4.28 [\#1152](https://github.com/camptocamp/c2cwsgiutils/pull/1152) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211125140927 to 1.1.dev20211209145632 [\#1151](https://github.com/camptocamp/c2cwsgiutils/pull/1151) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump prospector from 1.5.3 to 1.5.3.1 in /acceptance\_tests/app [\#1150](https://github.com/camptocamp/c2cwsgiutils/pull/1150) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump prospector from 1.5.3 to 1.5.3.1 in /acceptance_tests/app [\#1150](https://github.com/camptocamp/c2cwsgiutils/pull/1150) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump prospector from 1.5.3 to 1.5.3.1 [\#1149](https://github.com/camptocamp/c2cwsgiutils/pull/1149) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump prospector from 1.5.2 to 1.5.3 in /acceptance\_tests/app [\#1148](https://github.com/camptocamp/c2cwsgiutils/pull/1148) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump prospector from 1.5.2 to 1.5.3 in /acceptance_tests/app [\#1148](https://github.com/camptocamp/c2cwsgiutils/pull/1148) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump prospector from 1.5.2 to 1.5.3 [\#1147](https://github.com/camptocamp/c2cwsgiutils/pull/1147) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.0.1 to 4.0.3 [\#1146](https://github.com/camptocamp/c2cwsgiutils/pull/1146) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump prospector from 1.5.1 to 1.5.2 in /acceptance\_tests/app [\#1145](https://github.com/camptocamp/c2cwsgiutils/pull/1145) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump prospector from 1.5.1 to 1.5.2 in /acceptance_tests/app [\#1145](https://github.com/camptocamp/c2cwsgiutils/pull/1145) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump prospector from 1.5.1 to 1.5.2 [\#1144](https://github.com/camptocamp/c2cwsgiutils/pull/1144) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.1.2 to 6.2 in /acceptance\_tests/app [\#1143](https://github.com/camptocamp/c2cwsgiutils/pull/1143) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.1.2 to 6.2 in /acceptance_tests/app [\#1143](https://github.com/camptocamp/c2cwsgiutils/pull/1143) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.1.2 to 6.2 [\#1142](https://github.com/camptocamp/c2cwsgiutils/pull/1142) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.26.0 to 2.26.1 [\#1141](https://github.com/camptocamp/c2cwsgiutils/pull/1141) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 3.5.18 to 4.0.1 [\#1140](https://github.com/camptocamp/c2cwsgiutils/pull/1140) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -294,8 +296,8 @@
 - Bump types-python-dateutil from 2.8.0 to 2.8.3 [\#1128](https://github.com/camptocamp/c2cwsgiutils/pull/1128) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump redis from 3.5.3 to 4.0.2 [\#1127](https://github.com/camptocamp/c2cwsgiutils/pull/1127) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.0.1 to 6.1.2 [\#1126](https://github.com/camptocamp/c2cwsgiutils/pull/1126) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2021.5.29 to 2021.11.23 in /acceptance\_tests/app [\#1125](https://github.com/camptocamp/c2cwsgiutils/pull/1125) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.0.1 to 6.1.2 in /acceptance\_tests/app [\#1124](https://github.com/camptocamp/c2cwsgiutils/pull/1124) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2021.5.29 to 2021.11.23 in /acceptance_tests/app [\#1125](https://github.com/camptocamp/c2cwsgiutils/pull/1125) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.0.1 to 6.1.2 in /acceptance_tests/app [\#1124](https://github.com/camptocamp/c2cwsgiutils/pull/1124) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.25 to 1.4.27 [\#1123](https://github.com/camptocamp/c2cwsgiutils/pull/1123) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-ujson from 0.1.1 to 4.2.0 [\#1122](https://github.com/camptocamp/c2cwsgiutils/pull/1122) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pyyaml from 5.4.1 to 6.0 [\#1121](https://github.com/camptocamp/c2cwsgiutils/pull/1121) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -309,12 +311,12 @@
 - Bump c2cciutils from 1.1.dev20211012114625 to 1.1.dev20211019114043 [\#1107](https://github.com/camptocamp/c2cwsgiutils/pull/1107) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211008145734 to 1.1.dev20211012114625 [\#1102](https://github.com/camptocamp/c2cwsgiutils/pull/1102) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211007121148 to 1.1.dev20211008145734 [\#1101](https://github.com/camptocamp/c2cwsgiutils/pull/1101) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 6.0 to 6.0.1 in /acceptance\_tests/app [\#1100](https://github.com/camptocamp/c2cwsgiutils/pull/1100) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 6.0 to 6.0.1 in /acceptance_tests/app [\#1100](https://github.com/camptocamp/c2cwsgiutils/pull/1100) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211006140719 to 1.1.dev20211007121148 [\#1099](https://github.com/camptocamp/c2cwsgiutils/pull/1099) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.0 to 6.0.1 [\#1098](https://github.com/camptocamp/c2cwsgiutils/pull/1098) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump alembic from 1.7.3 to 1.7.4 [\#1097](https://github.com/camptocamp/c2cwsgiutils/pull/1097) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211004142851 to 1.1.dev20211006140719 [\#1096](https://github.com/camptocamp/c2cwsgiutils/pull/1096) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 5.5 to 6.0 in /acceptance\_tests/app [\#1095](https://github.com/camptocamp/c2cwsgiutils/pull/1095) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 5.5 to 6.0 in /acceptance_tests/app [\#1095](https://github.com/camptocamp/c2cwsgiutils/pull/1095) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210921153209 to 1.1.dev20211004142851 [\#1094](https://github.com/camptocamp/c2cwsgiutils/pull/1094) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 5.5 to 6.0 [\#1093](https://github.com/camptocamp/c2cwsgiutils/pull/1093) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pytest-cov from 2.12.1 to 3.0.0 [\#1092](https://github.com/camptocamp/c2cwsgiutils/pull/1092) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -328,10 +330,10 @@
 - Bump sqlalchemy from 1.4.23 to 1.4.24 [\#1082](https://github.com/camptocamp/c2cwsgiutils/pull/1082) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.4.0 to 1.4.1 [\#1081](https://github.com/camptocamp/c2cwsgiutils/pull/1081) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump ujson from 4.1.0 to 4.2.0 [\#1080](https://github.com/camptocamp/c2cwsgiutils/pull/1080) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pipenv from 2020.5.28 to 2021.5.29 in /acceptance\_tests/app [\#1079](https://github.com/camptocamp/c2cwsgiutils/pull/1079) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pipenv from 2020.5.28 to 2021.5.29 in /acceptance_tests/app [\#1079](https://github.com/camptocamp/c2cwsgiutils/pull/1079) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.25.7 to 2.25.8 [\#1078](https://github.com/camptocamp/c2cwsgiutils/pull/1078) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.3.1 to 1.4.0 [\#1077](https://github.com/camptocamp/c2cwsgiutils/pull/1077) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump prospector from 1.5.0.1 to 1.5.1 in /acceptance\_tests/app [\#1076](https://github.com/camptocamp/c2cwsgiutils/pull/1076) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump prospector from 1.5.0.1 to 1.5.1 in /acceptance_tests/app [\#1076](https://github.com/camptocamp/c2cwsgiutils/pull/1076) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210915084344 to 1.1.dev20210921153209 [\#1075](https://github.com/camptocamp/c2cwsgiutils/pull/1075) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.25.6 to 2.25.7 [\#1072](https://github.com/camptocamp/c2cwsgiutils/pull/1072) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump alembic from 1.7.1 to 1.7.3 [\#1071](https://github.com/camptocamp/c2cwsgiutils/pull/1071) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -673,7 +675,7 @@
 
 **Merged pull requests:**
 
-- Fix the c2c\_name [\#1243](https://github.com/camptocamp/c2cwsgiutils/pull/1243) ([sbrunner](https://github.com/sbrunner))
+- Fix the c2c_name [\#1243](https://github.com/camptocamp/c2cwsgiutils/pull/1243) ([sbrunner](https://github.com/sbrunner))
 - Use standard cass for the arguments [\#1233](https://github.com/camptocamp/c2cwsgiutils/pull/1233) ([sbrunner](https://github.com/sbrunner))
 - Add more standard way to manage databases sessions [\#1231](https://github.com/camptocamp/c2cwsgiutils/pull/1231) ([sbrunner](https://github.com/sbrunner))
 - More generic script loading [\#1222](https://github.com/camptocamp/c2cwsgiutils/pull/1222) ([sbrunner](https://github.com/sbrunner))
@@ -699,7 +701,7 @@
 - Update Sentry configuration [\#979](https://github.com/camptocamp/c2cwsgiutils/pull/979) ([sbrunner](https://github.com/sbrunner))
 - SQLAlchemyLogger: more general error handling [\#978](https://github.com/camptocamp/c2cwsgiutils/pull/978) ([jwkaltz](https://github.com/jwkaltz))
 - \[Backport master\] Log the exceptions throw the logger to be in JSON [\#977](https://github.com/camptocamp/c2cwsgiutils/pull/977) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Less and beter errors with check\_es on OpenShift [\#973](https://github.com/camptocamp/c2cwsgiutils/pull/973) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+- \[Backport master\] Less and better errors with check_es on OpenShift [\#973](https://github.com/camptocamp/c2cwsgiutils/pull/973) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - \[Backport master\] Mark the package as typed [\#970](https://github.com/camptocamp/c2cwsgiutils/pull/970) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Fix for sqlalchemy-utils re-upload [\#950](https://github.com/camptocamp/c2cwsgiutils/pull/950) ([sbrunner](https://github.com/sbrunner))
 - Bump c2cciutils [\#935](https://github.com/camptocamp/c2cwsgiutils/pull/935) ([sbrunner](https://github.com/sbrunner))
@@ -709,11 +711,11 @@
 - \[Backport master\] Fix for elasticsearch version 7.x [\#894](https://github.com/camptocamp/c2cwsgiutils/pull/894) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - \[Backport master\] Make the broadcast decorator more generic [\#892](https://github.com/camptocamp/c2cwsgiutils/pull/892) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Use Redis 6 [\#884](https://github.com/camptocamp/c2cwsgiutils/pull/884) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Always use env\_or\_config or env\_or\_settings to correctly handle empt… [\#855](https://github.com/camptocamp/c2cwsgiutils/pull/855) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+- \[Backport master\] Always use env_or_config or env_or_settings to correctly handle empt… [\#855](https://github.com/camptocamp/c2cwsgiutils/pull/855) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Be able to easier be able po update Python version [\#848](https://github.com/camptocamp/c2cwsgiutils/pull/848) ([sbrunner](https://github.com/sbrunner))
 - \[Backport master\] Add missing \_\_init\_\_.py [\#844](https://github.com/camptocamp/c2cwsgiutils/pull/844) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - More backward compatible with version 3 [\#822](https://github.com/camptocamp/c2cwsgiutils/pull/822) ([fredj](https://github.com/fredj))
-- Fix dupplicate pull request from Dependabot [\#814](https://github.com/camptocamp/c2cwsgiutils/pull/814) ([sbrunner](https://github.com/sbrunner))
+- Fix duplicate pull request from Dependabot [\#814](https://github.com/camptocamp/c2cwsgiutils/pull/814) ([sbrunner](https://github.com/sbrunner))
 - Fix the publish on rebuild [\#788](https://github.com/camptocamp/c2cwsgiutils/pull/788) ([sbrunner](https://github.com/sbrunner))
 - Use c2cciutils - publish to GitHub Container Registry [\#781](https://github.com/camptocamp/c2cwsgiutils/pull/781) ([sbrunner](https://github.com/sbrunner))
 - Rebuild on Docker Container Registry [\#777](https://github.com/camptocamp/c2cwsgiutils/pull/777) ([sbrunner](https://github.com/sbrunner))
@@ -724,7 +726,7 @@
 - Use secret defined in organisation [\#756](https://github.com/camptocamp/c2cwsgiutils/pull/756) ([sbrunner](https://github.com/sbrunner))
 - Add Clean docker hub tags workflow [\#754](https://github.com/camptocamp/c2cwsgiutils/pull/754) ([sbrunner](https://github.com/sbrunner))
 - Use YAML safe loader [\#728](https://github.com/camptocamp/c2cwsgiutils/pull/728) ([sbrunner](https://github.com/sbrunner))
-- REDIS\_URL or REDIS\_SENTINEL can be an empty string [\#726](https://github.com/camptocamp/c2cwsgiutils/pull/726) ([sbrunner](https://github.com/sbrunner))
+- REDIS_URL or REDIS_SENTINEL can be an empty string [\#726](https://github.com/camptocamp/c2cwsgiutils/pull/726) ([sbrunner](https://github.com/sbrunner))
 - Assert that checker name is present [\#722](https://github.com/camptocamp/c2cwsgiutils/pull/722) ([sbrunner](https://github.com/sbrunner))
 - \[Backport master\] No empty header value [\#704](https://github.com/camptocamp/c2cwsgiutils/pull/704) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - \[Backport master\] Add missing yaml dependency [\#701](https://github.com/camptocamp/c2cwsgiutils/pull/701) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
@@ -757,7 +759,7 @@
 
 **Closed issues:**
 
-- c2c.redis\_url is never used [\#852](https://github.com/camptocamp/c2cwsgiutils/issues/852)
+- c2c.redis_url is never used [\#852](https://github.com/camptocamp/c2cwsgiutils/issues/852)
 
 ## [4.1.1](https://github.com/camptocamp/c2cwsgiutils/tree/4.1.1) (2021-01-06)
 
@@ -782,7 +784,7 @@
 
 **Closed issues:**
 
-- Dependabot couldn't find the branch release\_4 [\#603](https://github.com/camptocamp/c2cwsgiutils/issues/603)
+- Dependabot couldn't find the branch release_4 [\#603](https://github.com/camptocamp/c2cwsgiutils/issues/603)
 - Multistage build is unusable [\#574](https://github.com/camptocamp/c2cwsgiutils/issues/574)
 
 ## [3.12.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.12.0) (2020-04-28)
@@ -902,7 +904,7 @@
 
 - Don't break on missing process [\#497](https://github.com/camptocamp/c2cwsgiutils/pull/497) ([sbrunner](https://github.com/sbrunner))
 - Improve index label placement and upgrade bootstrap [\#491](https://github.com/camptocamp/c2cwsgiutils/pull/491) ([pvalsecc](https://github.com/pvalsecc))
-- Auth for show\_refs and some details around there [\#490](https://github.com/camptocamp/c2cwsgiutils/pull/490) ([pvalsecc](https://github.com/pvalsecc))
+- Auth for show_refs and some details around there [\#490](https://github.com/camptocamp/c2cwsgiutils/pull/490) ([pvalsecc](https://github.com/pvalsecc))
 - Add a few sentry integrations [\#489](https://github.com/camptocamp/c2cwsgiutils/pull/489) ([pvalsecc](https://github.com/pvalsecc))
 - Set the Starting version message as info [\#487](https://github.com/camptocamp/c2cwsgiutils/pull/487) ([sbrunner](https://github.com/sbrunner))
 - Check the code using prospector [\#486](https://github.com/camptocamp/c2cwsgiutils/pull/486) ([pvalsecc](https://github.com/pvalsecc))
@@ -976,8 +978,8 @@
 
 **Merged pull requests:**
 
--  Ignore Python internal dict, put size in Kib [\#465](https://github.com/camptocamp/c2cwsgiutils/pull/465) ([sbrunner](https://github.com/sbrunner))
-- Fix debug/memory?analyze\_type=builtins.function [\#464](https://github.com/camptocamp/c2cwsgiutils/pull/464) ([pvalsecc](https://github.com/pvalsecc))
+- Ignore Python internal dict, put size in Kib [\#465](https://github.com/camptocamp/c2cwsgiutils/pull/465) ([sbrunner](https://github.com/sbrunner))
+- Fix debug/memory?analyze_type=builtins.function [\#464](https://github.com/camptocamp/c2cwsgiutils/pull/464) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.8.3](https://github.com/camptocamp/c2cwsgiutils/tree/3.8.3) (2019-11-25)
 
@@ -1036,7 +1038,7 @@
 
 **Merged pull requests:**
 
-- Add debug/memory\_maps [\#448](https://github.com/camptocamp/c2cwsgiutils/pull/448) ([pvalsecc](https://github.com/pvalsecc))
+- Add debug/memory_maps [\#448](https://github.com/camptocamp/c2cwsgiutils/pull/448) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.7.1](https://github.com/camptocamp/c2cwsgiutils/tree/3.7.1) (2019-11-08)
 
@@ -1044,7 +1046,7 @@
 
 **Merged pull requests:**
 
-- Make get\_size public [\#440](https://github.com/camptocamp/c2cwsgiutils/pull/440) ([sbrunner](https://github.com/sbrunner))
+- Make get_size public [\#440](https://github.com/camptocamp/c2cwsgiutils/pull/440) ([sbrunner](https://github.com/sbrunner))
 
 ## [3.7.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.7.0) (2019-11-06)
 
@@ -1080,11 +1082,11 @@
 
 **Merged pull requests:**
 
-- Add analyze\_type to c2c/debug/memory [\#439](https://github.com/camptocamp/c2cwsgiutils/pull/439) ([pvalsecc](https://github.com/pvalsecc))
+- Add analyze_type to c2c/debug/memory [\#439](https://github.com/camptocamp/c2cwsgiutils/pull/439) ([pvalsecc](https://github.com/pvalsecc))
 - Allow richer tag values in statsd [\#433](https://github.com/camptocamp/c2cwsgiutils/pull/433) ([pvalsecc](https://github.com/pvalsecc))
 - Log sql request with duration [\#432](https://github.com/camptocamp/c2cwsgiutils/pull/432) ([sbrunner](https://github.com/sbrunner))
 - Clearer alembic error message [\#419](https://github.com/camptocamp/c2cwsgiutils/pull/419) ([sbrunner](https://github.com/sbrunner))
-- Add requests timeout to wait\_url [\#417](https://github.com/camptocamp/c2cwsgiutils/pull/417) ([pvalsecc](https://github.com/pvalsecc))
+- Add requests timeout to wait_url [\#417](https://github.com/camptocamp/c2cwsgiutils/pull/417) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.6.2](https://github.com/camptocamp/c2cwsgiutils/tree/3.6.2) (2019-09-26)
 
@@ -1143,7 +1145,7 @@
 - Remove docstrings and asserts from the runtime [\#391](https://github.com/camptocamp/c2cwsgiutils/pull/391) ([pvalsecc](https://github.com/pvalsecc))
 - Fix table in README [\#385](https://github.com/camptocamp/c2cwsgiutils/pull/385) ([fredj](https://github.com/fredj))
 - Remove requires.io badges [\#384](https://github.com/camptocamp/c2cwsgiutils/pull/384) ([fredj](https://github.com/fredj))
--  Add the possibility to check for the ELK roundtrip time [\#380](https://github.com/camptocamp/c2cwsgiutils/pull/380) ([pvalsecc](https://github.com/pvalsecc))
+- Add the possibility to check for the ELK roundtrip time [\#380](https://github.com/camptocamp/c2cwsgiutils/pull/380) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.5.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.5.0) (2019-08-19)
 
@@ -1244,7 +1246,7 @@
 **Merged pull requests:**
 
 - \[requires.io\] dependency update on master branch [\#318](https://github.com/camptocamp/c2cwsgiutils/pull/318) ([pvalsecc](https://github.com/pvalsecc))
-- Improve health\_check metrics [\#317](https://github.com/camptocamp/c2cwsgiutils/pull/317) ([pvalsecc](https://github.com/pvalsecc))
+- Improve health_check metrics [\#317](https://github.com/camptocamp/c2cwsgiutils/pull/317) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#316](https://github.com/camptocamp/c2cwsgiutils/pull/316) ([pvalsecc](https://github.com/pvalsecc))
 - Switch to mypy strict [\#315](https://github.com/camptocamp/c2cwsgiutils/pull/315) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#314](https://github.com/camptocamp/c2cwsgiutils/pull/314) ([pvalsecc](https://github.com/pvalsecc))
@@ -1385,7 +1387,7 @@
 
 - Can use a cookie to authenticate the client [\#267](https://github.com/camptocamp/c2cwsgiutils/pull/267) ([pvalsecc](https://github.com/pvalsecc))
 - Fix the debug/headers link [\#266](https://github.com/camptocamp/c2cwsgiutils/pull/266) ([pvalsecc](https://github.com/pvalsecc))
-- Add the stack to health\_check if the secret is passed [\#265](https://github.com/camptocamp/c2cwsgiutils/pull/265) ([pvalsecc](https://github.com/pvalsecc))
+- Add the stack to health_check if the secret is passed [\#265](https://github.com/camptocamp/c2cwsgiutils/pull/265) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#264](https://github.com/camptocamp/c2cwsgiutils/pull/264) ([sdebayle](https://github.com/sdebayle))
 - \[requires.io\] dependency update on master branch [\#263](https://github.com/camptocamp/c2cwsgiutils/pull/263) ([sdebayle](https://github.com/sdebayle))
 - \[requires.io\] dependency update on master branch [\#262](https://github.com/camptocamp/c2cwsgiutils/pull/262) ([sdebayle](https://github.com/sdebayle))
@@ -1409,7 +1411,7 @@
 - \[requires.io\] dependency update on master branch [\#251](https://github.com/camptocamp/c2cwsgiutils/pull/251) ([sdebayle](https://github.com/sdebayle))
 - Make auth public, and easier to use [\#250](https://github.com/camptocamp/c2cwsgiutils/pull/250) ([sbrunner](https://github.com/sbrunner))
 - \[requires.io\] dependency update on master branch [\#249](https://github.com/camptocamp/c2cwsgiutils/pull/249) ([sdebayle](https://github.com/sdebayle))
-- Add minmal vim configuration [\#248](https://github.com/camptocamp/c2cwsgiutils/pull/248) ([sbrunner](https://github.com/sbrunner))
+- Add minimal vim configuration [\#248](https://github.com/camptocamp/c2cwsgiutils/pull/248) ([sbrunner](https://github.com/sbrunner))
 - Better redis configuration [\#247](https://github.com/camptocamp/c2cwsgiutils/pull/247) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#246](https://github.com/camptocamp/c2cwsgiutils/pull/246) ([sdebayle](https://github.com/sdebayle))
 - \[requires.io\] dependency update on master branch [\#245](https://github.com/camptocamp/c2cwsgiutils/pull/245) ([sdebayle](https://github.com/sdebayle))
@@ -1472,7 +1474,7 @@
 
 **Closed issues:**
 
-- secretkey change cause error in Beaker  [\#228](https://github.com/camptocamp/c2cwsgiutils/issues/228)
+- secretkey change cause error in Beaker [\#228](https://github.com/camptocamp/c2cwsgiutils/issues/228)
 
 **Merged pull requests:**
 
@@ -1525,7 +1527,7 @@
 - \[requires.io\] dependency update on master branch [\#211](https://github.com/camptocamp/c2cwsgiutils/pull/211) ([sdebayle](https://github.com/sdebayle))
 - Store logging levels in redis [\#210](https://github.com/camptocamp/c2cwsgiutils/pull/210) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#209](https://github.com/camptocamp/c2cwsgiutils/pull/209) ([sdebayle](https://github.com/sdebayle))
-- Leverage setup\_process for stats\_db [\#208](https://github.com/camptocamp/c2cwsgiutils/pull/208) ([pvalsecc](https://github.com/pvalsecc))
+- Leverage setup_process for stats_db [\#208](https://github.com/camptocamp/c2cwsgiutils/pull/208) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [2.11.0](https://github.com/camptocamp/c2cwsgiutils/tree/2.11.0) (2018-09-10)
 
@@ -1533,7 +1535,7 @@
 
 **Merged pull requests:**
 
-- Added a setup\_process module [\#207](https://github.com/camptocamp/c2cwsgiutils/pull/207) ([pvalsecc](https://github.com/pvalsecc))
+- Added a setup_process module [\#207](https://github.com/camptocamp/c2cwsgiutils/pull/207) ([pvalsecc](https://github.com/pvalsecc))
 - Use X-API-Key in index page [\#206](https://github.com/camptocamp/c2cwsgiutils/pull/206) ([sbrunner](https://github.com/sbrunner))
 - \[requires.io\] dependency update on master branch [\#205](https://github.com/camptocamp/c2cwsgiutils/pull/205) ([sdebayle](https://github.com/sdebayle))
 - Small fixes around redis [\#204](https://github.com/camptocamp/c2cwsgiutils/pull/204) ([pvalsecc](https://github.com/pvalsecc))
@@ -1600,7 +1602,7 @@
 
 - Test index behind a proxy doing https [\#180](https://github.com/camptocamp/c2cwsgiutils/pull/180) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#179](https://github.com/camptocamp/c2cwsgiutils/pull/179) ([guewen](https://github.com/guewen))
-- Improve debug/memory\_diff [\#178](https://github.com/camptocamp/c2cwsgiutils/pull/178) ([pvalsecc](https://github.com/pvalsecc))
+- Improve debug/memory_diff [\#178](https://github.com/camptocamp/c2cwsgiutils/pull/178) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [2.8.1](https://github.com/camptocamp/c2cwsgiutils/tree/2.8.1) (2018-07-04)
 
@@ -1613,7 +1615,7 @@
 **Merged pull requests:**
 
 - \[requires.io\] dependency update on master branch [\#176](https://github.com/camptocamp/c2cwsgiutils/pull/176) ([guewen](https://github.com/guewen))
-- Fix root URL for applications having C2C\_BASE\_PATH='' [\#175](https://github.com/camptocamp/c2cwsgiutils/pull/175) ([pvalsecc](https://github.com/pvalsecc))
+- Fix root URL for applications having C2C_BASE_PATH='' [\#175](https://github.com/camptocamp/c2cwsgiutils/pull/175) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [2.7.0](https://github.com/camptocamp/c2cwsgiutils/tree/2.7.0) (2018-07-03)
 
@@ -1692,7 +1694,7 @@
 
 **Closed issues:**
 
-- Fails silently to start wsgi if lineman is not installed and SQL\_PROFILER\_SECRET is defined [\#150](https://github.com/camptocamp/c2cwsgiutils/issues/150)
+- Fails silently to start wsgi if lineman is not installed and SQL_PROFILER_SECRET is defined [\#150](https://github.com/camptocamp/c2cwsgiutils/issues/150)
 
 **Merged pull requests:**
 
@@ -1778,7 +1780,7 @@
 - \[requires.io\] dependency update on master branch [\#126](https://github.com/camptocamp/c2cwsgiutils/pull/126) ([sdebayle](https://github.com/sdebayle))
 - \[requires.io\] dependency update on master branch [\#125](https://github.com/camptocamp/c2cwsgiutils/pull/125) ([sdebayle](https://github.com/sdebayle))
 - Fix Server-Timing header [\#124](https://github.com/camptocamp/c2cwsgiutils/pull/124) ([pvalsecc](https://github.com/pvalsecc))
-- Don't escape forward slashes in fast\_json [\#123](https://github.com/camptocamp/c2cwsgiutils/pull/123) ([pvalsecc](https://github.com/pvalsecc))
+- Don't escape forward slashes in fast_json [\#123](https://github.com/camptocamp/c2cwsgiutils/pull/123) ([pvalsecc](https://github.com/pvalsecc))
 - Add acceptance.utils.approx [\#122](https://github.com/camptocamp/c2cwsgiutils/pull/122) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [1.10.0](https://github.com/camptocamp/c2cwsgiutils/tree/1.10.0) (2018-03-28)
@@ -1787,7 +1789,7 @@
 
 **Merged pull requests:**
 
-- Add a fast\_json renderer [\#121](https://github.com/camptocamp/c2cwsgiutils/pull/121) ([pvalsecc](https://github.com/pvalsecc))
+- Add a fast_json renderer [\#121](https://github.com/camptocamp/c2cwsgiutils/pull/121) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [1.9.0](https://github.com/camptocamp/c2cwsgiutils/tree/1.9.0) (2018-03-26)
 
@@ -1853,7 +1855,7 @@
 - \[requires.io\] dependency update on master branch [\#98](https://github.com/camptocamp/c2cwsgiutils/pull/98) ([guewen](https://github.com/guewen))
 - \[requires.io\] dependency update on master branch [\#97](https://github.com/camptocamp/c2cwsgiutils/pull/97) ([sbrunner](https://github.com/sbrunner))
 - \[requires.io\] dependency update on master branch [\#96](https://github.com/camptocamp/c2cwsgiutils/pull/96) ([sdebayle](https://github.com/sdebayle))
-- Added stats.outcome\_timer\_context [\#99](https://github.com/camptocamp/c2cwsgiutils/pull/99) ([pvalsecc](https://github.com/pvalsecc))
+- Added stats.outcome_timer_context [\#99](https://github.com/camptocamp/c2cwsgiutils/pull/99) ([pvalsecc](https://github.com/pvalsecc))
 - Better look in Jenkins blue ocean. [\#95](https://github.com/camptocamp/c2cwsgiutils/pull/95) ([pvalsecc](https://github.com/pvalsecc))
 - Misc cleanups [\#94](https://github.com/camptocamp/c2cwsgiutils/pull/94) ([pvalsecc](https://github.com/pvalsecc))
 - Add sonar source analysis for master [\#89](https://github.com/camptocamp/c2cwsgiutils/pull/89) ([pvalsecc](https://github.com/pvalsecc))
@@ -1875,7 +1877,7 @@
 
 **Closed issues:**
 
-- Must be able the start if STATSD\_ADDRESS cannot be resolved [\#83](https://github.com/camptocamp/c2cwsgiutils/issues/83)
+- Must be able the start if STATSD_ADDRESS cannot be resolved [\#83](https://github.com/camptocamp/c2cwsgiutils/issues/83)
 - Docker container not as root [\#80](https://github.com/camptocamp/c2cwsgiutils/issues/80)
 
 **Merged pull requests:**
@@ -1898,7 +1900,7 @@
 - \[requires.io\] dependency update on master branch [\#77](https://github.com/camptocamp/c2cwsgiutils/pull/77) ([sdebayle](https://github.com/sdebayle))
 - \[requires.io\] dependency update on master branch [\#76](https://github.com/camptocamp/c2cwsgiutils/pull/76) ([sdebayle](https://github.com/sdebayle))
 - \[requires.io\] dependency update on master branch [\#74](https://github.com/camptocamp/c2cwsgiutils/pull/74) ([sdebayle](https://github.com/sdebayle))
--  Add /debug/memory\_diff/... [\#75](https://github.com/camptocamp/c2cwsgiutils/pull/75) ([pvalsecc](https://github.com/pvalsecc))
+- Add /debug/memory_diff/... [\#75](https://github.com/camptocamp/c2cwsgiutils/pull/75) ([pvalsecc](https://github.com/pvalsecc))
 - Add the possibility for health checks to return results [\#73](https://github.com/camptocamp/c2cwsgiutils/pull/73) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [1.4.1](https://github.com/camptocamp/c2cwsgiutils/tree/1.4.1) (2018-01-12)
@@ -1937,7 +1939,7 @@
 **Merged pull requests:**
 
 - \[requires.io\] dependency update on master branch [\#56](https://github.com/camptocamp/c2cwsgiutils/pull/56) ([sdebayle](https://github.com/sdebayle))
-- Add table size metrics in c2cwsgiutils\_stats\_db.py [\#57](https://github.com/camptocamp/c2cwsgiutils/pull/57) ([pvalsecc](https://github.com/pvalsecc))
+- Add table size metrics in c2cwsgiutils_stats_db.py [\#57](https://github.com/camptocamp/c2cwsgiutils/pull/57) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [1.2.0](https://github.com/camptocamp/c2cwsgiutils/tree/1.2.0) (2017-11-22)
 
@@ -1951,7 +1953,7 @@
 - \[requires.io\] dependency update on master branch [\#48](https://github.com/camptocamp/c2cwsgiutils/pull/48) ([pvalsecc](https://github.com/pvalsecc))
 - Misc [\#55](https://github.com/camptocamp/c2cwsgiutils/pull/55) ([pvalsecc](https://github.com/pvalsecc))
 - Have the test timeout if the CEE log is not coming [\#53](https://github.com/camptocamp/c2cwsgiutils/pull/53) ([pvalsecc](https://github.com/pvalsecc))
-- The sql\_profiler URL now broadcasts to every instances [\#50](https://github.com/camptocamp/c2cwsgiutils/pull/50) ([pvalsecc](https://github.com/pvalsecc))
+- The sql_profiler URL now broadcasts to every instances [\#50](https://github.com/camptocamp/c2cwsgiutils/pull/50) ([pvalsecc](https://github.com/pvalsecc))
 - Remove mypy suppressions that are not needed anymore [\#49](https://github.com/camptocamp/c2cwsgiutils/pull/49) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [1.1.0](https://github.com/camptocamp/c2cwsgiutils/tree/1.1.0) (2017-11-10)
@@ -2011,7 +2013,7 @@
 - \[requires.io\] dependency update on master branch [\#23](https://github.com/camptocamp/c2cwsgiutils/pull/23) ([pvalsecc](https://github.com/pvalsecc))
 - Healthcheck timings [\#29](https://github.com/camptocamp/c2cwsgiutils/pull/29) ([pvalsecc](https://github.com/pvalsecc))
 - Ignore upload errors [\#26](https://github.com/camptocamp/c2cwsgiutils/pull/26) ([pvalsecc](https://github.com/pvalsecc))
-- Pretty print JSON by default, remove c2c\_pretty parameter [\#22](https://github.com/camptocamp/c2cwsgiutils/pull/22) ([romanzoller](https://github.com/romanzoller))
+- Pretty print JSON by default, remove c2c_pretty parameter [\#22](https://github.com/camptocamp/c2cwsgiutils/pull/22) ([romanzoller](https://github.com/romanzoller))
 - Remove obsolete flag [\#21](https://github.com/camptocamp/c2cwsgiutils/pull/21) ([gberaudo](https://github.com/gberaudo))
 
 ## [0.28.0](https://github.com/camptocamp/c2cwsgiutils/tree/0.28.0) (2017-09-29)
@@ -2021,7 +2023,7 @@
 **Closed issues:**
 
 - Allow to filter what health checks are run [\#15](https://github.com/camptocamp/c2cwsgiutils/issues/15)
-- Have the JSON renderer pretty print when the c2c\_pretty parameter is set [\#14](https://github.com/camptocamp/c2cwsgiutils/issues/14)
+- Have the JSON renderer pretty print when the c2c_pretty parameter is set [\#14](https://github.com/camptocamp/c2cwsgiutils/issues/14)
 
 **Merged pull requests:**
 
@@ -2064,11 +2066,11 @@
 
 **Closed issues:**
 
-- makefile - pull not called by build\_docker [\#12](https://github.com/camptocamp/c2cwsgiutils/issues/12)
+- makefile - pull not called by build_docker [\#12](https://github.com/camptocamp/c2cwsgiutils/issues/12)
 
 **Merged pull requests:**
 
-- Allow integration with pyramid\_debugtoolbar [\#13](https://github.com/camptocamp/c2cwsgiutils/pull/13) ([pvalsecc](https://github.com/pvalsecc))
+- Allow integration with pyramid_debugtoolbar [\#13](https://github.com/camptocamp/c2cwsgiutils/pull/13) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [0.23.0](https://github.com/camptocamp/c2cwsgiutils/tree/0.23.0) (2017-08-31)
 
@@ -2242,7 +2244,7 @@
 
 **Closed issues:**
 
-- add cors\_credentials option in services.create [\#1](https://github.com/camptocamp/c2cwsgiutils/issues/1)
+- add cors_credentials option in services.create [\#1](https://github.com/camptocamp/c2cwsgiutils/issues/1)
 
 **Merged pull requests:**
 
@@ -2276,6 +2278,4 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/bf7f9ff9fa63d11aa33d24cd62f003694d20e53a...0.0.1)
 
-
-
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
+\* _This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)_

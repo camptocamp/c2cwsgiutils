@@ -48,7 +48,7 @@ prospector = { extras = [
   "with_mypy"
 ], version = "1.7.7" }
 pylint = "2.14.5"
-mypy = "0.961"
+mypy = "0.971"
 flake8 = "4.0.1"
 
 [build-system]

@@ -147,7 +147,7 @@ prospector = { extras = [
   "with_mypy",
   "with_pyroma"
 ], version = "1.7.7" }
-pylint = "2.14.4"
+pylint = "2.14.5"
 mypy = "0.961"
 flake8 = "4.0.1"
 coverage = "6.4.1"

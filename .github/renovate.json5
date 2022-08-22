@@ -5,8 +5,10 @@
   labels: ['dependencies'],
   separateMajorMinor: true,
   separateMinorPatch: true,
-  baseBranches: ['master', '5.1'],
+  prHourlyLimit: 0,
+  prConcurrentLimit: 0,
   lockFileMaintenance: { enabled: true, automerge: true },
+  baseBranches: ['master'],
   packageRules: [
     /** Automerge the patch, the minor and the dev dependency */
     {

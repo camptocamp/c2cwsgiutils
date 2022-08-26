@@ -73,15 +73,10 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
             db=db,
             **redis_options,
         )
-
-        try:
-            LOG.info("Redis setup using: %s, %s, %s", sentinels, service_name, redis_options_)
-            _master = _sentinel.master_for(service_name)
-            _slave = _sentinel.slave_for(service_name)
-            return
-        except redis.sentinel.MasterNotFoundError as error:
-            print(_sentinel.sentinels[0].sentinel_masters())
-            raise Exception(_sentinel.sentinels[0].sentinel_masters()) from error
+        LOG.info("Redis setup using: %s, %s, %s", sentinels, service_name, redis_options_)
+        _master = _sentinel.master_for(service_name)
+        _slave = _sentinel.slave_for(service_name)
+        return
     if url:
         if not url.startswith("redis://"):
             url = "redis://" + url

@@ -22,37 +22,17 @@ build: build_docker build_acceptance build_test_app ## Build all Docker images
 .PHONY: tests
 tests: build_test_app ## Run the unit tests
 	@docker run --rm $(DOCKER_BASE):tests pytest --version
-	docker stop c2cwsgiutils_tests || true
-	docker run --rm --detach --name=c2cwsgiutils_tests --volume=$(shell pwd):/opt/c2cwsgiutils $(DOCKER_BASE):tests tail -f /dev/null
-	docker exec c2cwsgiutils_tests pytest -vv --cov=c2cwsgiutils --color=yes tests
-	rm -rf reports/coverage/api reports/acceptance.xml
-	mkdir -p reports/coverage/api
-	# Get the UT reports
-	docker cp c2cwsgiutils_tests:/opt/c2cwsgiutils/.coverage reports/coverage/api/coverage.ut.1
-	docker stop c2cwsgiutils_tests
+	docker run --rm --detach \
+	--volume=$(shell pwd)/results:/results \
+	--volume=$(shell pwd)/c2cwsgiutils:/opt/c2cwsgiutils/c2cwsgiutils \
+	--volume=$(shell pwd)/tests:/opt/c2cwsgiutils/tests \
+	$(DOCKER_BASE):tests pytest -vv --color=yes tests
 
 .PHONY: acceptance
 acceptance: tests build_acceptance build_redis_sentinal ## Run the acceptance tests
-	docker stop c2cwsgiutils-acceptance || true
-	docker run --rm --detach --name=c2cwsgiutils-acceptance --volume=/var/run/docker.sock:/var/run/docker.sock \
-		--env=WAITRESS $(DOCKER_BASE)_acceptance tail -f /dev/null
-	docker exec c2cwsgiutils-acceptance py.test -vv --color=yes --junitxml /reports/acceptance.xml --html /reports/acceptance.html \
-			--self-contained-html $(PYTEST_OPTS) tests
-	# Copy the reports locally
-	docker cp c2cwsgiutils-acceptance:/reports ./
-	docker stop c2cwsgiutils-acceptance
-	# Generate the HTML report for code coverage
-	docker stop c2cwsgiutils-acceptance-reports || true
-	docker run --rm --detach --volume=$(shell pwd)/reports/coverage/api:/reports/coverage/api:ro --name=c2cwsgiutils-acceptance-reports $(DOCKER_BASE)_test_app tail -f /dev/null
-	docker exec c2cwsgiutils-acceptance-reports c2cwsgiutils-coverage-report c2cwsgiutils c2cwsgiutils_app
-	# Copy the HTML locally
-	docker cp c2cwsgiutils-acceptance-reports:/tmp/coverage/api reports/coverage
-	docker stop c2cwsgiutils-acceptance-reports
-	# Fix code path in the cobertura XML file
-	sed -ie 's%>/app/c2cwsgiutils_app<%>$(shell pwd)/acceptance_tests/app/c2cwsgiutils_app<%' reports/coverage/api/coverage.xml
-	sed -ie 's%filename="/opt/c2cwsgiutils/c2cwsgiutils/%filename="c2cwsgiutils/%' reports/coverage/api/coverage.xml
-	sed -ie 's%</sources>%<source>$(shell pwd)</source></sources>%' reports/coverage/api/coverage.xml
-	sed -ie 's%file="tests/%file="acceptance_tests/tests/tests/%' reports/acceptance.xml
+	docker run --rm --volume=/var/run/docker.sock:/var/run/docker.sock \
+		--volume=$(shell pwd)/reports:/reports \
+		--env=WAITRESS $(DOCKER_BASE)_acceptance py.test -vv --color=yes $(PYTEST_OPTS) tests
 
 .PHONY: build_docker
 build_docker:
@@ -117,5 +97,5 @@ c2cciutils: .venv/timestamp
 .PHONY: acceptance_local
 acceptance_local: .venv/timestamp
 	DOCKER_RUN=0 ./.venv/bin/pytest \
-	-vv --color=yes --junitxml reports/acceptance.xml --html reports/acceptance.html \
+	-vv --color=yes --junitxml=reports/acceptance.xml --html=reports/acceptance.html \
 	--self-contained-html $(PYTEST_OPTS) acceptance_tests/tests

@@ -7,3 +7,4 @@ __pycache__
 /docs/*/build/
 /.mypy_cache
 /acceptance_tests/tests/docker-compose.override.yaml
+/results/

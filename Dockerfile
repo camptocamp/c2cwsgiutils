@@ -106,4 +106,6 @@ RUN --mount=type=cache,target=/root/.cache \
   sed --in-place 's/enable = true # disable on Docker/enable = false/g' pyproject.toml \
   && python3 -m pip install --disable-pip-version-check --no-deps --editable=.
 
+WORKDIR /opt/c2cwsgiutils
+
 FROM base as standard

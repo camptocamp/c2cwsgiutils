@@ -9,22 +9,14 @@ import argparse
 import warnings
 from typing import Any, Callable, Dict, Optional, TypedDict, cast
 
+import pyramid.config
 import pyramid.registry
 import pyramid.request
 import pyramid.router
-import pyramid.config
-
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
 
-from c2cwsgiutils import (
-    broadcast,
-    coverage_setup,
-    redis_stats,
-    sentry,
-    stats,
-    sql_profiler,
-)
+from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler, stats
 
 
 def fill_arguments(

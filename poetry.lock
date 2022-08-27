@@ -1184,7 +1184,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-redis"
-version = "4.3.17"
+version = "4.3.18"
 description = "Typing stubs for redis"
 category = "dev"
 optional = false
@@ -1353,7 +1353,7 @@ standard = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "netif
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "f64a1374db3fc1021f291bf04a05275b8035c008dcd426add63b392a8724aa7d"
+content-hash = "35dc0cd92e332803d82dfbb76a65a66185f95abbd876bdb2223560310c008a77"
 
 [metadata.files]
 alembic = [
@@ -2090,8 +2090,8 @@ types-pyyaml = [
     {file = "types_PyYAML-6.0.11-py3-none-any.whl", hash = "sha256:8f890028123607379c63550179ddaec4517dc751f4c527a52bb61934bf495989"},
 ]
 types-redis = [
-    {file = "types-redis-4.3.17.tar.gz", hash = "sha256:03b023c08acf344f4f0821cc1c7e4dbecb7b17bc5483927c3e73d80f7fe1768e"},
-    {file = "types_redis-4.3.17-py3-none-any.whl", hash = "sha256:a34c4e7aafa4b2fb9090d3a7f3ad0ac969089c7b4a05c21dff593a0c37405916"},
+    {file = "types-redis-4.3.18.tar.gz", hash = "sha256:2260532c157d4f64f6e266de67b0aaa1979cfb969e409a16445ec6976c4a1de6"},
+    {file = "types_redis-4.3.18-py3-none-any.whl", hash = "sha256:ba4dffd5f804af849ddd5399164abd04fbf87fa5295680d89ccec010c66bb110"},
 ]
 types-requests = [
     {file = "types-requests-2.28.9.tar.gz", hash = "sha256:feaf581bd580497a47fe845d506fa3b91b484cf706ff27774e87659837de9962"},

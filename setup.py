@@ -52,6 +52,7 @@ setup(
     extras_require={
         "standard": [e for e in INSTALL_REQUIRES if e != "redis"],
         "broadcast": ["redis"],
+        "test_images": ["scikit-image"],
     },
     entry_points={
         "console_scripts": [

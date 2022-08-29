@@ -11,5 +11,4 @@
 !Pipfile.lock
 !setup.py
 !setup.cfg
-!tests
 **/__pycache__

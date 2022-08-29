@@ -21,13 +21,30 @@ all: build acceptance
 .PHONY: build
 build: build_docker build_acceptance build_test_app
 
+.PHONY: checks
+checks: prospector pytest
+
+.PHONY: prospector
+prospector: build_docker_test
+	docker run \
+	--volume=$(shell pwd)/c2cwsgiutils:/opt/c2cwsgiutils/c2cwsgiutils \
+	--volume=$(shell pwd)/tests:/opt/c2cwsgiutils/tests \
+	$(DOCKER_BASE):tests prospector --die-on-tool-error --output=pylint .
+
+.PHONY: pytest
+pytest: build_docker_test
+	mkdir -p reports/coverage/api/
+	docker run \
+	--volume=$(shell pwd)/results:/results \
+	--volume=$(shell pwd)/c2cwsgiutils:/opt/c2cwsgiutils/c2cwsgiutils \
+	--volume=$(shell pwd)/tests:/opt/c2cwsgiutils/tests \
+	$(DOCKER_BASE):tests pytest -vv --cov=c2cwsgiutils --color=yes tests > reports/coverage/api/coverage.ut.1
+
 .PHONY: acceptance
-acceptance: build_acceptance build_test_app
+acceptance: build_acceptance build_test_app pytest
 	docker build --tag=camptocamp/c2cwsgiutils-redis-sentinel:6 acceptance_tests/tests/redis/
 	rm -rf reports/coverage/api reports/acceptance.xml
 	mkdir -p reports/coverage/api
-	# Get the UT reports
-	docker run --rm $(DOCKER_BASE):tests cat /opt/c2cwsgiutils/.coverage > reports/coverage/api/coverage.ut.1
 	# Run the tests
 	docker run $(DOCKER_TTY) --volume=/var/run/docker.sock:/var/run/docker.sock \
 		--name=c2cwsgiutils_acceptance_$$PPID --env=WAITRESS $(DOCKER_BASE)_acceptance \
@@ -95,5 +112,5 @@ c2cciutils: .venv/timestamp
 .PHONY: acceptance_local
 acceptance_local: .venv/timestamp
 	DOCKER_RUN=0 ./.venv/bin/pytest \
-	-vv --color=yes --junitxml reports/acceptance.xml --html reports/acceptance.html \
+	-vv --color=yes --junitxml=reports/acceptance.xml --html=reports/acceptance.html \
 	--self-contained-html $(PYTEST_OPTS) acceptance_tests/tests

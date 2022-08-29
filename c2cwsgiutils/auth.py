@@ -46,6 +46,15 @@ USE_SESSION_ENV = "C2C_USE_SESSION"
 LOG = logging.getLogger(__name__)
 
 
+class AuthConfig(TypedDict, total=False):
+    """Configuration of the authentication."""
+
+    # The repository to check access to (<organization>/<repository>).
+    github_repository: Optional[str]
+    # The type of access to check (admin|push|pull).
+    github_access_type: Optional[str]
+
+
 def get_expected_secret(request: pyramid.request.Request) -> str:
     """Return the secret expected from the client."""
     settings = request.registry.settings
@@ -197,13 +206,44 @@ def check_access(
     `access_type` is the type of access to check (admin|push|pull).
     """
 
-    auth, user = is_auth_user(request)
-    if not auth:
+    if not is_auth(request):
         return False
 
     settings = request.registry.settings
     if auth_type(settings) != AuthenticationType.GITHUB:
         return True
+
+    return check_access_config(
+        request.registry.settings,
+        {
+            "github_repository": env_or_settings(
+                settings,
+                GITHUB_REPOSITORY_ENV,
+                GITHUB_REPOSITORY_PROP,
+                "",
+            )
+            if repo is None
+            else repo,
+            "github_access_type": env_or_settings(
+                settings,
+                GITHUB_ACCESS_TYPE_ENV,
+                GITHUB_ACCESS_TYPE_PROP,
+                "pull",
+            )
+            if auth_type is None
+            else access_type,
+        },
+    )
+
+
+def check_access_config(request: pyramid.request.Request, auth_config: AuthConfig) -> bool:
+    """Check if the user has access to the resource."""
+
+    auth, user = is_auth_user(request)
+    if not auth:
+        return False
+
+    settings = request.registry.settings
 
     oauth = OAuth2Session(
         env_or_settings(settings, GITHUB_CLIENT_ID_ENV, GITHUB_CLIENT_ID_PROP, ""),
@@ -218,24 +258,11 @@ def check_access(
         GITHUB_REPO_URL_PROP,
         "https://api.github.com/repos",
     )
-    if repo is None:
-        repo = env_or_settings(
-            settings,
-            GITHUB_REPOSITORY_ENV,
-            GITHUB_REPOSITORY_PROP,
-            "",
-        )
-    if access_type is None:
-        access_type = env_or_settings(
-            settings,
-            GITHUB_ACCESS_TYPE_ENV,
-            GITHUB_ACCESS_TYPE_PROP,
-            "pull",
-        )
-    repository = oauth.get(f"{repo_url}/{repo}").json()
-    if "permissions" not in repository or repository["permissions"][access_type] is not True:
-        return False
-    return True
+    repository = oauth.get(f"{repo_url}/{auth_config.get('github_repository')}").json()
+    return not (
+        "permissions" not in repository
+        or repository["permissions"][auth_config.get("github_access_type")] is not True
+    )
 
 
 def is_enabled(

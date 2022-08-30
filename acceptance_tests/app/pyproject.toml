@@ -25,10 +25,10 @@ version = "0.1.0"
 description = "Test application for c2cwsgiutils"
 authors = ["Camptocamp <info@camptocamp.com>"]
 classifiers = [
-    "Programming Language :: Python",
-    "Framework :: Pyramid",
-    "Topic :: Internet :: WWW/HTTP",
-    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+  "Programming Language :: Python",
+  "Framework :: Pyramid",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
 ]
 packages = [{ include = "c2cwsgiutils_app" }]
 
@@ -43,11 +43,8 @@ python = ">=3.8,<4.0"
 coverage = "6.4.4"
 
 [tool.poetry.dev-dependencies]
-prospector = { extras = [
-  "with_bandit",
-  "with_mypy"
-], version = "1.7.7" }
+prospector = { extras = ["with_bandit", "with_mypy"], version = "1.7.7" }
 
 [build-system]
-requires = [  "poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

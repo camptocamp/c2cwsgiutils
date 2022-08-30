@@ -3,7 +3,7 @@ import os
 
 from setuptools import find_packages, setup
 
-VERSION = "5.1.0"
+VERSION = "5.1.1"
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 

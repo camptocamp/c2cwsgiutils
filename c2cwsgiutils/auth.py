@@ -214,7 +214,7 @@ def check_access(
         return True
 
     return check_access_config(
-        request.registry.settings,
+        request,
         {
             "github_repository": env_or_settings(
                 settings,

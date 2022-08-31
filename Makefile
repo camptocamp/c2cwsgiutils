@@ -38,7 +38,7 @@ pytest: build_docker_test
 	--volume=$(shell pwd)/results:/results \
 	--volume=$(shell pwd)/c2cwsgiutils:/opt/c2cwsgiutils/c2cwsgiutils \
 	--volume=$(shell pwd)/tests:/opt/c2cwsgiutils/tests \
-	$(DOCKER_BASE):tests pytest -vv --cov=c2cwsgiutils --color=yes tests > reports/coverage/api/coverage.ut.1
+	$(DOCKER_BASE):tests pytest -vv --cov=c2cwsgiutils --color=yes tests
 
 .PHONY: acceptance
 acceptance: build_acceptance build_test_app pytest

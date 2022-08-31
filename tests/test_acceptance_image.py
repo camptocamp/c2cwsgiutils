@@ -13,9 +13,16 @@ def test_good():
 def test_wrong():
     image = os.path.join(os.path.dirname(__file__), os.path.join(os.path.dirname(__file__), "test.wrong.png"))
     with pytest.raises(AssertionError):
-        check_image_file("/results", image, os.path.join(os.path.dirname(__file__), "test.expected.png"))
+        check_image_file(
+            "/results", image, os.path.join(os.path.dirname(__file__), "test.expected.png"), use_mask=False
+        )
     check_image_file(
         "/results",
         "/results/test.diff.png",
         os.path.join(os.path.dirname(__file__), "test.diff.expected.png"),
     )
+
+
+def test_mask():
+    image = os.path.join(os.path.dirname(__file__), "test.wrong.png")
+    check_image_file("/results", image, os.path.join(os.path.dirname(__file__), "test.expected.png"))

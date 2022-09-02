@@ -230,7 +230,7 @@ def check_access(
                 GITHUB_ACCESS_TYPE_PROP,
                 "pull",
             )
-            if auth_type is None
+            if access_type is None
             else access_type,
         },
     )

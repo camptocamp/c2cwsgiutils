@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.cache \
 # Do the conversion
 COPY poetry.lock pyproject.toml ./
 RUN poetry export --extras=all --output=requirements.txt \
-  && poetry export --extras=all --dev --output=requirements-dev.txt
+  && poetry export --extras=all --with=dev --output=requirements-dev.txt
 
 # Base, the biggest thing is to install the Python packages
 FROM base-all-0 as base-all

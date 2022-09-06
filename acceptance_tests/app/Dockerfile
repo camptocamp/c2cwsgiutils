@@ -6,16 +6,20 @@ SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 # We don't directly use `poetry install` because it force to use a virtual environment.
 FROM base-all as poetry
 
+RUN --mount=type=cache,target=/var/lib/apt/lists \
+  --mount=type=cache,target=/var/cache,sharing=locked \
+  apt-get update \
+  && apt-get install --assume-yes --no-install-recommends python-is-python3
+
 # Install Poetry
 WORKDIR /tmp
 COPY requirements.txt ./
-RUN --mount=type=cache,target=/root/.cache \
-  python3 -m pip install --disable-pip-version-check --requirement=requirements.txt
+RUN python3 -m pip install --disable-pip-version-check --requirement=requirements.txt
 
 # Do the conversion
 COPY poetry.lock pyproject.toml ./
 RUN poetry export --output=requirements.txt \
-  && poetry export --dev --output=requirements-dev.txt
+  && poetry export --with=dev --output=requirements-dev.txt
 
 # Base, the biggest thing is to install the Python packages
 FROM base-all as base

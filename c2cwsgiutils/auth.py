@@ -110,21 +110,22 @@ def _is_auth_user_github(request: pyramid.request.Request) -> Tuple[bool, UserDe
         ),
         "",
     )
-    try:
-        return True, cast(
-            UserDetails,
-            jwt.decode(
-                cookie,
-                env_or_settings(
-                    settings,
-                    GITHUB_AUTH_SECRET_ENV,
-                    GITHUB_AUTH_SECRET_PROP,
+    if cookie:
+        try:
+            return True, cast(
+                UserDetails,
+                jwt.decode(
+                    cookie,
+                    env_or_settings(
+                        settings,
+                        GITHUB_AUTH_SECRET_ENV,
+                        GITHUB_AUTH_SECRET_PROP,
+                    ),
+                    algorithms=["HS256"],
                 ),
-                algorithms=["HS256"],
-            ),
-        )
-    except jwt.exceptions.InvalidTokenError as e:
-        LOG.warning("Error no decoding JWT token: %s", e)
+            )
+        except jwt.exceptions.InvalidTokenError as e:
+            LOG.warning("Error on decoding JWT token: %s", e)
     return False, {}
 
 

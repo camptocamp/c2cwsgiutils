@@ -36,7 +36,8 @@ COPY . /app
 ARG GIT_HASH
 
 RUN --mount=type=cache,target=/root/.cache \
-  python3 -m pip install --disable-pip-version-check --no-deps --editable=.
+  python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
+  && python3 -m pip freeze > /requirements.txt
 RUN ./models_graph.py > models.dot \
   && ./models_graph.py Hello > models-hello.dot \
   && c2cwsgiutils-genversion $GIT_HASH \

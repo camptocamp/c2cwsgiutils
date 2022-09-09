@@ -104,7 +104,8 @@ COPY pyproject.toml README.md ./
 # The sed is to deactivate the poetry-dynamic-versioning plugin.
 RUN --mount=type=cache,target=/root/.cache \
   sed --in-place 's/enable = true # disable on Docker/enable = false/g' pyproject.toml \
-  && python3 -m pip install --disable-pip-version-check --no-deps --editable=.
+  && python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
+  && python3 -m pip freeze > /requirements.txt
 
 WORKDIR /opt/c2cwsgiutils
 

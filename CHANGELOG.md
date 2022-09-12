@@ -1,5 +1,9 @@
 # Changelog
 
+## [5.1.5](https://github.com/camptocamp/c2cwsgiutils/tree/5.1.5) (2022-09-10)
+
+[Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/5.1.4...5.1.5)
+
 ## [5.1.4](https://github.com/camptocamp/c2cwsgiutils/tree/5.1.4) (2022-09-02)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/5.1.3...5.1.4)

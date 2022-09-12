@@ -6,7 +6,7 @@ import threading
 import time
 from typing import Any, Callable, List, Mapping, Optional
 
-import redis  # pylint: disable=unused-import
+import redis
 
 from c2cwsgiutils.broadcast import interface, local, utils
 

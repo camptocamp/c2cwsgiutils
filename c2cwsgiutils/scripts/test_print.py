@@ -33,7 +33,7 @@ def main() -> None:
     c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
     if not args.verbose:
         logging.root.setLevel(logging.INFO)
-    print_ = PrintConnection(base_url=args.url, origin=args.referer if args.referer else args.url)
+    print_ = PrintConnection(base_url=args.url, origin=args.referrer if args.referrer else args.url)
     print_.wait_ready(app=args.app)
     if args.app is None:
         for app in print_.get_apps():

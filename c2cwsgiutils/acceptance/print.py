@@ -23,7 +23,7 @@ class PrintConnection(connection.Connection):
             origin: The origin and referrer to include in the requests
         """
         super().__init__(base_url=base_url, origin=origin)
-        self.session.headers["Referer"] = origin
+        self.session.headers["Referrer"] = origin
 
     def wait_ready(self, timeout: int = 60, app: str = "default") -> None:
         """Wait the print instance to be ready."""

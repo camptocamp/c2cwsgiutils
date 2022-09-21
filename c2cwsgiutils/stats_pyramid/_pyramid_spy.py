@@ -14,10 +14,10 @@ def _add_server_metric(
     duration: Optional[float] = None,
     description: Optional[str] = None,
 ) -> None:
-    # format: <name>;dur=<duration>;desc=<description>
+    # format: <name>;due=<duration>;desc=<description>
     metric = name
     if duration is not None:
-        metric += ";dur=" + str(round(duration * 1000))
+        metric += ";due=" + str(round(duration * 1000))
     if description is not None:
         metric += ";desc=" + description
 

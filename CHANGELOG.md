@@ -34,7 +34,12 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/4.1.4...5.0.0)
 
-#### :package: Dependencies update
+**Closed issues:**
+
+- Cache-Control header should not be mandatory [\#1160](https://github.com/camptocamp/c2cwsgiutils/issues/1160)
+- Redis health check are not activated [\#837](https://github.com/camptocamp/c2cwsgiutils/issues/837)
+
+**Merged pull requests:**
 
 - Bump pytest from 6.2.5 to 7.0.0 [\#1257](https://github.com/camptocamp/c2cwsgiutils/pull/1257) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220202080326 to 1.1.dev20220203110559 [\#1253](https://github.com/camptocamp/c2cwsgiutils/pull/1253) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -44,6 +49,7 @@
 - Bump types-redis from 4.1.13 to 4.1.14 [\#1247](https://github.com/camptocamp/c2cwsgiutils/pull/1247) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220131090250 to 1.1.dev20220202080326 [\#1246](https://github.com/camptocamp/c2cwsgiutils/pull/1246) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump alembic from 1.7.5 to 1.7.6 [\#1244](https://github.com/camptocamp/c2cwsgiutils/pull/1244) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix the c2c_name [\#1243](https://github.com/camptocamp/c2cwsgiutils/pull/1243) ([sbrunner](https://github.com/sbrunner))
 - Bump types-python-dateutil from 2.8.8 to 2.8.9 [\#1241](https://github.com/camptocamp/c2cwsgiutils/pull/1241) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump requests-oauthlib from 1.3.0 to 1.3.1 [\#1239](https://github.com/camptocamp/c2cwsgiutils/pull/1239) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.11 to 4.1.13 [\#1238](https://github.com/camptocamp/c2cwsgiutils/pull/1238) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -51,12 +57,15 @@
 - Bump types-requests from 2.27.7 to 2.27.8 [\#1236](https://github.com/camptocamp/c2cwsgiutils/pull/1236) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220124152826 to 1.1.dev20220131090250 [\#1235](https://github.com/camptocamp/c2cwsgiutils/pull/1235) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.10 to 4.1.11 [\#1234](https://github.com/camptocamp/c2cwsgiutils/pull/1234) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Use standard cass for the arguments [\#1233](https://github.com/camptocamp/c2cwsgiutils/pull/1233) ([sbrunner](https://github.com/sbrunner))
 - Bump redis from 4.1.1 to 4.1.2 [\#1232](https://github.com/camptocamp/c2cwsgiutils/pull/1232) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add more standard way to manage databases sessions [\#1231](https://github.com/camptocamp/c2cwsgiutils/pull/1231) ([sbrunner](https://github.com/sbrunner))
 - Bump coverage from 6.2 to 6.3 in /acceptance_tests/app [\#1230](https://github.com/camptocamp/c2cwsgiutils/pull/1230) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.5.3 to 1.5.4 [\#1229](https://github.com/camptocamp/c2cwsgiutils/pull/1229) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverage from 6.2 to 6.3 [\#1228](https://github.com/camptocamp/c2cwsgiutils/pull/1228) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220120144445 to 1.1.dev20220124152826 [\#1226](https://github.com/camptocamp/c2cwsgiutils/pull/1226) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.30 to 1.4.31 [\#1225](https://github.com/camptocamp/c2cwsgiutils/pull/1225) ([dependabot[bot]](https://github.com/apps/dependabot))
+- More generic script loading [\#1222](https://github.com/camptocamp/c2cwsgiutils/pull/1222) ([sbrunner](https://github.com/sbrunner))
 - Bump types-python-dateutil from 2.8.7 to 2.8.8 [\#1221](https://github.com/camptocamp/c2cwsgiutils/pull/1221) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220119105226 to 1.1.dev20220120144445 [\#1220](https://github.com/camptocamp/c2cwsgiutils/pull/1220) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.29 to 1.4.30 [\#1219](https://github.com/camptocamp/c2cwsgiutils/pull/1219) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -69,6 +78,7 @@
 - Bump types-requests from 2.27.6 to 2.27.7 [\#1212](https://github.com/camptocamp/c2cwsgiutils/pull/1212) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.7 to 4.1.8 [\#1211](https://github.com/camptocamp/c2cwsgiutils/pull/1211) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-requests from 2.27.5 to 2.27.6 [\#1210](https://github.com/camptocamp/c2cwsgiutils/pull/1210) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Pin setuptools and other to fix pipenv [\#1208](https://github.com/camptocamp/c2cwsgiutils/pull/1208) ([sbrunner](https://github.com/sbrunner))
 - Bump types-python-dateutil from 2.8.5 to 2.8.6 [\#1207](https://github.com/camptocamp/c2cwsgiutils/pull/1207) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2021.11.23 to 2022.1.8 in /acceptance_tests/app [\#1206](https://github.com/camptocamp/c2cwsgiutils/pull/1206) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-pyyaml from 6.0.2 to 6.0.3 [\#1205](https://github.com/camptocamp/c2cwsgiutils/pull/1205) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -82,9 +92,14 @@
 - Bump types-ujson from 4.2.0 to 4.2.1 [\#1196](https://github.com/camptocamp/c2cwsgiutils/pull/1196) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump cornice from 6.0.0 to 6.0.1 [\#1195](https://github.com/camptocamp/c2cwsgiutils/pull/1195) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-pyyaml from 6.0.1 to 6.0.2 [\#1194](https://github.com/camptocamp/c2cwsgiutils/pull/1194) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Escape the % for the config default [\#1192](https://github.com/camptocamp/c2cwsgiutils/pull/1192) ([sbrunner](https://github.com/sbrunner))
 - Bump types-redis from 4.1.2 to 4.1.3 [\#1191](https://github.com/camptocamp/c2cwsgiutils/pull/1191) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump requests from 2.27.0 to 2.27.1 [\#1190](https://github.com/camptocamp/c2cwsgiutils/pull/1190) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211215101636 to 1.1.dev20220105162844 [\#1189](https://github.com/camptocamp/c2cwsgiutils/pull/1189) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix duplicate env in loader for pserve, ... [\#1188](https://github.com/camptocamp/c2cwsgiutils/pull/1188) ([sbrunner](https://github.com/sbrunner))
+- Remove the c2cwsgiutils-run script [\#1187](https://github.com/camptocamp/c2cwsgiutils/pull/1187) ([sbrunner](https://github.com/sbrunner))
+- Fix the authentication with cookie [\#1186](https://github.com/camptocamp/c2cwsgiutils/pull/1186) ([sbrunner](https://github.com/sbrunner))
+- Fix default is [\#1185](https://github.com/camptocamp/c2cwsgiutils/pull/1185) ([sbrunner](https://github.com/sbrunner))
 - Bump requests from 2.26.0 to 2.27.0 [\#1183](https://github.com/camptocamp/c2cwsgiutils/pull/1183) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 4.1.1 to 4.1.2 [\#1182](https://github.com/camptocamp/c2cwsgiutils/pull/1182) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy-utils from 0.38.1 to 0.38.2 [\#1177](https://github.com/camptocamp/c2cwsgiutils/pull/1177) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -141,6 +156,8 @@
 - Bump pyjwt from 2.1.0 to 2.3.0 [\#1119](https://github.com/camptocamp/c2cwsgiutils/pull/1119) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211022130135 to 1.1.dev20211122024433 [\#1118](https://github.com/camptocamp/c2cwsgiutils/pull/1118) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2021.11.9 to 2021.11.15 [\#1117](https://github.com/camptocamp/c2cwsgiutils/pull/1117) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Release 3 =\> best effort [\#1116](https://github.com/camptocamp/c2cwsgiutils/pull/1116) ([sbrunner](https://github.com/sbrunner))
+- \[Backport master\] Ignore CVE: 42194, unfixed upstream [\#1113](https://github.com/camptocamp/c2cwsgiutils/pull/1113) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump pipenv from 2021.5.29 to 2021.11.9 [\#1111](https://github.com/camptocamp/c2cwsgiutils/pull/1111) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211021112135 to 1.1.dev20211022130135 [\#1109](https://github.com/camptocamp/c2cwsgiutils/pull/1109) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211019114043 to 1.1.dev20211021112135 [\#1108](https://github.com/camptocamp/c2cwsgiutils/pull/1108) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -159,6 +176,7 @@
 - Bump sentry-sdk from 1.4.2 to 1.4.3 [\#1091](https://github.com/camptocamp/c2cwsgiutils/pull/1091) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump types-redis from 3.5.8 to 3.5.9 [\#1090](https://github.com/camptocamp/c2cwsgiutils/pull/1090) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump cornice from 5.2.0 to 6.0.0 [\#1089](https://github.com/camptocamp/c2cwsgiutils/pull/1089) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Be able to login with GitHub in the c2c interface [\#1088](https://github.com/camptocamp/c2cwsgiutils/pull/1088) ([sbrunner](https://github.com/sbrunner))
 - Bump types-requests from 2.25.8 to 2.25.9 [\#1086](https://github.com/camptocamp/c2cwsgiutils/pull/1086) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.4.1 to 1.4.2 [\#1085](https://github.com/camptocamp/c2cwsgiutils/pull/1085) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.24 to 1.4.25 [\#1084](https://github.com/camptocamp/c2cwsgiutils/pull/1084) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -171,6 +189,8 @@
 - Bump sentry-sdk from 1.3.1 to 1.4.0 [\#1077](https://github.com/camptocamp/c2cwsgiutils/pull/1077) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump prospector from 1.5.0.1 to 1.5.1 in /acceptance_tests/app [\#1076](https://github.com/camptocamp/c2cwsgiutils/pull/1076) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210915084344 to 1.1.dev20210921153209 [\#1075](https://github.com/camptocamp/c2cwsgiutils/pull/1075) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add the app in the Dependabot updates, cleanup [\#1074](https://github.com/camptocamp/c2cwsgiutils/pull/1074) ([sbrunner](https://github.com/sbrunner))
+- \[Backport master\] Pin version - Fix build [\#1073](https://github.com/camptocamp/c2cwsgiutils/pull/1073) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump types-requests from 2.25.6 to 2.25.7 [\#1072](https://github.com/camptocamp/c2cwsgiutils/pull/1072) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump alembic from 1.7.1 to 1.7.3 [\#1071](https://github.com/camptocamp/c2cwsgiutils/pull/1071) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210913073441 to 1.1.dev20210915084344 [\#1069](https://github.com/camptocamp/c2cwsgiutils/pull/1069) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -200,13 +220,18 @@
 - Bump sentry-sdk from 1.3.0 to 1.3.1 [\#1045](https://github.com/camptocamp/c2cwsgiutils/pull/1045) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210712112154 to 1.1.dev20210727151149 [\#1044](https://github.com/camptocamp/c2cwsgiutils/pull/1044) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.21 to 1.4.22 [\#1043](https://github.com/camptocamp/c2cwsgiutils/pull/1043) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] Activate sentry performance monitoring [\#1042](https://github.com/camptocamp/c2cwsgiutils/pull/1042) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump sqlalchemy from 1.4.20 to 1.4.21 [\#1041](https://github.com/camptocamp/c2cwsgiutils/pull/1041) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] Faster count [\#1039](https://github.com/camptocamp/c2cwsgiutils/pull/1039) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump requests from 2.25.1 to 2.26.0 [\#1038](https://github.com/camptocamp/c2cwsgiutils/pull/1038) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210709152623 to 1.1.dev20210712112154 [\#1037](https://github.com/camptocamp/c2cwsgiutils/pull/1037) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210701074602 to 1.1.dev20210709152623 [\#1036](https://github.com/camptocamp/c2cwsgiutils/pull/1036) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sentry-sdk from 1.2.0 to 1.3.0 [\#1035](https://github.com/camptocamp/c2cwsgiutils/pull/1035) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] Catch the right exception [\#1034](https://github.com/camptocamp/c2cwsgiutils/pull/1034) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump sentry-sdk from 1.1.0 to 1.2.0 [\#1031](https://github.com/camptocamp/c2cwsgiutils/pull/1031) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210629154910 to 1.1.dev20210701074602 [\#1029](https://github.com/camptocamp/c2cwsgiutils/pull/1029) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Upgrade for Python 3.6 \(with pyupgrade\) [\#1028](https://github.com/camptocamp/c2cwsgiutils/pull/1028) ([sbrunner](https://github.com/sbrunner))
+- \[Backport master\] Fix duplicated environment variable with different cass [\#1027](https://github.com/camptocamp/c2cwsgiutils/pull/1027) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump c2cciutils from 1.1.dev20210623154317 to 1.1.dev20210629154910 [\#1026](https://github.com/camptocamp/c2cwsgiutils/pull/1026) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy-utils from 0.37.7 to 0.37.8 [\#1024](https://github.com/camptocamp/c2cwsgiutils/pull/1024) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.19 to 1.4.20 [\#1023](https://github.com/camptocamp/c2cwsgiutils/pull/1023) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -235,17 +260,25 @@
 - Bump types-redis from 3.5.0 to 3.5.1 [\#999](https://github.com/camptocamp/c2cwsgiutils/pull/999) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.17 to 1.4.18 [\#998](https://github.com/camptocamp/c2cwsgiutils/pull/998) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump mypy from 0.812 to 0.902 [\#997](https://github.com/camptocamp/c2cwsgiutils/pull/997) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] Add more logs in db stats [\#996](https://github.com/camptocamp/c2cwsgiutils/pull/996) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump c2cciutils from 1.1.dev20210511092229 to 1.1.dev20210604063451 [\#993](https://github.com/camptocamp/c2cwsgiutils/pull/993) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy-utils from 0.37.5 to 0.37.6 [\#992](https://github.com/camptocamp/c2cwsgiutils/pull/992) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pytest-cov from 2.12.0 to 2.12.1 [\#991](https://github.com/camptocamp/c2cwsgiutils/pull/991) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] Log table names in db stats [\#990](https://github.com/camptocamp/c2cwsgiutils/pull/990) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump sqlalchemy-utils from 0.37.4 to 0.37.5 [\#988](https://github.com/camptocamp/c2cwsgiutils/pull/988) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump netifaces from 0.10.9 to 0.11.0 [\#987](https://github.com/camptocamp/c2cwsgiutils/pull/987) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.15 to 1.4.17 [\#986](https://github.com/camptocamp/c2cwsgiutils/pull/986) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pipenv from 2020.11.15 to 2021.5.29 [\#985](https://github.com/camptocamp/c2cwsgiutils/pull/985) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] We get too many logs because we have a new parameter named ProtectionKey [\#982](https://github.com/camptocamp/c2cwsgiutils/pull/982) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump alembic from 1.6.4 to 1.6.5 [\#980](https://github.com/camptocamp/c2cwsgiutils/pull/980) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update Sentry configuration [\#979](https://github.com/camptocamp/c2cwsgiutils/pull/979) ([sbrunner](https://github.com/sbrunner))
+- SQLAlchemyLogger: more general error handling [\#978](https://github.com/camptocamp/c2cwsgiutils/pull/978) ([jwkaltz](https://github.com/jwkaltz))
+- \[Backport master\] Log the exceptions throw the logger to be in JSON [\#977](https://github.com/camptocamp/c2cwsgiutils/pull/977) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump alembic from 1.6.3 to 1.6.4 [\#976](https://github.com/camptocamp/c2cwsgiutils/pull/976) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump alembic from 1.6.2 to 1.6.3 [\#975](https://github.com/camptocamp/c2cwsgiutils/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy-utils from 0.37.3 to 0.37.4 [\#974](https://github.com/camptocamp/c2cwsgiutils/pull/974) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Backport master\] Less and better errors with check_es on OpenShift [\#973](https://github.com/camptocamp/c2cwsgiutils/pull/973) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+- \[Backport master\] Mark the package as typed [\#970](https://github.com/camptocamp/c2cwsgiutils/pull/970) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump pytest-cov from 2.11.1 to 2.12.0 [\#968](https://github.com/camptocamp/c2cwsgiutils/pull/968) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy-utils from 0.37.2 to 0.37.3 [\#967](https://github.com/camptocamp/c2cwsgiutils/pull/967) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump boltons from 20.2.1 to 21.0.0 [\#966](https://github.com/camptocamp/c2cwsgiutils/pull/966) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -260,6 +293,7 @@
 - Bump alembic from 1.5.8 to 1.6.0 [\#954](https://github.com/camptocamp/c2cwsgiutils/pull/954) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy-utils from 0.37.0 to 0.37.1 [\#953](https://github.com/camptocamp/c2cwsgiutils/pull/953) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.12 to 1.4.13 [\#952](https://github.com/camptocamp/c2cwsgiutils/pull/952) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix for sqlalchemy-utils re-upload [\#950](https://github.com/camptocamp/c2cwsgiutils/pull/950) ([sbrunner](https://github.com/sbrunner))
 - Bump sqlalchemy from 1.4.11 to 1.4.12 [\#949](https://github.com/camptocamp/c2cwsgiutils/pull/949) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210427101151 to 1.1.dev20210428132049 [\#948](https://github.com/camptocamp/c2cwsgiutils/pull/948) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210422085804 to 1.1.dev20210427101151 [\#947](https://github.com/camptocamp/c2cwsgiutils/pull/947) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -269,6 +303,7 @@
 - Bump c2cciutils from 1.1.dev20210416145645 to 1.1.dev20210419145517 [\#942](https://github.com/camptocamp/c2cwsgiutils/pull/942) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump sqlalchemy from 1.4.7 to 1.4.9 [\#941](https://github.com/camptocamp/c2cwsgiutils/pull/941) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20210414082455 to 1.1.dev20210416145645 [\#940](https://github.com/camptocamp/c2cwsgiutils/pull/940) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump c2cciutils [\#935](https://github.com/camptocamp/c2cwsgiutils/pull/935) ([sbrunner](https://github.com/sbrunner))
 - Bump sqlalchemy-utils from 0.36.8 to 0.37.0 [\#934](https://github.com/camptocamp/c2cwsgiutils/pull/934) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.23 to 1.4.7 [\#932](https://github.com/camptocamp/c2cwsgiutils/pull/932) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pyramid from 1.10.8 to 2.0 [\#931](https://github.com/camptocamp/c2cwsgiutils/pull/931) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -277,16 +312,19 @@
 - Bump gunicorn from 20.0.4 to 20.1.0 [\#922](https://github.com/camptocamp/c2cwsgiutils/pull/922) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.5.7 to 1.5.8 [\#920](https://github.com/camptocamp/c2cwsgiutils/pull/920) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump lxml from 4.6.2 to 4.6.3 [\#919](https://github.com/camptocamp/c2cwsgiutils/pull/919) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Retry the query on elastic search [\#916](https://github.com/camptocamp/c2cwsgiutils/pull/916) ([sbrunner](https://github.com/sbrunner))
 - Bump alembic from 1.5.6 to 1.5.7 [\#913](https://github.com/camptocamp/c2cwsgiutils/pull/913) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210305083859 to 1.0 [\#912](https://github.com/camptocamp/c2cwsgiutils/pull/912) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.5.5 to 1.5.6 [\#911](https://github.com/camptocamp/c2cwsgiutils/pull/911) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210304083613 to 1.0.dev20210305083859 [\#910](https://github.com/camptocamp/c2cwsgiutils/pull/910) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210302092543 to 1.0.dev20210304083613 [\#909](https://github.com/camptocamp/c2cwsgiutils/pull/909) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.20.3 to 1.0.0 [\#908](https://github.com/camptocamp/c2cwsgiutils/pull/908) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Use pipenv sync [\#907](https://github.com/camptocamp/c2cwsgiutils/pull/907) ([sbrunner](https://github.com/sbrunner))
 - Bump junit2html from 30.0.5 to 30.0.6 [\#906](https://github.com/camptocamp/c2cwsgiutils/pull/906) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump junit2html from 30.0.4 to 30.0.5 [\#905](https://github.com/camptocamp/c2cwsgiutils/pull/905) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210302075833 to 1.0.dev20210302092543 [\#904](https://github.com/camptocamp/c2cwsgiutils/pull/904) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210217133842 to 1.0.dev20210302075833 [\#903](https://github.com/camptocamp/c2cwsgiutils/pull/903) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix master, for Redis 6.2 [\#902](https://github.com/camptocamp/c2cwsgiutils/pull/902) ([sbrunner](https://github.com/sbrunner))
 - Bump pyramid from 1.10.7 to 1.10.8 [\#901](https://github.com/camptocamp/c2cwsgiutils/pull/901) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump coverage from 5.4 to 5.5 [\#900](https://github.com/camptocamp/c2cwsgiutils/pull/900) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pyramid from 1.10.6 to 1.10.7 [\#899](https://github.com/camptocamp/c2cwsgiutils/pull/899) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -294,12 +332,15 @@
 - Bump pyramid from 1.10.5 to 1.10.6 [\#897](https://github.com/camptocamp/c2cwsgiutils/pull/897) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump cornice from 5.0.3 to 5.1.0 [\#896](https://github.com/camptocamp/c2cwsgiutils/pull/896) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.20.2 to 0.20.3 [\#895](https://github.com/camptocamp/c2cwsgiutils/pull/895) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Fix for elasticsearch version 7.x [\#894](https://github.com/camptocamp/c2cwsgiutils/pull/894) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump c2cciutils from 1.0.dev20210212123011 to 1.0.dev20210217133842 [\#893](https://github.com/camptocamp/c2cwsgiutils/pull/893) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Make the broadcast decorator more generic [\#892](https://github.com/camptocamp/c2cwsgiutils/pull/892) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump sentry-sdk from 0.20.1 to 0.20.2 [\#889](https://github.com/camptocamp/c2cwsgiutils/pull/889) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.20.0 to 0.20.1 [\#888](https://github.com/camptocamp/c2cwsgiutils/pull/888) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210212084346 to 1.0.dev20210212123011 [\#887](https://github.com/camptocamp/c2cwsgiutils/pull/887) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210208135331 to 1.0.dev20210212084346 [\#886](https://github.com/camptocamp/c2cwsgiutils/pull/886) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.19.5 to 0.20.0 [\#885](https://github.com/camptocamp/c2cwsgiutils/pull/885) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Use Redis 6 [\#884](https://github.com/camptocamp/c2cwsgiutils/pull/884) ([sbrunner](https://github.com/sbrunner))
 - Bump c2cciutils from 1.0.dev20210208095330 to 1.0.dev20210208135331 [\#883](https://github.com/camptocamp/c2cwsgiutils/pull/883) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210204125831 to 1.0.dev20210208095330 [\#881](https://github.com/camptocamp/c2cwsgiutils/pull/881) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210111121829 to 1.0.dev20210204125831 [\#880](https://github.com/camptocamp/c2cwsgiutils/pull/880) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -323,12 +364,15 @@
 - Bump c2cciutils from 1.0.dev20210108091533 to 1.0.dev20210108163130 [\#859](https://github.com/camptocamp/c2cwsgiutils/pull/859) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20210107153221 to 1.0.dev20210108091533 [\#858](https://github.com/camptocamp/c2cwsgiutils/pull/858) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201224081728 to 1.0.dev20210107153221 [\#857](https://github.com/camptocamp/c2cwsgiutils/pull/857) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Always use env_or_config or env_or_settings to correctly handle empt… [\#855](https://github.com/camptocamp/c2cwsgiutils/pull/855) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump junit2html from 30.0.2 to 30.0.3 [\#853](https://github.com/camptocamp/c2cwsgiutils/pull/853) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump junit2html from 30.0.1 to 30.0.2 [\#851](https://github.com/camptocamp/c2cwsgiutils/pull/851) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump junit2html from 26 to 30.0.1 [\#850](https://github.com/camptocamp/c2cwsgiutils/pull/850) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201223170112 to 1.0.dev20201224081728 [\#849](https://github.com/camptocamp/c2cwsgiutils/pull/849) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Be able to easier be able po update Python version [\#848](https://github.com/camptocamp/c2cwsgiutils/pull/848) ([sbrunner](https://github.com/sbrunner))
 - Bump c2cciutils from 1.0.dev20201223143028 to 1.0.dev20201223170112 [\#847](https://github.com/camptocamp/c2cwsgiutils/pull/847) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201222122805 to 1.0.dev20201223143028 [\#845](https://github.com/camptocamp/c2cwsgiutils/pull/845) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Add missing \_\_init\_\_.py [\#844](https://github.com/camptocamp/c2cwsgiutils/pull/844) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump c2cciutils from 1.0.dev20201221104733 to 1.0.dev20201222122805 [\#842](https://github.com/camptocamp/c2cwsgiutils/pull/842) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201217141839 to 1.0.dev20201221104733 [\#841](https://github.com/camptocamp/c2cwsgiutils/pull/841) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump coverage from 5.3 to 5.3.1 [\#840](https://github.com/camptocamp/c2cwsgiutils/pull/840) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -338,12 +382,14 @@
 - Bump requests from 2.25.0 to 2.25.1 [\#830](https://github.com/camptocamp/c2cwsgiutils/pull/830) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201215125058 to 1.0.dev20201216094446 [\#829](https://github.com/camptocamp/c2cwsgiutils/pull/829) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 6.2.0 to 6.2.1 [\#823](https://github.com/camptocamp/c2cwsgiutils/pull/823) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- More backward compatible with version 3 [\#822](https://github.com/camptocamp/c2cwsgiutils/pull/822) ([fredj](https://github.com/fredj))
 - Bump c2cciutils from 1.0.dev20201214090910 to 1.0.dev20201215125058 [\#821](https://github.com/camptocamp/c2cwsgiutils/pull/821) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201211125858 to 1.0.dev20201214090910 [\#819](https://github.com/camptocamp/c2cwsgiutils/pull/819) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump wheel from 0.36.1 to 0.36.2 [\#818](https://github.com/camptocamp/c2cwsgiutils/pull/818) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest-html from 3.1.0 to 3.1.1 [\#817](https://github.com/camptocamp/c2cwsgiutils/pull/817) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump bandit from 1.6.3 to 1.7.0 [\#816](https://github.com/camptocamp/c2cwsgiutils/pull/816) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 6.1.2 to 6.2.0 [\#815](https://github.com/camptocamp/c2cwsgiutils/pull/815) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix duplicate pull request from Dependabot [\#814](https://github.com/camptocamp/c2cwsgiutils/pull/814) ([sbrunner](https://github.com/sbrunner))
 - Bump c2cciutils from 1.0.dev20201210160050 to 1.0.dev20201211125858 [\#813](https://github.com/camptocamp/c2cwsgiutils/pull/813) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201210160050 to 1.0.dev20201211125858 in /ci [\#812](https://github.com/camptocamp/c2cwsgiutils/pull/812) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201209160528 to 1.0.dev20201210160050 [\#811](https://github.com/camptocamp/c2cwsgiutils/pull/811) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -363,16 +409,25 @@
 - Bump wheel from 0.36.0 to 0.36.1 [\#792](https://github.com/camptocamp/c2cwsgiutils/pull/792) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump bandit from 1.6.2 to 1.6.3 [\#791](https://github.com/camptocamp/c2cwsgiutils/pull/791) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201204131347 to 1.0.dev20201204141427 in /ci [\#790](https://github.com/camptocamp/c2cwsgiutils/pull/790) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix the publish on rebuild [\#788](https://github.com/camptocamp/c2cwsgiutils/pull/788) ([sbrunner](https://github.com/sbrunner))
 - Bump c2cciutils from 1.0.dev20201203101049 to 1.0.dev20201203121250 in /ci [\#786](https://github.com/camptocamp/c2cwsgiutils/pull/786) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201202191901 to 1.0.dev20201203101049 in /ci [\#785](https://github.com/camptocamp/c2cwsgiutils/pull/785) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump c2cciutils from 1.0.dev20201202131358 to 1.0.dev20201202191901 in /ci [\#784](https://github.com/camptocamp/c2cwsgiutils/pull/784) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Use c2cciutils - publish to GitHub Container Registry [\#781](https://github.com/camptocamp/c2cwsgiutils/pull/781) ([sbrunner](https://github.com/sbrunner))
 - Bump wheel from 0.35.1 to 0.36.0 [\#780](https://github.com/camptocamp/c2cwsgiutils/pull/780) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump lxml from 4.6.1 to 4.6.2 [\#779](https://github.com/camptocamp/c2cwsgiutils/pull/779) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump junit2html from 25 to 26 [\#778](https://github.com/camptocamp/c2cwsgiutils/pull/778) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Rebuild on Docker Container Registry [\#777](https://github.com/camptocamp/c2cwsgiutils/pull/777) ([sbrunner](https://github.com/sbrunner))
 - Bump sentry-sdk from 0.19.3 to 0.19.4 [\#769](https://github.com/camptocamp/c2cwsgiutils/pull/769) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Allow selecting DB healthcheck engines [\#767](https://github.com/camptocamp/c2cwsgiutils/pull/767) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+- Publish Docker images to GitHub Container Registry [\#764](https://github.com/camptocamp/c2cwsgiutils/pull/764) ([sbrunner](https://github.com/sbrunner))
 - Bump pipenv from 2020.11.4 to 2020.11.15 [\#763](https://github.com/camptocamp/c2cwsgiutils/pull/763) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest-html from 2.1.1 to 3.0.0 [\#762](https://github.com/camptocamp/c2cwsgiutils/pull/762) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix clean Docker hub tags [\#761](https://github.com/camptocamp/c2cwsgiutils/pull/761) ([sbrunner](https://github.com/sbrunner))
+- Use Ubuntu 20.04 [\#757](https://github.com/camptocamp/c2cwsgiutils/pull/757) ([sbrunner](https://github.com/sbrunner))
+- Use secret defined in organisation [\#756](https://github.com/camptocamp/c2cwsgiutils/pull/756) ([sbrunner](https://github.com/sbrunner))
 - Bump sentry-sdk from 0.19.2 to 0.19.3 [\#755](https://github.com/camptocamp/c2cwsgiutils/pull/755) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Add Clean docker hub tags workflow [\#754](https://github.com/camptocamp/c2cwsgiutils/pull/754) ([sbrunner](https://github.com/sbrunner))
 - Bump requests from 2.24.0 to 2.25.0 [\#753](https://github.com/camptocamp/c2cwsgiutils/pull/753) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pyramid from 1.10.4 to 1.10.5 [\#752](https://github.com/camptocamp/c2cwsgiutils/pull/752) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump keyrings-alt from 4.0.0 to 4.0.1 [\#751](https://github.com/camptocamp/c2cwsgiutils/pull/751) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -394,8 +449,11 @@
 - Bump keyrings-alt from 3.5.2 to 4.0.0 [\#732](https://github.com/camptocamp/c2cwsgiutils/pull/732) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 6.1.0 to 6.1.1 [\#731](https://github.com/camptocamp/c2cwsgiutils/pull/731) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.17.8 to 0.18.0 [\#730](https://github.com/camptocamp/c2cwsgiutils/pull/730) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Use YAML safe loader [\#728](https://github.com/camptocamp/c2cwsgiutils/pull/728) ([sbrunner](https://github.com/sbrunner))
+- REDIS_URL or REDIS_SENTINEL can be an empty string [\#726](https://github.com/camptocamp/c2cwsgiutils/pull/726) ([sbrunner](https://github.com/sbrunner))
 - Bump pytest from 6.0.2 to 6.1.0 [\#724](https://github.com/camptocamp/c2cwsgiutils/pull/724) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump keyrings-alt from 3.4.0 to 3.5.2 [\#723](https://github.com/camptocamp/c2cwsgiutils/pull/723) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Assert that checker name is present [\#722](https://github.com/camptocamp/c2cwsgiutils/pull/722) ([sbrunner](https://github.com/sbrunner))
 - Bump sentry-sdk from 0.17.7 to 0.17.8 [\#720](https://github.com/camptocamp/c2cwsgiutils/pull/720) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.17.6 to 0.17.7 [\#719](https://github.com/camptocamp/c2cwsgiutils/pull/719) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.17.5 to 0.17.6 [\#718](https://github.com/camptocamp/c2cwsgiutils/pull/718) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -411,8 +469,11 @@
 - Bump setuptools from 50.0.3 to 50.1.0 [\#708](https://github.com/camptocamp/c2cwsgiutils/pull/708) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 50.0.1 to 50.0.3 [\#707](https://github.com/camptocamp/c2cwsgiutils/pull/707) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.17.2 to 0.17.3 [\#706](https://github.com/camptocamp/c2cwsgiutils/pull/706) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] No empty header value [\#704](https://github.com/camptocamp/c2cwsgiutils/pull/704) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump sentry-sdk from 0.17.1 to 0.17.2 [\#703](https://github.com/camptocamp/c2cwsgiutils/pull/703) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 50.0.0 to 50.0.1 [\#702](https://github.com/camptocamp/c2cwsgiutils/pull/702) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Add missing yaml dependency [\#701](https://github.com/camptocamp/c2cwsgiutils/pull/701) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+- \[Backport master\] Add Redis Options [\#699](https://github.com/camptocamp/c2cwsgiutils/pull/699) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump cornice from 5.0.2 to 5.0.3 [\#698](https://github.com/camptocamp/c2cwsgiutils/pull/698) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 49.6.0 to 50.0.0 [\#697](https://github.com/camptocamp/c2cwsgiutils/pull/697) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.17.0 to 0.17.1 [\#696](https://github.com/camptocamp/c2cwsgiutils/pull/696) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -422,6 +483,7 @@
 - Bump sentry-sdk from 0.16.4 to 0.16.5 [\#690](https://github.com/camptocamp/c2cwsgiutils/pull/690) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest-cov from 2.10.0 to 2.10.1 [\#689](https://github.com/camptocamp/c2cwsgiutils/pull/689) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump wheel from 0.35.0 to 0.35.1 [\#688](https://github.com/camptocamp/c2cwsgiutils/pull/688) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Parse package version installed as editable [\#686](https://github.com/camptocamp/c2cwsgiutils/pull/686) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump setuptools from 49.4.0 to 49.6.0 [\#685](https://github.com/camptocamp/c2cwsgiutils/pull/685) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump wheel from 0.34.2 to 0.35.0 [\#684](https://github.com/camptocamp/c2cwsgiutils/pull/684) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 49.3.2 to 49.4.0 [\#683](https://github.com/camptocamp/c2cwsgiutils/pull/683) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -440,6 +502,7 @@
 - Bump sentry-sdk from 0.16.1 to 0.16.2 [\#667](https://github.com/camptocamp/c2cwsgiutils/pull/667) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump twine from 3.1.1 to 3.2.0 [\#665](https://github.com/camptocamp/c2cwsgiutils/pull/665) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 49.1.0 to 49.2.0 [\#664](https://github.com/camptocamp/c2cwsgiutils/pull/664) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Fix pip release, c2cwsgiutils-run in the Python egg [\#663](https://github.com/camptocamp/c2cwsgiutils/pull/663) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump setuptools from 49.1.3 to 49.2.0 [\#662](https://github.com/camptocamp/c2cwsgiutils/pull/662) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 49.1.2 to 49.1.3 [\#661](https://github.com/camptocamp/c2cwsgiutils/pull/661) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 49.1.1 to 49.1.2 [\#660](https://github.com/camptocamp/c2cwsgiutils/pull/660) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -453,9 +516,12 @@
 - Bump setuptools from 47.3.2 to 48.0.0 [\#650](https://github.com/camptocamp/c2cwsgiutils/pull/650) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 47.3.1 to 47.3.2 [\#649](https://github.com/camptocamp/c2cwsgiutils/pull/649) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.15.1 to 0.16.0 [\#648](https://github.com/camptocamp/c2cwsgiutils/pull/648) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Remove unworking dependabot rules [\#647](https://github.com/camptocamp/c2cwsgiutils/pull/647) ([sbrunner](https://github.com/sbrunner))
 - Bump sqlalchemy-utils from 0.36.6 to 0.36.7 [\#646](https://github.com/camptocamp/c2cwsgiutils/pull/646) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.17 to 1.3.18 [\#645](https://github.com/camptocamp/c2cwsgiutils/pull/645) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Also audit Pipenv files [\#644](https://github.com/camptocamp/c2cwsgiutils/pull/644) ([sbrunner](https://github.com/sbrunner))
 - Bump twine from 3.1.1 to 3.2.0 [\#642](https://github.com/camptocamp/c2cwsgiutils/pull/642) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Use safety to avoid simple security in dependencies [\#641](https://github.com/camptocamp/c2cwsgiutils/pull/641) ([sbrunner](https://github.com/sbrunner))
 - Bump mypy from 0.781 to 0.782 [\#640](https://github.com/camptocamp/c2cwsgiutils/pull/640) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump boltons from 20.1.0 to 20.2.0 [\#639](https://github.com/camptocamp/c2cwsgiutils/pull/639) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump mypy from 0.780 to 0.781 [\#638](https://github.com/camptocamp/c2cwsgiutils/pull/638) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -466,10 +532,14 @@
 - Bump setuptools from 47.2.0 to 47.3.0 [\#633](https://github.com/camptocamp/c2cwsgiutils/pull/633) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 47.1.1 to 47.2.0 [\#632](https://github.com/camptocamp/c2cwsgiutils/pull/632) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest-cov from 2.9.0 to 2.10.0 [\#630](https://github.com/camptocamp/c2cwsgiutils/pull/630) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Add CodeQL security scanning [\#629](https://github.com/camptocamp/c2cwsgiutils/pull/629) ([sbrunner](https://github.com/sbrunner))
+- Be able to use Redis sentinels [\#627](https://github.com/camptocamp/c2cwsgiutils/pull/627) ([sbrunner](https://github.com/sbrunner))
 - Bump ujson from 2.0.3 to 3.0.0 [\#626](https://github.com/camptocamp/c2cwsgiutils/pull/626) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump mypy from 0.770 to 0.780 [\#625](https://github.com/camptocamp/c2cwsgiutils/pull/625) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 5.4.2 to 5.4.3 [\#624](https://github.com/camptocamp/c2cwsgiutils/pull/624) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix the release 4 rebuild [\#623](https://github.com/camptocamp/c2cwsgiutils/pull/623) ([sbrunner](https://github.com/sbrunner))
 - Bump pipenv from 2020.5.28 to 2020.6.2 [\#622](https://github.com/camptocamp/c2cwsgiutils/pull/622) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Backport master\] Don't pin the packages [\#621](https://github.com/camptocamp/c2cwsgiutils/pull/621) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
 - Bump redis from 3.5.2 to 3.5.3 [\#620](https://github.com/camptocamp/c2cwsgiutils/pull/620) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump lxml from 4.5.0 to 4.5.1 [\#619](https://github.com/camptocamp/c2cwsgiutils/pull/619) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.16 to 1.3.17 [\#618](https://github.com/camptocamp/c2cwsgiutils/pull/618) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -482,6 +552,8 @@
 - Bump cornice from 4.0.1 to 5.0.1 [\#610](https://github.com/camptocamp/c2cwsgiutils/pull/610) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pyflakes from 2.1.0 to 2.1.1 [\#609](https://github.com/camptocamp/c2cwsgiutils/pull/609) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 47.1.0 to 47.1.1 [\#608](https://github.com/camptocamp/c2cwsgiutils/pull/608) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Backport: add timeout, use an other user [\#607](https://github.com/camptocamp/c2cwsgiutils/pull/607) ([sbrunner](https://github.com/sbrunner))
+- Fix publish [\#604](https://github.com/camptocamp/c2cwsgiutils/pull/604) ([sbrunner](https://github.com/sbrunner))
 - Bump setuptools from 47.0.0 to 47.1.0 [\#602](https://github.com/camptocamp/c2cwsgiutils/pull/602) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 46.4.0 to 47.0.0 [\#601](https://github.com/camptocamp/c2cwsgiutils/pull/601) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump cornice from 5.0.0 to 5.0.1 [\#600](https://github.com/camptocamp/c2cwsgiutils/pull/600) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -493,6 +565,7 @@
 - Bump setuptools from 46.3.1 to 46.4.0 [\#594](https://github.com/camptocamp/c2cwsgiutils/pull/594) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 46.3.0 to 46.3.1 [\#593](https://github.com/camptocamp/c2cwsgiutils/pull/593) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump redis from 3.5.1 to 3.5.2 [\#592](https://github.com/camptocamp/c2cwsgiutils/pull/592) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Run: black -l 110 -t py36 [\#591](https://github.com/camptocamp/c2cwsgiutils/pull/591) ([sbrunner](https://github.com/sbrunner))
 - Bump sqlalchemy from 1.3.16 to 1.3.17 [\#590](https://github.com/camptocamp/c2cwsgiutils/pull/590) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.14.3 to 0.14.4 [\#589](https://github.com/camptocamp/c2cwsgiutils/pull/589) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 46.2.0 to 46.3.0 [\#588](https://github.com/camptocamp/c2cwsgiutils/pull/588) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -503,82 +576,6 @@
 - Bump sqlalchemy-utils from 0.36.4 to 0.36.5 [\#582](https://github.com/camptocamp/c2cwsgiutils/pull/582) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy-utils from 0.36.3 to 0.36.4 [\#581](https://github.com/camptocamp/c2cwsgiutils/pull/581) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump redis from 3.4.1 to 3.5.0 [\#580](https://github.com/camptocamp/c2cwsgiutils/pull/580) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Closed issues:**
-
-- Cache-Control header should not be mandatory [\#1160](https://github.com/camptocamp/c2cwsgiutils/issues/1160)
-- Redis health check are not activated [\#837](https://github.com/camptocamp/c2cwsgiutils/issues/837)
-
-**Merged pull requests:**
-
-- Fix the c2c_name [\#1243](https://github.com/camptocamp/c2cwsgiutils/pull/1243) ([sbrunner](https://github.com/sbrunner))
-- Use standard cass for the arguments [\#1233](https://github.com/camptocamp/c2cwsgiutils/pull/1233) ([sbrunner](https://github.com/sbrunner))
-- Add more standard way to manage databases sessions [\#1231](https://github.com/camptocamp/c2cwsgiutils/pull/1231) ([sbrunner](https://github.com/sbrunner))
-- More generic script loading [\#1222](https://github.com/camptocamp/c2cwsgiutils/pull/1222) ([sbrunner](https://github.com/sbrunner))
-- Pin setuptools and other to fix pipenv [\#1208](https://github.com/camptocamp/c2cwsgiutils/pull/1208) ([sbrunner](https://github.com/sbrunner))
-- Escape the % for the config default [\#1192](https://github.com/camptocamp/c2cwsgiutils/pull/1192) ([sbrunner](https://github.com/sbrunner))
-- Fix duplicate env in loader for pserve, ... [\#1188](https://github.com/camptocamp/c2cwsgiutils/pull/1188) ([sbrunner](https://github.com/sbrunner))
-- Remove the c2cwsgiutils-run script [\#1187](https://github.com/camptocamp/c2cwsgiutils/pull/1187) ([sbrunner](https://github.com/sbrunner))
-- Fix the authentication with cookie [\#1186](https://github.com/camptocamp/c2cwsgiutils/pull/1186) ([sbrunner](https://github.com/sbrunner))
-- Fix default is [\#1185](https://github.com/camptocamp/c2cwsgiutils/pull/1185) ([sbrunner](https://github.com/sbrunner))
-- Release 3 =\> best effort [\#1116](https://github.com/camptocamp/c2cwsgiutils/pull/1116) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Ignore CVE: 42194, unfixed upstream [\#1113](https://github.com/camptocamp/c2cwsgiutils/pull/1113) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Be able to login with GitHub in the c2c interface [\#1088](https://github.com/camptocamp/c2cwsgiutils/pull/1088) ([sbrunner](https://github.com/sbrunner))
-- Add the app in the Dependabot updates, cleanup [\#1074](https://github.com/camptocamp/c2cwsgiutils/pull/1074) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Pin version - Fix build [\#1073](https://github.com/camptocamp/c2cwsgiutils/pull/1073) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Activate sentry performance monitoring [\#1042](https://github.com/camptocamp/c2cwsgiutils/pull/1042) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Faster count [\#1039](https://github.com/camptocamp/c2cwsgiutils/pull/1039) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Catch the right exception [\#1034](https://github.com/camptocamp/c2cwsgiutils/pull/1034) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Upgrade for Python 3.6 \(with pyupgrade\) [\#1028](https://github.com/camptocamp/c2cwsgiutils/pull/1028) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Fix duplicated environment variable with different cass [\#1027](https://github.com/camptocamp/c2cwsgiutils/pull/1027) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Add more logs in db stats [\#996](https://github.com/camptocamp/c2cwsgiutils/pull/996) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Log table names in db stats [\#990](https://github.com/camptocamp/c2cwsgiutils/pull/990) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] We get too many logs because we have a new parameter named ProtectionKey [\#982](https://github.com/camptocamp/c2cwsgiutils/pull/982) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Update Sentry configuration [\#979](https://github.com/camptocamp/c2cwsgiutils/pull/979) ([sbrunner](https://github.com/sbrunner))
-- SQLAlchemyLogger: more general error handling [\#978](https://github.com/camptocamp/c2cwsgiutils/pull/978) ([jwkaltz](https://github.com/jwkaltz))
-- \[Backport master\] Log the exceptions throw the logger to be in JSON [\#977](https://github.com/camptocamp/c2cwsgiutils/pull/977) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Less and better errors with check_es on OpenShift [\#973](https://github.com/camptocamp/c2cwsgiutils/pull/973) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Mark the package as typed [\#970](https://github.com/camptocamp/c2cwsgiutils/pull/970) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Fix for sqlalchemy-utils re-upload [\#950](https://github.com/camptocamp/c2cwsgiutils/pull/950) ([sbrunner](https://github.com/sbrunner))
-- Bump c2cciutils [\#935](https://github.com/camptocamp/c2cwsgiutils/pull/935) ([sbrunner](https://github.com/sbrunner))
-- Retry the query on elastic search [\#916](https://github.com/camptocamp/c2cwsgiutils/pull/916) ([sbrunner](https://github.com/sbrunner))
-- Use pipenv sync [\#907](https://github.com/camptocamp/c2cwsgiutils/pull/907) ([sbrunner](https://github.com/sbrunner))
-- Fix master, for Redis 6.2 [\#902](https://github.com/camptocamp/c2cwsgiutils/pull/902) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Fix for elasticsearch version 7.x [\#894](https://github.com/camptocamp/c2cwsgiutils/pull/894) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Make the broadcast decorator more generic [\#892](https://github.com/camptocamp/c2cwsgiutils/pull/892) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Use Redis 6 [\#884](https://github.com/camptocamp/c2cwsgiutils/pull/884) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Always use env_or_config or env_or_settings to correctly handle empt… [\#855](https://github.com/camptocamp/c2cwsgiutils/pull/855) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Be able to easier be able po update Python version [\#848](https://github.com/camptocamp/c2cwsgiutils/pull/848) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Add missing \_\_init\_\_.py [\#844](https://github.com/camptocamp/c2cwsgiutils/pull/844) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- More backward compatible with version 3 [\#822](https://github.com/camptocamp/c2cwsgiutils/pull/822) ([fredj](https://github.com/fredj))
-- Fix duplicate pull request from Dependabot [\#814](https://github.com/camptocamp/c2cwsgiutils/pull/814) ([sbrunner](https://github.com/sbrunner))
-- Fix the publish on rebuild [\#788](https://github.com/camptocamp/c2cwsgiutils/pull/788) ([sbrunner](https://github.com/sbrunner))
-- Use c2cciutils - publish to GitHub Container Registry [\#781](https://github.com/camptocamp/c2cwsgiutils/pull/781) ([sbrunner](https://github.com/sbrunner))
-- Rebuild on Docker Container Registry [\#777](https://github.com/camptocamp/c2cwsgiutils/pull/777) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Allow selecting DB healthcheck engines [\#767](https://github.com/camptocamp/c2cwsgiutils/pull/767) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Publish Docker images to GitHub Container Registry [\#764](https://github.com/camptocamp/c2cwsgiutils/pull/764) ([sbrunner](https://github.com/sbrunner))
-- Fix clean Docker hub tags [\#761](https://github.com/camptocamp/c2cwsgiutils/pull/761) ([sbrunner](https://github.com/sbrunner))
-- Use Ubuntu 20.04 [\#757](https://github.com/camptocamp/c2cwsgiutils/pull/757) ([sbrunner](https://github.com/sbrunner))
-- Use secret defined in organization [\#756](https://github.com/camptocamp/c2cwsgiutils/pull/756) ([sbrunner](https://github.com/sbrunner))
-- Add Clean docker hub tags workflow [\#754](https://github.com/camptocamp/c2cwsgiutils/pull/754) ([sbrunner](https://github.com/sbrunner))
-- Use YAML safe loader [\#728](https://github.com/camptocamp/c2cwsgiutils/pull/728) ([sbrunner](https://github.com/sbrunner))
-- REDIS_URL or REDIS_SENTINEL can be an empty string [\#726](https://github.com/camptocamp/c2cwsgiutils/pull/726) ([sbrunner](https://github.com/sbrunner))
-- Assert that checker name is present [\#722](https://github.com/camptocamp/c2cwsgiutils/pull/722) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] No empty header value [\#704](https://github.com/camptocamp/c2cwsgiutils/pull/704) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Add missing yaml dependency [\#701](https://github.com/camptocamp/c2cwsgiutils/pull/701) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Add Redis Options [\#699](https://github.com/camptocamp/c2cwsgiutils/pull/699) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Parse package version installed as editable [\#686](https://github.com/camptocamp/c2cwsgiutils/pull/686) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- \[Backport master\] Fix pip release, c2cwsgiutils-run in the Python egg [\#663](https://github.com/camptocamp/c2cwsgiutils/pull/663) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Remove unworking dependabot rules [\#647](https://github.com/camptocamp/c2cwsgiutils/pull/647) ([sbrunner](https://github.com/sbrunner))
-- Also audit Pipenv files [\#644](https://github.com/camptocamp/c2cwsgiutils/pull/644) ([sbrunner](https://github.com/sbrunner))
-- Use safety to avoid simple security in dependencies [\#641](https://github.com/camptocamp/c2cwsgiutils/pull/641) ([sbrunner](https://github.com/sbrunner))
-- Add CodeQL security scanning [\#629](https://github.com/camptocamp/c2cwsgiutils/pull/629) ([sbrunner](https://github.com/sbrunner))
-- Be able to use Redis sentinels [\#627](https://github.com/camptocamp/c2cwsgiutils/pull/627) ([sbrunner](https://github.com/sbrunner))
-- Fix the release 4 rebuild [\#623](https://github.com/camptocamp/c2cwsgiutils/pull/623) ([sbrunner](https://github.com/sbrunner))
-- \[Backport master\] Don't pin the packages [\#621](https://github.com/camptocamp/c2cwsgiutils/pull/621) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
-- Backport: add timeout, use an other user [\#607](https://github.com/camptocamp/c2cwsgiutils/pull/607) ([sbrunner](https://github.com/sbrunner))
-- Fix publish [\#604](https://github.com/camptocamp/c2cwsgiutils/pull/604) ([sbrunner](https://github.com/sbrunner))
-- Run: black -l 110 -t py36 [\#591](https://github.com/camptocamp/c2cwsgiutils/pull/591) ([sbrunner](https://github.com/sbrunner))
 - Update base image for a release 4 [\#578](https://github.com/camptocamp/c2cwsgiutils/pull/578) ([gberaudo](https://github.com/gberaudo))
 
 ## [4.1.4](https://github.com/camptocamp/c2cwsgiutils/tree/4.1.4) (2021-06-30)
@@ -627,24 +624,26 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.11.0...3.12.0)
 
-#### :package: Dependencies update
-
-- Bump junit2html from 022 to 023 [\#576](https://github.com/camptocamp/c2cwsgiutils/pull/576) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump yamllint from 1.22.1 to 1.23.0 [\#575](https://github.com/camptocamp/c2cwsgiutils/pull/575) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
 **Merged pull requests:**
 
 - Fix readonly assignment [\#579](https://github.com/camptocamp/c2cwsgiutils/pull/579) ([gberaudo](https://github.com/gberaudo))
+- Bump junit2html from 022 to 023 [\#576](https://github.com/camptocamp/c2cwsgiutils/pull/576) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump yamllint from 1.22.1 to 1.23.0 [\#575](https://github.com/camptocamp/c2cwsgiutils/pull/575) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [3.11.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.11.0) (2020-04-16)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.10.0...3.11.0)
 
-#### :package: Dependencies update
+**Closed issues:**
+
+- Dependabot couldn't find the branch 2.4 [\#531](https://github.com/camptocamp/c2cwsgiutils/issues/531)
+
+**Merged pull requests:**
 
 - Bump yamllint from 1.22.0 to 1.22.1 [\#573](https://github.com/camptocamp/c2cwsgiutils/pull/573) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump yamllint from 1.21.0 to 1.22.0 [\#572](https://github.com/camptocamp/c2cwsgiutils/pull/572) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump coverage from 5.0.4 to 5.1 [\#571](https://github.com/camptocamp/c2cwsgiutils/pull/571) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Add view for DB maintenance [\#570](https://github.com/camptocamp/c2cwsgiutils/pull/570) ([gberaudo](https://github.com/gberaudo))
 - Bump zope-interface from 5.0.2 to 5.1.0 [\#569](https://github.com/camptocamp/c2cwsgiutils/pull/569) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.15 to 1.3.16 [\#568](https://github.com/camptocamp/c2cwsgiutils/pull/568) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump psycopg2 from 2.8.4 to 2.8.5 [\#567](https://github.com/camptocamp/c2cwsgiutils/pull/567) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -667,7 +666,9 @@
 - Bump pytest from 5.4.0 to 5.4.1 [\#550](https://github.com/camptocamp/c2cwsgiutils/pull/550) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 5.3.5 to 5.4.0 [\#549](https://github.com/camptocamp/c2cwsgiutils/pull/549) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.14 to 1.3.15 [\#548](https://github.com/camptocamp/c2cwsgiutils/pull/548) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix mypy error [\#547](https://github.com/camptocamp/c2cwsgiutils/pull/547) ([sbrunner](https://github.com/sbrunner))
 - Bump pytest-html from 2.0.1 to 2.1.0 [\#546](https://github.com/camptocamp/c2cwsgiutils/pull/546) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- updated postgres client to version 12 [\#545](https://github.com/camptocamp/c2cwsgiutils/pull/545) ([ochriste](https://github.com/ochriste))
 - Bump mypy from 0.761 to 0.770 [\#544](https://github.com/camptocamp/c2cwsgiutils/pull/544) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.13 to 1.3.14 [\#543](https://github.com/camptocamp/c2cwsgiutils/pull/543) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump zope-interface from 4.7.1 to 4.7.2 [\#542](https://github.com/camptocamp/c2cwsgiutils/pull/542) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -679,36 +680,26 @@
 - Bump sentry-sdk from 0.14.1 to 0.14.2 [\#536](https://github.com/camptocamp/c2cwsgiutils/pull/536) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump requests from 2.22.0 to 2.23.0 [\#535](https://github.com/camptocamp/c2cwsgiutils/pull/535) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump zope-sqlalchemy from 1.2 to 1.3 [\#534](https://github.com/camptocamp/c2cwsgiutils/pull/534) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump setuptools from 45.1.0 to 45.2.0 [\#528](https://github.com/camptocamp/c2cwsgiutils/pull/528) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump alembic from 1.3.3 to 1.4.0 [\#527](https://github.com/camptocamp/c2cwsgiutils/pull/527) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump redis from 3.4.0 to 3.4.1 [\#526](https://github.com/camptocamp/c2cwsgiutils/pull/526) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump wheel from 0.34.1 to 0.34.2 [\#524](https://github.com/camptocamp/c2cwsgiutils/pull/524) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump redis from 3.3.11 to 3.4.0 [\#523](https://github.com/camptocamp/c2cwsgiutils/pull/523) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump lxml from 4.4.2 to 4.5.0 [\#521](https://github.com/camptocamp/c2cwsgiutils/pull/521) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump pytest from 5.3.4 to 5.3.5 [\#520](https://github.com/camptocamp/c2cwsgiutils/pull/520) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump wheel from 0.33.6 to 0.34.1 [\#519](https://github.com/camptocamp/c2cwsgiutils/pull/519) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Closed issues:**
-
-- Dependabot couldn't find the branch 2.4 [\#531](https://github.com/camptocamp/c2cwsgiutils/issues/531)
-
-**Merged pull requests:**
-
-- Add view for DB maintenance [\#570](https://github.com/camptocamp/c2cwsgiutils/pull/570) ([gberaudo](https://github.com/gberaudo))
-- Fix mypy error [\#547](https://github.com/camptocamp/c2cwsgiutils/pull/547) ([sbrunner](https://github.com/sbrunner))
-- updated postgres client to version 12 [\#545](https://github.com/camptocamp/c2cwsgiutils/pull/545) ([ochriste](https://github.com/ochriste))
 - Some GitHub actions tweak [\#533](https://github.com/camptocamp/c2cwsgiutils/pull/533) ([sbrunner](https://github.com/sbrunner))
 - Use multistage build [\#532](https://github.com/camptocamp/c2cwsgiutils/pull/532) ([sbrunner](https://github.com/sbrunner))
 - Add Dependabot config [\#529](https://github.com/camptocamp/c2cwsgiutils/pull/529) ([sbrunner](https://github.com/sbrunner))
+- Bump setuptools from 45.1.0 to 45.2.0 [\#528](https://github.com/camptocamp/c2cwsgiutils/pull/528) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump alembic from 1.3.3 to 1.4.0 [\#527](https://github.com/camptocamp/c2cwsgiutils/pull/527) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump redis from 3.4.0 to 3.4.1 [\#526](https://github.com/camptocamp/c2cwsgiutils/pull/526) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Fix check es [\#525](https://github.com/camptocamp/c2cwsgiutils/pull/525) ([pvalsecc](https://github.com/pvalsecc))
+- Bump wheel from 0.34.1 to 0.34.2 [\#524](https://github.com/camptocamp/c2cwsgiutils/pull/524) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump redis from 3.3.11 to 3.4.0 [\#523](https://github.com/camptocamp/c2cwsgiutils/pull/523) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - GitHub actions [\#522](https://github.com/camptocamp/c2cwsgiutils/pull/522) ([sbrunner](https://github.com/sbrunner))
+- Bump lxml from 4.4.2 to 4.5.0 [\#521](https://github.com/camptocamp/c2cwsgiutils/pull/521) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump pytest from 5.3.4 to 5.3.5 [\#520](https://github.com/camptocamp/c2cwsgiutils/pull/520) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump wheel from 0.33.6 to 0.34.1 [\#519](https://github.com/camptocamp/c2cwsgiutils/pull/519) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Add github action [\#500](https://github.com/camptocamp/c2cwsgiutils/pull/500) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.10.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.10.0) (2020-01-27)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.9.4...3.10.0)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump sqlalchemy from 1.3.12 to 1.3.13 [\#518](https://github.com/camptocamp/c2cwsgiutils/pull/518) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.3.2 to 1.3.3 [\#517](https://github.com/camptocamp/c2cwsgiutils/pull/517) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -728,37 +719,31 @@
 - Bump coverage from 5.0 to 5.0.1 [\#502](https://github.com/camptocamp/c2cwsgiutils/pull/502) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump mypy from 0.760 to 0.761 [\#501](https://github.com/camptocamp/c2cwsgiutils/pull/501) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump mypy from 0.750 to 0.760 [\#498](https://github.com/camptocamp/c2cwsgiutils/pull/498) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Don't break on missing process [\#497](https://github.com/camptocamp/c2cwsgiutils/pull/497) ([sbrunner](https://github.com/sbrunner))
 - Bump alembic from 1.3.1 to 1.3.2 [\#496](https://github.com/camptocamp/c2cwsgiutils/pull/496) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.11 to 1.3.12 [\#495](https://github.com/camptocamp/c2cwsgiutils/pull/495) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump prospector from 1.1.7 to 1.2.0 [\#494](https://github.com/camptocamp/c2cwsgiutils/pull/494) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 5.3.1 to 5.3.2 [\#493](https://github.com/camptocamp/c2cwsgiutils/pull/493) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump coverage from 4.5.4 to 5.0 [\#492](https://github.com/camptocamp/c2cwsgiutils/pull/492) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump sqlalchemy-utils from 0.35.0 to 0.36.0 [\#488](https://github.com/camptocamp/c2cwsgiutils/pull/488) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump sentry-sdk from 0.13.4 to 0.13.5 [\#485](https://github.com/camptocamp/c2cwsgiutils/pull/485) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
-- Don't break on missing process [\#497](https://github.com/camptocamp/c2cwsgiutils/pull/497) ([sbrunner](https://github.com/sbrunner))
 - Improve index label placement and upgrade bootstrap [\#491](https://github.com/camptocamp/c2cwsgiutils/pull/491) ([pvalsecc](https://github.com/pvalsecc))
 - Auth for show_refs and some details around there [\#490](https://github.com/camptocamp/c2cwsgiutils/pull/490) ([pvalsecc](https://github.com/pvalsecc))
 - Add a few sentry integrations [\#489](https://github.com/camptocamp/c2cwsgiutils/pull/489) ([pvalsecc](https://github.com/pvalsecc))
+- Bump sqlalchemy-utils from 0.35.0 to 0.36.0 [\#488](https://github.com/camptocamp/c2cwsgiutils/pull/488) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Set the Starting version message as info [\#487](https://github.com/camptocamp/c2cwsgiutils/pull/487) ([sbrunner](https://github.com/sbrunner))
 - Check the code using prospector [\#486](https://github.com/camptocamp/c2cwsgiutils/pull/486) ([pvalsecc](https://github.com/pvalsecc))
+- Bump sentry-sdk from 0.13.4 to 0.13.5 [\#485](https://github.com/camptocamp/c2cwsgiutils/pull/485) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Make prospector happy \(part of codacy\) [\#484](https://github.com/camptocamp/c2cwsgiutils/pull/484) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.9.4](https://github.com/camptocamp/c2cwsgiutils/tree/3.9.4) (2019-12-03)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.9.3...3.9.4)
 
-#### :package: Dependencies update
-
-- Bump cornice from 3.6.1 to 4.0.1 [\#482](https://github.com/camptocamp/c2cwsgiutils/pull/482) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump mypy from 0.740 to 0.750 [\#481](https://github.com/camptocamp/c2cwsgiutils/pull/481) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump setuptools from 42.0.1 to 42.0.2 [\#480](https://github.com/camptocamp/c2cwsgiutils/pull/480) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
 **Merged pull requests:**
 
 - Add show refs, some little things [\#483](https://github.com/camptocamp/c2cwsgiutils/pull/483) ([sbrunner](https://github.com/sbrunner))
+- Bump cornice from 3.6.1 to 4.0.1 [\#482](https://github.com/camptocamp/c2cwsgiutils/pull/482) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump mypy from 0.740 to 0.750 [\#481](https://github.com/camptocamp/c2cwsgiutils/pull/481) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump setuptools from 42.0.1 to 42.0.2 [\#480](https://github.com/camptocamp/c2cwsgiutils/pull/480) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [3.9.3](https://github.com/camptocamp/c2cwsgiutils/tree/3.9.3) (2019-11-29)
 
@@ -776,44 +761,35 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.9.0...3.9.1)
 
-#### :package: Dependencies update
-
-- Bump twine from 3.1.0 to 3.1.1 [\#477](https://github.com/camptocamp/c2cwsgiutils/pull/477) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
 **Merged pull requests:**
 
 - Fix the original headers [\#478](https://github.com/camptocamp/c2cwsgiutils/pull/478) ([sbrunner](https://github.com/sbrunner))
+- Bump twine from 3.1.0 to 3.1.1 [\#477](https://github.com/camptocamp/c2cwsgiutils/pull/477) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [3.9.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.9.0) (2019-11-27)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.8.4...3.9.0)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump pytest from 5.3.0 to 5.3.1 [\#476](https://github.com/camptocamp/c2cwsgiutils/pull/476) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump gunicorn from 20.0.3 to 20.0.4 [\#475](https://github.com/camptocamp/c2cwsgiutils/pull/475) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.13.3 to 0.13.4 [\#474](https://github.com/camptocamp/c2cwsgiutils/pull/474) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump lxml from 4.4.1 to 4.4.2 [\#466](https://github.com/camptocamp/c2cwsgiutils/pull/466) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
 - Be able to specify the return error code on header [\#473](https://github.com/camptocamp/c2cwsgiutils/pull/473) ([sbrunner](https://github.com/sbrunner))
 - Keep the renamed old headers [\#472](https://github.com/camptocamp/c2cwsgiutils/pull/472) ([sbrunner](https://github.com/sbrunner))
 - Fix indicator that the message contains a stack trace [\#471](https://github.com/camptocamp/c2cwsgiutils/pull/471) ([sbrunner](https://github.com/sbrunner))
+- Bump lxml from 4.4.1 to 4.4.2 [\#466](https://github.com/camptocamp/c2cwsgiutils/pull/466) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Add sql logger [\#456](https://github.com/camptocamp/c2cwsgiutils/pull/456) ([danduk82](https://github.com/danduk82))
 
 ## [3.8.4](https://github.com/camptocamp/c2cwsgiutils/tree/3.8.4) (2019-11-26)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.8.3...3.8.4)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump gunicorn from 20.0.2 to 20.0.3 [\#469](https://github.com/camptocamp/c2cwsgiutils/pull/469) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 42.0.0 to 42.0.1 [\#468](https://github.com/camptocamp/c2cwsgiutils/pull/468) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.13.2 to 0.13.3 [\#467](https://github.com/camptocamp/c2cwsgiutils/pull/467) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
 - Ignore Python internal dict, put size in Kib [\#465](https://github.com/camptocamp/c2cwsgiutils/pull/465) ([sbrunner](https://github.com/sbrunner))
 - Fix debug/memory?analyze_type=builtins.function [\#464](https://github.com/camptocamp/c2cwsgiutils/pull/464) ([pvalsecc](https://github.com/pvalsecc))
 
@@ -821,14 +797,11 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.8.2...3.8.3)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump twine from 3.0.0 to 3.1.0 [\#463](https://github.com/camptocamp/c2cwsgiutils/pull/463) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump gunicorn from 20.0.0 to 20.0.2 [\#462](https://github.com/camptocamp/c2cwsgiutils/pull/462) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 41.6.0 to 42.0.0 [\#461](https://github.com/camptocamp/c2cwsgiutils/pull/461) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
 - Adds an indicator that the message contains a stack trace [\#460](https://github.com/camptocamp/c2cwsgiutils/pull/460) ([sbrunner](https://github.com/sbrunner))
 
 ## [3.8.2](https://github.com/camptocamp/c2cwsgiutils/tree/3.8.2) (2019-11-22)
@@ -843,17 +816,14 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.8.0...3.8.1)
 
-#### :package: Dependencies update
-
-- Bump pytest from 5.2.4 to 5.3.0 [\#455](https://github.com/camptocamp/c2cwsgiutils/pull/455) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump yamllint from 1.18.0 to 1.19.0 [\#454](https://github.com/camptocamp/c2cwsgiutils/pull/454) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump twine from 2.0.0 to 3.0.0 [\#453](https://github.com/camptocamp/c2cwsgiutils/pull/453) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump pytest-html from 2.0.0 to 2.0.1 [\#452](https://github.com/camptocamp/c2cwsgiutils/pull/452) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
 **Merged pull requests:**
 
 - vm and init index sizes are always 0 =\> remove them [\#458](https://github.com/camptocamp/c2cwsgiutils/pull/458) ([pvalsecc](https://github.com/pvalsecc))
 - Add metrics view for Prometheus [\#457](https://github.com/camptocamp/c2cwsgiutils/pull/457) ([sbrunner](https://github.com/sbrunner))
+- Bump pytest from 5.2.4 to 5.3.0 [\#455](https://github.com/camptocamp/c2cwsgiutils/pull/455) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump yamllint from 1.18.0 to 1.19.0 [\#454](https://github.com/camptocamp/c2cwsgiutils/pull/454) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump twine from 2.0.0 to 3.0.0 [\#453](https://github.com/camptocamp/c2cwsgiutils/pull/453) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump pytest-html from 2.0.0 to 2.0.1 [\#452](https://github.com/camptocamp/c2cwsgiutils/pull/452) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Reduce a bit memory usage by clearing the linecache [\#451](https://github.com/camptocamp/c2cwsgiutils/pull/451) ([pvalsecc](https://github.com/pvalsecc))
 - Reduce a bit memory usage [\#450](https://github.com/camptocamp/c2cwsgiutils/pull/450) ([pvalsecc](https://github.com/pvalsecc))
 
@@ -861,9 +831,10 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.7.1...3.8.0)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump pytest from 5.2.3 to 5.2.4 [\#449](https://github.com/camptocamp/c2cwsgiutils/pull/449) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Add debug/memory_maps [\#448](https://github.com/camptocamp/c2cwsgiutils/pull/448) ([pvalsecc](https://github.com/pvalsecc))
 - Bump pytest from 5.2.2 to 5.2.3 [\#447](https://github.com/camptocamp/c2cwsgiutils/pull/447) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.3.0 to 1.3.1 [\#446](https://github.com/camptocamp/c2cwsgiutils/pull/446) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump cornice from 3.6.0 to 3.6.1 [\#445](https://github.com/camptocamp/c2cwsgiutils/pull/445) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -871,10 +842,6 @@
 - Bump sqlalchemy from 1.3.10 to 1.3.11 [\#443](https://github.com/camptocamp/c2cwsgiutils/pull/443) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump gunicorn from 19.9.0 to 20.0.0 [\#442](https://github.com/camptocamp/c2cwsgiutils/pull/442) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.13.1 to 0.13.2 [\#441](https://github.com/camptocamp/c2cwsgiutils/pull/441) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
-- Add debug/memory_maps [\#448](https://github.com/camptocamp/c2cwsgiutils/pull/448) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.7.1](https://github.com/camptocamp/c2cwsgiutils/tree/3.7.1) (2019-11-08)
 
@@ -888,13 +855,16 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.6.2...3.7.0)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
+- Add analyze_type to c2c/debug/memory [\#439](https://github.com/camptocamp/c2cwsgiutils/pull/439) ([pvalsecc](https://github.com/pvalsecc))
 - Bump alembic from 1.2.1 to 1.3.0 [\#438](https://github.com/camptocamp/c2cwsgiutils/pull/438) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump boltons from 19.2.0 to 19.3.0 [\#437](https://github.com/camptocamp/c2cwsgiutils/pull/437) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 41.5.1 to 41.6.0 [\#436](https://github.com/camptocamp/c2cwsgiutils/pull/436) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 41.5.0 to 41.5.1 [\#435](https://github.com/camptocamp/c2cwsgiutils/pull/435) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump flake8 from 3.7.8 to 3.7.9 [\#434](https://github.com/camptocamp/c2cwsgiutils/pull/434) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Allow richer tag values in statsd [\#433](https://github.com/camptocamp/c2cwsgiutils/pull/433) ([pvalsecc](https://github.com/pvalsecc))
+- Log sql request with duration [\#432](https://github.com/camptocamp/c2cwsgiutils/pull/432) ([sbrunner](https://github.com/sbrunner))
 - Bump setuptools from 41.4.0 to 41.5.0 [\#431](https://github.com/camptocamp/c2cwsgiutils/pull/431) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.13.0 to 0.13.1 [\#430](https://github.com/camptocamp/c2cwsgiutils/pull/430) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 5.2.1 to 5.2.2 [\#428](https://github.com/camptocamp/c2cwsgiutils/pull/428) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -906,7 +876,9 @@
 - Bump yamllint from 1.17.0 to 1.18.0 [\#422](https://github.com/camptocamp/c2cwsgiutils/pull/422) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump redis from 3.3.10 to 3.3.11 [\#421](https://github.com/camptocamp/c2cwsgiutils/pull/421) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump redis from 3.3.8 to 3.3.10 [\#420](https://github.com/camptocamp/c2cwsgiutils/pull/420) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Clearer alembic error message [\#419](https://github.com/camptocamp/c2cwsgiutils/pull/419) ([sbrunner](https://github.com/sbrunner))
 - Bump sqlalchemy from 1.3.9 to 1.3.10 [\#418](https://github.com/camptocamp/c2cwsgiutils/pull/418) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Add requests timeout to wait_url [\#417](https://github.com/camptocamp/c2cwsgiutils/pull/417) ([pvalsecc](https://github.com/pvalsecc))
 - Bump pytest from 5.2.0 to 5.2.1 [\#416](https://github.com/camptocamp/c2cwsgiutils/pull/416) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.8 to 1.3.9 [\#415](https://github.com/camptocamp/c2cwsgiutils/pull/415) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 41.2.0 to 41.4.0 [\#414](https://github.com/camptocamp/c2cwsgiutils/pull/414) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -916,35 +888,24 @@
 - Bump pytest from 5.1.3 to 5.2.0 [\#409](https://github.com/camptocamp/c2cwsgiutils/pull/409) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump mypy from 0.701 to 0.730 [\#408](https://github.com/camptocamp/c2cwsgiutils/pull/408) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
-**Merged pull requests:**
-
-- Add analyze_type to c2c/debug/memory [\#439](https://github.com/camptocamp/c2cwsgiutils/pull/439) ([pvalsecc](https://github.com/pvalsecc))
-- Allow richer tag values in statsd [\#433](https://github.com/camptocamp/c2cwsgiutils/pull/433) ([pvalsecc](https://github.com/pvalsecc))
-- Log sql request with duration [\#432](https://github.com/camptocamp/c2cwsgiutils/pull/432) ([sbrunner](https://github.com/sbrunner))
-- Clearer alembic error message [\#419](https://github.com/camptocamp/c2cwsgiutils/pull/419) ([sbrunner](https://github.com/sbrunner))
-- Add requests timeout to wait_url [\#417](https://github.com/camptocamp/c2cwsgiutils/pull/417) ([pvalsecc](https://github.com/pvalsecc))
-
 ## [3.6.2](https://github.com/camptocamp/c2cwsgiutils/tree/3.6.2) (2019-09-26)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.6.1...3.6.2)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
+- Fix the way CORS is tested in the response. [\#407](https://github.com/camptocamp/c2cwsgiutils/pull/407) ([pvalsecc](https://github.com/pvalsecc))
 - Bump twine from 1.15.0 to 2.0.0 [\#406](https://github.com/camptocamp/c2cwsgiutils/pull/406) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.2.0 to 1.2.1 [\#405](https://github.com/camptocamp/c2cwsgiutils/pull/405) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.12.1 to 0.12.2 [\#404](https://github.com/camptocamp/c2cwsgiutils/pull/404) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 5.1.2 to 5.1.3 [\#403](https://github.com/camptocamp/c2cwsgiutils/pull/403) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.1.0 to 1.2.0 [\#402](https://github.com/camptocamp/c2cwsgiutils/pull/402) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.12.0 to 0.12.1 [\#401](https://github.com/camptocamp/c2cwsgiutils/pull/401) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump sentry-sdk from 0.11.2 to 0.12.0 [\#398](https://github.com/camptocamp/c2cwsgiutils/pull/398) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- Bump twine from 1.14.0 to 1.15.0 [\#396](https://github.com/camptocamp/c2cwsgiutils/pull/396) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
-- Fix the way CORS is tested in the response. [\#407](https://github.com/camptocamp/c2cwsgiutils/pull/407) ([pvalsecc](https://github.com/pvalsecc))
 - Adapted to the new log format [\#400](https://github.com/camptocamp/c2cwsgiutils/pull/400) ([pvalsecc](https://github.com/pvalsecc))
 - Allow to configure the process log level in text output [\#399](https://github.com/camptocamp/c2cwsgiutils/pull/399) ([pvalsecc](https://github.com/pvalsecc))
+- Bump sentry-sdk from 0.11.2 to 0.12.0 [\#398](https://github.com/camptocamp/c2cwsgiutils/pull/398) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Add requests statistics for simple processes [\#397](https://github.com/camptocamp/c2cwsgiutils/pull/397) ([pvalsecc](https://github.com/pvalsecc))
+- Bump twine from 1.14.0 to 1.15.0 [\#396](https://github.com/camptocamp/c2cwsgiutils/pull/396) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [3.6.1](https://github.com/camptocamp/c2cwsgiutils/tree/3.6.1) (2019-09-17)
 
@@ -952,42 +913,43 @@
 
 **Merged pull requests:**
 
-- Remove -OO optimization [\#395](https://github.com/camptocamp/c2cwsgiutils/pull/395) ([pvalsecc](https://github.com/pvalsecc))
+- Remove -OO optimisation [\#395](https://github.com/camptocamp/c2cwsgiutils/pull/395) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.6.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.6.0) (2019-09-10)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.5.0...3.6.0)
 
-#### :sparkles: Enhancements
+**Implemented enhancements:**
 
 - Non backward compatible changes for release 4 [\#354](https://github.com/camptocamp/c2cwsgiutils/issues/354)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump pytest-html from 1.22.0 to 2.0.0 [\#394](https://github.com/camptocamp/c2cwsgiutils/pull/394) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Add lite version, Use multistage build [\#393](https://github.com/camptocamp/c2cwsgiutils/pull/393) ([sbrunner](https://github.com/sbrunner))
 - Bump twine from 1.13.0 to 1.14.0 [\#392](https://github.com/camptocamp/c2cwsgiutils/pull/392) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Remove docstrings and asserts from the runtime [\#391](https://github.com/camptocamp/c2cwsgiutils/pull/391) ([pvalsecc](https://github.com/pvalsecc))
 - Bump sentry-sdk from 0.11.1 to 0.11.2 [\#390](https://github.com/camptocamp/c2cwsgiutils/pull/390) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump pytest from 5.1.1 to 5.1.2 [\#389](https://github.com/camptocamp/c2cwsgiutils/pull/389) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sqlalchemy from 1.3.7 to 1.3.8 [\#388](https://github.com/camptocamp/c2cwsgiutils/pull/388) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.0.11 to 1.1.0 [\#387](https://github.com/camptocamp/c2cwsgiutils/pull/387) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump setuptools from 41.1.0 to 41.2.0 [\#386](https://github.com/camptocamp/c2cwsgiutils/pull/386) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Fix table in README [\#385](https://github.com/camptocamp/c2cwsgiutils/pull/385) ([fredj](https://github.com/fredj))
+- Remove requires.io badges [\#384](https://github.com/camptocamp/c2cwsgiutils/pull/384) ([fredj](https://github.com/fredj))
 - Bump pytest from 5.1.0 to 5.1.1 [\#383](https://github.com/camptocamp/c2cwsgiutils/pull/383) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.11.0 to 0.11.1 [\#382](https://github.com/camptocamp/c2cwsgiutils/pull/382) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump redis from 3.3.7 to 3.3.8 [\#381](https://github.com/camptocamp/c2cwsgiutils/pull/381) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
-- Add lite version, Use multistage build [\#393](https://github.com/camptocamp/c2cwsgiutils/pull/393) ([sbrunner](https://github.com/sbrunner))
-- Remove docstrings and asserts from the runtime [\#391](https://github.com/camptocamp/c2cwsgiutils/pull/391) ([pvalsecc](https://github.com/pvalsecc))
-- Fix table in README [\#385](https://github.com/camptocamp/c2cwsgiutils/pull/385) ([fredj](https://github.com/fredj))
-- Remove requires.io badges [\#384](https://github.com/camptocamp/c2cwsgiutils/pull/384) ([fredj](https://github.com/fredj))
 - Add the possibility to check for the ELK roundtrip time [\#380](https://github.com/camptocamp/c2cwsgiutils/pull/380) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.5.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.5.0) (2019-08-19)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.4.0...3.5.0)
 
-#### :package: Dependencies update
+**Closed issues:**
+
+- V3 breaks on sentry.client change [\#355](https://github.com/camptocamp/c2cwsgiutils/issues/355)
+
+**Merged pull requests:**
 
 - Bump sentry-sdk from 0.10.2 to 0.11.0 [\#379](https://github.com/camptocamp/c2cwsgiutils/pull/379) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump wheel from 0.33.4 to 0.33.6 [\#378](https://github.com/camptocamp/c2cwsgiutils/pull/378) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
@@ -1013,23 +975,16 @@
 - Bump pytest from 5.0.0 to 5.0.1 [\#357](https://github.com/camptocamp/c2cwsgiutils/pull/357) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.9.5 to 0.10.0 [\#356](https://github.com/camptocamp/c2cwsgiutils/pull/356) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
-**Closed issues:**
-
-- V3 breaks on sentry.client change [\#355](https://github.com/camptocamp/c2cwsgiutils/issues/355)
-
 ## [3.4.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.4.0) (2019-07-01)
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/3.3.0...3.4.0)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump pytest from 4.6.3 to 5.0.0 [\#353](https://github.com/camptocamp/c2cwsgiutils/pull/353) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.9.2 to 0.9.5 [\#352](https://github.com/camptocamp/c2cwsgiutils/pull/352) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump alembic from 1.0.10 to 1.0.11 [\#351](https://github.com/camptocamp/c2cwsgiutils/pull/351) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 - Bump sentry-sdk from 0.9.0 to 0.9.2 [\#350](https://github.com/camptocamp/c2cwsgiutils/pull/350) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-
-**Merged pull requests:**
-
 - Use pytest-html to generate test reports. [\#348](https://github.com/camptocamp/c2cwsgiutils/pull/348) ([pvalsecc](https://github.com/pvalsecc))
 - Switch to the new library for Sentry integration [\#346](https://github.com/camptocamp/c2cwsgiutils/pull/346) ([pvalsecc](https://github.com/pvalsecc))
 - \[requires.io\] dependency update on master branch [\#344](https://github.com/camptocamp/c2cwsgiutils/pull/344) ([pvalsecc](https://github.com/pvalsecc))
@@ -1168,7 +1123,7 @@
 
 [Full Changelog](https://github.com/camptocamp/c2cwsgiutils/compare/2.18.0...3.0.0)
 
-#### :sparkles: Enhancements
+**Implemented enhancements:**
 
 - Non backward compatible changes for release 3 [\#177](https://github.com/camptocamp/c2cwsgiutils/issues/177)
 

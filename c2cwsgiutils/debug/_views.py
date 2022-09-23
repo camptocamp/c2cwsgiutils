@@ -72,7 +72,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
     if len(split_path) > 1:
         sub_request.query_string = split_path[1]
 
-    # warmup run
+    # warm-up run
     try:
         if "no_warmup" not in request.params:
             request.invoke_subrequest(sub_request)

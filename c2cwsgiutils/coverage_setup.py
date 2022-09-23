@@ -9,13 +9,13 @@ LOG = logging.getLogger(__name__)
 
 
 def init() -> None:
-    """Initialise the code coverage, for backward compatibility."""
+    """Initialize the code coverage, for backward compatibility."""
     warnings.warn("init function is deprecated; use includeme instead")
     includeme()
 
 
 def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
-    """Initialise the code coverage."""
+    """Initialize the code coverage."""
     if os.environ.get("COVERAGE", "0") != "1":
         return
     import coverage

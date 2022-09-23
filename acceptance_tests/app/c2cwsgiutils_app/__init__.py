@@ -26,7 +26,7 @@ def main(_, **settings):
     """
     config = Configurator(settings=settings, route_prefix="/api")
 
-    # Initialise the broadcast view before c2cwsgiutils is initialised. This allows to test the
+    # Initialize the broadcast view before c2cwsgiutils is initialized. This allows to test the
     # reconfiguration on the fly of the broadcast framework
     config.add_route("broadcast", r"/broadcast", request_method="GET")
     config.add_view(

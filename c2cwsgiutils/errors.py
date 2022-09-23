@@ -60,7 +60,7 @@ def _do_error(
         request.method,
         request.url,
         status,
-        extra={"referer": request.referer},
+        extra={"referrer": request.referrer},
         exc_info=exception,
     )
 
@@ -88,7 +88,7 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
             request.url,
             exception.status_code,
             str(exception),
-            extra={"referer": request.referer},
+            extra={"referrer": request.referrer},
         )
         request.response.headers.update(exception.headers)  # forward headers
         _add_cors(request)

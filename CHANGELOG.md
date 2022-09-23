@@ -559,7 +559,7 @@
 - Publish Docker images to GitHub Container Registry [\#764](https://github.com/camptocamp/c2cwsgiutils/pull/764) ([sbrunner](https://github.com/sbrunner))
 - Fix clean Docker hub tags [\#761](https://github.com/camptocamp/c2cwsgiutils/pull/761) ([sbrunner](https://github.com/sbrunner))
 - Use Ubuntu 20.04 [\#757](https://github.com/camptocamp/c2cwsgiutils/pull/757) ([sbrunner](https://github.com/sbrunner))
-- Use secret defined in organization [\#756](https://github.com/camptocamp/c2cwsgiutils/pull/756) ([sbrunner](https://github.com/sbrunner))
+- Use secret defined in organisation [\#756](https://github.com/camptocamp/c2cwsgiutils/pull/756) ([sbrunner](https://github.com/sbrunner))
 - Add Clean docker hub tags workflow [\#754](https://github.com/camptocamp/c2cwsgiutils/pull/754) ([sbrunner](https://github.com/sbrunner))
 - Use YAML safe loader [\#728](https://github.com/camptocamp/c2cwsgiutils/pull/728) ([sbrunner](https://github.com/sbrunner))
 - REDIS_URL or REDIS_SENTINEL can be an empty string [\#726](https://github.com/camptocamp/c2cwsgiutils/pull/726) ([sbrunner](https://github.com/sbrunner))
@@ -952,7 +952,7 @@
 
 **Merged pull requests:**
 
-- Remove -OO optimization [\#395](https://github.com/camptocamp/c2cwsgiutils/pull/395) ([pvalsecc](https://github.com/pvalsecc))
+- Remove -OO optimisation [\#395](https://github.com/camptocamp/c2cwsgiutils/pull/395) ([pvalsecc](https://github.com/pvalsecc))
 
 ## [3.6.0](https://github.com/camptocamp/c2cwsgiutils/tree/3.6.0) (2019-09-10)
 

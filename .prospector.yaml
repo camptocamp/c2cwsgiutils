@@ -32,6 +32,7 @@ pylint:
     - wrong-import-order
     - missing-module-docstring
     - missing-function-docstring
+    - missing-timeout # Done globally
 
 pycodestyle:
   options:

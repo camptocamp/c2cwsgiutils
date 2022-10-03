@@ -9,7 +9,7 @@ flake8==3.7.5
 gunicorn==20.0.4
 importlib-metadata==3.8.1
 junit2html==022
-lxml==4.6.5
+lxml==4.9.1
 mypy==0.670
 netifaces==0.10.9
 objgraph==3.4.0

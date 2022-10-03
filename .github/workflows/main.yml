@@ -25,9 +25,8 @@ jobs:
           sudo apt update
           sudo apt install --yes python3-wheel python3-setuptools
 
-      - run: sudo python3 -m pip install --upgrade pip
-      - run: sudo python3 -m pip uninstall httplib2
-      - run: sudo python3 -m pip install --requirement=ci/requirements.txt
+      - run: python3 -m pip install --upgrade pip
+      - run: python3 -m pip install --requirement=ci/requirements.txt
 
       - name: Checks
         run: c2cciutils-checks

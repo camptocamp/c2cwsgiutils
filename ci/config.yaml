@@ -15,3 +15,9 @@ checks:
   black:
     ignore_patterns_re:
       - .*
+
+audit:
+  snyk:
+    files_no_install:
+      - ci/requirements.txt
+      - requirements.txt

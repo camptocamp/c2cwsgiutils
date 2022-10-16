@@ -1,6 +1,6 @@
 [[package]]
 name = "astroid"
-version = "2.12.10"
+version = "2.12.11"
 description = "An abstract syntax tree for Python with inference support."
 category = "dev"
 optional = false
@@ -107,8 +107,8 @@ python-versions = ">=3.6"
 smmap = ">=3.0.1,<6"
 
 [[package]]
-name = "GitPython"
-version = "3.1.28"
+name = "gitpython"
+version = "3.1.29"
 description = "GitPython is a python library used to interact with Git repositories"
 category = "dev"
 optional = false
@@ -127,9 +127,9 @@ python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
+pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
 plugins = ["setuptools"]
-requirements_deprecated_finder = ["pip-api", "pipreqs"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
 name = "lazy-object-proxy"
@@ -240,12 +240,12 @@ setoptconf-tmp = ">=0.3.1,<0.4.0"
 toml = ">=0.10.2,<0.11.0"
 
 [package.extras]
-with_bandit = ["bandit (>=1.5.1)"]
-with_everything = ["bandit (>=1.5.1)", "frosted (>=1.4.1)", "mypy (>=0.600)", "pyroma (>=2.4)", "vulture (>=1.5)"]
-with_frosted = ["frosted (>=1.4.1)"]
-with_mypy = ["mypy (>=0.600)"]
-with_pyroma = ["pyroma (>=2.4)"]
-with_vulture = ["vulture (>=1.5)"]
+with-bandit = ["bandit (>=1.5.1)"]
+with-everything = ["bandit (>=1.5.1)", "frosted (>=1.4.1)", "mypy (>=0.600)", "pyroma (>=2.4)", "vulture (>=1.5)"]
+with-frosted = ["frosted (>=1.4.1)"]
+with-mypy = ["mypy (>=0.600)"]
+with-pyroma = ["pyroma (>=2.4)"]
+with-vulture = ["vulture (>=1.5)"]
 
 [[package]]
 name = "pycodestyle"
@@ -279,14 +279,14 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "pylint"
-version = "2.15.3"
+version = "2.15.4"
 description = "python code static checker"
 category = "dev"
 optional = false
 python-versions = ">=3.7.2"
 
 [package.dependencies]
-astroid = ">=2.12.10,<=2.14.0-dev0"
+astroid = ">=2.12.11,<=2.14.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
 dill = ">=0.2"
 isort = ">=4.2.5,<6"
@@ -326,8 +326,8 @@ pylint = ">=2.0,<3"
 pylint-plugin-utils = ">=0.7"
 
 [package.extras]
-for_tests = ["coverage", "django-tables2", "django-tastypie", "factory-boy", "pylint (>=2.13)", "pytest", "wheel"]
-with_django = ["Django"]
+for-tests = ["coverage", "django-tables2", "django-tastypie", "factory-boy", "pylint (>=2.13)", "pytest", "wheel"]
+with-django = ["Django"]
 
 [[package]]
 name = "pylint-flask"
@@ -352,7 +352,7 @@ python-versions = ">=3.6.2"
 pylint = ">=1.7"
 
 [[package]]
-name = "PyYAML"
+name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
 category = "dev"
@@ -399,7 +399,7 @@ python-versions = "*"
 
 [[package]]
 name = "stevedore"
-version = "4.0.0"
+version = "4.0.1"
 description = "Manage dynamic plugins for Python applications"
 category = "dev"
 optional = false
@@ -455,8 +455,8 @@ content-hash = "a37605ac2d589b41f95ce8604e9fbf9286af8c7ccb1745ee1f1af4eacbc50af9
 
 [metadata.files]
 astroid = [
-    {file = "astroid-2.12.10-py3-none-any.whl", hash = "sha256:997e0c735df60d4a4caff27080a3afc51f9bdd693d3572a4a0b7090b645c36c5"},
-    {file = "astroid-2.12.10.tar.gz", hash = "sha256:81f870105d892e73bf535da77a8261aa5bde838fa4ed12bb2f435291a098c581"},
+    {file = "astroid-2.12.11-py3-none-any.whl", hash = "sha256:867a756bbf35b7bc07b35bfa6522acd01f91ad9919df675e8428072869792dce"},
+    {file = "astroid-2.12.11.tar.gz", hash = "sha256:2df4f9980c4511474687895cbfdb8558293c1a826d9118bb09233d7c2bff1c83"},
 ]
 bandit = [
     {file = "bandit-1.7.4-py3-none-any.whl", hash = "sha256:412d3f259dab4077d0e7f0c11f50f650cc7d10db905d98f6520a95a18049658a"},
@@ -538,9 +538,9 @@ gitdb = [
     {file = "gitdb-4.0.9-py3-none-any.whl", hash = "sha256:8033ad4e853066ba6ca92050b9df2f89301b8fc8bf7e9324d412a63f8bf1a8fd"},
     {file = "gitdb-4.0.9.tar.gz", hash = "sha256:bac2fd45c0a1c9cf619e63a90d62bdc63892ef92387424b855792a6cabe789aa"},
 ]
-GitPython = [
-    {file = "GitPython-3.1.28-py3-none-any.whl", hash = "sha256:77bfbd299d8709f6af7e0c70840ef26e7aff7cf0c1ed53b42dd7fc3a310fcb02"},
-    {file = "GitPython-3.1.28.tar.gz", hash = "sha256:6bd3451b8271132f099ceeaf581392eaf6c274af74bb06144307870479d0697c"},
+gitpython = [
+    {file = "GitPython-3.1.29-py3-none-any.whl", hash = "sha256:41eea0deec2deea139b459ac03656f0dd28fc4a3387240ec1d3c259a2c47850f"},
+    {file = "GitPython-3.1.29.tar.gz", hash = "sha256:cc36bfc4a3f913e66805a28e84703e419d9c264c1077e537b54f0e1af85dbefd"},
 ]
 isort = [
     {file = "isort-5.10.1-py3-none-any.whl", hash = "sha256:6f62d78e2f89b4500b080fe3a81690850cd254227f27f75c3a0c491a1f351ba7"},
@@ -652,8 +652,8 @@ pyflakes = [
     {file = "pyflakes-2.5.0.tar.gz", hash = "sha256:491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3"},
 ]
 pylint = [
-    {file = "pylint-2.15.3-py3-none-any.whl", hash = "sha256:7f6aad1d8d50807f7bc64f89ac75256a9baf8e6ed491cc9bc65592bc3f462cf1"},
-    {file = "pylint-2.15.3.tar.gz", hash = "sha256:5fdfd44af182866999e6123139d265334267339f29961f00c89783155eacc60b"},
+    {file = "pylint-2.15.4-py3-none-any.whl", hash = "sha256:629cf1dbdfb6609d7e7a45815a8bb59300e34aa35783b5ac563acaca2c4022e9"},
+    {file = "pylint-2.15.4.tar.gz", hash = "sha256:5441e9294335d354b7bad57c1044e5bd7cce25c433475d76b440e53452fa5cb8"},
 ]
 pylint-celery = [
     {file = "pylint-celery-0.3.tar.gz", hash = "sha256:41e32094e7408d15c044178ea828dd524beedbdbe6f83f712c5e35bde1de4beb"},
@@ -669,7 +669,7 @@ pylint-plugin-utils = [
     {file = "pylint-plugin-utils-0.7.tar.gz", hash = "sha256:ce48bc0516ae9415dd5c752c940dfe601b18fe0f48aa249f2386adfa95a004dd"},
     {file = "pylint_plugin_utils-0.7-py3-none-any.whl", hash = "sha256:b3d43e85ab74c4f48bb46ae4ce771e39c3a20f8b3d56982ab17aa73b4f98d535"},
 ]
-PyYAML = [
+pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
     {file = "PyYAML-6.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9df7ed3b3d2e0ecfe09e14741b857df43adb5a3ddadc919a2d94fbdf78fea53c"},
     {file = "PyYAML-6.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:77f396e6ef4c73fdc33a9157446466f1cff553d979bd00ecb64385760c6babdc"},
@@ -727,8 +727,8 @@ snowballstemmer = [
     {file = "snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1"},
 ]
 stevedore = [
-    {file = "stevedore-4.0.0-py3-none-any.whl", hash = "sha256:87e4d27fe96d0d7e4fc24f0cbe3463baae4ec51e81d95fbe60d2474636e0c7d8"},
-    {file = "stevedore-4.0.0.tar.gz", hash = "sha256:f82cc99a1ff552310d19c379827c2c64dd9f85a38bcd5559db2470161867b786"},
+    {file = "stevedore-4.0.1-py3-none-any.whl", hash = "sha256:01645addb67beff04c7cfcbb0a6af8327d2efc3380b0f034aa316d4576c4d470"},
+    {file = "stevedore-4.0.1.tar.gz", hash = "sha256:9a23111a6e612270c591fd31ff3321c6b5f3d5f3dabb1427317a5ab608fc261a"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},

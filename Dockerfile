@@ -66,9 +66,9 @@ WORKDIR /opt/c2cwsgiutils
 COPY c2cwsgiutils ./c2cwsgiutils
 COPY pyproject.toml README.md ./
 # The sed is to deactivate the poetry-dynamic-versioning plugin.
+ENV POETRY_DYNAMIC_VERSIONING_BYPASS=dev
 RUN --mount=type=cache,target=/root/.cache \
-  sed --in-place 's/enable = true # disable on Docker/enable = false/g' pyproject.toml \
-  && python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
+  python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m compileall -q \
   && python3 -m compileall /usr/local/lib/python3.* /usr/lib/python3.* . -q \
   && python3 -c 'import c2cwsgiutils'
@@ -102,9 +102,9 @@ WORKDIR /opt/c2cwsgiutils
 COPY c2cwsgiutils ./c2cwsgiutils
 COPY pyproject.toml README.md ./
 # The sed is to deactivate the poetry-dynamic-versioning plugin.
+ENV POETRY_DYNAMIC_VERSIONING_BYPASS=dev
 RUN --mount=type=cache,target=/root/.cache \
-  sed --in-place 's/enable = true # disable on Docker/enable = false/g' pyproject.toml \
-  && python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
+  python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m pip freeze > /requirements.txt
 
 WORKDIR /opt/c2cwsgiutils

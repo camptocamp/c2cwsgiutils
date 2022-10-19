@@ -1,0 +1,13 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-PYTHON-URLLIB3-1533435:
+    - '*':
+        reason: Dependency issues
+        created: 2022-10-19T09:29:27.634Z
+  SNYK-PYTHON-URLLIB3-1014645:
+    - '*':
+        reason: New version not available for Python 3.6
+        created: 2022-10-19T09:29:27.634Z
+patch: {}

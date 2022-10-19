@@ -21,9 +21,9 @@ pytest-cov==2.6.1
 raven==6.10.0
 requests==2.21.0
 SQLAlchemy==1.2.18
-ujson==5.4.0
+ujson==1.35
 yamllint==1.14.0
 zope.interface==4.6.0
 zope.sqlalchemy==1.1
-mako>=1.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
-urllib3>=1.26.5 # not directly required, pinned by Snyk to avoid a vulnerability
+mako==1.1.6
+urllib3==1.24.3

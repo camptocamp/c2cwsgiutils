@@ -25,3 +25,5 @@ ujson==1.35
 yamllint==1.14.0
 zope.interface==4.6.0
 zope.sqlalchemy==1.1
+mako==1.1.6
+urllib3==1.24.3

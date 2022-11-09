@@ -20,6 +20,7 @@ RUN --mount=type=cache,target=/root/.cache \
 
 # Do the conversion
 COPY poetry.lock pyproject.toml ./
+ENV POETRY_DYNAMIC_VERSIONING_BYPASS=0.0.0
 RUN poetry export --extras=all --output=requirements.txt \
   && poetry export --extras=all --with=dev --output=requirements-dev.txt
 
@@ -102,9 +103,9 @@ WORKDIR /opt/c2cwsgiutils
 COPY c2cwsgiutils ./c2cwsgiutils
 COPY pyproject.toml README.md ./
 # The sed is to deactivate the poetry-dynamic-versioning plugin.
-ENV POETRY_DYNAMIC_VERSIONING_BYPASS=dev
+ARG VERSION=dev
 RUN --mount=type=cache,target=/root/.cache \
-  python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
+  POETRY_DYNAMIC_VERSIONING_BYPASS=${VERSION} python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m pip freeze > /requirements.txt
 
 WORKDIR /opt/c2cwsgiutils

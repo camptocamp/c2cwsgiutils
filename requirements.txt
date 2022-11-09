@@ -1,5 +1,6 @@
 poetry==1.2.1
 poetry-core==1.2.0
+poetry-dynamic-versioning[plugin]==0.19.0
 poetry-plugin-tweak-dependencies-version==1.0.0
 poetry_plugin_export==1.1.0
 pip==22.3.1

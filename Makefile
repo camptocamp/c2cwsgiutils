@@ -1,5 +1,6 @@
 DOCKER_BASE = camptocamp/c2cwsgiutils
 export DOCKER_BUILDKIT=1
+VERSION = $(strip $(shell poetry version --short))
 
 GIT_HASH := $(shell git rev-parse HEAD)
 
@@ -36,7 +37,7 @@ acceptance: tests build_acceptance build_redis_sentinal ## Run the acceptance te
 
 .PHONY: build_docker
 build_docker:
-	docker build --tag=$(DOCKER_BASE) --target=standard .
+	docker build --build-arg=VERSION=$(VERSION) --tag=$(DOCKER_BASE) --target=standard .
 
 .PHONY: build_docker_test
 build_docker_test:

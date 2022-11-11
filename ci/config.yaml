@@ -6,9 +6,8 @@ version:
       to: '5'
 
 checks:
-  versions:
-    extra_versions:
-      - '5'
+  versions: False
+  required_workflows: False
 
   black:
     ignore_patterns_re:

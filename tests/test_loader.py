@@ -1,10 +1,12 @@
 from unittest.mock import mock_open, patch
 
+import pytest
 from pyramid.scripts.common import get_config_loader
 
 from c2cwsgiutils import get_config_defaults
 
 
+@pytest.mark.skip(reason="Double loader registered")
 @patch(
     "paste.deploy.loadwsgi.open",
     mock_open(

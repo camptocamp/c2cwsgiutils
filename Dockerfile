@@ -1,6 +1,11 @@
 FROM ubuntu:18.04 AS lite
 LABEL maintainer "info@camptocamp.org"
 
+# Fail on error on pipe, see: https://github.com/hadolint/hadolint/wiki/DL4006.
+# Treat unset variables as an error when substituting.
+# Print commands and their arguments as they are executed.
+SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
+
 COPY requirements.txt docker-requirements.txt fake_python3 /opt/c2cwsgiutils/
 RUN apt update && \
     DEV_PACKAGES="build-essential python3.7-dev equivs" && \

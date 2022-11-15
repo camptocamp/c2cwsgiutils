@@ -3,7 +3,7 @@ LABEL maintainer "info@camptocamp.org"
 
 COPY requirements.txt docker-requirements.txt fake_python3 /opt/c2cwsgiutils/
 RUN apt update && \
-    DEV_PACKAGES="libpq-dev build-essential python3.7-dev equivs" && \
+    DEV_PACKAGES="build-essential python3.7-dev equivs" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libpq5 \
         libpq-dev \

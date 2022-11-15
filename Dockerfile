@@ -1,6 +1,14 @@
 FROM ubuntu:20.04 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
+# Fail on error on pipe, see: https://github.com/hadolint/hadolint/wiki/DL4006.
+# Treat unset variables as an error when substituting.
+# Print commands and their arguments as they are executed.
+SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
+
+# Workaround for newer version of setuptools
+ENV SETUPTOOLS_USE_DISTUTILS=stdlib
+
 COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
 RUN apt update && \
     DEV_PACKAGES="libpq-dev build-essential python3-dev" && \

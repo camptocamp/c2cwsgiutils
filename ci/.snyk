@@ -5,5 +5,5 @@ ignore:
   SNYK-PYTHON-SETUPTOOLS-3113904:
     - '*':
         reason: Not working with used Python version
-        created: 2022-11-15T12:36:42.875Z
+        created: 2022-11-15T13:54:08.963Z
 patch: {}

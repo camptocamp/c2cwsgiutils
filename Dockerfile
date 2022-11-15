@@ -1,6 +1,9 @@
 FROM ubuntu:20.04 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
+# Fix for newer version of setuptools
+ENV SETUPTOOLS_USE_DISTUTILS=stdlib
+
 COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
 # hadolint ignore=SC2086
 RUN apt-get update && \

@@ -85,7 +85,9 @@ def tracking(request):
     depth = int(request.matchdict.get("depth"))
     result = {"request_id": request.c2c_request_id}
     if depth > 0:
-        result["sub"] = requests.get(f"http://localhost:8080/api/tracking/{depth - 1}").json()
+        result["sub"] = requests.get(  # pylint: disable=missing-timeout
+            f"http://localhost:8080/api/tracking/{depth - 1}"
+        ).json()
     return result
 
 

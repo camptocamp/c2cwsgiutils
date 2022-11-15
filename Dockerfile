@@ -6,6 +6,7 @@ RUN apt update && \
     DEV_PACKAGES="libpq-dev build-essential python3.7-dev equivs" && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends \
         libpq5 \
+        libpq-dev \
         python3.7 \
         curl \
         gnupg \

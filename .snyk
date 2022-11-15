@@ -26,4 +26,8 @@ ignore:
     - '*':
         reason: New version not available for Python 3.6
         created: 2022-10-19T09:29:27.634Z
+  SNYK-PYTHON-SETUPTOOLS-3113904:
+    - '*':
+        reason: Not working with used Python version
+        created: 2022-11-15T13:51:25.725Z
 patch: {}

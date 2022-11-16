@@ -10,4 +10,8 @@ ignore:
     - '*':
         reason: New version not available for Python 3.6
         created: 2022-10-19T09:29:27.634Z
+  SNYK-PYTHON-PIPENV-2330883:
+    - '*':
+        reason: Dependency issues
+        created: 2022-11-16T11:51:25.854Z
 patch: {}

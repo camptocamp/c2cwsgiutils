@@ -56,7 +56,7 @@ ENV TERM=linux \
 
 FROM base-all AS base-lint
 # The /poetry/requirements.txt file is build with the command
-# poetry export --extras=all --dev --output=requirements-dev.txt, see above
+# poetry export --extras=all --with=dev --output=requirements-dev.txt, see above
 RUN --mount=type=cache,target=/root/.cache \
   --mount=type=bind,from=poetry,source=/tmp,target=/poetry \
   python3 -m pip install --disable-pip-version-check --no-deps --requirement=/poetry/requirements-dev.txt

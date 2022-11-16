@@ -69,7 +69,7 @@ prospector: build_docker_test ## Run the prospector checker
 .venv/timestamp: requirements.txt ci/requirements.txt pyproject.toml poetry.lock
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
 	.venv/bin/pip3 install --upgrade -r requirements.txt -r ci/requirements.txt
-	.venv/bin/poetry install --dev
+	.venv/bin/poetry install --with=dev
 	.venv/bin/pip install --editable=.
 	touch $@
 

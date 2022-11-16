@@ -43,9 +43,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
   && strip /usr/local/lib/python3.*/dist-packages/*/*.so \
   && apt-get remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
-ENV TERM=linux \
-  LANG=C.UTF-8 \
-  LOG_TYPE=console \
+ENV LOG_TYPE=console \
   LOG_HOST=localhost \
   LOG_PORT=514 \
   SQL_LOG_LEVEL=WARN \

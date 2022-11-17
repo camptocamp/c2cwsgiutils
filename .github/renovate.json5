@@ -8,7 +8,7 @@
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
   lockFileMaintenance: { enabled: true, automerge: true },
-  baseBranches: ['master'],
+  baseBranches: ['master', '5.1', '5.0', 'release_2', 'release_3', 'release_4'],
   packageRules: [
     /** Automerge the patch, the minor and the dev dependency */
     {
@@ -38,6 +38,11 @@
     /** Accept only the patch on the stabilization branches */
     {
       matchBaseBranches: ['/5\\..*/'],
+      matchUpdateTypes: ['major', 'minor', 'pin', 'digest', 'lockFileMaintenance', 'rollback', 'bump'],
+      enabled: false,
+    },
+    {
+      matchBaseBranches: ['/release_.*/'],
       matchUpdateTypes: ['major', 'minor', 'pin', 'digest', 'lockFileMaintenance', 'rollback', 'bump'],
       enabled: false,
     },

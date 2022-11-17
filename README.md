@@ -140,6 +140,9 @@ accessed with a good secret, a cookie is stored and the secret can be omitted.
 An alternative of using `C2C_SECRET` is to use an authentication on GitHub,
 [create the GitHub application](https://github.com/settings/applications/new).
 
+Configure the json renderers with the `C2C_JSON_PRETTY_PRINT` and `C2C_JSON_SORT_KEYS` environment
+variables or `c2c.json.pretty_print`and `c2c.json.sort_keys` properties. Default is `false`.
+
 Then it will redirect the user to the github authentication form if not already authenticated
 (using `C2C_AUTH_GITHUB_CLIENT_ID`, `C2C_AUTH_GITHUB_CLIENT_SECRET` and `C2C_AUTH_GITHUB_SCOPE`).
 

@@ -212,7 +212,7 @@ class Connection:
     def _merge_headers(self, headers: Optional[Mapping[str, str]], cors: bool) -> Mapping[str, str]:
         merged = dict(headers) if headers is not None else {}
         if self.session.headers is not None:
-            merged.update(self.session.headers)
+            merged.update(self.session.headers)  # type: ignore
         merged.update(self._cors_headers(cors))
         return merged
 

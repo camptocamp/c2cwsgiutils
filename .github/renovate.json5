@@ -35,16 +35,16 @@
       separateMajorMinor: false,
       separateMinorPatch: false,
     },
-    /** Accept only the patch on the stabilization branches */
+    /** Accept only the patch on stabilization branches */
     {
-      matchBaseBranches: ['/5\\..*/'],
+      matchBaseBranches: ['/[0-9]\\..*/', '/release_.*/'],
       matchUpdateTypes: ['major', 'minor', 'pin', 'digest', 'lockFileMaintenance', 'rollback', 'bump'],
       enabled: false,
     },
+    /** Monthly update on stabilization branches */
     {
-      matchBaseBranches: ['/release_.*/'],
-      matchUpdateTypes: ['major', 'minor', 'pin', 'digest', 'lockFileMaintenance', 'rollback', 'bump'],
-      enabled: false,
+      matchBaseBranches: ['/[0-9]\\..*/', '/release_.*/'],
+      schedule: ['on the 1st day of the month'],
     },
   ],
 }

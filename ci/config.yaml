@@ -13,6 +13,7 @@ checks:
   black:
     ignore_patterns_re:
       - .*\.html
+  versions: false
 
 publish:
   pypi:

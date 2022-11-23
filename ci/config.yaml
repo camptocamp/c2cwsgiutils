@@ -18,3 +18,9 @@ checks:
       - .*\.html
       - .*\.md
       - .*\.mako
+
+audit:
+  pipfile:
+    sections:
+      - default
+  pipfile_lock: false

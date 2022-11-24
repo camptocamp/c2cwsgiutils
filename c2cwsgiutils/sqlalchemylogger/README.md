@@ -9,7 +9,7 @@ To add the logger in a pyramid ini file use something like:
 keys = sqlalchemy_logger
 
 [handler_sqlalchemy_logger]
-class = sqlalchemy_logger.handlers.SQLAlchemyHandler
+class = c2cwsgiutils.sqlalchemylogger.handlers.SQLAlchemyHandler
 #args = ({'url':'sqlite:///logger_db.sqlite3','tablename':'test'},'curl')
 args = ({'url':'postgresql://postgres:password@localhost:5432/test','tablename':'test','tableargs': {'schema':'xyz'}},'curl')
 level = NOTSET
@@ -30,7 +30,7 @@ To use the handler in a script, you might:
 import logging
 import time
 
-from sqlalchemylogger.handlers import SQLAlchemyHandler
+from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 
 if __name__ == '__main__':
     logging.basicConfig(

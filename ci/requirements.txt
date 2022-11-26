@@ -1,4 +1,4 @@
-c2cciutils[checks,publish]==1.4.0.dev250
+c2cciutils[checks,publish]==1.4.0.dev251
 poetry-dynamic-versioning[plugin]==0.21.1
 poetry-plugin-export==1.2.0
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability

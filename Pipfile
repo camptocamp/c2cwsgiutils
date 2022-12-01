@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-astroid = "==2.5.8"
+astroid = "==2.5.*"
 bandit = "==1.6.3"
 coverage = "==5.1"
 junit2html = "==023"

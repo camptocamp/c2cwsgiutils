@@ -1337,7 +1337,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-redis"
-version = "4.3.21.5"
+version = "4.3.21.6"
 description = "Typing stubs for redis"
 category = "dev"
 optional = false
@@ -1525,7 +1525,7 @@ test-images = ["scikit-image"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "cf816de8df00343a3e4fde368415e2b6e8054b12df4d267f794709219fe75f3e"
+content-hash = "13a56a34821733f611c1c572d671e9997bac3fbe4f204b431adab91dc3977db2"
 
 [metadata.files]
 alembic = [
@@ -2458,8 +2458,8 @@ types-pyyaml = [
     {file = "types_PyYAML-6.0.12.2-py3-none-any.whl", hash = "sha256:1e94e80aafee07a7e798addb2a320e32956a373f376655128ae20637adb2655b"},
 ]
 types-redis = [
-    {file = "types-redis-4.3.21.5.tar.gz", hash = "sha256:4be36676840606c536fa43de0221141699962499318a9fd7c75202506d19e1d2"},
-    {file = "types_redis-4.3.21.5-py3-none-any.whl", hash = "sha256:0eb90bb7a20fbc3c2307f71a08179e37feee23d9922f3614daa75fd3a8e7506d"},
+    {file = "types-redis-4.3.21.6.tar.gz", hash = "sha256:f7969f73a0f79e9e7895f053a06d8b429fb7b5d4fe1269b8ee40463388f653ad"},
+    {file = "types_redis-4.3.21.6-py3-none-any.whl", hash = "sha256:615e5a9142993789ffc22ee54435769b600da3e528bb51cf38430e5cd82af306"},
 ]
 types-requests = [
     {file = "types-requests-2.28.11.5.tar.gz", hash = "sha256:a7df37cc6fb6187a84097da951f8e21d335448aa2501a6b0a39cbd1d7ca9ee2a"},

@@ -1312,7 +1312,7 @@ docs = ["Sphinx (>=1.3.1)", "docutils", "pylons-sphinx-themes"]
 
 [[package]]
 name = "trove-classifiers"
-version = "2022.10.19"
+version = "2022.12.1"
 description = "Canonical source for classifiers on PyPI (pypi.org)."
 category = "dev"
 optional = false
@@ -1524,7 +1524,7 @@ test-images = ["scikit-image"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "7bbf9ec60133a644f3604ee665cc3a8cb7de567f927327bdfec93afa14e8584b"
+content-hash = "76d19ed8155b904fdc0498d4fbfef115541d5e6974a20ae7801a82cd6fc270a0"
 
 [metadata.files]
 alembic = [
@@ -2445,8 +2445,8 @@ translationstring = [
     {file = "translationstring-1.4.tar.gz", hash = "sha256:bf947538d76e69ba12ab17283b10355a9ecfbc078e6123443f43f2107f6376f3"},
 ]
 trove-classifiers = [
-    {file = "trove-classifiers-2022.10.19.tar.gz", hash = "sha256:3a58b43b5149a0e125037e7e875d35e4471435a6a5a5b7e6b68cbee7afd23739"},
-    {file = "trove_classifiers-2022.10.19-py3-none-any.whl", hash = "sha256:887261694f96a6af04a6d09566d4fd46b70edd5f1025b9ffc35cb4961218e8b0"},
+    {file = "trove-classifiers-2022.12.1.tar.gz", hash = "sha256:8eccd9c075038ef2ec73276e2422d0dbf4d632f9133f029632d0df35374caf77"},
+    {file = "trove_classifiers-2022.12.1-py3-none-any.whl", hash = "sha256:20ce6feeadd5793718b2106f0c832f821f29838aec792143e620b0a0a0a810b8"},
 ]
 types-python-dateutil = [
     {file = "types-python-dateutil-2.8.19.4.tar.gz", hash = "sha256:351a8ca9afd4aea662f87c1724d2e1ae59f9f5f99691be3b3b11d2393cd3aaa1"},

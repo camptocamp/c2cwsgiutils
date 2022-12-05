@@ -10,6 +10,7 @@ version:
       to: master
 
 checks:
+  versions: false
   black:
     ignore_patterns_re:
       - .*\.html

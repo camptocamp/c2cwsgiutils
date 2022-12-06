@@ -5,10 +5,24 @@ import pyramid.config
 import ujson
 from pyramid.renderers import JSON
 
+from c2cwsgiutils.config_utils import config_bool, env_or_config
 
-def fast_dumps(v: Any, **_kargv: Any) -> str:
+
+class _FastDumps:
     """Dump the json fast using ujson."""
-    return ujson.dumps(v, ensure_ascii=False, indent=2, sort_keys=True, escape_forward_slashes=False)
+
+    def __init__(self, pretty_print: bool, sort_keys: bool) -> None:
+        self.pretty_print = pretty_print
+        self.sort_keys = sort_keys
+
+    def __call__(self, v: Any, **_kargv: Any) -> str:
+        return ujson.dumps(
+            v,
+            ensure_ascii=False,
+            indent=2 if self.pretty_print else 0,
+            sort_keys=self.sort_keys,
+            escape_forward_slashes=False,
+        )
 
 
 def init(config: pyramid.config.Configurator) -> None:
@@ -19,5 +33,13 @@ def init(config: pyramid.config.Configurator) -> None:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize json and fast_json renderer."""
-    config.add_renderer("json", JSON(indent=2, sort_keys=True))
-    config.add_renderer("fast_json", JSON(serializer=fast_dumps))
+
+    pretty_print = config_bool(
+        env_or_config(config, "C2C_JSON_PRETTY_PRINT", "c2c.json.pretty_print", "false")
+    )
+    sort_keys = config_bool(env_or_config(config, "C2C_JSON_SORT_KEYS", "c2c.json.sort_keys", "false"))
+
+    fast_dump = _FastDumps(pretty_print, sort_keys)
+
+    config.add_renderer("json", JSON(indent=2 if pretty_print else None, sort_keys=sort_keys))
+    config.add_renderer("fast_json", JSON(serializer=fast_dump))

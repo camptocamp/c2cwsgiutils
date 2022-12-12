@@ -20,9 +20,3 @@ publish:
     versions:
       - version_tag
       - version_branch
-
-audit:
-  pipfile:
-    sections:
-      - default
-  pipfile_lock: false

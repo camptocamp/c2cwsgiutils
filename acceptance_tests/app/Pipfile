@@ -8,7 +8,7 @@ pipenv = "==2022.1.8"
 setuptools = "==45.2.0"
 # Lock dependencies
 "backports.entry-points-selectable" = "==1.1.1"
-certifi = "==2021.5.30"
+certifi = "==2022.12.7"
 distlib = "==0.3.6"
 filelock = "==3.0.12"
 platformdirs = "==2.3.0"

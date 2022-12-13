@@ -31,7 +31,7 @@ setuptools = "==65.5.1"
 waitress = "==2.1.2"
 # Lock dependencies
 cee-syslog-handler = "==0.6.0"
-certifi = "==2021.10.8"
+certifi = "==2022.12.7"
 charset-normalizer = "==2.0.12"
 deprecated = "==1.2.13"
 graphviz = "==0.19.2"

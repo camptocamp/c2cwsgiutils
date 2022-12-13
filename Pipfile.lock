@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fad575770527533791bd03554e8650f76dc689f410e856fd2f58d1c6517fb6b7"
+            "sha256": "8eabb5dd6d16276d579eb8a57a63d1cf02e09da2d41fac7e0a227c237f84a3a1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -42,11 +42,11 @@
         },
         "certifi": {
             "hashes": [
-                "sha256:78884e7c1d4b00ce3cea67b44566851c4343c120abd683433ce934a68ea58872",
-                "sha256:d62a0163eb4c2344ac042ab2bdf75399a71a2d8c7d47eac2e2ee91b9d6339569"
+                "sha256:35824b4c3a97115964b408844d64aa14db1cc518f6562e8d7261699d1350a9e3",
+                "sha256:4ad3232f5e926d6718ec31cfc1fcadfde020920e278684144551c91769c7bc18"
             ],
             "index": "pypi",
-            "version": "==2021.10.8"
+            "version": "==2022.12.7"
         },
         "charset-normalizer": {
             "hashes": [
@@ -724,11 +724,11 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
-                "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
+                "sha256:47cc05d99aaa09c9e72ed5809b60e7ba354e64b59c9c173ac3018642d8bb41fc",
+                "sha256:c083dd0dce68dbfbe1129d5271cb90f9447dea7d52097c6e0126120c521ddea8"
             ],
             "index": "pypi",
-            "version": "==1.26.12"
+            "version": "==1.26.13"
         },
         "venusian": {
             "hashes": [
@@ -980,11 +980,11 @@
         },
         "gitdb": {
             "hashes": [
-                "sha256:8033ad4e853066ba6ca92050b9df2f89301b8fc8bf7e9324d412a63f8bf1a8fd",
-                "sha256:bac2fd45c0a1c9cf619e63a90d62bdc63892ef92387424b855792a6cabe789aa"
+                "sha256:6eb990b69df4e15bad899ea868dc46572c3f75339735663b81de79b06f17eb9a",
+                "sha256:c286cf298426064079ed96a9e4a9d39e7f3e9bf15ba60701e95f5492f28415c7"
             ],
             "index": "pypi",
-            "version": "==4.0.9"
+            "version": "==4.0.10"
         },
         "gitpython": {
             "hashes": [

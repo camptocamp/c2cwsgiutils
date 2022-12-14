@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d030f4f969080d1bfaf50abb78f7e3e6eaf68654f96fb3afab75a22553862567"
+            "sha256": "3776a2cdcaf19d4b7edc8a06d7800b584a6045f0d2276cb50e13d77b2a4b593e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -74,11 +74,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:316484eebff54cc18f322dea09ed031b7e3eb00811b19dcedb09bc09bba7d93d",
-                "sha256:89c6e6011ec2f6d57d43a3f9296c4ef022c2cbf49bab26b407fe67992ae3397f"
+                "sha256:d0b9a8433464d5800cbe05094acf5c6d52a91bfac9b52bcfc4d41382be5d5d31",
+                "sha256:e197a19aa8ec9722928f2206f8de752def0e4c9fc6953527360d1c36d94ddb2f"
             ],
             "index": "pypi",
-            "version": "==45.2.0"
+            "version": "==65.5.1"
         },
         "six": {
             "hashes": [
@@ -377,11 +377,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:316484eebff54cc18f322dea09ed031b7e3eb00811b19dcedb09bc09bba7d93d",
-                "sha256:89c6e6011ec2f6d57d43a3f9296c4ef022c2cbf49bab26b407fe67992ae3397f"
+                "sha256:d0b9a8433464d5800cbe05094acf5c6d52a91bfac9b52bcfc4d41382be5d5d31",
+                "sha256:e197a19aa8ec9722928f2206f8de752def0e4c9fc6953527360d1c36d94ddb2f"
             ],
             "index": "pypi",
-            "version": "==45.2.0"
+            "version": "==65.5.1"
         },
         "snowballstemmer": {
             "hashes": [

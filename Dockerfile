@@ -1,6 +1,8 @@
 FROM ubuntu:20.04 AS base-all
 LABEL maintainer "info@camptocamp.org"
 
+ENV SETUPTOOLS_USE_DISTUTILS=stdlib
+
 COPY requirements.txt Pipfile* /opt/c2cwsgiutils/
 RUN apt update && \
     DEV_PACKAGES="libpq-dev build-essential python3-dev" && \

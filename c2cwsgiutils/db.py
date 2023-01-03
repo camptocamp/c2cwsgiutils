@@ -51,7 +51,7 @@ def setup_session(
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
 
-    Arguments:
+    Keyword Arguments:
 
         config: The pyramid Configuration object
         master_prefix: The prefix for the master connection configuration entries in the application \
@@ -108,7 +108,7 @@ def create_session(
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
 
-    Arguments:
+    Keyword Arguments:
 
         config: The pyramid Configuration object. If None, only master is used
         name: The name of the check
@@ -349,7 +349,7 @@ def init(
     """
     Initialize the database for a Pyramid app.
 
-    Arguments:
+    Keyword Arguments:
 
         config: The pyramid Configuration object
         master_prefix: The prefix for the master connection configuration entries in the application \

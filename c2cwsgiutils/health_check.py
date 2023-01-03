@@ -392,11 +392,10 @@ class HealthCheck:
         """
         Check that the version matches across all instances.
 
-        Arguments:
+        Keyword Arguments:
 
             name: the name of the check (defaults to "version")
             level: the level of the health check
-        :return:
         """
 
         def check(request: pyramid.request.Request) -> Dict[str, Any]:

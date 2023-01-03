@@ -121,7 +121,7 @@ def timer(key: Optional[Sequence[Any]] = None, tags: TagType = None) -> Timer:
 
     The key can be omitted, but then need to be specified when stop is called.
 
-    Arguments:
+    Keyword Arguments:
 
         key: The path of the key, given as a list.
         tags: Some tags to attach to the metric.

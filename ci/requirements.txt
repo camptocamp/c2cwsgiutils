@@ -2,4 +2,4 @@ c2cciutils==1.0
 urllib3>=1.26.5 # not directly required, pinned by Snyk to avoid a vulnerability
 pip>=21.1 # not directly required, pinned by Snyk to avoid a vulnerability
 protobuf==3.19.6
-setuptools==59.6.0
+setuptools==65.5.1

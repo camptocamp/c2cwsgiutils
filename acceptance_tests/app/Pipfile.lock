@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "315acd3c8594bda33731e4ba99f726aec698a45a8e5665c0502532ff1040e102"
+            "sha256": "5ac0c5a523f3fdea9ca62c9c1db3f9d30405864e459cc06045dd5f2933df8faf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -348,11 +348,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:18783cca3cfee5b83c6c5d10b3cdb66c6594520ffae61890858fe8d932e1c6b4",
-                "sha256:349c8cd36aede4d50a0754a8c0218b43323d13d5d88f4b2952ddfe3e169681eb"
+                "sha256:3b120505e5af1d06a5ad76b55d8660d44bf0f2fc3c59c2bdd94e39188ee3a4df",
+                "sha256:c2108037eb074334d9e874dc3c783752cc03d0796c88c9a9af282d0f161a1004"
             ],
             "index": "pypi",
-            "version": "==2.15.9"
+            "version": "==2.15.5"
         },
         "pylint-celery": {
             "hashes": [

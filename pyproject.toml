@@ -145,7 +145,7 @@ all = [
 test_images = ["scikit-image"]
 
 [tool.poetry.dev-dependencies]
-prospector = { extras = ["with_bandit", "with_mypy", "with_pyroma"], version = "1.8.3" }
+prospector = { extras = ["with_bandit", "with_mypy", "with_pyroma"], version = "1.7.7" }
 pylint = { version = "2.15.6" }
 coverage = "7.0.2"
 junit2html = "30.1.3"

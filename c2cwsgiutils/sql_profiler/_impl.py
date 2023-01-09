@@ -43,9 +43,10 @@ class _Repository:
                 try:
                     LOG.info("statement:\n%s", _indent(_beautify_sql(statement)))
                     LOG.info("parameters: %s", repr(parameters))
-                    output = "\n  ".join(
-                        [row[0] for row in conn.engine.execute("EXPLAIN ANALYZE " + statement, parameters)]
-                    )
+                    with conn.engine.begin() as c:
+                        output = "\n  ".join(
+                            [row[0] for row in c.execute("EXPLAIN ANALYZE " + statement, parameters)]
+                        )
                     LOG.info(output)
                 except Exception:  # nosec  # pylint: disable=broad-except
                     pass

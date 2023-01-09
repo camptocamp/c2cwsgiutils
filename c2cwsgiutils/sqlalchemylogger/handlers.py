@@ -99,7 +99,8 @@ class SQLAlchemyHandler(logging.Handler):
             "schema", None
         ):
             if not self.engine.dialect.has_schema(self.engine, self.Log.__table_args__["schema"]):
-                self.engine.execute(sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]))
+                with self.engine.begin() as connection:
+                    connection.execute(sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]))
         Base.metadata.create_all(self.engine)
 
     def emit(self, record: Any) -> None:

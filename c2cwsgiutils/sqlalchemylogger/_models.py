@@ -1,7 +1,7 @@
 from typing import Any, Dict, Union
 
 from sqlalchemy import Column
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy.types import DateTime, Integer, String
 

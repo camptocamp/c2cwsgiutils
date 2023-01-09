@@ -1,7 +1,7 @@
 import sqlalchemy as sa
-import sqlalchemy.ext.declarative
+from sqlalchemy.orm import declarative_base
 
-Base = sqlalchemy.ext.declarative.declarative_base()
+Base = declarative_base()
 
 
 class Hello(Base):

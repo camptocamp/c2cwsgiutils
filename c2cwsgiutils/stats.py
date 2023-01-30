@@ -8,7 +8,7 @@ import socket
 import threading
 import time
 from abc import ABCMeta, abstractmethod
-from typing import (  # noqa  # pylint: disable=unused-import
+from typing import (  # noqa
     Any,
     Callable,
     Dict,

@@ -1,6 +1,6 @@
 import logging
 import warnings
-from typing import Any, Callable, Dict, Optional  # noqa  # pylint: disable=unused-import
+from typing import Any, Callable, Dict, Optional  # noqa
 
 import pyramid.config
 

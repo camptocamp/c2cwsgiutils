@@ -86,7 +86,7 @@ FROM base-lint as tests
 COPY . /opt/c2cwsgiutils/
 RUN python3 -m pip install --disable-pip-version-check --no-cache-dir --no-deps \
     --editable=/opt/c2cwsgiutils
-RUN (cd /opt/c2cwsgiutils/ && prospector -X --output=pylint)
+RUN (cd /opt/c2cwsgiutils/ && prospector --die-on-tool-error --output=pylint)
 RUN echo "from pickle import *" > /usr/lib/python3.8/cPickle.py
 RUN (cd /opt/c2cwsgiutils/ && pytest -vv --cov=c2cwsgiutils --color=yes tests && rm -r tests)
 

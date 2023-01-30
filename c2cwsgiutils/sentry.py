@@ -2,7 +2,7 @@ import contextlib
 import logging
 import os
 import warnings
-from typing import Any, Callable, Generator, MutableMapping, Optional  # noqa  # pylint: disable=unused-import
+from typing import Any, Callable, Generator, MutableMapping, Optional  # noqa
 
 import pyramid.config
 import sentry_sdk

@@ -27,6 +27,8 @@ pylint:
     - wrong-import-order
     - missing-module-docstring
     - missing-function-docstring
+    - missing-timeout # done with a default value
+    - c-extension-no-member # error with ujson
 
 pep8:
   options:
@@ -58,4 +60,7 @@ bandit:
     config: .bandit.yaml
 
 mccabe:
+  run: false
+
+dodgy:
   run: false

@@ -2,7 +2,7 @@
 import logging
 import re
 import warnings
-from typing import Pattern  # noqa  # pylint: disable=unused-import
+from typing import Pattern  # noqa
 from typing import Any, Callable, Iterable, Optional, Tuple, Union, cast
 
 import pyramid.config
@@ -190,7 +190,7 @@ def _add_tween(
 
         return db_chooser_tween
 
-    tweens.__setattr__(name, db_chooser_tween_factory)
+    tweens.__setattr__(name, db_chooser_tween_factory)  # pylint: disable=unnecessary-dunder-call
     config.add_tween("c2cwsgiutils.db.tweens." + name, over="pyramid_tm.tm_tween_factory")
 
 

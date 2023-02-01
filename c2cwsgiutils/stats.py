@@ -8,18 +8,7 @@ import socket
 import threading
 import time
 from abc import ABCMeta, abstractmethod
-from typing import (  # noqa  # pylint: disable=unused-import
-    Any,
-    Callable,
-    Dict,
-    Generator,
-    List,
-    Mapping,
-    MutableMapping,
-    Optional,
-    Sequence,
-    Tuple,
-)
+from typing import Any, Callable, Dict, Generator, List, Mapping, MutableMapping, Optional, Sequence, Tuple
 
 import pyramid.request
 

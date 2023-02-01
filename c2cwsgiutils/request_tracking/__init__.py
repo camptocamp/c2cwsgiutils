@@ -7,7 +7,7 @@ import logging
 import urllib.parse
 import uuid
 import warnings
-from typing import Any, Dict, List, Optional, Sequence  # noqa  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional, Sequence
 
 import pyramid.request
 import requests.adapters

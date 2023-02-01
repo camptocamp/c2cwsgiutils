@@ -72,7 +72,7 @@ types-redis = "==4.1.22"
 types-ujson = "==4.2.1"
 types-python-dateutil = "==2.8.19.6"
 # Lock dependencies
-astroid = "==2.13.3"
+astroid = "==2.13.5"
 attrs = "==21.4.0"
 bandit = "==1.7.4"
 dodgy = "==0.2.1"

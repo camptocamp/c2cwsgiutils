@@ -12,7 +12,7 @@ pylint-django = "==2.5.3"
 flake8 = ">2.0.0"
 coverage = "==6.3.3"
 # Lock dependencies
-astroid = "==2.13.3"
+astroid = "==2.13.5"
 bandit = "==1.7.4"
 dill = "==0.3.6"
 dodgy = "==0.2.1"

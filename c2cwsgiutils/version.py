@@ -37,7 +37,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
             LOG.info("Starting version %s", git_hash)
 
         if stats.USE_TAGS:
-            stats.increment_counter(["version"], 1, tags=dict(version=git_hash))
+            stats.increment_counter(["version"], 1, tags={"version": git_hash})
         else:
             stats.increment_counter(["version", git_hash], 1)
 

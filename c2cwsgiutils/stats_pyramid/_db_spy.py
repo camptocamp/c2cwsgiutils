@@ -60,7 +60,7 @@ def _simplify_sql(sql: str) -> str:
 def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
     if stats.USE_TAGS and what != "commit":
         key = ["sql"]
-        tags: Optional[Dict[str, str]] = dict(query=what)
+        tags: Optional[Dict[str, str]] = {"query": what}
     else:
         key = ["sql", what]
         tags = None

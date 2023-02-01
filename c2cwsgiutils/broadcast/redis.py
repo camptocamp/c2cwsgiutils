@@ -46,7 +46,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 response = callback(**data["params"])
             except Exception as e:  # pragma: no cover  # pylint: disable=broad-except
                 LOG.error("Failed handling a broadcast message", exc_info=True)
-                response = dict(status=500, message=str(e))
+                response = {"status": 500, "message": str(e)}
             answer_channel = data.get("answer_channel")
             if answer_channel is not None:
                 LOG.debug("Sending broadcast answer on %s", answer_channel)

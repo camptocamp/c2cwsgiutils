@@ -45,7 +45,12 @@ class _Repository:
                     LOG.info("parameters: %s", repr(parameters))
                     with conn.engine.begin() as c:
                         output = "\n  ".join(
-                            [row[0] for row in c.execute("EXPLAIN ANALYZE " + statement, parameters)]
+                            [
+                                row[0]
+                                for row in c.execute(
+                                    sqlalchemy.text(f"EXPLAIN ANALYZE {statement}"), parameters
+                                )
+                            ]
                         )
                     LOG.info(output)
                 except Exception:  # nosec  # pylint: disable=broad-except

@@ -35,7 +35,7 @@ def setup_session(
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
 ) -> Tuple[
-    Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
+    Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]],
     sqlalchemy.engine.Engine,
     sqlalchemy.engine.Engine,
 ]:
@@ -67,7 +67,7 @@ def setup_session(
         slave_prefix = master_prefix
     settings = config.registry.settings
     rw_engine = sqlalchemy.engine_from_config(settings, master_prefix + ".")
-    rw_engine.c2c_name = master_prefix
+    rw_engine.c2c_name = master_prefix  # type: ignore
     factory = sqlalchemy.orm.sessionmaker(bind=rw_engine)
     register(factory)
     db_session = sqlalchemy.orm.scoped_session(factory)
@@ -76,14 +76,14 @@ def setup_session(
     if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
         LOG.info("Using a slave DB for reading %s", master_prefix)
         ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
-        ro_engine.c2c_name = slave_prefix
+        ro_engine.c2c_name = slave_prefix  # type: ignore
         tween_name = master_prefix.replace(".", "_")
         _add_tween(config, tween_name, db_session, force_master, force_slave)
     else:
         ro_engine = rw_engine
 
-    db_session.c2c_rw_bind = rw_engine
-    db_session.c2c_ro_bind = ro_engine
+    db_session.c2c_rw_bind = rw_engine  # type: ignore
+    db_session.c2c_ro_bind = ro_engine  # type: ignore
     return db_session, rw_engine, ro_engine
 
 
@@ -95,7 +95,7 @@ def create_session(
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
     **engine_config: Any,
-) -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session]:
+) -> Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]]:
     """
     Create a SQLAlchemy session.
 
@@ -133,21 +133,21 @@ def create_session(
         LOG.info("Using a slave DB for reading %s", name)
         ro_engine = sqlalchemy.create_engine(slave_url, **engine_config)
         _add_tween(config, name, db_session, force_master, force_slave)
-        rw_engine.c2c_name = name + "_master"
-        ro_engine.c2c_name = name + "_slave"
+        rw_engine.c2c_name = name + "_master"  # type: ignore
+        ro_engine.c2c_name = name + "_slave"  # type: ignore
     else:
-        rw_engine.c2c_name = name
+        rw_engine.c2c_name = name  # type: ignore
         ro_engine = rw_engine
 
-    db_session.c2c_rw_bind = rw_engine
-    db_session.c2c_ro_bind = ro_engine
+    db_session.c2c_rw_bind = rw_engine  # type: ignore
+    db_session.c2c_ro_bind = ro_engine  # type: ignore
     return db_session
 
 
 def _add_tween(
     config: pyramid.config.Configurator,
     name: str,
-    db_session: Union[sqlalchemy.orm.Session, sqlalchemy.orm.scoped_session],
+    db_session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
     force_master: Optional[Iterable[str]],
     force_slave: Optional[Iterable[str]],
 ) -> None:
@@ -176,11 +176,19 @@ def _add_tween(
                 not has_force_master
                 and (request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths))
             ):
-                LOG.debug("Using %s database for: %s", db_session.c2c_ro_bind.c2c_name, method_path)
-                session.bind = db_session.c2c_ro_bind
+                LOG.debug(
+                    "Using %s database for: %s",
+                    db_session.c2c_ro_bind.c2c_name,  # type: ignore
+                    method_path,
+                )
+                session.bind = db_session.c2c_ro_bind  # type: ignore
             else:
-                LOG.debug("Using %s database for: %s", db_session.c2c_rw_bind.c2c_name, method_path)
-                session.bind = db_session.c2c_rw_bind
+                LOG.debug(
+                    "Using %s database for: %s",
+                    db_session.c2c_rw_bind.c2c_name,  # type: ignore
+                    method_path,
+                )
+                session.bind = db_session.c2c_rw_bind  # type: ignore
 
             try:
                 return handler(request)
@@ -193,7 +201,7 @@ def _add_tween(
     config.add_tween("c2cwsgiutils.db.tweens." + name, over="pyramid_tm.tm_tween_factory")
 
 
-class SessionFactory(sessionmaker):  # type: ignore
+class SessionFactory(sessionmaker[sqlalchemy.orm.Session]):  # pylint: disable=unsubscriptable-object
     """The custom session factory that manage the read only and read write sessions."""
 
     def __init__(
@@ -213,18 +221,18 @@ class SessionFactory(sessionmaker):  # type: ignore
 
     def engine_name(self, readwrite: bool) -> str:
         if readwrite:
-            return cast(str, self.rw_engine.c2c_name)
-        return cast(str, self.ro_engine.c2c_name)
+            return cast(str, self.rw_engine.c2c_name)  # type: ignore
+        return cast(str, self.ro_engine.c2c_name)  # type: ignore
 
-    def __call__(
+    def __call__(  # type: ignore
         self, request: Optional[pyramid.request.Request], readwrite: Optional[bool] = None, **local_kw: Any
-    ) -> sqlalchemy.orm.Session:
+    ) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
         if readwrite is not None:
             if readwrite and not force_readonly:
-                LOG.debug("Using %s database", self.rw_engine.c2c_name)
+                LOG.debug("Using %s database", self.rw_engine.c2c_name)  # type: ignore
                 self.configure(bind=self.rw_engine)
             else:
-                LOG.debug("Using %s database", self.ro_engine.c2c_name)
+                LOG.debug("Using %s database", self.ro_engine.c2c_name)  # type: ignore
                 self.configure(bind=self.ro_engine)
         else:
             assert request is not None
@@ -237,12 +245,12 @@ class SessionFactory(sessionmaker):  # type: ignore
                     or any(r.match(method_path) for r in self.slave_paths)
                 )
             ):
-                LOG.debug("Using %s database for: %s", self.ro_engine.c2c_name, method_path)
+                LOG.debug("Using %s database for: %s", self.ro_engine.c2c_name, method_path)  # type: ignore
                 self.configure(bind=self.ro_engine)
             else:
-                LOG.debug("Using %s database for: %s", self.rw_engine.c2c_name, method_path)
+                LOG.debug("Using %s database for: %s", self.rw_engine.c2c_name, method_path)  # type: ignore
                 self.configure(bind=self.rw_engine)
-        return super().__call__(**local_kw)
+        return super().__call__(**local_kw)  # type: ignore
 
 
 def get_engine(
@@ -252,7 +260,9 @@ def get_engine(
     return engine_from_config(settings, prefix)
 
 
-def get_session_factory(engine: sqlalchemy.engine.Engine) -> sessionmaker:
+def get_session_factory(
+    engine: sqlalchemy.engine.Engine,
+) -> sessionmaker[sqlalchemy.orm.Session]:  # pylint: disable=unsubscriptable-object
     """Get the session factory from the engine."""
     factory = sessionmaker()
     factory.configure(bind=engine)
@@ -260,7 +270,7 @@ def get_session_factory(engine: sqlalchemy.engine.Engine) -> sessionmaker:
 
 
 def get_tm_session(
-    session_factory: sessionmaker,
+    session_factory: sessionmaker[sqlalchemy.orm.Session],  # pylint: disable=unsubscriptable-object
     transaction_manager: transaction.TransactionManager,
 ) -> sqlalchemy.orm.Session:
     """
@@ -319,6 +329,7 @@ def get_tm_session(
           request = dbsession.info["request"]
     """
     dbsession = session_factory()
+    assert isinstance(dbsession, sqlalchemy.orm.Session), type(dbsession)
     zope.sqlalchemy.register(dbsession, transaction_manager=transaction_manager)
     return dbsession
 
@@ -327,7 +338,7 @@ def get_tm_session_pyramid(
     session_factory: SessionFactory,
     transaction_manager: transaction.TransactionManager,
     request: pyramid.request.Request,
-) -> sqlalchemy.orm.Session:
+) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
     """
     Get a ``sqlalchemy.orm.Session`` instance backed by a transaction.
 
@@ -367,13 +378,13 @@ def init(
     dbengine = settings.get("dbengine")
     if not dbengine:
         rw_engine = get_engine(settings, master_prefix + ".")
-        rw_engine.c2c_name = master_prefix
+        rw_engine.c2c_name = master_prefix  # type: ignore
 
         # Setup a slave DB connection and add a tween to use it.
         if slave_prefix and settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
             LOG.info("Using a slave DB for reading %s", master_prefix)
             ro_engine = get_engine(config.get_settings(), slave_prefix + ".")
-            ro_engine.c2c_name = slave_prefix
+            ro_engine.c2c_name = slave_prefix  # type: ignore
         else:
             ro_engine = rw_engine
     else:
@@ -389,6 +400,8 @@ def init(
         if dbsession is None:
             # request.tm is the transaction manager used by pyramid_tm
             dbsession = get_tm_session_pyramid(session_factory, request.tm, request=request)
+            assert dbsession is not None
+        assert isinstance(dbsession, sqlalchemy.orm.Session), type(dbsession)
         return dbsession
 
     config.add_request_method(dbsession, reify=True)

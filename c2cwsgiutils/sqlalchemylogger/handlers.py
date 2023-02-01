@@ -98,9 +98,11 @@ class SQLAlchemyHandler(logging.Handler):
         if not isinstance(self.Log.__table_args__, type(None)) and self.Log.__table_args__.get(
             "schema", None
         ):
-            if not self.engine.dialect.has_schema(self.engine, self.Log.__table_args__["schema"]):
-                with self.engine.begin() as connection:
-                    connection.execute(sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]))
+            with self.engine.begin() as connection:
+                if not self.engine.dialect.has_schema(connection, self.Log.__table_args__["schema"]):
+                    connection.execute(
+                        sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]),  # type: ignore
+                    )
         Base.metadata.create_all(self.engine)
 
     def emit(self, record: Any) -> None:

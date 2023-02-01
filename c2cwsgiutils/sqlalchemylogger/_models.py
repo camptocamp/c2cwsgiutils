@@ -21,7 +21,10 @@ def create_log_class(tablename: str = "logs", tableargs: Union[str, Dict[str, st
         level = Column(String)  # info, debug, or error?
         trace = Column(String)  # the full traceback printout
         msg = Column(String)  # any custom log you may have included
-        created_at = Column(DateTime, default=func.now())  # the current timestamp
+        created_at = Column(  # the current timestamp
+            DateTime,
+            default=func.now(),  # pylint: disable=not-callable
+        )
 
         def __init__(self, logger: Any = None, level: Any = None, trace: Any = None, msg: Any = None) -> None:
             self.logger = logger

@@ -183,3 +183,4 @@ format-jinja = """
 
 [tool.poetry-plugin-tweak-dependencies-version]
 default = "present"
+sqlalchemy = ">=1.4.0,<3.0.0"

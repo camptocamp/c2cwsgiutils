@@ -135,14 +135,14 @@ def _do_indexes(reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_
                 [schema, table, index_name, fork],
                 value,
                 kind="index_size",
-                tags=dict(schema=schema, table=table, index=index_name, fork=fork),
+                tags={"schema": schema, "table": table, "index": index_name, "fork": fork},
             )
         for action, value in (("scan", number_of_scans), ("read", tuples_read), ("fetch", tuples_fetched)):
             reporter.do_report(
                 [schema, table, index_name, action],
                 value,
                 kind="index_usage",
-                tags=dict(schema=schema, table=table, index=index_name, action=action),
+                tags={"schema": schema, "table": table, "index": index_name, "action": action},
             )
 
 
@@ -159,7 +159,7 @@ def _do_table_size(
     """,
         params={"schema": schema, "table": table},
     ).fetchone()
-    reporter.do_report([schema, table], size, kind="size", tags=dict(schema=schema, table=table))
+    reporter.do_report([schema, table], size, kind="size", tags={"schema": schema, "table": table})
 
 
 def _do_table_count(
@@ -172,13 +172,13 @@ def _do_table_count(
         "SELECT reltuples::bigint AS count FROM pg_class "  # nosec
         f"WHERE oid = '{quote(schema)}.{quote(table)}'::regclass;"
     ).fetchone()
-    reporter.do_report([schema, table], count, kind="count", tags=dict(schema=schema, table=table))
+    reporter.do_report([schema, table], count, kind="count", tags={"schema": schema, "table": table})
 
 
 def do_extra(session: sqlalchemy.orm.scoped_session, extra: str, reporter: Reporter) -> None:
     """Do an extra report."""
     for metric, count in session.execute(extra):
-        reporter.do_report(str(metric).split("."), count, kind="count", tags=dict(metric=metric))
+        reporter.do_report(str(metric).split("."), count, kind="count", tags={"metric": metric})
 
 
 def _do_dtats_db(args: argparse.Namespace) -> None:

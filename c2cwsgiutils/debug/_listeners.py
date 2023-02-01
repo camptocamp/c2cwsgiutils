@@ -85,7 +85,7 @@ def _dump_memory_impl(
                 break
         if analyze_type == "builtins.function":
             result[analyze_type]["modules"] = [
-                dict(module=i[0], nb_func=i[1])
+                {"module": i[0], "nb_func": i[1]}
                 for i in sorted(mod_counts.items(), key=lambda x: -x[1])[:limit]
             ]
         elif analyze_type == "linecache":
@@ -93,13 +93,13 @@ def _dump_memory_impl(
 
             cache = linecache.cache
             result[analyze_type]["biggest_objects"] = sorted(
-                (dict(filename=k, size_kb=get_size(v)) for k, v in cache.items()),
+                ({"filename": k, "size_kb": get_size(v)} for k, v in cache.items()),
                 key=lambda i: -(cast(int, i["size_kb"])),
             )
         else:
             biggest_objects.reverse()
             result[analyze_type]["biggest_objects"] = [
-                dict(size_kb=i[0], repr=repr(i[1])) for i in biggest_objects
+                {"size_kb": i[0], "repr": repr(i[1])} for i in biggest_objects
             ]
     return result
 

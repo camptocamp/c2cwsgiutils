@@ -37,7 +37,7 @@ def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
         block = config[f"handler_{hh}"]
         stream_match = stream_re.match(block["args"])
         if stream_match is None:
-            raise Exception(f"Could not parse args of handler {hh}")
+            raise Exception(f"Could not parse args of handler {hh}")  # pylint: disable=broad-exception-raised
         args = stream_match.groups()[0]
         c = block["class"]
         if "." not in c:

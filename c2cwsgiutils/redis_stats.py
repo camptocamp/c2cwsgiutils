@@ -13,7 +13,7 @@ ORIG: Optional[Callable[..., Any]] = None
 def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
     if stats.USE_TAGS:
         key = ["redis"]
-        tags: Optional[Dict[str, str]] = dict(cmd=args[0])
+        tags: Optional[Dict[str, str]] = {"cmd": args[0]}
     else:
         key = ["redis", args[0]]
         tags = None

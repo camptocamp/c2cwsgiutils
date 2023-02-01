@@ -159,7 +159,9 @@ def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     ).decode("utf-8")
     out_match = ALEMBIC_HEAD_RE.match(out)
     if not out_match:
-        raise Exception("Cannot get the alembic HEAD version from: " + out)
+        raise Exception(  # pylint: disable=broad-exception-raised
+            "Cannot get the alembic HEAD version from: " + out
+        )
     return out_match.group(1)
 
 
@@ -260,7 +262,7 @@ class HealthCheck:
                     with binding as session:
                         if stats.USE_TAGS:
                             key = ["sql", "manual", "health_check", "alembic"]
-                            tags: Optional[Dict[str, str]] = dict(conf=alembic_ini_path, con=binding.name())
+                            tags: Optional[Dict[str, str]] = {"conf": alembic_ini_path, "con": binding.name()}
                         else:
                             key = [
                                 "sql",
@@ -279,12 +281,12 @@ class HealthCheck:
                             ).fetchone()
                             if stats.USE_TAGS:
                                 stats.increment_counter(
-                                    ["alembic_version"], 1, tags=dict(version=actual_version, name=name)
+                                    ["alembic_version"], 1, tags={"version": actual_version, "name": name}
                                 )
                             else:
                                 stats.increment_counter(["alembic_version", name, actual_version], 1)
                             if actual_version != version_:
-                                raise Exception(
+                                raise Exception(  # pylint: disable=broad-exception-raised
                                     f"Invalid alembic version (db: {actual_version}, code: {version_})"
                                 )
                 return version_
@@ -406,13 +408,13 @@ class HealthCheck:
             v: Optional[str]
             for v, count in Counter(versions).items():
                 if stats.USE_TAGS:
-                    stats.increment_counter(["version"], count, tags=dict(version=v))
+                    stats.increment_counter(["version"], count, tags={"version": v})
                 else:
                     stats.increment_counter(["version", v], count)
 
                 ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
-            return dict(version=ref, count=len(versions))
+            return {"version": ref, "count": len(versions)}
 
         assert name
         self._checks.append((name, check, level))
@@ -471,12 +473,12 @@ class HealthCheck:
             if result is not None:
                 results["successes"][name]["result"] = result
             if stats.USE_TAGS:
-                stats.increment_counter(["health_check"], 1, tags=dict(name=name, outcome="success"))
+                stats.increment_counter(["health_check"], 1, tags={"name": name, "outcome": "success"})
             else:
                 stats.increment_counter(["health_check", name, "success"], 1)
         except Exception as e:  # pylint: disable=broad-except
             if stats.USE_TAGS:
-                stats.increment_counter(["health_check"], 1, tags=dict(name=name, outcome="failure"))
+                stats.increment_counter(["health_check"], 1, tags={"name": name, "outcome": "failure"})
             else:
                 stats.increment_counter(["health_check", name, "failure"], 1)
             LOG.warning("Health check %s failed", name, exc_info=True)
@@ -496,7 +498,7 @@ class HealthCheck:
             with binding as session:
                 if stats.USE_TAGS:
                     key = ["sql", "manual", "health_check", "db"]
-                    tags: Optional[Dict[str, str]] = dict(con=binding.name())
+                    tags: Optional[Dict[str, str]] = {"con": binding.name()}
                 else:
                     key = ["sql", "manual", "health_check", "db", binding.name()]
                     tags = None

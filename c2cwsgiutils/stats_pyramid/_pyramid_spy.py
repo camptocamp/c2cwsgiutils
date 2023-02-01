@@ -46,9 +46,12 @@ def _create_finished_cb(
                 _add_server_metric(request, "route", description=name)
         if stats.USE_TAGS:
             key = [kind]
-            tags: Optional[Dict[str, Any]] = dict(
-                method=request.method, route=name, status=status, group=status // 100
-            )
+            tags: Optional[Dict[str, Any]] = {
+                "method": request.method,
+                "route": name,
+                "status": status,
+                "group": status // 100,
+            }
         else:
             key = [kind, request.method, name, status]
             tags = None

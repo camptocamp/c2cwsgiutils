@@ -24,7 +24,7 @@ def _try(what: Callable[[], Any], fail: bool = True, times: int = 5, delay: int 
     for i in range(times):
         try:
             return what()
-        except:  # noqa: bare-except
+        except:  # pylint: disable=bare-except
             LOG.warning("Exception:", exc_info=True)
             if i + 1 == times and fail:
                 raise

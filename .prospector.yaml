@@ -68,3 +68,6 @@ pyroma:
 
 mccabe:
   run: false
+
+dodgy:
+  run: false

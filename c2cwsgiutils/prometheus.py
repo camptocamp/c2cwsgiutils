@@ -1,4 +1,4 @@
-from typing import Any, Mapping, MutableMapping, Optional  # noqa  # pylint: disable=unused-import
+from typing import Any, Mapping, MutableMapping, Optional
 
 import requests
 

@@ -2,8 +2,7 @@
 import logging
 import re
 import warnings
-from typing import Pattern  # noqa  # pylint: disable=unused-import
-from typing import Any, Callable, Iterable, Optional, Tuple, Union, cast
+from typing import Any, Callable, Iterable, Optional, Pattern, Tuple, Union, cast
 
 import pyramid.config
 import pyramid.config.settings

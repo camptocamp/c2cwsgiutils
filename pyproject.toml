@@ -27,13 +27,13 @@ readme = "README.md"
 authors = ["Camptocamp <info@camptocamp.com>"]
 keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
 repository = "https://github.com/camptocamp/c2cwsgiutils"
-license = "FreeBSD"
+license = "BSD-2-Clause"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Plugins",
   "Framework :: Pyramid",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: BSD",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",

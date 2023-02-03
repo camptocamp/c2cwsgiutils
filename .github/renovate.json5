@@ -7,7 +7,11 @@
   separateMinorPatch: true,
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
-  lockFileMaintenance: { enabled: true, automerge: true, schedule: 'on the first day of the month' },
+  lockFileMaintenance: {
+    enabled: true,
+    automerge: true,
+    schedule: 'after 5pm on the first day of the month',
+  },
   baseBranches: ['master', '5.1', '5.0', 'release_2', 'release_3', 'release_4'],
   packageRules: [
     /** Automerge the patch, the minor and the dev dependency */

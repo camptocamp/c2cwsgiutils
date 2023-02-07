@@ -40,6 +40,7 @@ pycodestyle:
   disable:
     - E203 # Whitespace before ':', duplicated with black, with error in array
     - E722 # do not use bare 'except', duplicated with pylint
+    - E261 # at least two spaces before inline comment, duplicated with black
 
 pydocstyle:
   disable:

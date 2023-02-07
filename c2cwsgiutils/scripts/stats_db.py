@@ -99,16 +99,27 @@ class Reporter:
             raise self._error
 
 
-def do_table(session: sqlalchemy.orm.scoped_session, schema: str, table: str, reporter: Reporter) -> None:
+def do_table(
+    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    schema: str,
+    table: str,
+    reporter: Reporter,
+) -> None:
     """Do the stats on a table."""
     _do_table_count(reporter, schema, session, table)
     _do_table_size(reporter, schema, session, table)
     _do_indexes(reporter, schema, session, table)
 
 
-def _do_indexes(reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_session, table: str) -> None:
+def _do_indexes(
+    reporter: Reporter,
+    schema: str,
+    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    table: str,
+) -> None:
     for index_name, size_main, size_fsm, number_of_scans, tuples_read, tuples_fetched in session.execute(
-        """
+        sqlalchemy.text(
+            """
     SELECT
          foo.indexname,
          pg_relation_size(concat(quote_ident(foo.schemaname), '.', quote_ident(foo.indexrelname)), 'main'),
@@ -127,7 +138,8 @@ def _do_indexes(reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_
          ) AS foo
          ON t.tablename = foo.ctablename AND t.schemaname=foo.schemaname
     WHERE t.schemaname=:schema AND t.tablename=:table
-    """,
+    """
+        ),
         params={"schema": schema, "table": table},
     ):
         for fork, value in (("main", size_main), ("fsm", size_fsm)):
@@ -147,37 +159,53 @@ def _do_indexes(reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_
 
 
 def _do_table_size(
-    reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_session, table: str
+    reporter: Reporter,
+    schema: str,
+    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    table: str,
 ) -> None:
-    size: int = 0
-    (size,) = session.execute(
-        """
+    result = session.execute(
+        sqlalchemy.text(
+            """
     SELECT pg_table_size(c.oid) AS total_bytes
     FROM pg_class c
     LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE relkind = 'r' AND nspname=:schema AND relname=:table
-    """,
+    """
+        ),
         params={"schema": schema, "table": table},
     ).fetchone()
+    assert result is not None
+    size: int
+    (size,) = result
     reporter.do_report([schema, table], size, kind="size", tags={"schema": schema, "table": table})
 
 
 def _do_table_count(
-    reporter: Reporter, schema: str, session: sqlalchemy.orm.scoped_session, table: str
+    reporter: Reporter,
+    schema: str,
+    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    table: str,
 ) -> None:
-    quote = session.bind.dialect.identifier_preparer.quote
     # We request and estimation of the count as a real count is very slow on big tables
     # and seems to cause replicatin lags. This estimate is updated on ANALYZE and VACUUM.
-    (count,) = session.execute(
-        "SELECT reltuples::bigint AS count FROM pg_class "  # nosec
-        f"WHERE oid = '{quote(schema)}.{quote(table)}'::regclass;"
+    result = session.execute(
+        sqlalchemy.text(  # nosec
+            "SELECT reltuples::bigint AS count FROM pg_class "
+            f"WHERE oid = '{sqlalchemy.sql.quoted_name(schema, True)}."
+            f"{sqlalchemy.sql.quoted_name(table, True)}'::regclass;"
+        )
     ).fetchone()
+    assert result is not None
+    (count,) = result
     reporter.do_report([schema, table], count, kind="count", tags={"schema": schema, "table": table})
 
 
-def do_extra(session: sqlalchemy.orm.scoped_session, extra: str, reporter: Reporter) -> None:
+def do_extra(
+    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session], extra: str, reporter: Reporter
+) -> None:
     """Do an extra report."""
-    for metric, count in session.execute(extra):
+    for metric, count in session.execute(sqlalchemy.text(extra)):
         reporter.do_report(str(metric).split("."), count, kind="count", tags={"metric": metric})
 
 
@@ -193,12 +221,14 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
         raise
 
     tables = session.execute(
-        """
+        sqlalchemy.text(
+            """
     SELECT table_schema, table_name FROM information_schema.tables
     WHERE table_type='BASE TABLE' AND table_schema IN :schemas
-    """,
+    """
+        ),
         params={"schemas": tuple(args.schema)},
-    )
+    ).fetchall()
     for schema, table in tables:
         LOG.info("Process table %s.%s.", schema, table)
         try:

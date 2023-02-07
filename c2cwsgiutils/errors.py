@@ -107,10 +107,11 @@ def _include_dev_details(request: pyramid.request.Request) -> bool:
 def _integrity_error(
     exception: sqlalchemy.exc.StatementError, request: pyramid.request.Request
 ) -> pyramid.response.Response:
-    def reduce_info_sent(e: sqlalchemy.exc.StatementError) -> None:
-        # remove details (SQL statement and links to SQLAlchemy) from the error
-        e.statement = None
-        e.code = None
+    def reduce_info_sent(e: Exception) -> None:
+        if isinstance(e, sqlalchemy.exc.StatementError):
+            # remove details (SQL statement and links to SQLAlchemy) from the error
+            e.statement = None
+            e.code = None
 
     return _do_error(request, 400, exception, reduce_info_sent=reduce_info_sent)
 

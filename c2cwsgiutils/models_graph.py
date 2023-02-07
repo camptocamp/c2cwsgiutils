@@ -71,7 +71,7 @@ def _get_all_cols(symbol: Any) -> List[str]:
             # Those are not fields
             pass
         elif isinstance(member, sa.sql.schema.SchemaItem):
-            cols.append(member_name + ("[null]" if member.nullable else ""))
+            cols.append(member_name + ("[null]" if member.nullable else ""))  # type: ignore
         elif isinstance(member, sa.orm.attributes.InstrumentedAttribute):
             nullable = (
                 member.property.columns[0].nullable

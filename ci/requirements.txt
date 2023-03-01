@@ -1,2 +1,2 @@
-c2cciutils==1.1.dev20210331152818
+c2cciutils==1.1.20
 certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerability

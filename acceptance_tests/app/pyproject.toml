@@ -39,7 +39,7 @@ get-hello = "c2cwsgiutils_app.get_hello:main"
 main = "c2cwsgiutils_app:main"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.11"
+python = ">=3.10,<4.0"
 coverage = "7.2.1"
 
 [tool.poetry.dev-dependencies]

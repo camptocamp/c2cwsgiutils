@@ -17,6 +17,11 @@ import c2cwsgiutils.setup_process
 from c2cwsgiutils import stats
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 
+if sqlalchemy.__version__.split(".")[0] != "1":
+    scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
+else:
+    scoped_session = sqlalchemy.orm.scoped_session
+
 LOG = logging.getLogger(__name__)
 
 
@@ -100,7 +105,7 @@ class Reporter:
 
 
 def do_table(
-    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    session: scoped_session,
     schema: str,
     table: str,
     reporter: Reporter,
@@ -114,7 +119,7 @@ def do_table(
 def _do_indexes(
     reporter: Reporter,
     schema: str,
-    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    session: scoped_session,
     table: str,
 ) -> None:
     for index_name, size_main, size_fsm, number_of_scans, tuples_read, tuples_fetched in session.execute(
@@ -161,7 +166,7 @@ def _do_indexes(
 def _do_table_size(
     reporter: Reporter,
     schema: str,
-    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    session: scoped_session,
     table: str,
 ) -> None:
     result = session.execute(
@@ -184,7 +189,7 @@ def _do_table_size(
 def _do_table_count(
     reporter: Reporter,
     schema: str,
-    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+    session: scoped_session,
     table: str,
 ) -> None:
     # We request and estimation of the count as a real count is very slow on big tables
@@ -201,9 +206,7 @@ def _do_table_count(
     reporter.do_report([schema, table], count, kind="count", tags={"schema": schema, "table": table})
 
 
-def do_extra(
-    session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session], extra: str, reporter: Reporter
-) -> None:
+def do_extra(session: scoped_session, extra: str, reporter: Reporter) -> None:
     """Do an extra report."""
     for metric, count in session.execute(sqlalchemy.text(extra)):
         reporter.do_report(str(metric).split("."), count, kind="count", tags={"metric": metric})

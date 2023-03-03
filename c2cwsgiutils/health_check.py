@@ -28,6 +28,11 @@ from pyramid.httpexceptions import HTTPNotFound
 import c2cwsgiutils.db
 from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
 
+if sqlalchemy.__version__.split(".")[0] != "1":
+    scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
+else:
+    scoped_session = sqlalchemy.orm.scoped_session
+
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
 
@@ -59,7 +64,7 @@ class _Binding:
     def name(self) -> str:
         raise NotImplementedError()
 
-    def __enter__(self) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
+    def __enter__(self) -> scoped_session:
         raise NotImplementedError()
 
     def __exit__(
@@ -79,14 +84,12 @@ class _NewBinding(_Binding):
     def name(self) -> str:
         return self.session.engine_name(self.readwrite)
 
-    def __enter__(self) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
+    def __enter__(self) -> scoped_session:
         return self.session(None, self.readwrite)
 
 
 class _OldBinding(_Binding):
-    def __init__(
-        self, session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session], engine: sqlalchemy.engine.Engine
-    ):
+    def __init__(self, session: scoped_session, engine: sqlalchemy.engine.Engine):
         self.session = session
         self.engine = engine
         self.prev_bind = None
@@ -94,7 +97,7 @@ class _OldBinding(_Binding):
     def name(self) -> str:
         return cast(str, self.engine.c2c_name)  # type: ignore
 
-    def __enter__(self) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
+    def __enter__(self) -> scoped_session:
         self.prev_bind = self.session.bind  # type: ignore
         self.session.bind = self.engine
         return self.session
@@ -110,7 +113,7 @@ class _OldBinding(_Binding):
 
 
 def _get_binding_class(
-    session: Union[sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session], c2cwsgiutils.db.SessionFactory],
+    session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
     ro_engin: sqlalchemy.engine.Engine,
     rw_engin: sqlalchemy.engine.Engine,
     readwrite: bool,
@@ -122,7 +125,7 @@ def _get_binding_class(
 
 
 def _get_bindings(
-    session: Union[sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session], c2cwsgiutils.db.SessionFactory],
+    session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
     engine_type: EngineType,
 ) -> List[_Binding]:
     if isinstance(session, c2cwsgiutils.db.SessionFactory):
@@ -195,8 +198,8 @@ class HealthCheck:
 
     def add_db_session_check(
         self,
-        session: Union[sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session], c2cwsgiutils.db.SessionFactory],
-        query_cb: Optional[Callable[[sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]], Any]] = None,
+        session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
+        query_cb: Optional[Callable[[scoped_session], Any]] = None,
         at_least_one_model: Optional[object] = None,
         level: int = 1,
         engine_type: EngineType = EngineType.READ_AND_WRITE,
@@ -223,7 +226,7 @@ class HealthCheck:
 
     def add_alembic_check(
         self,
-        session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
+        session: scoped_session,
         alembic_ini_path: str,
         level: int = 2,
         name: str = "alembic",
@@ -259,7 +262,7 @@ class HealthCheck:
         assert version_table
 
         class _Check:
-            def __init__(self, session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]) -> None:
+            def __init__(self, session: scoped_session) -> None:
                 self.session = session
 
             def __call__(self, request: pyramid.request.Request) -> str:
@@ -503,7 +506,7 @@ class HealthCheck:
     @staticmethod
     def _create_db_engine_check(
         binding: _Binding,
-        query_cb: Callable[[sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]], None],
+        query_cb: Callable[[scoped_session], None],
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
             with binding as session:
@@ -519,8 +522,8 @@ class HealthCheck:
         return "db_engine_" + binding.name(), check
 
     @staticmethod
-    def _at_least_one(model: Any) -> Callable[[sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]], Any]:
-        def query(session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]) -> None:
+    def _at_least_one(model: Any) -> Callable[[scoped_session], Any]:
+        def query(session: scoped_session) -> None:
             result = session.query(model).first()
             if result is None:
                 raise HTTPNotFound(model.__name__ + " record not found")

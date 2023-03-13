@@ -102,7 +102,7 @@ def check_image(
         expected[mask == 0] = [255, 255, 255]
 
     score, diff = skimage.metrics.structural_similarity(
-        expected, image_to_check, multichannel=True, full=True
+        expected, image_to_check, multichannel=True, full=True, channel_axis=2
     )
     diff = (255 - diff * 255).astype("uint8")
 

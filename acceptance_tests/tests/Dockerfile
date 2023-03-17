@@ -7,12 +7,12 @@ ARG DOCKER_COMPOSE_VERSION=1.10.0
 WORKDIR /acceptance_tests
 
 ENV DOCKER_RUN=1 \
-    PYTHONPATH=/acceptance_tests
+  PYTHONPATH=/acceptance_tests
 
 # Install all Debian dependencies except nodejs which requires https transport
 RUN DOCKER_VERSION=${DOCKER_VERSION} \
-    DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION} \
-    /opt/c2cwsgiutils/install_docker.sh
+  DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION} \
+  /opt/c2cwsgiutils/install_docker.sh
 
 COPY . ./
 

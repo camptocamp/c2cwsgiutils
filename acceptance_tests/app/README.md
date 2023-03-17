@@ -1,5 +1,4 @@
-A sample application
-====================
+# A sample application
 
 This is a sample application shipped as a Docker Image.
 

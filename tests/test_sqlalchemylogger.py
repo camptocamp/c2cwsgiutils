@@ -20,7 +20,7 @@ class SqlAlchemyLoggerTests(unittest.TestCase):
             os.remove(self.dummy_db_name)
 
     def test_sqlalchemylogger_handlers(self):
-        logger_db_engine = {"url": "sqlite:///{}".format(self.dummy_db_name)}
+        logger_db_engine = {"url": f"sqlite:///{self.dummy_db_name}"}
         handler = SQLAlchemyHandler(logger_db_engine)
         test_message = "bla this is a test"
         x = logging.LogRecord(

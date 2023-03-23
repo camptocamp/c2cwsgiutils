@@ -63,18 +63,13 @@ def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
     loader.setup_logging(None)
 
 
-PyramidEnv = TypedDict(
-    "PyramidEnv",
-    {
-        "root": Any,
-        "closer": Callable[..., Any],
-        "registry": pyramid.registry.Registry,
-        "request": pyramid.request.Request,
-        "root_factory": object,
-        "app": Callable[[Dict[str, str], Any], Any],
-    },
-    total=True,
-)
+class PyramidEnv(TypedDict, total=True):
+    root: Any
+    closer: Callable[..., Any]
+    registry: pyramid.registry.Registry
+    request: pyramid.request.Request
+    root_factory: object
+    app: Callable[[Dict[str, str], Any], Any]
 
 
 def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEnv:

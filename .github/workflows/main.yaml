@@ -9,14 +9,14 @@ env:
 jobs:
   build:
     name: Continuous integration
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 15
     if: "!startsWith(github.event.head_commit.message, '[skip ci] ')"
 
     steps:
       - run: dpkg --list
       - run: pip freeze --all
-      # Remove Python packages with wrong version
+        # Remove Python packages with wrong version
       - run: sudo apt-get remove python3-debian python3-distro-info
       - run: docker system prune --all --force
       - uses: actions/checkout@v3

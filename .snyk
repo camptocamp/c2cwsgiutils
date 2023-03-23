@@ -10,4 +10,8 @@ ignore:
     - '*':
         reason: Not working with used Python version
         created: 2023-01-03T07:59:26.707Z
+  SNYK-PYTHON-SENTRYSDK-3367401:
+    - '*':
+        reason: Not working with used Python version
+        created: 2023-03-23T11:36:14.064Z
 patch: {}

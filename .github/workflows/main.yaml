@@ -4,7 +4,7 @@ on:
   push:
 
 env:
-  IN_CI: '1'
+  IN_CI: "1"
 
 jobs:
   build:

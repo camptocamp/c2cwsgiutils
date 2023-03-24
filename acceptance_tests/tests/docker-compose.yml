@@ -3,7 +3,7 @@ app:
   environment: &app_env
     SQLALCHEMY_URL: postgresql://www-data:www-data@db:5432/test
     SQLALCHEMY_URL_SLAVE: postgresql://www-data:www-data@db_slave:5432/test
-    PGOPTIONS: '-c statement_timeout=1500'
+    PGOPTIONS: "-c statement_timeout=1500"
     STATS_VIEW: 1
     STATSD_ADDRESS: ${TEST_IP}:8125
     STATSD_PREFIX: acceptance
@@ -17,7 +17,7 @@ app:
     C2C_PROFILER_PATH: /api_profiler
     C2C_PROFILER_MODULES: "c2cwsgiutils c2cwsgiutils_app sqlalchemy request"
     LOG_HOST: ${TEST_IP}
-    LOG_TYPE: 'console,logstash'
+    LOG_TYPE: "console,logstash"
     SQL_LOG_LEVEL: DEBUG
     OTHER_LOG_LEVEL: DEBUG
     COVERAGE: 1
@@ -49,7 +49,7 @@ alembic_master:
     STATSD_PREFIX: alembic_master
   links:
     - db
-  command: /bin/true  # will use execute with another script from the tests to actually do it
+  command: /bin/true # will use execute with another script from the tests to actually do it
 
 alembic_slave:
   image: camptocamp/c2cwsgiutils_test_app:latest
@@ -65,7 +65,7 @@ alembic_slave:
     STATSD_PREFIX: alembic_slave
   links:
     - db_slave:db
-  command: /bin/true  # will use execute with another script from the tests to actually do it
+  command: /bin/true # will use execute with another script from the tests to actually do it
 
 db:
   image: camptocamp/postgres:9.6
@@ -87,10 +87,9 @@ db_slave:
   ports:
     - 25432:5432
 
-
 run_test:
   image: camptocamp/c2cwsgiutils_test_app:latest
-  command: 'true'
+  command: "true"
   environment: *app_env
   links:
     - db

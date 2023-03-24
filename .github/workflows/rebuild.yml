@@ -5,7 +5,7 @@ on:
     - cron: "30 2 * * *"
 
 env:
-  IN_CI: '1'
+  IN_CI: "1"
   SUMMON_PROVIDER: /usr/local/bin/gopass
 
 jobs:

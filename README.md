@@ -1,35 +1,34 @@
 # Camptocamp WSGI utilities
 
-| branch  | CI  | static analysis |
-|---|---|---|
-| master | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c47d09a059ca410cbc325f94d7993518)](https://www.codacy.com/app/camptocamp/c2cwsgiutils?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=camptocamp/c2cwsgiutils&amp;utm_campaign=Badge_Grade) |
-| release_3 | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_3)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_3/) |
+| branch                 | CI                                                                                                                                                                               | static analysis                                                                                                                                                                                                                                           |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| master                 | [![Build master](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/master)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/master/)          | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c47d09a059ca410cbc325f94d7993518)](https://www.codacy.com/app/camptocamp/c2cwsgiutils?utm_source=github.com&utm_medium=referral&utm_content=camptocamp/c2cwsgiutils&utm_campaign=Badge_Grade) |
+| release_3              | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_3)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_3/) |
 | release_2 (deprecated) | [![Build release_1](https://ci.camptocamp.com/buildStatus/icon?job=geospatial/c2cwsgiutils/release_2)](https://ci.camptocamp.com/job/geospatial/job/c2cwsgiutils/job/release_2/) |
 
 This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
 applications:
 
-* Provide a small framework for gathering performance statistics about
+- Provide a small framework for gathering performance statistics about
   a web application (statsd protocol)
-* Allow to use a master/slave PostgresQL configuration
-* Logging handler for CEE/UDP logs
-  * An optional view to change runtime the log levels
-* SQL profiler to debug DB performance problems, disabled by default. Warning, it will slow down everything.
-* A view to get the version information about the application and the installed packages
-* A framework for implementing a health_check service
-* Error handlers to send JSON messages to the client in case of error
-* A cornice service drop in replacement for setting up CORS
+- Allow to use a master/slave PostgresQL configuration
+- Logging handler for CEE/UDP logs
+  - An optional view to change runtime the log levels
+- SQL profiler to debug DB performance problems, disabled by default. Warning, it will slow down everything.
+- A view to get the version information about the application and the installed packages
+- A framework for implementing a health_check service
+- Error handlers to send JSON messages to the client in case of error
+- A cornice service drop in replacement for setting up CORS
 
 Also provide tools for writing acceptance tests:
 
-* A class that can be used from a py.test fixture to control a
+- A class that can be used from a py.test fixture to control a
   composition
-* A class that can be used from a py.text fixture to test a REST API
+- A class that can be used from a py.text fixture to test a REST API
 
 As an example on how to use it in an application provided by a Docker image, you can look at the
 test application in [acceptance_tests/app](acceptance_tests/app).
 To see how to test such an application, look at [acceptance_tests/tests](acceptance_tests/tests).
-
 
 ## Install
 
@@ -37,6 +36,7 @@ The library is available in PYPI:
 [https://pypi.python.org/pypi/c2cwsgiutils](https://pypi.python.org/pypi/c2cwsgiutils)
 
 With pip:
+
 ```
 pip install c2cwsgiutils
 ```
@@ -46,7 +46,6 @@ Or (preferred) as a base Docker image:
 
 If you need an image with a smaller foot print, use the tags prefixed with `-light`. Those are without
 gdal and without the build tools.
-
 
 ## General config
 
@@ -62,7 +61,6 @@ A few REST APIs are added and can be seen with this URL:
 Some APIs are protected by a secret. This secret is specified in the `C2C_SECRET` variable or `c2c.secret`
 property. It is either passed as the `secret` query parameter or the `X-API-Key` header. Once
 accessed with a good secret, a cookie is stored and the secret can be omitted.
-
 
 ## Pyramid
 
@@ -92,13 +90,12 @@ in the request object (`request.client_addr`, for example). This filter is equiv
 `PasteDeploy#prefix` (minus the prefix part) does, but supports newer headers as well (`Forwarded`).
 If you need to prefix your routes, you can use the `route_prefix` parameter of the `Configurator` constructor.
 
-
 ## Logging
 
 Two new logging backends are provided:
 
-* `c2cwsgiutils.pyramid_logging.PyramidCeeSysLogHandler`: to send @cee formatted logs to syslog through UDP.
-* `c2cwsgiutils.pyramid_logging.JsonLogHandler`: to output (on stdout or stderr) JSON formatted logs.
+- `c2cwsgiutils.pyramid_logging.PyramidCeeSysLogHandler`: to send @cee formatted logs to syslog through UDP.
+- `c2cwsgiutils.pyramid_logging.JsonLogHandler`: to output (on stdout or stderr) JSON formatted logs.
 
 Look at the logging configuration part of
 [acceptance_tests/app/production.ini](acceptance_tests/app/production.ini) for a usage example.
@@ -109,14 +106,12 @@ variable. Then, the current status of a logger can be queried with a GET on
 `{C2C_BASE_PATH}/logging/level?secret={C2C_SECRET}&name={logger_name}&level={level}`. Overrides are stored in
 Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) is configured.
 
-
 ## Database maintenance
 
 You can enable a view to force usage of the slave engine using the `C2C_DB_MAINTENANCE_VIEW_ENABLED` environment
 variable. Then, the database can be made "readonly" with
 `{C2C_BASE_PATH}/db/maintenance?secret={C2C_SECRET}&readonly=true`.
 The current state is stored in Redis, if `C2C_REDIS_URL` (`c2c.redis_url`) is configured.
-
 
 ### Request tracking
 
@@ -142,26 +137,25 @@ The requests module is also patched to monitor requests done without timeout. In
 configure a default timeout with the `C2C_REQUESTS_DEFAULT_TIMEOUT` environment variable
 (`c2c.requests_default_timeout`). If no timeout and no default is specified, a warning is issued.
 
-
 ## Metrics
 
 To enable and configure the metrics framework, you can use:
 
-* STATS_VIEW (c2c.stats_view): if defined, will enable the stats view `{C2C_BASE_PATH}/stats.json`
-* STATSD_ADDRESS (c2c.statsd_address): if defined, send stats to the given statsd server
-* STATSD_PREFIX (c2c.statsd_prefix): prefix to add to every metric names
-* STATSD_USE_TAGS: If true, automatic metrics will use tags
-* STATSD_TAG_{tag_name}: To set a global tag for the service
+- STATS_VIEW (c2c.stats_view): if defined, will enable the stats view `{C2C_BASE_PATH}/stats.json`
+- STATSD_ADDRESS (c2c.statsd_address): if defined, send stats to the given statsd server
+- STATSD_PREFIX (c2c.statsd_prefix): prefix to add to every metric names
+- STATSD_USE_TAGS: If true, automatic metrics will use tags
+- STATSD*TAG*{tag_name}: To set a global tag for the service
 
 If enabled, some metrics are automatically generated:
 
-* {STATSD_PREFIX}.route.{verb}.{route_name}.{status}: The time to process a query (includes rendering)
-* {STATSD_PREFIX}.render.{verb}.{route_name}.{status}: The time to render a query
-* {STATSD_PREFIX}.sql.{query}: The time to execute the given SQL query (simplified and normalized)
-* {STATSD_PREFIX}.requests.{scheme}.{hostname}.{port}.{verb}.{status}: The time to execute HTTP requests to
-   outside services (only the time between the start of sending of the request and when the header is
-   back with a chunk of the body)
-* {STATSD_PREFIX}.redis.{command}: The time to execute the given Redis command
+- {STATSD_PREFIX}.route.{verb}.{route_name}.{status}: The time to process a query (includes rendering)
+- {STATSD_PREFIX}.render.{verb}.{route_name}.{status}: The time to render a query
+- {STATSD_PREFIX}.sql.{query}: The time to execute the given SQL query (simplified and normalized)
+- {STATSD_PREFIX}.requests.{scheme}.{hostname}.{port}.{verb}.{status}: The time to execute HTTP requests to
+  outside services (only the time between the start of sending of the request and when the header is
+  back with a chunk of the body)
+- {STATSD_PREFIX}.redis.{command}: The time to execute the given Redis command
 
 You can manually measure the time spent on something like that:
 
@@ -184,7 +178,6 @@ Other functions exists to generate metrics. Look at the `c2cwsgiutils.stats` mod
 Look at the `c2cwsgiutils_stats_db.py` utility if you want to generate statistics (gauges) about the
 row counts.
 
-
 ## SQL profiler
 
 The SQL profiler must be configured with the `C2C_SQL_PROFILER_ENABLED` environment variable. That enables a view
@@ -195,7 +188,6 @@ If enabled, for each `SELECT` query sent by SQLAlchemy, another query it done wi
 prepended to it. The results are sent to the `c2cwsgiutils.sql_profiler` logger.
 
 Don't enable that on a busy production system. It will kill your performances.
-
 
 ## Profiler
 
@@ -208,7 +200,6 @@ The profiler, even if configured, is actually disabled when the application star
 visit its page.
 
 If you want to use this feature, you must have the `linesman` package installed.
-
 
 ## DB sessions
 
@@ -244,7 +235,6 @@ def init(config):
 You can use the `force_slave` and `force_master` parameters to override the defaults and force a route to use
 the master or the slave engine.
 
-
 ## Health checks
 
 To enable health checks, you must add some setup in your WSGI main (usually after the DB connections are
@@ -271,46 +261,47 @@ looking like that (in case of error):
 
 ```json
 {
-    "status": 500,
-    "successes": {
-        "db_engine_sqlalchemy": {"timing": 0.002},
-        "db_engine_sqlalchemy_slave": {"timing": 0.003},
-        "http://localhost/api/hello": {"timing": 0.010},
-        "alembic_app_alembic.ini_alembic": {"timing": 0.005, "result": "4a8c1bb4e775"}
-    },
-    "failures": {
-        "custom": {
-            "message": "I'm not happy",
-            "timing": 0.001
-        }
+  "status": 500,
+  "successes": {
+    "db_engine_sqlalchemy": { "timing": 0.002 },
+    "db_engine_sqlalchemy_slave": { "timing": 0.003 },
+    "http://localhost/api/hello": { "timing": 0.01 },
+    "alembic_app_alembic.ini_alembic": {
+      "timing": 0.005,
+      "result": "4a8c1bb4e775"
     }
+  },
+  "failures": {
+    "custom": {
+      "message": "I'm not happy",
+      "timing": 0.001
+    }
+  }
 }
 ```
 
 The levels are:
 
-* 0: Don't add checks at this level. This max_level is used for doing a simple ping.
-* 1: Checks for anything vital for the usefulness of the service (DB, redis, ...). This is the max_level set
-     by default and used by load balancers to determine if the service is alive.
-* \>=2: Use those at your convenience. Pingdom and CO are usually setup at max_level=100. So stay below.
+- 0: Don't add checks at this level. This max_level is used for doing a simple ping.
+- 1: Checks for anything vital for the usefulness of the service (DB, redis, ...). This is the max_level set
+  by default and used by load balancers to determine if the service is alive.
+- \>=2: Use those at your convenience. Pingdom and CO are usually setup at max_level=100. So stay below.
 
 The URL `{C2C_BASE_PATH}/health_check?checks=<check_name>` can be used to run the health checks on some
 checks, coma separated list.
 
 When you instanciate the `HealthCheck` class, two checks may be automatically enabled:
 
-* If redis is configured, check that redis is reachable.
-* If redis is configured and the version information is available, check that the version matches
+- If redis is configured, check that redis is reachable.
+- If redis is configured and the version information is available, check that the version matches
   accross all instances.
 
 Look at the documentation of the `c2cwsgiutils.health_check.HealthCheck` class for more information.
-
 
 ## SQLAlchemy models graph
 
 A command is provided that can generate Doxygen graphs of an SQLAlchemy ORM model.
 See [acceptance_tests/app/models_graph.py](acceptance_tests/app/models_graph.py) how it's used.
-
 
 ## Version information
 
@@ -318,13 +309,13 @@ If the `/app/versions.json` exists, a view is added (`{C2C_BASE_PATH}/versions.j
 version of a app. This file is generated by calling the `c2cwsgiutils_genversion.py [$GIT_TAG] $GIT_HASH`
 command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) of the WSGI application.
 
-
 ## Metrics
 
 The path `/metrics` provide some metrics for Prometheus.
 By default we have the `smap` `pss`, but we can easly add the `rss`, `size` or your custom settings:
 
 Example:
+
 ```
 from import c2cwsgiutils.metrics import add_provider, Provider, MemoryMapProvider
 
@@ -339,38 +330,38 @@ add_provider(MemoryMapProvider('rss'))
 add_provider(CustomProvider())
 ```
 
-
 ## Debugging
 
 To enable the debugging interface, you must set the `C2C_DEBUG_VIEW_ENABLED` environment variable. Then you can
 have dumps of a few things:
 
-* every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={C2C_SECRET}`
-* memory usage: `{C2C_BASE_PATH}/debug/memory?secret={C2C_SECRET}&limit=30&analyze_type=builtins.dict&python_internals_map=false`
-* object ref: `{C2C_BASE_PATH}/debug/show_refs.dot?secret={C2C_SECRET}&analyze_type=gunicorn.app.wsgiapp.WSGIApplication&analyze_id=12345&max_depth=3&too_many=10&filter=1024&no_extra_info&backrefs`
+- every threads' stacktrace: `{C2C_BASE_PATH}/debug/stacks?secret={C2C_SECRET}`
+- memory usage: `{C2C_BASE_PATH}/debug/memory?secret={C2C_SECRET}&limit=30&analyze_type=builtins.dict&python_internals_map=false`
+- object ref: `{C2C_BASE_PATH}/debug/show_refs.dot?secret={C2C_SECRET}&analyze_type=gunicorn.app.wsgiapp.WSGIApplication&analyze_id=12345&max_depth=3&too_many=10&filter=1024&no_extra_info&backrefs`
   `analyze_type` and `analyze_id` should not ve used toogether, you can use it like:
   ```
   curl "<URL>" > /tmp/show_refs.dot
   dot -Lg -Tpng /tmp/show_refs.dot > /tmp/show_refs.png
   ```
-* memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff?path={path_info}&secret={C2C_SECRET}&limit=30&no_warmup`
-* sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={C2C_SECRET}&time=60.2`
-* see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={C2C_SECRET}&status=500`
-* return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={C2C_SECRET}&status=500`
+- memory increase when calling another API: `{C2C_BASE_PATH}/debug/memory_diff?path={path_info}&secret={C2C_SECRET}&limit=30&no_warmup`
+- sleep the given number of seconds (to test load balancer timeouts): `{C2C_BASE_PATH}/debug/sleep?secret={C2C_SECRET}&time=60.2`
+- see the HTTP headers received by WSGI: `{C2C_BASE_PATH}/debug/headers?secret={C2C_SECRET}&status=500`
+- return an HTTP error: `{C2C_BASE_PATH}/debug/error?secret={C2C_SECRET}&status=500`
 
 It is possible to automatically reload gunicorn as soon as you change your local python code. For this you need
 to have a specially tweaked `docker-compose.yml`:
+
 ```yml
 services:
   api:
     environment:
-      GUNICORN_PARAMS: '-b :80 --threads 10 --timeout 60 --reload'
+      GUNICORN_PARAMS: "-b :80 --threads 10 --timeout 60 --reload"
   volumes:
     - ./api/somepath:/app/somepath:ro
 ```
-The GUNICORN\_PARAMS has the `--reload` parameter and your local python code is
-mounted (read only) into the container.
 
+The GUNICORN_PARAMS has the `--reload` parameter and your local python code is
+mounted (read only) into the container.
 
 ### Broadcast
 
@@ -380,19 +371,18 @@ can configure c2cwsgiutils to use Redis pub/sub to broadcast those requests and 
 
 The impacted APIs are:
 
-* `{C2C_BASE_PATH}/debug/stacks`
-* `{C2C_BASE_PATH}/debug/memory`
-* `{C2C_BASE_PATH}/logging/level`
-* `{C2C_BASE_PATH}/sql_profiler`
+- `{C2C_BASE_PATH}/debug/stacks`
+- `{C2C_BASE_PATH}/debug/memory`
+- `{C2C_BASE_PATH}/logging/level`
+- `{C2C_BASE_PATH}/sql_profiler`
 
 The configuration parameters are:
 
-* `C2C_REDIS_URL` (`c2c.redis_url`): The URL to the Redis instance to use
-* `C2C_BROADCAST_PREFIX` (`c2c.broadcast_prefix`): The prefix to add to the channels being used (must be
+- `C2C_REDIS_URL` (`c2c.redis_url`): The URL to the Redis instance to use
+- `C2C_BROADCAST_PREFIX` (`c2c.broadcast_prefix`): The prefix to add to the channels being used (must be
   different for 2 different services)
 
 If not configured, only the process receiving the request is impacted.
-
 
 ## CORS
 
@@ -407,7 +397,6 @@ def hello_get(request):
     return {'hello': True}
 ```
 
-
 # Exception handling
 
 By default, c2cwsgiutils will install exception handling views that will catch any exception raised by the
@@ -419,6 +408,7 @@ In development mode (`DEVELOPMENT=1`), all the details (SQL statement, stacktrac
 client. In production mode, you can still get them by sending the secret defined in `C2C_SECRET` in the query.
 
 If you want to use pyramid_debugtoolbar, you need to disable exception handling and configure it like that:
+
 ```
 pyramid.includes =
     pyramid_debugtoolbar
@@ -429,21 +419,19 @@ debugtoolbar.show_on_exc_only = true
 c2c.disable_exception_handling = 1
 ```
 
-
 # JSON pretty print
 
 Two JSON renderers are available:
 
-* `json`: the normal JSON renderer (default)
-* `fast_json`: a faster JSON renderer
-is tuned differently.
+- `json`: the normal JSON renderer (default)
+- `fast_json`: a faster JSON renderer
+  is tuned differently.
 
 Both pretty prints the rendered JSON. While this adds significant amount of whitespace, the difference in
 bytes transmitted on the network is negligible thanks to gzip compression.
 
 The `fast_json` renderer is using ujson which is faster, but doesn't offer the ability to change the rendering
 of some types (the `default` parameter of json.dumps). This will interact badly with `papyrus` and such.
-
 
 ## Sentry integration
 
@@ -452,14 +440,13 @@ The stacktraces can be sent to a sentry.io service for collection. To enable it,
 
 A few other environment variables can be used to tune the info sent with each report:
 
-* `SENTRY_EXCLUDES` (`c2c.sentry.excludes`): list of loggers (colon separated, without spaces) to exclude for sentry
-* `GIT_HASH` (`c2c.git_hash`): will be used for the release
-* `SENTRY_CLIENT_RELEASE`: If not equal to "latest", will be taken for the release instead of the GIT_HASH
-* `SENTRY_CLIENT_ENVIRONMENT`: the environment (dev, int, prod, ...)
-* `SENTRY_CLIENT_IGNORE_EXCEPTIONS`: list (coma separated) of exceptions to ignore (defaults to SystemExit)
-* `SENTRY_TAG_...`: to add other custom tags
-* `SENTRY_LEVEL`: starting from what logging level to send events to Sentry (defaults to ERROR)
-
+- `SENTRY_EXCLUDES` (`c2c.sentry.excludes`): list of loggers (colon separated, without spaces) to exclude for sentry
+- `GIT_HASH` (`c2c.git_hash`): will be used for the release
+- `SENTRY_CLIENT_RELEASE`: If not equal to "latest", will be taken for the release instead of the GIT_HASH
+- `SENTRY_CLIENT_ENVIRONMENT`: the environment (dev, int, prod, ...)
+- `SENTRY_CLIENT_IGNORE_EXCEPTIONS`: list (coma separated) of exceptions to ignore (defaults to SystemExit)
+- `SENTRY_TAG_...`: to add other custom tags
+- `SENTRY_LEVEL`: starting from what logging level to send events to Sentry (defaults to ERROR)
 
 # Developer info
 
@@ -478,18 +465,18 @@ make
 
 Make sure you are strict with the version numbers:
 
-* bug fix version change: Nothing added, removed or changed in the API and only bug fix
+- bug fix version change: Nothing added, removed or changed in the API and only bug fix
   version number changes in the dependencies
-* minor version change: The API must remain backward compatible and only minor version
+- minor version change: The API must remain backward compatible and only minor version
   number changes in the dependencies
-* major version change: The API and the dependencies are not backward compatible
+- major version change: The API and the dependencies are not backward compatible
 
 To make a release:
 
-* Change the the version in [setup.py](setup.py).
-* Commit and push to master.
-* Tag the GIT commit.
-* Rebase the `release_${MAJOR_VERSION}` branch to this commit and push the `release_${MAJOR_VERSION}` and
+- Change the the version in [setup.py](setup.py).
+- Commit and push to master.
+- Tag the GIT commit.
+- Rebase the `release_${MAJOR_VERSION}` branch to this commit and push the `release_${MAJOR_VERSION}` and
   the tag to github. Make sure to do that at the same time so that Jenkins can see the tag when it builds
   the branch.
 

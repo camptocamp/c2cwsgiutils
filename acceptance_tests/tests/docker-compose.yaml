@@ -1,4 +1,4 @@
-version: '2.2'
+version: "2.2"
 
 services:
   app:
@@ -32,8 +32,8 @@ services:
       PYTHONMALLOC: debug
       GUNICORN_PARAMS: -b :8080 --worker-class gthread --threads 10 --workers 1
       # Test problematic environment variable (values contains % and duplicated with different cass)
-      TEST: '%1'
-      test: '%2'
+      TEST: "%1"
+      test: "%2"
     links:
       - db
       - db_slave
@@ -55,7 +55,7 @@ services:
       STATSD_PREFIX: alembic_master
     links:
       - db
-    command: /bin/true  # will use execute with another script from the tests to actually do it
+    command: /bin/true # will use execute with another script from the tests to actually do it
 
   alembic_slave:
     image: camptocamp/c2cwsgiutils_test_app
@@ -71,7 +71,7 @@ services:
       STATSD_PREFIX: alembic_slave
     links:
       - db_slave:db
-    command: /bin/true  # will use execute with another script from the tests to actually do it
+    command: /bin/true # will use execute with another script from the tests to actually do it
 
   db:
     image: camptocamp/postgres:12
@@ -93,26 +93,22 @@ services:
     ports:
       - 25432:5432
 
-
   run_test:
     image: camptocamp/c2cwsgiutils_test_app
-    command: 'true'
+    command: "true"
     environment: *app_env
     links:
       - db
       - redis
 
-
   redis_master:
     image: redis:5
-
 
   redis_slave:
     image: redis:5
     command: redis-server --slaveof redis_master 6379
     depends_on:
       - redis_master
-
 
   # Sentinel
   redis:

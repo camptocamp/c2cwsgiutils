@@ -64,6 +64,8 @@ def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
 
 
 class PyramidEnv(TypedDict, total=True):
+    """The return type of the bootstrap functions."""
+
     root: Any
     closer: Callable[..., Any]
     registry: pyramid.registry.Registry

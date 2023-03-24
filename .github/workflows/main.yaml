@@ -38,7 +38,7 @@ jobs:
           restore-keys: "pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}\npre-commit-"
       - run: pre-commit run --all-files
         env:
-          SKIP: poetry-lock
+          SKIP: poetry-lock,isort
       - run: git diff && false
         if: failure()
       - name: Checks

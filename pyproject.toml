@@ -3,8 +3,6 @@ line-length = 110
 target-version = ['py310']
 
 [tool.isort]
-known_third_party = "pyramid2"
-known_first_party = "c2cwsgiutils"
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = false

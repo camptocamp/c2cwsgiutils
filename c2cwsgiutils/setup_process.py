@@ -13,10 +13,9 @@ import pyramid.config
 import pyramid.registry
 import pyramid.request
 import pyramid.router
+from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler, stats
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
-
-from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler, stats
 
 
 def fill_arguments(
@@ -63,18 +62,15 @@ def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
     loader.setup_logging(None)
 
 
-PyramidEnv = TypedDict(
-    "PyramidEnv",
-    {
-        "root": Any,
-        "closer": Callable[..., Any],
-        "registry": pyramid.registry.Registry,
-        "request": pyramid.request.Request,
-        "root_factory": object,
-        "app": Callable[[Dict[str, str], Any], Any],
-    },
-    total=True,
-)
+class PyramidEnv(TypedDict, total=True):
+    """The return type of the bootstrap functions."""
+
+    root: Any
+    closer: Callable[..., Any]
+    registry: pyramid.registry.Registry
+    request: pyramid.request.Request
+    root_factory: object
+    app: Callable[[Dict[str, str], Any], Any]
 
 
 def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEnv:

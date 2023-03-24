@@ -3,9 +3,8 @@ from typing import Any, Callable, Dict, Optional
 import pyramid.config
 import pyramid.events
 import pyramid.request
-from pyramid.httpexceptions import HTTPException
-
 from c2cwsgiutils import stats
+from pyramid.httpexceptions import HTTPException
 
 
 def _add_server_metric(

@@ -665,3 +665,12 @@ To make a release:
 - Tag the GIT commit.
 - Add the new branch name in the `.github/workflows/rebuild.yaml` and
   `.github/workflows/audit.yaml` files.
+
+## Contributing
+
+Install the pre-commit hooks:
+
+```bash
+pip install pre-commit
+pre-commit install --allow-missing-config
+```

@@ -3,7 +3,6 @@ import warnings
 from typing import Any, Mapping, Optional, cast
 
 import pyramid.request
-
 from c2cwsgiutils import auth, broadcast, config_utils, db, redis_utils
 
 LOG = logging.getLogger(__name__)

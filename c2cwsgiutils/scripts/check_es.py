@@ -9,11 +9,10 @@ import uuid
 import warnings
 from typing import Any, List, Optional
 
-import requests.exceptions
-from dateutil import parser as dp
-
 import c2cwsgiutils.setup_process
+import requests.exceptions
 from c2cwsgiutils import stats
+from dateutil import parser as dp
 
 
 def _ensure_slash(txt: Optional[str]) -> Optional[str]:

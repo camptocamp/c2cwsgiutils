@@ -11,7 +11,6 @@ from typing import Any, Mapping, Set
 import pyramid.request
 import sqlalchemy.engine
 import sqlalchemy.event
-
 from c2cwsgiutils import auth, broadcast, config_utils
 
 LOG = logging.getLogger(__name__)

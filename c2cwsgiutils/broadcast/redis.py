@@ -7,7 +7,6 @@ import time
 from typing import Any, Callable, List, Mapping, Optional
 
 import redis
-
 from c2cwsgiutils.broadcast import interface, local, utils
 
 LOG = logging.getLogger(__name__)

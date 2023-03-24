@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pyramid.request
 import pyramid.response
-
 from c2cwsgiutils.debug.utils import dump_memory_maps
 
 

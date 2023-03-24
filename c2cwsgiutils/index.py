@@ -7,9 +7,6 @@ import jwt
 import pyramid.config
 import pyramid.request
 import pyramid.response
-from pyramid.httpexceptions import HTTPFound
-from requests_oauthlib import OAuth2Session
-
 from c2cwsgiutils import config_utils
 from c2cwsgiutils.auth import (
     GITHUB_AUTH_COOKIE_ENV,
@@ -41,6 +38,8 @@ from c2cwsgiutils.auth import (
     is_auth_user,
 )
 from c2cwsgiutils.config_utils import env_or_settings
+from pyramid.httpexceptions import HTTPFound
+from requests_oauthlib import OAuth2Session
 
 LOG = logging.getLogger(__name__)
 

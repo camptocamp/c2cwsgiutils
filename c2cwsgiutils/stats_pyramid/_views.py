@@ -1,7 +1,6 @@
 from typing import cast
 
 import pyramid.config
-
 from c2cwsgiutils import config_utils, stats
 
 

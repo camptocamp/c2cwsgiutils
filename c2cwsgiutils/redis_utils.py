@@ -3,12 +3,11 @@ import threading
 import time
 from typing import Any, Mapping, Optional, Tuple
 
+import c2cwsgiutils.config_utils
 import redis.client
 import redis.exceptions
 import redis.sentinel
 import yaml
-
-import c2cwsgiutils.config_utils
 
 LOG = logging.getLogger(__name__)
 

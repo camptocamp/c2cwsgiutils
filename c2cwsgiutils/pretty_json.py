@@ -3,10 +3,9 @@ from typing import Any
 
 import pyramid.config
 import ujson
+from c2cwsgiutils.config_utils import config_bool, env_or_config
 from cornice.renderer import CorniceRenderer
 from pyramid.renderers import JSON
-
-from c2cwsgiutils.config_utils import config_bool, env_or_config
 
 
 class _FastDumps:

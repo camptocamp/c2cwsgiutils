@@ -1,6 +1,8 @@
 import logging
 
 import requests
+from c2cwsgiutils import sentry, services
+from c2cwsgiutils.stats import increment_counter, set_gauge, timer_context
 from pyramid.httpexceptions import (
     HTTPBadRequest,
     HTTPForbidden,
@@ -9,8 +11,6 @@ from pyramid.httpexceptions import (
     HTTPUnauthorized,
 )
 
-from c2cwsgiutils import sentry, services
-from c2cwsgiutils.stats import increment_counter, set_gauge, timer_context
 from c2cwsgiutils_app import models
 
 ping_service = services.create("ping", "/ping")

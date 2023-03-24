@@ -18,3 +18,4 @@ zope.interface==5.1.2
 zope.sqlalchemy==1.3
 markupsafe==2.0.1
 certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=1.26.5 # not directly required, pinned by Snyk to avoid a vulnerability

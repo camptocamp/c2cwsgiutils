@@ -6,7 +6,6 @@ import traceback
 from typing import Any, Dict, List, Mapping, Optional, Tuple, cast
 
 import objgraph
-
 from c2cwsgiutils import broadcast
 from c2cwsgiutils.debug.utils import get_size
 

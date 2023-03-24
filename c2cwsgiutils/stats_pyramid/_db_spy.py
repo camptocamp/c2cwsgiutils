@@ -3,10 +3,9 @@ import re
 from typing import Any, Callable, Dict, Optional
 
 import sqlalchemy.event
+from c2cwsgiutils import stats
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.orm import Session
-
-from c2cwsgiutils import stats
 
 LOG = logging.getLogger(__name__)
 

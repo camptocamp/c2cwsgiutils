@@ -6,13 +6,12 @@ from typing import Any, Callable, Generator, MutableMapping, Optional
 
 import pyramid.config
 import sentry_sdk
+from c2cwsgiutils import config_utils
 from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
 from sentry_sdk.integrations.pyramid import PyramidIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sentry_sdk.integrations.wsgi import SentryWsgiMiddleware
-
-from c2cwsgiutils import config_utils
 
 LOG = logging.getLogger(__name__)
 _client_setup = False

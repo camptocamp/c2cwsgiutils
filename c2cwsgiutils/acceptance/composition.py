@@ -7,9 +7,8 @@ import warnings
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 import netifaces
-from pyramid.request import Request
-
 from c2cwsgiutils.acceptance import utils
+from pyramid.request import Request
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(

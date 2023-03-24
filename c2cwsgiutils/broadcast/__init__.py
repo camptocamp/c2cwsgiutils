@@ -5,7 +5,6 @@ import warnings
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 import pyramid.config
-
 from c2cwsgiutils import config_utils, redis_utils
 from c2cwsgiutils.broadcast import interface, local, redis
 

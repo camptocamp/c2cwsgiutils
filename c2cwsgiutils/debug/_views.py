@@ -10,10 +10,9 @@ import objgraph
 import pyramid.config
 import pyramid.request
 import pyramid.response
-from pyramid.httpexceptions import HTTPException, exception_response
-
 from c2cwsgiutils import auth, broadcast, config_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
+from pyramid.httpexceptions import HTTPException, exception_response
 
 LOG = logging.getLogger(__name__)
 SPACE_RE = re.compile(r" +")

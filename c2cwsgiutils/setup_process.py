@@ -13,10 +13,9 @@ import pyramid.config
 import pyramid.registry
 import pyramid.request
 import pyramid.router
+from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler, stats
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
-
-from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler, stats
 
 
 def fill_arguments(

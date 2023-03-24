@@ -3,7 +3,6 @@ import logging
 import cornice
 import pyramid.config
 import pyramid_tm
-
 from c2cwsgiutils import (
     broadcast,
     coverage_setup,

@@ -3,7 +3,6 @@ import os
 
 import psycopg2
 import pytest
-
 from c2cwsgiutils.acceptance import utils
 from c2cwsgiutils.acceptance.composition import Composition
 from c2cwsgiutils.acceptance.connection import Connection

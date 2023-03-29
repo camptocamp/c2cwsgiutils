@@ -18,4 +18,8 @@ ignore:
     - '*':
         reason: Not working with used Python version
         created: 2023-03-28T05:58:42.236Z
+  SNYK-PYTHON-WHEEL-3180413:
+    - '*':
+        reason: Not working with used Python version
+        created: 2023-03-29T06:11:00.728Z
 patch: {}

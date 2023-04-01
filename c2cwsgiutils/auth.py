@@ -98,7 +98,6 @@ def _is_auth_secret(request: pyramid.request.Request) -> bool:
 
 
 def _is_auth_user_github(request: pyramid.request.Request) -> Tuple[bool, UserDetails]:
-
     settings = request.registry.settings
     cookie = request.cookies.get(
         env_or_settings(

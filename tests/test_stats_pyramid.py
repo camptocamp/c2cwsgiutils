@@ -2,7 +2,6 @@ from c2cwsgiutils.stats_pyramid._db_spy import _simplify_sql as simplify_sql  # 
 
 
 def test_simplify_sql():
-
     assert simplify_sql("SELECT a FROM xxx WHERE b IN (1, 2, 3)") == "SELECT FROM xxx WHERE b IN (?)"
 
     assert (

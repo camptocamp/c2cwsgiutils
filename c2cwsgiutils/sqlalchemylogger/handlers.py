@@ -75,7 +75,7 @@ class SQLAlchemyHandler(logging.Handler):
         try:
             self.session.bulk_save_objects(logs)
             self.session.commit()
-        except (SQLAlchemyError):
+        except SQLAlchemyError:
             try:
                 self.create_db()
                 self.session.rollback()

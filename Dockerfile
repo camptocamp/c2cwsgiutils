@@ -95,6 +95,8 @@ ENV C2C_BASE_PATH=/c2c \
 
 CMD ["/usr/local/bin/gunicorn"]
 
+COPY production.ini /app/
+
 FROM base-lint as tests
 
 WORKDIR /opt/c2cwsgiutils
@@ -105,7 +107,5 @@ ARG VERSION=dev
 RUN --mount=type=cache,target=/root/.cache \
   POETRY_DYNAMIC_VERSIONING_BYPASS=${VERSION} python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m pip freeze > /requirements.txt
-
-WORKDIR /opt/c2cwsgiutils
 
 FROM base as standard

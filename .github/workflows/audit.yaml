@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         branch:
-          - release_2
-          - release_3
-          - release_4
+          - '2'
+          - '3'
+          - '4'
           - '5.0'
           - '5.1'
           - '5.2'
@@ -53,7 +53,7 @@ jobs:
         run: ~/.venv/bin/c2cciutils-audit --branch=${{ matrix.branch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GOPASS_CI_GITHUB_TOKEN }}
-      - name: Audit Snyk debug
+      - name: Audit
         run: ~/.venv/bin/c2cciutils-audit --branch=${{ matrix.branch }} || true
         if: failure()
         env:

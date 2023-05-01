@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b95dcc68acd74e6af9e7f0892de087cb7a70e12298fffabbf7f1c5c17a4ba9d2"
+            "sha256": "deb613b9c8127f109e39298d7505c7eff2adbf36c5780da77d6ef39be7ffbb8e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -92,11 +92,11 @@
     "develop": {
         "astroid": {
             "hashes": [
-                "sha256:a1fbaad9d3e5f2eeb8e3a1d1d6008a081b1aac33ef86ff7742ae0714d92e9cf2",
-                "sha256:b573ed96112061150eade70851c277a92fba544812b781836ab16fedbbddb497"
+                "sha256:86b0a340a512c65abf4368b80252754cda17c02cdbbd3f587dddf98112233e7b",
+                "sha256:bb24615c77f4837c707669d16907331374ae8a964650a66999da3f5ca68dc946"
             ],
             "index": "pypi",
-            "version": "==2.12.14"
+            "version": "==2.11.7"
         },
         "bandit": {
             "hashes": [
@@ -380,11 +380,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:9df0d07e8948a1c3ffa3b6e2d7e6e63d9fb457c5da5b961ed63106594780cc7e",
-                "sha256:b3dc5ef7d33858f297ac0d06cc73862f01e4f2e74025ec3eff347ce0bc60baf5"
+                "sha256:487ce2192eee48211269a0e976421f334cf94de1806ca9d0a99449adcdf0285e",
+                "sha256:fabe30000de7d07636d2e82c9a518ad5ad7908590fe135ace169b44839c15f90"
             ],
             "index": "pypi",
-            "version": "==2.15.10"
+            "version": "==2.14.5"
         },
         "pylint-celery": {
             "hashes": [
@@ -474,7 +474,7 @@
                 "sha256:2d11b9b8dd03868f09b4fffadc84a6a8cda574e40dc90821bd845720ebb8e89c",
                 "sha256:69cdf53799e63f38b95b9bf9c875f8c90e78dd62b2f00c13a911c7a3b9fa4704"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_full_version >= '3.7.0'",
             "version": "==13.3.5"
         },
         "setoptconf-tmp": {
@@ -484,6 +484,14 @@
             ],
             "index": "pypi",
             "version": "==0.3.1"
+        },
+        "setuptools": {
+            "hashes": [
+                "sha256:d0b9a8433464d5800cbe05094acf5c6d52a91bfac9b52bcfc4d41382be5d5d31",
+                "sha256:e197a19aa8ec9722928f2206f8de752def0e4c9fc6953527360d1c36d94ddb2f"
+            ],
+            "index": "pypi",
+            "version": "==65.5.1"
         },
         "smmap": {
             "hashes": [

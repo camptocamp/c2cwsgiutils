@@ -43,7 +43,7 @@ You should install `c2cwsgiutils` with the tool you use to manage your pip depen
 
 In the `Dockerfile` you should add the following lines:
 
-```
+```dockerfile
 # Generate the version file.
 RUN c2cwsgiutils-genversion $(git rev-parse HEAD)
 
@@ -51,20 +51,20 @@ CMD ["gunicorn", "--paste=/app/production.ini"]
 
 # Default values for the environment variables
 ENV \
-    DEVELOPMENT=0 \
-    SQLALCHEMY_POOL_RECYCLE=30 \
-    SQLALCHEMY_POOL_SIZE=5 \
-    SQLALCHEMY_MAX_OVERFLOW=25 \
-    SQLALCHEMY_SLAVE_POOL_RECYCLE=30 \
-    SQLALCHEMY_SLAVE_POOL_SIZE=5 \
-    SQLALCHEMY_SLAVE_MAX_OVERFLOW=25\
-    LOG_TYPE=console \
-    OTHER_LOG_LEVEL=WARNING \
-    GUNICORN_LOG_LEVEL=WARNING \
-    GUNICORN_ACCESS_LOG_LEVEL=INFO \
-    SQL_LOG_LEVEL=WARNING \
-    C2CWSGIUTILS_LOG_LEVEL=WARNING \
-    LOG_LEVEL=INFO
+  DEVELOPMENT=0 \
+  SQLALCHEMY_POOL_RECYCLE=30 \
+  SQLALCHEMY_POOL_SIZE=5 \
+  SQLALCHEMY_MAX_OVERFLOW=25 \
+  SQLALCHEMY_SLAVE_POOL_RECYCLE=30 \
+  SQLALCHEMY_SLAVE_POOL_SIZE=5 \
+  SQLALCHEMY_SLAVE_MAX_OVERFLOW=25\
+  LOG_TYPE=console \
+  OTHER_LOG_LEVEL=WARNING \
+  GUNICORN_LOG_LEVEL=WARNING \
+  GUNICORN_ACCESS_LOG_LEVEL=INFO \
+  SQL_LOG_LEVEL=WARNING \
+  C2CWSGIUTILS_LOG_LEVEL=WARNING \
+  LOG_LEVEL=INFO
 ```
 
 Add in your `main` function.
@@ -461,12 +461,85 @@ command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) 
 ## Metrics
 
 The path `/metrics` provide some metrics for Prometheus.
-By default we have the `smap` `pss`, but we can easily add the `rss`, `size` or your custom settings:
+By default we have the `smap` `pss`, but we can easily add the `rss`, `size`:
 
-Example:
-
+```python
+from import c2cwsgiutils.metrics import add_provider, MemoryMapProvider
+add_provider(MemoryMapProvider('rss'))
 ```
-from import c2cwsgiutils.metrics import add_provider, Provider, MemoryMapProvider
+
+### gauge
+
+Just provide a value:
+
+```python
+from import c2cwsgiutils.metrics import add_provider, Gauge
+
+gauge = Gauge('my_gauge', 'My Gauge')
+add_provider(gauge)
+
+gauge_value = counter.get_value({"label": "value"})
+gauge_value.set_value(42)
+```
+
+### counter
+
+Manually count:
+
+```python
+from import c2cwsgiutils.metrics import add_provider, Counter
+
+counter = Counter('my_counter', 'My Counter')
+add_provider(counter)
+
+counter_value = counter.get_value({"label": "value"})
+counter_value.inc()
+```
+
+Count the number of call:
+
+```python
+from import c2cwsgiutils.metrics import add_provider, Counter
+
+counter = Counter('my_counter', 'My Counter')
+add_provider(counter)
+
+counter_value1 = counter.get_value({"label": "value1"})
+counter_value2 = counter.get_value({"label": "value2"})
+
+@counter_value1.count()
+def my_function():
+    ...
+
+with counter_value2.count():
+    ...
+```
+
+Get the elapsed time on call:
+
+```python
+from import c2cwsgiutils.metrics import add_provider, Counter
+
+counter = Counter('my_counter', 'My Counter')
+add_provider(counter)
+
+counter_value1 = counter.get_value({"label": "value1"})
+counter_value2 = counter.get_value({"label": "value2"})
+
+@counter_value1.timer()
+def my_function():
+    ...
+
+with counter_value2.timer():
+    ...
+```
+
+### custom provider
+
+Create a custom provider (get the data on the fly):
+
+```python
+from import c2cwsgiutils.metrics import add_provider, Provider
 
 class CustomProvider(Provider):
     def __init__(self):
@@ -475,7 +548,6 @@ class CustomProvider(Provider):
     def get_data(self):
         return [({'metadata_key': 'matadata_value'}, metrics_value)]
 
-add_provider(MemoryMapProvider('rss'))
 add_provider(CustomProvider())
 ```
 
@@ -531,7 +603,7 @@ have dumps of a few things:
 - memory usage: `{C2C_BASE_PATH}/debug/memory?secret={C2C_SECRET}&limit=30&analyze_type=builtins.dict&python_internals_map=false`
 - object ref: `{C2C_BASE_PATH}/debug/show_refs.dot?secret={C2C_SECRET}&analyze_type=gunicorn.app.wsgiapp.WSGIApplication&analyze_id=12345&max_depth=3&too_many=10&filter=1024&no_extra_info&backrefs`
   `analyze_type` and `analyze_id` should not ve used toogether, you can use it like:
-  ```
+  ```bash
   curl "<URL>" > /tmp/show_refs.dot
   dot -Lg -Tpng /tmp/show_refs.dot > /tmp/show_refs.png
   ```
@@ -592,7 +664,7 @@ client. In production mode, you can still get them by sending the secret defined
 
 If you want to use pyramid_debugtoolbar, you need to disable exception handling and configure it like that:
 
-```
+```ini
 pyramid.includes =
     pyramid_debugtoolbar
 debugtoolbar.enabled = true

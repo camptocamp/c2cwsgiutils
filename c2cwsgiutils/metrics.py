@@ -4,7 +4,7 @@ import re
 import socket
 import warnings
 from os import listdir
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Generic, List, Optional, Tuple, Union
 
 import pyramid.request
 import pyramid.response
@@ -38,7 +38,7 @@ def add_provider(provider: Provider) -> None:
     _PROVIDERS.append(provider)
 
 
-def _metrics() -> pyramid.response.Response:
+def _metrics() -> str:
     result: List[str] = []
 
     for provider in _PROVIDERS:
@@ -108,3 +108,134 @@ def includeme(config: pyramid.config.Configurator) -> None:
     config.add_route("c2c_metrics", r"/metrics", request_method="GET")
     config.add_view(_view, route_name="c2c_metrics", http_cache=0)
     add_provider(MemoryMapProvider())
+
+
+class _Value:
+    def get_value(self) -> Union[int, float]:
+        raise NotImplementedError()
+
+
+Value = TypeVar("Value", bound=_Value)
+
+
+class _Data(Provider, Generic[Value]):
+    def __init__(self):
+        self.data: List[Tuple[Dict[str, str], Value]] = []
+
+    def get_value(self, key: Dict[str, str]) -> Value:
+        for attributes, value in self.data:
+            if len(attributes) != len(key):
+                continue
+            for k, v in key.items():
+                if attributes.get(k) != v:
+                    break
+            return value
+        return None
+
+    def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
+        """Get the values."""
+        return [(k, v.get_value()) for k, v in self.data]
+
+    def new_value(self) -> Value:
+        raise NotImplementedError()
+
+
+class GaugeValue(_Value):
+    """The value store for a Prometheus gauge."""
+
+    value: Union[int, float] = 0
+
+    def get_value(self) -> Union[int, float]:
+        return value
+
+    def set_value(self, value: Union[int, float]) -> None:
+        self.value = value
+
+
+class Gauge(_Data[GaugeValue]):
+    """The provider interface."""
+
+    def __init__(self, name: str, help_: str, extend: bool = True):
+        self.name = name
+        self.help = help_
+        self.type = "gauge"
+        self.extend = extend
+        super().__init__()
+
+    def new_value(self) -> GaugeValue:
+        return GaugeValue()
+
+
+class CounterTimer:
+    """An interface to use a Prometheus gauge to get elapsed time with a decorator or a `with` statement."""
+
+    _start: float = 0
+
+    def __init__(self, gauge: "CounterValue"):
+        self.gauge = gauge
+
+    def __enter__(self) -> "CounterTimer":
+        self._start = time.time()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.gauge.inc(time.time() - self._start)
+
+    def __call__(self, function: Function) -> Function:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with self:
+                return function(*args, **kwargs)
+
+        return wrapper
+
+
+class CounterGauge:
+    """An interface to use a Prometheus gauge to count with a decorator or a `with` statement."""
+
+    def __init__(self, gauge: "CounterValue"):
+        self.gauge = gauge
+
+    def __enter__(self) -> "CounterGauge":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.gauge.inc()
+
+    def __call__(self, function: Function) -> Function:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with self:
+                return function(*args, **kwargs)
+
+        return wrapper
+
+
+class CounterValue(_Value):
+    """The value store for a Prometheus gauge."""
+
+    value: Union[int, float] = 0
+
+    def get_value(self) -> Union[int, float]:
+        return value
+
+    def inc(self, increment: Union[int, float] = 1) -> None:
+        self.value += value
+
+    def timer(self) -> CounterTimer:
+        return CounterTimer(self)
+
+    def count(self) -> CounterGauge:
+        return CounterGauge(self)
+
+
+class Counter(_Data[CounterValue]):
+    """The provider interface."""
+
+    def __init__(self, name: str, help_: str, extend: bool = True):
+        self.name = name
+        self.help = help_
+        self.type = "gauge"
+        self.extend = extend
+        super().__init__()
+
+    def new_value(self) -> CounterValue:
+        return CounterValue()

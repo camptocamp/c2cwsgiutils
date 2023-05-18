@@ -9,6 +9,10 @@ from c2cwsgiutils.acceptance.composition import Composition
 from c2cwsgiutils.acceptance.connection import Connection
 
 BASE_URL = "http://" + utils.DOCKER_GATEWAY + ":8480/api/"
+BASE_URL_APP2 = "http://" + utils.DOCKER_GATEWAY + ":8482/api/"
+PROMETHEUS_URL = "http://" + utils.DOCKER_GATEWAY + ":9092/metrics"
+PROMETHEUS_TEST_URL = "http://" + utils.DOCKER_GATEWAY + ":9098/metrics"
+PROMETHEUS_STATS_DB_URL = "http://" + utils.DOCKER_GATEWAY + ":9099/metrics"
 LOG = logging.getLogger(__name__)
 
 
@@ -37,6 +41,38 @@ def app_connection(composition):
     return Connection(base_url=BASE_URL, origin="http://example.com/")
 
 
+@pytest.fixture
+def app2_connection(composition):
+    """
+    Fixture that returns a connection to a running batch container.
+    """
+    return Connection(base_url=BASE_URL_APP2, origin="http://example.com/")
+
+
+@pytest.fixture
+def prometheus_connection(composition):
+    """
+    Fixture that returns a connection to a running batch container.
+    """
+    return Connection(base_url=PROMETHEUS_URL, origin="http://example.com/")
+
+
+@pytest.fixture
+def prometheus_test_connection(composition):
+    """
+    Fixture that returns a connection to a running batch container.
+    """
+    return Connection(base_url=PROMETHEUS_TEST_URL, origin="http://example.com/")
+
+
+@pytest.fixture
+def prometheus_stats_db_connection(composition):
+    """
+    Fixture that returns a connection to a running batch container.
+    """
+    return Connection(base_url=PROMETHEUS_STATS_DB_URL, origin="http://example.com/")
+
+
 @pytest.fixture(scope="session")
 def master_db_setup(composition):
     return _create_table(composition, master=True)
@@ -49,7 +85,10 @@ def slave_db_setup(composition):
 
 def _create_table(composition, master):
     name = "master" if master else "slave"
-    composition.run("alembic_" + name, "/app/run_alembic.sh")
+    proc = composition.run_proc("alembic_" + name, "/app/run_alembic.sh")
+    if proc.returncode != 0:
+        LOG.error("Alembic failed")
+        raise Exception("Alembic failed")
     connection = _connect(master)
     with connection.cursor() as curs:
         LOG.info("Creating data for " + name)

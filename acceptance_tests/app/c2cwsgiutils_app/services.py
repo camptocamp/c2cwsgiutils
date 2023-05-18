@@ -1,5 +1,6 @@
 import logging
 
+import prometheus_client
 import requests
 from pyramid.httpexceptions import (
     HTTPBadRequest,
@@ -10,9 +11,13 @@ from pyramid.httpexceptions import (
 )
 
 from c2cwsgiutils import sentry, services
-from c2cwsgiutils.stats import increment_counter, set_gauge, timer_context
 
 from c2cwsgiutils_app import models
+
+_PROMETHEUS_TEST_COUNTER = prometheus_client.Counter("test_counter", "Test counter")
+_PROMETHEUS_TEST_GAUGE = prometheus_client.Gauge("test_gauge", "Test gauge", ["value", "toto"])
+_PROMETHEUS_TEST_SUMMARY = prometheus_client.Summary("test_summary", "Test summary")
+
 
 ping_service = services.create("ping", "/ping")
 hello_service = services.create("hello", "/hello", cors_credentials=True)
@@ -39,10 +44,10 @@ def hello_get(request):
     """
     Will use the slave.
     """
-    with timer_context(["sql", "read_hello"]):
+    with _PROMETHEUS_TEST_SUMMARY.time():
         hello = request.dbsession.query(models.Hello).first()
-    increment_counter(["test", "counter"])
-    set_gauge(["test", "gauge/s"], 42, tags={"value": 24, "toto": "tutu"})
+    _PROMETHEUS_TEST_COUNTER.inc()
+    _PROMETHEUS_TEST_GAUGE.labels(value=24, toto="tutu").set(42)
     return {"value": hello.value}
 
 

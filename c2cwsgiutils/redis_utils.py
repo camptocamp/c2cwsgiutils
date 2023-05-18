@@ -29,6 +29,14 @@ _slave: Optional["redis.client.Redis[str]"] = None
 _sentinel: Optional[redis.sentinel.Sentinel] = None
 
 
+def cleanup() -> None:
+    """Cleanup the redis connections."""
+    global _master, _slave, _sentinel
+    _master = None
+    _slave = None
+    _sentinel = None
+
+
 def get(
     settings: Optional[Mapping[str, bytes]] = None,
 ) -> Tuple[

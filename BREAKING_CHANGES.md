@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 6.0
+
+- The stats will not anymore be published on StatsD, use Prometheus client instead.
+
 ## Release 5.2
 
 - `c2cwsgiutils_run` is completely removes (not used from 5.0).

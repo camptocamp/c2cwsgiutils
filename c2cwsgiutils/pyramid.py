@@ -12,8 +12,8 @@ from c2cwsgiutils import (
     errors,
     index,
     logging_view,
-    metrics,
     pretty_json,
+    prometheus,
     redis_stats,
     request_tracking,
     sentry,
@@ -21,6 +21,8 @@ from c2cwsgiutils import (
     stats_pyramid,
     version,
 )
+
+_LOG = logging.getLogger(__name__)
 
 
 def includeme(config: pyramid.config.Configurator) -> None:
@@ -46,7 +48,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
     config.include(logging_view.includeme)
     config.include(sql_profiler.includeme)
     config.include(version.includeme)
+    config.include(prometheus.includeme)
     config.include(debug.includeme)
-    config.include(metrics.includeme)
     config.include(errors.includeme)
     config.include(index.includeme)

@@ -15,6 +15,10 @@ pylint:
       - lxml
   disable:
     - too-many-return-statements
+    - too-many-arguments
+    - too-many-branches
+    - too-many-instance-attributes
+    - too-few-public-methods
     - global-statement
     - line-too-long
     - import-outside-toplevel
@@ -24,8 +28,6 @@ pylint:
     - no-self-use
     - import-error
     - superfluous-parens
-    - too-few-public-methods
-    - too-many-arguments
     - ungrouped-imports
     - unused-argument
     - use-symbolic-message-instead

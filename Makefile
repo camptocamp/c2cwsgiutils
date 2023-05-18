@@ -79,9 +79,9 @@ pull: ## Pull the Docker images
 	for image in `find -name "docker-compose*.yaml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do docker pull $$image; done
 
 .PHONY: run
-run: build_test_app ## Run the test application
+run: build_test_app build_docker ## Run the test application
 	# cp acceptance_tests/tests/docker-compose.override.sample.yaml acceptance_tests/tests/docker-compose.override.yaml
-	cd acceptance_tests/tests/; TEST_IP=172.17.0.1 docker-compose up
+	cd acceptance_tests/tests/; docker-compose up --detach
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp

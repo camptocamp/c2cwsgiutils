@@ -1,33 +1,105 @@
+import logging
 import subprocess
+import threading
+import time
 
 import pytest
 
-
-def test_no_extra(app_connection, composition):
-    composition.run(
-        "run_test",
-        "c2cwsgiutils-stats-db",
-        "--db=postgresql://www-data:www-data@db:5432/test",
-        "--schema=public",
-    )
+_LOG = logging.getLogger(__name__)
 
 
-def test_with_extra(app_connection, composition):
-    composition.run(
-        "run_test",
-        "c2cwsgiutils-stats-db",
-        "--db=postgresql://www-data:www-data@db:5432/test",
-        "--schema=public",
-        "--extra=select 'toto', 42",
-    )
+class _PrometheusThread:
+    def __init__(self, connection, prometheus):
+        self._connection = connection
+        self._prometheus = prometheus
+
+    def __call__(self):
+        while not self._prometheus.stop:
+            try:
+                with self._connection.session.get(self._connection.base_url) as r:
+                    _LOG.debug("Prometheus: %s", r.text)
+            except Exception as e:
+                _LOG.debug("Prometheus: %s", e)
+            time.sleep(2)
 
 
-def test_error(app_connection, composition):
-    with pytest.raises(subprocess.CalledProcessError):
+class _Prometheus:
+    stop = False
+
+    def __init__(self, connection):
+        self.thread = threading.Thread(target=_PrometheusThread(connection, self))
+
+    def __enter__(self):
+        self.thread.start()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stop = True
+
+
+def test_no_extra(app2_connection, prometheus_test_connection, composition):
+    with _Prometheus(prometheus_test_connection):
         composition.run(
+            "--service-ports",
             "run_test",
             "c2cwsgiutils-stats-db",
             "--db=postgresql://www-data:www-data@db:5432/test",
             "--schema=public",
-            "--extra=select 'toto, 42",
+            timeout=60,
         )
+
+
+def test_with_extra(app2_connection, prometheus_test_connection, composition):
+    with _Prometheus(prometheus_test_connection):
+        composition.run(
+            "--service-ports",
+            "run_test",
+            "c2cwsgiutils-stats-db",
+            "--db=postgresql://www-data:www-data@db:5432/test",
+            "--schema=public",
+            "--extra=select 'toto', 42",
+            timeout=60,
+        )
+
+
+def test_with_extra_gauge(app2_connection, prometheus_test_connection, composition):
+    with _Prometheus(prometheus_test_connection):
+        composition.run(
+            "--service-ports",
+            "run_test",
+            "c2cwsgiutils-stats-db",
+            "--db=postgresql://www-data:www-data@db:5432/test",
+            "--schema=public",
+            "--extra-gauge",
+            "select 'toto', 42",
+            "toto",
+            "toto help",
+            timeout=60,
+        )
+
+
+def test_error(app2_connection, prometheus_test_connection, composition):
+    with _Prometheus(prometheus_test_connection):
+        with pytest.raises(subprocess.CalledProcessError):
+            composition.run(
+                "--service-ports",
+                "run_test",
+                "c2cwsgiutils-stats-db",
+                "--db=postgresql://www-data:www-data@db:5432/test",
+                "--schema=public",
+                "--extra=select 'toto, 42",
+                timeout=60,
+            )
+
+
+def test_standalone(prometheus_stats_db_connection, composition):
+    """
+    Test that stats db is correctly waiting for the Prometheus call, and exit after the call.
+    """
+    ps = [l for l in composition.dc(["ps"]).split("\n") if "c2cwsgiutils_stats_db_" in l]
+    assert len(ps) == 1
+    assert " Up " in ps[0]
+    with _Prometheus(prometheus_stats_db_connection):
+        ps = [l for l in composition.dc(["ps"]).split("\n") if "c2cwsgiutils_stats_db_" in l]
+        assert len(ps) == 1
+        assert ps[0].strip().endswith(" Exit 0")

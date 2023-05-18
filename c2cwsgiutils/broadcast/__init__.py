@@ -36,11 +36,12 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     if _broadcaster is None:
         if master is not None and slave is not None:
             _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)
+            LOG.info("Broadcast service setup using Redis implementation")
         else:
             _broadcaster = local.LocalBroadcaster()
             LOG.info("Broadcast service setup using local implementation")
     elif isinstance(_broadcaster, local.LocalBroadcaster) and master is not None and slave is not None:
-        LOG.info("Switching from a local broadcaster to a redis broadcaster")
+        LOG.info("Switching from a local broadcaster to a Redis broadcaster")
         prev_broadcaster = _broadcaster
         _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)
         _broadcaster.copy_local_subscriptions(prev_broadcaster)
@@ -53,6 +54,13 @@ def _get(need_init: bool = False) -> interface.BaseBroadcaster:
             LOG.error("Broadcast functionality used before it is setup")
         _broadcaster = local.LocalBroadcaster()
     return _broadcaster
+
+
+def cleanup() -> None:
+    """Cleanup the broadcaster to force to reinitialize it."""
+
+    global _broadcaster
+    _broadcaster = None
 
 
 def subscribe(channel: str, callback: Callable[..., Any]) -> None:

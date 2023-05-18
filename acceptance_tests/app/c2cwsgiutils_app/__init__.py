@@ -25,6 +25,7 @@ def main(_, **settings):
     """
     This function returns a Pyramid WSGI application.
     """
+
     config = Configurator(settings=settings, route_prefix="/api")
 
     # Initialize the broadcast view before c2cwsgiutils is initialized. This allows to test the

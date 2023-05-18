@@ -55,11 +55,11 @@ def test_memory_analyze_other(app_connection):
 
 
 def test_sleep(app_connection):
-    start_time = time.monotonic()
+    start_time = time.perf_counter()
     app_connection.get(
         "c2c/debug/sleep", params={"secret": "changeme", "time": "0.1"}, expected_status=204, cors=False
     )
-    assert time.monotonic() - start_time > 0.1
+    assert time.perf_counter() - start_time > 0.1
 
 
 def test_time(app_connection):

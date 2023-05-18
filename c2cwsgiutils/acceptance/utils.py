@@ -45,7 +45,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
         timeout: the timeout to get a success
         interval: the interval between try
     """
-    timeout = time.monotonic() + timeout
+    timeout = time.perf_counter() + timeout
     while True:
         error = ""
         try:
@@ -57,7 +57,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
         except Exception as e:  # pylint: disable=broad-except
             error = str(e)
             LOG.info("  Failed: %s", e)
-        if time.monotonic() > timeout:
+        if time.perf_counter() > timeout:
             assert False, "Timeout: " + error
         time.sleep(interval)
 

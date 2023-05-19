@@ -14,7 +14,7 @@ import transaction
 from zope.sqlalchemy import register
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import stats
+from c2cwsgiutils import metrics_stats, stats
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
 
 if TYPE_CHECKING:

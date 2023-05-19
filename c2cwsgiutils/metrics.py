@@ -140,18 +140,6 @@ class _Data(Provider, Generic[Value]):
         raise NotImplementedError()
 
 
-class GaugeValue(_Value):
-    """The value store for a Prometheus gauge."""
-
-    value: Union[int, float] = 0
-
-    def get_value(self) -> Union[int, float]:
-        return value
-
-    def set_value(self, value: Union[int, float]) -> None:
-        self.value = value
-
-
 class Gauge(_Data[GaugeValue]):
     """The provider interface."""
 
@@ -166,20 +154,21 @@ class Gauge(_Data[GaugeValue]):
         return GaugeValue()
 
 
-class CounterTimer:
+class TimerGauge:
     """An interface to use a Prometheus gauge to get elapsed time with a decorator or a `with` statement."""
 
     _start: float = 0
 
-    def __init__(self, gauge: "CounterValue"):
+    def __init__(self, gauge: "CounterValue", add_status: bool = False):
         self.gauge = gauge
+        self.add_status = add_status
 
-    def __enter__(self) -> "CounterTimer":
+    def __enter__(self) -> "TimerGauge":
         self._start = time.time()
         return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        self.gauge.inc(time.time() - self._start)
+        self.gauge.inc(time.time() - self._start, {"status": "success" if exc_val is None else "failure"})
 
     def __call__(self, function: Function) -> Function:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -187,6 +176,20 @@ class CounterTimer:
                 return function(*args, **kwargs)
 
         return wrapper
+
+
+class StatusGauge(_Data[StatusGaugeValue]):
+    """The provider interface."""
+
+    def __init__(self, name: str, help_: str, extend: bool = True):
+        self.name = name
+        self.help = help_
+        self.type = "gauge"
+        self.extend = extend
+        super().__init__()
+
+    def new_value(self) -> StatusGaugeValue:
+        return StatusGaugeValue()
 
 
 class CounterGauge:
@@ -220,8 +223,8 @@ class CounterValue(_Value):
     def inc(self, increment: Union[int, float] = 1) -> None:
         self.value += value
 
-    def timer(self) -> CounterTimer:
-        return CounterTimer(self)
+    def timer(self) -> TimerGauge:
+        return TimerGauge(self)
 
     def count(self) -> CounterGauge:
         return CounterGauge(self)
@@ -239,3 +242,98 @@ class Counter(_Data[CounterValue]):
 
     def new_value(self) -> CounterValue:
         return CounterValue()
+
+
+class CounterStatusTimer:
+    """An interface to use a Prometheus gauge to get elapsed time with a decorator or a `with` statement."""
+
+    _start: float = 0
+
+    def __init__(self, gauge: "CounterStatusValue"):
+        self.gauge = gauge
+
+    def __enter__(self) -> "CounterStatusTimer":
+        self._start = time.time()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        if exc_val is None:
+            gauge.inc_success(time.time() - self._start)
+        else:
+            gauge.inc_failure(time.time() - self._start)
+
+    def __call__(self, function: Function) -> Function:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with self:
+                return function(*args, **kwargs)
+
+        return wrapper
+
+
+class CounterStatusGauge:
+    """An interface to use a Prometheus gauge to count with a decorator or a `with` statement."""
+
+    def __init__(self, gauge: "CounterStatusValue"):
+        self.gauge = gauge
+
+    def __enter__(self) -> "CounterStatusGauge":
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        if exc_val is None:
+            self.gauge.inc_success()
+        else:
+            self.gauge.inc_failure()
+
+    def __call__(self, function: Function) -> Function:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with self:
+                return function(*args, **kwargs)
+
+        return wrapper
+
+
+class CounterStatusValue(_Value):
+    """The value store for a Prometheus gauge."""
+
+    success: int = 0
+    failure: int = 0
+
+    def get_success(self) -> int:
+        return success
+
+    def get_failure(self) -> int:
+        return failure
+
+    def inc_success(self, increment: Union[int, float] = 1) -> None:
+        self.success += value
+
+    def inc_failure(self, increment: Union[int, float] = 1) -> None:
+        self.failure += value
+
+    def timer(self) -> CounterStatusTimer:
+        return CounterStatusTimer(self)
+
+    def count(self) -> CounterStatusGauge:
+        return CounterStatusGauge(self)
+
+
+class CounterStatus(_Data[CounterStatusValue]):
+    """The provider interface."""
+
+    def __init__(self, name: str, help_: str, extend: bool = True):
+        self.name = name
+        self.help = help_
+        self.type = "gauge"
+        self.extend = extend
+        super().__init__()
+
+    def new_value(self) -> CounterStatusValue:
+        return CounterStatusValue()
+
+    def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
+        """Get the values."""
+        return [
+            *[({"status": "success", **k}, v.get_success()) for k, v in self.data],
+            *[({"status": "failure", **k}, v.get_failure()) for k, v in self.data],
+        ]

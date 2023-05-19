@@ -7,19 +7,47 @@ import logging
 import urllib.parse
 import uuid
 import warnings
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, List, Optional
 
 import pyramid.request
 import requests.adapters
 import requests.models
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import config_utils, stats
+from c2cwsgiutils import config_utils, metrics_stats, stats
 
 ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
 DEFAULT_TIMEOUT: Optional[float] = None
+_COUNTER = metrics_stats.CounterStatus(
+    "requests",
+    "Number of requests",
+    ["requests"],
+    ["{scheme}", "{hostname}", "{port}", "{method}", "{status}"],
+    {
+        "scheme": "scheme",
+        "host": "host",
+        "port": "port",
+        "method": "method",
+        "method": "method",
+        "status": "status",
+    },
+)
+_TIMER = metrics_stats.CounterStatus(
+    "requests",
+    "Number of requests",
+    ["requests"],
+    ["{scheme}", "{hostname}", "{port}", "{method}", "{status}"],
+    {
+        "scheme": "scheme",
+        "host": "host",
+        "port": "port",
+        "method": "method",
+        "method": "method",
+        "status": "status",
+    },
+)
 
 
 def _gen_request_id(request: pyramid.request.Request) -> str:
@@ -47,29 +75,20 @@ def _patch_requests() -> None:
             else:
                 LOG.warning("Doing a %s request without timeout to %s", request.method, request.url)
 
-        status = 999
-        timer = stats.timer()
-        try:
-            response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
-            status = response.status_code
-            return response
-        finally:
-            if request.url is not None:
-                parsed = urllib.parse.urlparse(request.url)
-                port = parsed.port or (80 if parsed.scheme == "http" else 443)
-                if stats.USE_TAGS:
-                    key: Sequence[Any] = ["requests"]
-                    tags: Optional[Dict[str, Any]] = {
-                        "scheme": parsed.scheme,
-                        "host": parsed.hostname,
-                        "port": port,
-                        "method": request.method,
-                        "status": status,
-                    }
-                else:
-                    key = ["requests", parsed.scheme, parsed.hostname, port, request.method, status]
-                    tags = None
-                timer.stop(key, tags)
+        assert request.url
+        parsed = urllib.parse.urlparse(request.url)
+        port = parsed.port or (80 if parsed.scheme == "http" else 443)
+        tags = {
+            "scheme": parsed.scheme,
+            "host": parsed.hostname,
+            "port": port,
+            "method": request.method,
+        }
+        with _COUNTER.counter(tags):
+            with _TIMER.timer_context(tags):
+                response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
+                response.status_code
+                return response
 
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore
 

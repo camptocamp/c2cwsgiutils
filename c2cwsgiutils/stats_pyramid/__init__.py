@@ -3,8 +3,15 @@ import warnings
 
 import pyramid.config
 import pyramid.request
+<<<<<<< HEAD
 
 from c2cwsgiutils import stats
+||||||| parent of 7d860b4 (Continue)
+from c2cwsgiutils import stats
+=======
+
+from c2cwsgiutils import metrics_stats
+>>>>>>> 7d860b4 (Continue)
 
 
 def init(config: pyramid.config.Configurator) -> None:

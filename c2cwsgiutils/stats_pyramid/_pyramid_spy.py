@@ -5,7 +5,7 @@ import pyramid.events
 import pyramid.request
 from pyramid.httpexceptions import HTTPException
 
-from c2cwsgiutils import stats
+from c2cwsgiutils import metrics_stats, stats
 
 
 def _add_server_metric(

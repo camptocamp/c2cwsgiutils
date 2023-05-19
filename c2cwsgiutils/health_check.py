@@ -39,7 +39,7 @@ import sqlalchemy.sql
 from pyramid.httpexceptions import HTTPNotFound
 
 import c2cwsgiutils.db
-from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
+from c2cwsgiutils import auth, broadcast, config_utils, metrics_stats, redis_utils, stats, version
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -48,6 +48,36 @@ else:
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
+
+_DB_TIMER = metrics_stats.Counter(
+    "health_check_db",
+    "The to do a database query",
+    ["sql", "manual", "health_check", "{check}"],
+    ["{configuration}", "{connection}"],
+    {"configuration": "conf", "con": "connection"},
+)
+_ALEMBIC_VERSION = metrics_stats.Counter(
+    "alembic_version",
+    "The alembic version of the database",
+    ["alembic_version"],
+    ["{version}", "{name}"],
+    {"version": "version", "name": "name"},
+)
+
+_VERSION = metrics_stats.Counter(
+    "version",
+    "The alembic version of the database",
+    ["alembic_version"],
+    ["{version}"],
+    {"version": "version"},
+)
+_HEALTH_CHECKS = metrics_stats.Counter(
+    "health_check",
+    "The health check",
+    ["health_check"],
+    ["{name}", "{outcome}"],
+    {"name": "name", "outcome": "outcome"},
+)
 
 
 class EngineType(Enum):
@@ -283,20 +313,13 @@ class HealthCheck:
                 assert version_table
                 for binding in _get_bindings(self.session, EngineType.READ_AND_WRITE):
                     with binding as binded_session:
-                        if stats.USE_TAGS:
-                            key = ["sql", "manual", "health_check", "alembic"]
-                            tags: Optional[Dict[str, str]] = {"conf": alembic_ini_path, "con": binding.name()}
-                        else:
-                            key = [
-                                "sql",
-                                "manual",
-                                "health_check",
-                                "alembic",
-                                alembic_ini_path,
-                                binding.name(),
-                            ]
-                            tags = None
-                        with stats.timer_context(key, tags):
+                        with _DB_TIMER.timer_context(
+                            {
+                                "configuration": alembic_ini_path,
+                                "connection": binding.name(),
+                                "check": "alembic",
+                            }
+                        ):
                             result = binded_session.execute(
                                 sqlalchemy.text(
                                     "SELECT version_num FROM "  # nosec
@@ -306,12 +329,13 @@ class HealthCheck:
                             ).fetchone()
                             assert result is not None
                             (actual_version,) = result
-                            if stats.USE_TAGS:
-                                stats.increment_counter(
-                                    ["alembic_version"], 1, tags={"version": actual_version, "name": name}
-                                )
-                            else:
-                                stats.increment_counter(["alembic_version", name, actual_version], 1)
+                            _ALEMBIC_VERSION.increment_counter(
+                                {
+                                    "version": actual_version,
+                                    "name": name,
+                                    "configuration": alembic_ini_path,
+                                }
+                            )
                             if actual_version != version_:
                                 raise Exception(  # pylint: disable=broad-exception-raised
                                     f"Invalid alembic version (db: {actual_version}, code: {version_})"
@@ -434,10 +458,7 @@ class HealthCheck:
             # Output the versions we see on the monitoring
             v: Optional[str]
             for v, count in Counter(versions).items():
-                if stats.USE_TAGS:
-                    stats.increment_counter(["version"], count, tags={"version": v})
-                else:
-                    stats.increment_counter(["version", v], count)
+                _VERSION.increment_counter({"version": v}, count)
 
                 ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
@@ -499,15 +520,9 @@ class HealthCheck:
             results["successes"][name] = {"timing": time.monotonic() - start, "level": level}
             if result is not None:
                 results["successes"][name]["result"] = result
-            if stats.USE_TAGS:
-                stats.increment_counter(["health_check"], 1, tags={"name": name, "outcome": "success"})
-            else:
-                stats.increment_counter(["health_check", name, "success"], 1)
+            _HEALTH_CHECKS.increment_counter(1, {"name": name, "outcome": "success"})
         except Exception as e:  # pylint: disable=broad-except
-            if stats.USE_TAGS:
-                stats.increment_counter(["health_check"], 1, tags={"name": name, "outcome": "failure"})
-            else:
-                stats.increment_counter(["health_check", name, "failure"], 1)
+            _HEALTH_CHECKS.increment_counter(1, {"name": name, "outcome": "failure"})
             LOG.warning("Health check %s failed", name, exc_info=True)
             failure = {"message": str(e), "timing": time.monotonic() - start, "level": level}
             if isinstance(e, JsonCheckException) and e.json_data() is not None:
@@ -523,13 +538,10 @@ class HealthCheck:
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
             with binding as session:
-                if stats.USE_TAGS:
-                    key = ["sql", "manual", "health_check", "db"]
-                    tags: Optional[Dict[str, str]] = {"con": binding.name()}
-                else:
-                    key = ["sql", "manual", "health_check", "db", binding.name()]
-                    tags = None
-                with stats.timer_context(key, tags):
+                with _DB_TIMER.timer_context(
+                    key,
+                    {"configuration": alembic_ini_path, "connection": binding.name(), "check": "database"},
+                ):
                     return query_cb(session)
 
         return "db_engine_" + binding.name(), check

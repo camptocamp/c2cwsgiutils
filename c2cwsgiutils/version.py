@@ -6,7 +6,7 @@ from typing import Dict, Optional, cast
 
 import pyramid.config
 
-from c2cwsgiutils import config_utils, stats
+from c2cwsgiutils import config_utils, metrics_stats, stats
 
 VERSIONS_PATH = "/app/versions.json"
 LOG = logging.getLogger(__name__)

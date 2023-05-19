@@ -6,8 +6,14 @@ import sqlalchemy.event
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.orm import Session
 
+<<<<<<< HEAD
 from c2cwsgiutils import stats
 
+||||||| parent of 7d860b4 (Continue)
+=======
+from c2cwsgiutils import metrics_stats
+
+>>>>>>> 7d860b4 (Continue)
 LOG = logging.getLogger(__name__)
 
 

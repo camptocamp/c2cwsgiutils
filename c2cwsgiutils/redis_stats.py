@@ -1,24 +1,22 @@
 import logging
 import warnings
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
 import pyramid.config
 
-from c2cwsgiutils import config_utils, stats
+from c2cwsgiutils import config_utils, metrics_stats, stats
 
 LOG = logging.getLogger(__name__)
 ORIG: Optional[Callable[..., Any]] = None
 
+_COUNTER = metrics_stats.CounterStatus(
+    "redis", "Number of redis commands", ["redis"], ["{command}"], {"command": "cmd"}
+)
+
 
 def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
-    if stats.USE_TAGS:
-        key = ["redis"]
-        tags: Optional[Dict[str, str]] = {"cmd": args[0]}
-    else:
-        key = ["redis", args[0]]
-        tags = None
     assert ORIG is not None
-    with stats.outcome_timer_context(key, tags):
+    with _COUNTER.outcome_timer_context(key, tags):
         return ORIG(self, *args, **options)
 
 

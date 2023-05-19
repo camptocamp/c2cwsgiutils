@@ -12,6 +12,19 @@ VERSIONS_PATH = "/app/versions.json"
 LOG = logging.getLogger(__name__)
 
 
+_COUNTER_ROUTES = metrics_stats.Counter(
+    "version",
+    "The version of the application",
+    ["version"],
+    ["version"],
+    ["{version}"],
+    {
+        "version": "version",
+    },
+    ["counter"],
+)
+
+
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view, for backward compatibility."""
     warnings.warn("init function is deprecated; use includeme instead")
@@ -20,6 +33,7 @@ def init(config: pyramid.config.Configurator) -> None:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view."""
+
     if os.path.isfile(VERSIONS_PATH):
         versions = _read_versions()
         config.add_route(

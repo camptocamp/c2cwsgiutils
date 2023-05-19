@@ -181,20 +181,22 @@ class Gauge(_Data[GaugeValue]):
         return GaugeValue()
 
 
-class GaugeInspect:
+class Inspect:
     """A class used to inspect a part ov code."""
 
     _start: float = 0
 
-    def __init__(self, gauge: "GaugeValues"):
+    def __init__(self, gauge: "Counter", tags: Dict[str, str], add_status: bool = False):
         self.gauge = gauge
+        self.tags = tags
+        self.add_status = add_status
 
-    def __enter__(self) -> "GaugeInspect":
-        self.gauge.start()
+    def __enter__(self) -> "_Inspect":
+        self.start()
         return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        self.gauge.end(exc_val is None)
+        self.end(exc_val is None)
 
     def __call__(self, function: Function) -> Function:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -203,40 +205,43 @@ class GaugeInspect:
 
         return wrapper
 
+    def start(self) -> None:
+        assert self.inspect_type is not None
+        self._start = time.time()
+
+    def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
+        assert self._start > 0
+        self.gauge.get_value(tags).inc(
+            {
+                **({"status": "success" if success else "failure"} if self.add_status else {}),
+                **self.tags,
+                **(tags or {}),
+            },
+            time.time() - self._start,
+            success,
+        )
+
 
 class GaugeValues(_Value):
     """The value store for a Prometheus gauge."""
 
-    values: Dict[str, Dict[bool, Union[int, float]]] = {}
+    values: Dict[str, Union[int, float]] = {}
     start: float = 0
 
     def __init__(self, inspect_type: List[str] = None):
         self._start: float = 0
         self._inspect_type = inspect_type
 
-    def get_values(self) -> Union[int, float]:
+    def get_values(self) -> Dict[str, Union[int, float]]:
         return values
 
-    def inc(self, increment: Union[int, float] = 1) -> None:
-        self.value += value
-
-    def inspect(self) -> GaugeInspect:
-        return GaugeInspect(self)
-
-    def start(self) -> Vone:
+    def inc(self, time, tags: Optional[Dict[str, str]] = None) -> None:
         assert self.inspect_type is not None
-        self.start = time.time()
-
-    def end(self, success: bool = True) -> None:
-        assert self.inspect_type is not None
-        assert self.start > 0
         for inspect_type in self.inspect_type:
             if inspect_type == "timer":
-                self.values[inspect_type][success] = (
-                    self.values.get(inspect_type, {}).get(success, 0) + time.time() - self.start
-                )
+                self.values[inspect_type][success] = self.values.get(inspect_type, {}) + time
             if inspect_type == "counter":
-                self.values[inspect_type][success] = self.values.get(inspect_type, {}).get(success, 0) + 1
+                self.values[inspect_type][success] = self.values.get(inspect_type, {}) + 1
 
 
 class Counter(_Data[GaugeValues]):
@@ -286,3 +291,6 @@ class Counter(_Data[GaugeValues]):
                     ],
                 }
             )
+
+    def inspect(self, tags: Dict[str, str] = {}) -> Inspect:
+        return Inspect(self, tags)

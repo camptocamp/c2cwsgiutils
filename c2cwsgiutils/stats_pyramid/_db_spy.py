@@ -16,25 +16,18 @@ from c2cwsgiutils import metrics_stats
 >>>>>>> 7d860b4 (Continue)
 LOG = logging.getLogger(__name__)
 
-_COUNTER = metrics_stats.CounterStatus(
-    "what",
-    "Number of database requests",
-    ["sql"],
+_COUNTER = metrics_stats.Counter(
+    "database",
+    "Database requests",
+    ["sql", "counter"],
+    ["sql", "timer"],
     ["{what}"],
     {
         "what": "what",
         "query": "query",
     },
-)
-_TIMER = metrics_stats.CounterStatus(
-    "requests",
-    "Total time of database requests",
-    ["sql"],
-    ["{what}"],
-    {
-        "what": "what",
-        "query": "query",
-    },
+    ["timer", "counter"],
+    True,
 )
 
 

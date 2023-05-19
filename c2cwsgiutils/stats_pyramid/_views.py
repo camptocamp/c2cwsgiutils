@@ -7,6 +7,8 @@ from c2cwsgiutils import config_utils, metrics_stats, stats
 
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the statistic view."""
+
+    warnings.warn("The stats view is deprecated; use Prometheus instead")
     config.add_route(
         "c2c_read_stats_json", config_utils.get_base_path(config) + r"/stats.json", request_method="GET"
     )

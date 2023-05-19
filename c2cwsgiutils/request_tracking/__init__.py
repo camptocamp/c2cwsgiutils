@@ -20,9 +20,10 @@ ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
 DEFAULT_TIMEOUT: Optional[float] = None
-_COUNTER = metrics_stats.CounterStatus(
+_Counter = metrics_stats.Counter(
     "requests",
-    "Number of requests",
+    "Requests requests",
+    ["requests_counter"],
     ["requests"],
     ["{scheme}", "{hostname}", "{port}", "{method}", "{status}"],
     {
@@ -33,20 +34,8 @@ _COUNTER = metrics_stats.CounterStatus(
         "method": "method",
         "status": "status",
     },
-)
-_TIMER = metrics_stats.CounterStatus(
-    "requests",
-    "Number of requests",
-    ["requests"],
-    ["{scheme}", "{hostname}", "{port}", "{method}", "{status}"],
-    {
-        "scheme": "scheme",
-        "host": "host",
-        "port": "port",
-        "method": "method",
-        "method": "method",
-        "status": "status",
-    },
+    ["timer", "counter"],
+    True,
 )
 
 
@@ -84,11 +73,10 @@ def _patch_requests() -> None:
             "port": port,
             "method": request.method,
         }
-        with _COUNTER.counter(tags):
-            with _TIMER.timer_context(tags):
-                response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
-                response.status_code
-                return response
+        with _Counter.inspect(tags):
+            response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
+            response.status_code
+            return response
 
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore
 

@@ -306,11 +306,14 @@ def init_backends(settings: Optional[Mapping[str, str]] = None) -> None:
 
         settings: The Pyramid config
     """
+
     if config_utils.env_or_settings(settings, "STATS_VIEW", "c2c.stats_view", False):  # pragma: nocover
+        warnings.warn("Statsd is deprecated; use Prometheus instead")
         BACKENDS["memory"] = MemoryBackend()
 
     statsd_address = config_utils.env_or_settings(settings, "STATSD_ADDRESS", "c2c.statsd_address", None)
     if statsd_address is not None:  # pragma: nocover
+        warnings.warn("Statsd is deprecated; use Prometheus instead")
         statsd_prefix = config_utils.env_or_settings(settings, "STATSD_PREFIX", "c2c.statsd_prefix", "")
         statsd_tags = get_env_tags()
         try:

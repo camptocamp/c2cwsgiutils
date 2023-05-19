@@ -51,7 +51,6 @@ def init(config_file: str = "c2c:///app/production.ini") -> None:
     coverage_setup.includeme()
     sentry.includeme(config)
     broadcast.includeme(config)
-    stats.init_backends(settings)
     redis_stats.includeme(config)
     sql_profiler.includeme(config)
 

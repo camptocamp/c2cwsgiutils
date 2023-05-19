@@ -4,7 +4,7 @@ import re
 import socket
 import warnings
 from os import listdir
-from typing import Any, Dict, Generic, List, Optional, Tuple, Union
+from typing import Any, Dict, Generic, List, Optional, Tuple, TypedDict, Union
 
 import pyramid.request
 import pyramid.response
@@ -12,7 +12,25 @@ import pyramid.response
 from c2cwsgiutils.debug.utils import dump_memory_maps
 
 
-class Provider:
+class ProviderData(TypedDict):
+    """The provider data."""
+
+    name: str
+    help_: str
+    type_: str
+    extend: bool
+    data: List[Tuple[Dict[str, str], Union[int, float]]]
+
+
+class BaseProvider:
+    """Provide set of Prometheus values."""
+
+    def get_full_data(self) -> List[ProviderData]:
+        """Get all the provided data."""
+        return []
+
+
+class Provider(BaseProvider):
     """The provider interface."""
 
     def __init__(self, name: str, help_: str, type_: str = "gauge", extend: bool = True):
@@ -22,8 +40,14 @@ class Provider:
         self.extend = extend
 
     def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
-        """Get empty response, should be defined in the specific provider."""
+        """Get all the provided data."""
         return []
+
+    def get_full_data(self) -> List[ProviderData]:
+        """Get all the provided data."""
+        return [
+            {name: self.name, help_: self.help, type_: self.type, extend: self.extend, data: self.get_data()}
+        ]
 
 
 _PROVIDERS = []
@@ -42,20 +66,23 @@ def _metrics() -> str:
     result: List[str] = []
 
     for provider in _PROVIDERS:
-        result += [
-            f"# HELP {provider.name} {provider.help}",
-            f"# TYPE {provider.name} {provider.type}",
-        ]
-        for attributes, value in provider.get_data():
-            attrib = {}
-            if provider.extend:
-                attrib["pod_name"] = POD_NAME
-                if SERVICE_NAME is not None:
-                    attrib["service_name"] = SERVICE_NAME.group(1)
-            attrib.update(attributes)
-            dbl_quote = '"'
-            printable_attribs = ",".join([f'{k}="{v.replace(dbl_quote, "_")}"' for k, v in attrib.items()])
-            result.append(f"{provider.name}{{{printable_attribs}}} {value}")
+        for data in provider.get_full_data():
+            result += [
+                f"# HELP {data.name} {data.help}",
+                f"# TYPE {data.name} {data.type}",
+            ]
+            for attributes, value in data.data:
+                attrib = {}
+                if data.extend:
+                    attrib["pod_name"] = POD_NAME
+                    if SERVICE_NAME is not None:
+                        attrib["service_name"] = SERVICE_NAME.group(1)
+                attrib.update(attributes)
+                dbl_quote = '"'
+                printable_attributes = ",".join(
+                    [f'{k}="{v.replace(dbl_quote, "_")}"' for k, v in attrib.items()]
+                )
+                result.append(f"{data.name}{{{printable_attributes}}} {value}")
 
     return "\n".join(result)
 
@@ -118,7 +145,7 @@ class _Value:
 Value = TypeVar("Value", bound=_Value)
 
 
-class _Data(Provider, Generic[Value]):
+class _Data(BaseProvider, Generic[Value]):
     def __init__(self):
         self.data: List[Tuple[Dict[str, str], Value]] = []
 
@@ -130,7 +157,7 @@ class _Data(Provider, Generic[Value]):
                 if attributes.get(k) != v:
                     break
             return value
-        return None
+        return self.new_value()
 
     def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
         """Get the values."""
@@ -154,21 +181,20 @@ class Gauge(_Data[GaugeValue]):
         return GaugeValue()
 
 
-class TimerGauge:
-    """An interface to use a Prometheus gauge to get elapsed time with a decorator or a `with` statement."""
+class GaugeInspect:
+    """A class used to inspect a part ov code."""
 
     _start: float = 0
 
-    def __init__(self, gauge: "CounterValue", add_status: bool = False):
+    def __init__(self, gauge: "GaugeValues"):
         self.gauge = gauge
-        self.add_status = add_status
 
-    def __enter__(self) -> "TimerGauge":
-        self._start = time.time()
+    def __enter__(self) -> "GaugeInspect":
+        self.gauge.start()
         return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        self.gauge.inc(time.time() - self._start, {"status": "success" if exc_val is None else "failure"})
+        self.gauge.end(exc_val is None)
 
     def __call__(self, function: Function) -> Function:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -178,162 +204,85 @@ class TimerGauge:
         return wrapper
 
 
-class StatusGauge(_Data[StatusGaugeValue]):
-    """The provider interface."""
-
-    def __init__(self, name: str, help_: str, extend: bool = True):
-        self.name = name
-        self.help = help_
-        self.type = "gauge"
-        self.extend = extend
-        super().__init__()
-
-    def new_value(self) -> StatusGaugeValue:
-        return StatusGaugeValue()
-
-
-class CounterGauge:
-    """An interface to use a Prometheus gauge to count with a decorator or a `with` statement."""
-
-    def __init__(self, gauge: "CounterValue"):
-        self.gauge = gauge
-
-    def __enter__(self) -> "CounterGauge":
-        return self
-
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        self.gauge.inc()
-
-    def __call__(self, function: Function) -> Function:
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            with self:
-                return function(*args, **kwargs)
-
-        return wrapper
-
-
-class CounterValue(_Value):
+class GaugeValues(_Value):
     """The value store for a Prometheus gauge."""
 
-    value: Union[int, float] = 0
+    values: Dict[str, Dict[bool, Union[int, float]]] = {}
+    start: float = 0
 
-    def get_value(self) -> Union[int, float]:
-        return value
+    def __init__(self, inspect_type: List[str] = None):
+        self._start: float = 0
+        self._inspect_type = inspect_type
+
+    def get_values(self) -> Union[int, float]:
+        return values
 
     def inc(self, increment: Union[int, float] = 1) -> None:
         self.value += value
 
-    def timer(self) -> TimerGauge:
-        return TimerGauge(self)
+    def inspect(self) -> GaugeInspect:
+        return GaugeInspect(self)
 
-    def count(self) -> CounterGauge:
-        return CounterGauge(self)
+    def start(self) -> Vone:
+        assert self.inspect_type is not None
+        self.start = time.time()
+
+    def end(self, success: bool = True) -> None:
+        assert self.inspect_type is not None
+        assert self.start > 0
+        for inspect_type in self.inspect_type:
+            if inspect_type == "timer":
+                self.values[inspect_type][success] = (
+                    self.values.get(inspect_type, {}).get(success, 0) + time.time() - self.start
+                )
+            if inspect_type == "counter":
+                self.values[inspect_type][success] = self.values.get(inspect_type, {}).get(success, 0) + 1
 
 
-class Counter(_Data[CounterValue]):
+class Counter(_Data[GaugeValues]):
     """The provider interface."""
 
-    def __init__(self, name: str, help_: str, extend: bool = True):
+    def __init__(
+        self,
+        name: str,
+        help_: str,
+        extend: bool = True,
+        inspect_type: List[str] = None,
+        add_success: bool = False,
+    ):
         self.name = name
         self.help = help_
-        self.type = "gauge"
         self.extend = extend
+        self.inspect_type = inspect_type
+        self.add_success = add_success
         super().__init__()
 
-    def new_value(self) -> CounterValue:
-        return CounterValue()
+    def new_value(self) -> GaugeValues:
+        return GaugeValues()
 
-
-class CounterStatusTimer:
-    """An interface to use a Prometheus gauge to get elapsed time with a decorator or a `with` statement."""
-
-    _start: float = 0
-
-    def __init__(self, gauge: "CounterStatusValue"):
-        self.gauge = gauge
-
-    def __enter__(self) -> "CounterStatusTimer":
-        self._start = time.time()
-        return self
-
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        if exc_val is None:
-            gauge.inc_success(time.time() - self._start)
-        else:
-            gauge.inc_failure(time.time() - self._start)
-
-    def __call__(self, function: Function) -> Function:
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            with self:
-                return function(*args, **kwargs)
-
-        return wrapper
-
-
-class CounterStatusGauge:
-    """An interface to use a Prometheus gauge to count with a decorator or a `with` statement."""
-
-    def __init__(self, gauge: "CounterStatusValue"):
-        self.gauge = gauge
-
-    def __enter__(self) -> "CounterStatusGauge":
-        return self
-
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        if exc_val is None:
-            self.gauge.inc_success()
-        else:
-            self.gauge.inc_failure()
-
-    def __call__(self, function: Function) -> Function:
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            with self:
-                return function(*args, **kwargs)
-
-        return wrapper
-
-
-class CounterStatusValue(_Value):
-    """The value store for a Prometheus gauge."""
-
-    success: int = 0
-    failure: int = 0
-
-    def get_success(self) -> int:
-        return success
-
-    def get_failure(self) -> int:
-        return failure
-
-    def inc_success(self, increment: Union[int, float] = 1) -> None:
-        self.success += value
-
-    def inc_failure(self, increment: Union[int, float] = 1) -> None:
-        self.failure += value
-
-    def timer(self) -> CounterStatusTimer:
-        return CounterStatusTimer(self)
-
-    def count(self) -> CounterStatusGauge:
-        return CounterStatusGauge(self)
-
-
-class CounterStatus(_Data[CounterStatusValue]):
-    """The provider interface."""
-
-    def __init__(self, name: str, help_: str, extend: bool = True):
-        self.name = name
-        self.help = help_
-        self.type = "gauge"
-        self.extend = extend
-        super().__init__()
-
-    def new_value(self) -> CounterStatusValue:
-        return CounterStatusValue()
-
-    def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
-        """Get the values."""
-        return [
-            *[({"status": "success", **k}, v.get_success()) for k, v in self.data],
-            *[({"status": "failure", **k}, v.get_failure()) for k, v in self.data],
-        ]
+    def get_full_data(self) -> List[ProviderData]:
+        result = []
+        for inspect_type in self.inspect_type:
+            result.append(
+                {
+                    name: self.name if len(self.inspect_type) == 1 else f"{self.name}_{inspect_type}",
+                    help_: self.help if len(self.inspect_type) == 1 else f"{self.help} ({inspect_type})",
+                    type_: "gauge",
+                    extend: self.extend,
+                    data: [
+                        *[
+                            ({"status": "success", **k}, v.get_values().get(inspect_type, {}).get(True, 0))
+                            for k, v in self.data
+                        ],
+                        *[
+                            ({"status": "failure", **k}, v.get_values().get(inspect_type, {}).get(False, 0))
+                            for k, v in self.data
+                        ],
+                    ]
+                    if self.add_success
+                    else [
+                        *[(k, v.get_values().get(inspect_type, {}).get(True, 0)) for k, v in self.data],
+                        *[(k, v.get_values().get(inspect_type, {}).get(False, 0)) for k, v in self.data],
+                    ],
+                }
+            )

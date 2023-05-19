@@ -16,6 +16,27 @@ from c2cwsgiutils import metrics_stats
 >>>>>>> 7d860b4 (Continue)
 LOG = logging.getLogger(__name__)
 
+_COUNTER = metrics_stats.CounterStatus(
+    "what",
+    "Number of database requests",
+    ["sql"],
+    ["{what}"],
+    {
+        "what": "what",
+        "query": "query",
+    },
+)
+_TIMER = metrics_stats.CounterStatus(
+    "requests",
+    "Total time of database requests",
+    ["sql"],
+    ["{what}"],
+    {
+        "what": "what",
+        "query": "query",
+    },
+)
+
 
 def _jump_string(content: str, pos: int) -> int:
     quote_char = content[pos]
@@ -71,6 +92,7 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
         key = ["sql", what]
         tags = None
     measure = stats.timer(key, tags)
+    measure.start()
 
     def after(*_args: Any, **_kwargs: Any) -> None:
         duration = measure.stop()

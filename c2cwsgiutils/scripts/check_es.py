@@ -107,6 +107,7 @@ def deprecated() -> None:
 def main() -> None:
     """Run the command."""
     try:
+        warnings.warn("This tool is deprecated")
         argparser = argparse.ArgumentParser(description="Check logs on Elasticsearch")
         c2cwsgiutils.setup_process.fill_arguments(argparser)
         args = argparser.parse_args()

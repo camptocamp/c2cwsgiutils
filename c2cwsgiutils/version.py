@@ -6,13 +6,13 @@ from typing import Dict, Optional, cast
 
 import pyramid.config
 
-from c2cwsgiutils import config_utils, metrics_stats, stats
+from c2cwsgiutils import _metrics_stats, config_utils, metrics, metrics_stats, stats
 
 VERSIONS_PATH = "/app/versions.json"
 LOG = logging.getLogger(__name__)
 
 
-_COUNTER_ROUTES = metrics_stats.Counter(
+_COUNTER_ROUTES = _metrics_stats.Counter(
     "version",
     "The version of the application",
     ["version"],
@@ -21,7 +21,7 @@ _COUNTER_ROUTES = metrics_stats.Counter(
     {
         "version": "version",
     },
-    ["counter"],
+    [metrics.InspectType.COUNTER],
 )
 
 
@@ -50,10 +50,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
         else:
             LOG.info("Starting version %s", git_hash)
 
-        if stats.USE_TAGS:
-            stats.increment_counter(["version"], 1, tags={"version": git_hash})
-        else:
-            stats.increment_counter(["version", git_hash], 1)
+        _COUNTER_ROUTES.increment_counter({"version": git_hash})
 
 
 def _read_versions() -> Dict[str, Dict[str, str]]:

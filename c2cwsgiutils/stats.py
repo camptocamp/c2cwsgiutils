@@ -7,6 +7,7 @@ import re
 import socket
 import threading
 import time
+import warnings
 from abc import ABCMeta, abstractmethod
 from typing import Any, Callable, Dict, Generator, List, Mapping, MutableMapping, Optional, Sequence, Tuple
 
@@ -133,6 +134,20 @@ def set_gauge(key: Sequence[Any], value: float, tags: TagType = None) -> None:
     """
     for backend in BACKENDS.values():
         backend.gauge(key, value, tags)
+
+
+def increment_timer(key: Sequence[Any], increment: float = 1.0, tags: TagType = None) -> None:
+    """
+    Increment a counter value.
+
+    Arguments:
+
+        key: The path of the key, given as a list.
+        increment: The increment
+        tags: Some tags to attach to the metric.
+    """
+    for backend in BACKENDS.values():
+        backend.timer(key, increment, tags)
 
 
 def increment_counter(key: Sequence[Any], increment: int = 1, tags: TagType = None) -> None:

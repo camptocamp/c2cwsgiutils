@@ -39,7 +39,7 @@ import sqlalchemy.sql
 from pyramid.httpexceptions import HTTPNotFound
 
 import c2cwsgiutils.db
-from c2cwsgiutils import auth, broadcast, config_utils, metrics_stats, redis_utils, stats, version
+from c2cwsgiutils import _metrics_stats, auth, broadcast, config_utils, metrics, redis_utils, version
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -49,32 +49,37 @@ else:
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
 
-_DB_TIMER = metrics_stats.Counter(
+_DB_TIMER = _metrics_stats.Counter(
     "health_check_db",
     "The to do a database query",
+    ["sql", "manual", "health_check", "{check}", "counter"],
     ["sql", "manual", "health_check", "{check}"],
     ["{configuration}", "{connection}"],
     {"configuration": "conf", "con": "connection"},
+    [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
 )
-_ALEMBIC_VERSION = metrics_stats.Counter(
+_ALEMBIC_VERSION = _metrics_stats.Counter(
     "alembic_version",
     "The alembic version of the database",
     ["alembic_version"],
+    [],
     ["{version}", "{name}"],
     {"version": "version", "name": "name"},
 )
 
-_VERSION = metrics_stats.Counter(
+_VERSION = _metrics_stats.Counter(
     "version",
     "The alembic version of the database",
     ["alembic_version"],
+    [],
     ["{version}"],
     {"version": "version"},
 )
-_HEALTH_CHECKS = metrics_stats.Counter(
+_HEALTH_CHECKS = _metrics_stats.Counter(
     "health_check",
     "The health check",
     ["health_check"],
+    [],
     ["{name}", "{outcome}"],
     {"name": "name", "outcome": "outcome"},
 )
@@ -313,7 +318,7 @@ class HealthCheck:
                 assert version_table
                 for binding in _get_bindings(self.session, EngineType.READ_AND_WRITE):
                     with binding as binded_session:
-                        with _DB_TIMER.timer_context(
+                        with _DB_TIMER.inspect(
                             {
                                 "configuration": alembic_ini_path,
                                 "connection": binding.name(),
@@ -520,9 +525,9 @@ class HealthCheck:
             results["successes"][name] = {"timing": time.monotonic() - start, "level": level}
             if result is not None:
                 results["successes"][name]["result"] = result
-            _HEALTH_CHECKS.increment_counter(1, {"name": name, "outcome": "success"})
+            _HEALTH_CHECKS.increment_counter({"name": name, "outcome": "success"}, 1)
         except Exception as e:  # pylint: disable=broad-except
-            _HEALTH_CHECKS.increment_counter(1, {"name": name, "outcome": "failure"})
+            _HEALTH_CHECKS.increment_counter({"name": name, "outcome": "failure"}, 1)
             LOG.warning("Health check %s failed", name, exc_info=True)
             failure = {"message": str(e), "timing": time.monotonic() - start, "level": level}
             if isinstance(e, JsonCheckException) and e.json_data() is not None:
@@ -538,8 +543,7 @@ class HealthCheck:
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
             with binding as session:
-                with _DB_TIMER.timer_context(
-                    key,
+                with _DB_TIMER.inspect(
                     {"configuration": alembic_ini_path, "connection": binding.name(), "check": "database"},
                 ):
                     return query_cb(session)

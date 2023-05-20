@@ -1,3 +1,4 @@
+import time
 from typing import Callable, Optional
 
 import pyramid.config
@@ -5,37 +6,36 @@ import pyramid.events
 import pyramid.request
 from pyramid.httpexceptions import HTTPException
 
-from c2cwsgiutils import metrics_stats, stats
+from c2cwsgiutils import _metrics_stats, metrics, metrics_stats, stats
 
-_COUNTER_ROUTES = metrics_stats.Counter(
+_COUNTER_ROUTES = _metrics_stats.Counter(
     "routes",
     "Pyramid routes",
     ["routes", "counter"],
     ["routes", "timer"],
-    ["{what}"],
+    ["{method}", "{route}"],
     {
         "method": "method",
         "route": "route",
         "status": "status",
         "group": "group",
     },
-    ["timer", "counter"],
+    [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
 )
 
-_COUNTER_RENDER = metrics_stats.Counter(
+_COUNTER_RENDER = _metrics_stats.Counter(
     "render",
     "Pyramid render",
     ["render", "counter"],
     ["render", "timer"],
-    ["{what}"],
+    ["{method}", "{route}"],
     {
         "method": "method",
         "route": "route",
         "status": "status",
         "group": "group",
     },
-    ["method", "route", "status"],
-    ["timer", "counter"],
+    [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
 )
 
 
@@ -59,7 +59,7 @@ def _add_server_metric(
 
 
 def _create_finished_cb(
-    kind: str, measure: stats.Timer
+    kind: str, measure: _metrics_stats.Counter
 ) -> Callable[[pyramid.request.Request], None]:  # pragma: nocover
     inspect = measure.inspect()
     inspect.start()
@@ -80,11 +80,11 @@ def _create_finished_cb(
             if kind == "route":
                 _add_server_metric(request, "route", description=name)
         inspect.end(
-            {
+            tags={
                 "method": request.method,
                 "route": name,
                 "status": status,
-                "group": status // 100,
+                "group": str(status // 100),
             },
         )
         _add_server_metric(request, kind, duration=time.time() - start)

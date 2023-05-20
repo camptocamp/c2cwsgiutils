@@ -1,22 +1,17 @@
 import logging
 import re
-from typing import Any, Callable, Dict, Optional
+import time
+from typing import Any, Callable
 
 import sqlalchemy.event
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.orm import Session
 
-<<<<<<< HEAD
-from c2cwsgiutils import stats
+from c2cwsgiutils import _metrics_stats, metrics, metrics_stats, stats
 
-||||||| parent of 7d860b4 (Continue)
-=======
-from c2cwsgiutils import metrics_stats
-
->>>>>>> 7d860b4 (Continue)
 LOG = logging.getLogger(__name__)
 
-_COUNTER = metrics_stats.Counter(
+_COUNTER = _metrics_stats.Counter(
     "database",
     "Database requests",
     ["sql", "counter"],
@@ -26,7 +21,7 @@ _COUNTER = metrics_stats.Counter(
         "what": "what",
         "query": "query",
     },
-    ["timer", "counter"],
+    [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
     True,
 )
 
@@ -78,18 +73,13 @@ def _simplify_sql(sql: str) -> str:
 
 
 def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
-    if stats.USE_TAGS and what != "commit":
-        key = ["sql"]
-        tags: Optional[Dict[str, str]] = {"query": what}
-    else:
-        key = ["sql", what]
-        tags = None
-    measure = stats.timer(key, tags)
+    measure = _COUNTER.inspect({"query": what})
     measure.start()
+    start = time.time()
 
     def after(*_args: Any, **_kwargs: Any) -> None:
-        duration = measure.stop()
-        LOG.debug("Execute statement '%s' in %d.", what, duration)
+        measure.end()
+        LOG.debug("Execute statement '%s' in %d.", what, time.time() - start)
 
     return after
 

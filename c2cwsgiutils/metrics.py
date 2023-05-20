@@ -2,9 +2,11 @@
 
 import re
 import socket
+import time
 import warnings
+from enum import Enum
 from os import listdir
-from typing import Any, Dict, Generic, List, Optional, Tuple, TypedDict, Union
+from typing import Any, Callable, Dict, Generic, List, Mapping, Optional, Tuple, TypedDict, TypeVar, Union
 
 import pyramid.request
 import pyramid.response
@@ -16,8 +18,8 @@ class ProviderData(TypedDict):
     """The provider data."""
 
     name: str
-    help_: str
-    type_: str
+    help: str
+    type: str
     extend: bool
     data: List[Tuple[Dict[str, str], Union[int, float]]]
 
@@ -41,23 +43,31 @@ class Provider(BaseProvider):
 
     def get_data(self) -> List[Tuple[Dict[str, str], Union[int, float]]]:
         """Get all the provided data."""
-        return []
+
+        raise NotImplementedError()
 
     def get_full_data(self) -> List[ProviderData]:
         """Get all the provided data."""
+
         return [
-            {name: self.name, help_: self.help, type_: self.type, extend: self.extend, data: self.get_data()}
+            {
+                "name": self.name,
+                "help": self.help,
+                "type": self.type,
+                "extend": self.extend,
+                "data": self.get_data(),
+            }
         ]
 
 
-_PROVIDERS = []
+_PROVIDERS: List[BaseProvider] = []
 
 
 POD_NAME = socket.gethostname()
 SERVICE_NAME = re.match("^(.+)-[0-9a-f]+-[0-9a-z]+$", POD_NAME)
 
 
-def add_provider(provider: Provider) -> None:
+def add_provider(provider: BaseProvider) -> None:
     """Add the provider."""
     _PROVIDERS.append(provider)
 
@@ -68,12 +78,12 @@ def _metrics() -> str:
     for provider in _PROVIDERS:
         for data in provider.get_full_data():
             result += [
-                f"# HELP {data.name} {data.help}",
-                f"# TYPE {data.name} {data.type}",
+                f"# HELP {data['name']} {data['help']}",
+                f"# TYPE {data['name']} {data['type']}",
             ]
-            for attributes, value in data.data:
+            for attributes, value in data["data"]:
                 attrib = {}
-                if data.extend:
+                if data["extend"]:
                     attrib["pod_name"] = POD_NAME
                     if SERVICE_NAME is not None:
                         attrib["service_name"] = SERVICE_NAME.group(1)
@@ -82,7 +92,7 @@ def _metrics() -> str:
                 printable_attributes = ",".join(
                     [f'{k}="{v.replace(dbl_quote, "_")}"' for k, v in attrib.items()]
                 )
-                result.append(f"{data.name}{{{printable_attributes}}} {value}")
+                result.append(f"{data['name']}{{{printable_attributes}}} {value}")
 
     return "\n".join(result)
 
@@ -137,19 +147,22 @@ def includeme(config: pyramid.config.Configurator) -> None:
     add_provider(MemoryMapProvider())
 
 
-class _Value:
+class Value:
+    """The value store for a Prometheus gauge."""
+
     def get_value(self) -> Union[int, float]:
         raise NotImplementedError()
 
 
-Value = TypeVar("Value", bound=_Value)
+_Value = TypeVar("_Value", bound=Value)
 
 
-class _Data(BaseProvider, Generic[Value]):
-    def __init__(self):
-        self.data: List[Tuple[Dict[str, str], Value]] = []
+class _Data(BaseProvider, Generic[_Value]):
+    def __init__(self) -> None:
+        self.data: List[Tuple[Dict[str, str], _Value]] = []
 
-    def get_value(self, key: Dict[str, str]) -> Value:
+    def get_value(self, key: Optional[Mapping[str, Optional[str]]]) -> _Value:
+        key = key or {}
         for attributes, value in self.data:
             if len(attributes) != len(key):
                 continue
@@ -163,8 +176,68 @@ class _Data(BaseProvider, Generic[Value]):
         """Get the values."""
         return [(k, v.get_value()) for k, v in self.data]
 
-    def new_value(self) -> Value:
+    def new_value(self) -> _Value:
         raise NotImplementedError()
+
+
+class InspectType(Enum):
+    """The type of inspection."""
+
+    COUNTER = "counter"
+    TIMER = "timer"
+
+
+class Inspect:
+    """A class used to inspect a part ov code."""
+
+    _start: float = 0
+
+    def __init__(
+        self, gauge: "AutoCounter", tags: Optional[Mapping[str, Optional[str]]], add_status: bool = False
+    ):
+        self.gauge = gauge
+        self.tags = tags
+        self.add_status = add_status
+
+    def __enter__(self) -> "Inspect":
+        self.start()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.end(exc_val is None)
+
+    def __call__(self, function: Callable) -> Callable:  # type: ignore[type-arg]
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with self:
+                return function(*args, **kwargs)
+
+        return wrapper
+
+    def start(self) -> None:
+        self._start = time.monotonic()
+
+    def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
+        assert self._start > 0
+        self.gauge.increment(
+            time.monotonic() - self._start,
+            {
+                **({"status": "success" if success else "failure"} if self.add_status else {}),
+                **(self.tags or {}),
+                **(tags or {}),
+            },
+        )
+
+
+class GaugeValue(Value):
+    """The value store for a Prometheus gauge."""
+
+    value: Union[int, float] = 0
+
+    def get_value(self) -> Union[int, float]:
+        return self.value
+
+    def set_value(self, value: Union[int, float]) -> None:
+        self.value = value
 
 
 class Gauge(_Data[GaugeValue]):
@@ -181,70 +254,33 @@ class Gauge(_Data[GaugeValue]):
         return GaugeValue()
 
 
-class Inspect:
-    """A class used to inspect a part ov code."""
-
-    _start: float = 0
-
-    def __init__(self, gauge: "Counter", tags: Dict[str, str], add_status: bool = False):
-        self.gauge = gauge
-        self.tags = tags
-        self.add_status = add_status
-
-    def __enter__(self) -> "_Inspect":
-        self.start()
-        return self
-
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        self.end(exc_val is None)
-
-    def __call__(self, function: Function) -> Function:
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            with self:
-                return function(*args, **kwargs)
-
-        return wrapper
-
-    def start(self) -> None:
-        assert self.inspect_type is not None
-        self._start = time.time()
-
-    def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
-        assert self._start > 0
-        self.gauge.get_value(tags).inc(
-            {
-                **({"status": "success" if success else "failure"} if self.add_status else {}),
-                **self.tags,
-                **(tags or {}),
-            },
-            time.time() - self._start,
-            success,
-        )
-
-
-class GaugeValues(_Value):
+class CounterValue(Value):
     """The value store for a Prometheus gauge."""
 
-    values: Dict[str, Union[int, float]] = {}
-    start: float = 0
+    value: Union[int, float] = 0
 
-    def __init__(self, inspect_type: List[str] = None):
-        self._start: float = 0
-        self._inspect_type = inspect_type
+    def get_value(self) -> Union[int, float]:
+        return self.value
 
-    def get_values(self) -> Dict[str, Union[int, float]]:
-        return values
-
-    def inc(self, time, tags: Optional[Dict[str, str]] = None) -> None:
-        assert self.inspect_type is not None
-        for inspect_type in self.inspect_type:
-            if inspect_type == "timer":
-                self.values[inspect_type][success] = self.values.get(inspect_type, {}) + time
-            if inspect_type == "counter":
-                self.values[inspect_type][success] = self.values.get(inspect_type, {}) + 1
+    def inc(self, value: Union[int, float] = 1) -> None:
+        self.value += value
 
 
-class Counter(_Data[GaugeValues]):
+class SimpleCounter(_Data[CounterValue]):
+    """Provide a counter that should be manually increase."""
+
+    def __init__(self, name: str, help_: str, extend: bool = True):
+        self.name = name
+        self.help = help_
+        self.type = "gauge"
+        self.extend = extend
+        super().__init__()
+
+    def new_value(self) -> CounterValue:
+        return CounterValue()
+
+
+class AutoCounter(_Data[CounterValue]):
     """The provider interface."""
 
     def __init__(
@@ -252,45 +288,46 @@ class Counter(_Data[GaugeValues]):
         name: str,
         help_: str,
         extend: bool = True,
-        inspect_type: List[str] = None,
+        inspect_type: Optional[List[InspectType]] = None,
         add_success: bool = False,
     ):
         self.name = name
         self.help = help_
         self.extend = extend
-        self.inspect_type = inspect_type
         self.add_success = add_success
+        self.sub_counters: Dict[InspectType, SimpleCounter] = {}
+        inspect_type = inspect_type or []
+        for type_ in inspect_type:
+            sub_name = name
+            sub_help = help_
+            if len(inspect_type) > 1:
+                if type_ == InspectType.TIMER:
+                    sub_name += "_timer"
+                    sub_help += " [seconds]"
+                elif type_ == InspectType.COUNTER:
+                    sub_name += "_count"
+                    sub_help += " [nb]"
+
+            self.sub_counters[type_] = SimpleCounter(sub_name, sub_help, extend)
         super().__init__()
 
-    def new_value(self) -> GaugeValues:
-        return GaugeValues()
+    def new_value(self) -> CounterValue:
+        # Raise exception because this function should never be called
+        raise NotImplementedError()
 
     def get_full_data(self) -> List[ProviderData]:
-        result = []
-        for inspect_type in self.inspect_type:
-            result.append(
-                {
-                    name: self.name if len(self.inspect_type) == 1 else f"{self.name}_{inspect_type}",
-                    help_: self.help if len(self.inspect_type) == 1 else f"{self.help} ({inspect_type})",
-                    type_: "gauge",
-                    extend: self.extend,
-                    data: [
-                        *[
-                            ({"status": "success", **k}, v.get_values().get(inspect_type, {}).get(True, 0))
-                            for k, v in self.data
-                        ],
-                        *[
-                            ({"status": "failure", **k}, v.get_values().get(inspect_type, {}).get(False, 0))
-                            for k, v in self.data
-                        ],
-                    ]
-                    if self.add_success
-                    else [
-                        *[(k, v.get_values().get(inspect_type, {}).get(True, 0)) for k, v in self.data],
-                        *[(k, v.get_values().get(inspect_type, {}).get(False, 0)) for k, v in self.data],
-                    ],
-                }
-            )
+        results: List[ProviderData] = []
+        for counter in self.sub_counters.values():
+            results += counter.get_full_data()
+        return results
 
-    def inspect(self, tags: Dict[str, str] = {}) -> Inspect:
+    def increment(self, time_: float, tags: Optional[Mapping[str, Optional[str]]] = None) -> None:
+        tags = tags or {}
+        for inspect_type, counter in self.sub_counters.items():
+            if inspect_type == InspectType.TIMER:
+                counter.get_value(tags).inc(time_)
+            elif inspect_type == InspectType.COUNTER:
+                counter.get_value(tags).inc()
+
+    def inspect(self, tags: Optional[Mapping[str, Optional[str]]] = None) -> Inspect:
         return Inspect(self, tags)

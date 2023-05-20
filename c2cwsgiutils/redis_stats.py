@@ -4,19 +4,25 @@ from typing import Any, Callable, Optional
 
 import pyramid.config
 
-from c2cwsgiutils import config_utils, metrics_stats, stats
+from c2cwsgiutils import _metrics_stats, config_utils, metrics
 
 LOG = logging.getLogger(__name__)
 ORIG: Optional[Callable[..., Any]] = None
 
-_COUNTER = metrics_stats.CounterStatus(
-    "redis", "Number of redis commands", ["redis"], ["{command}"], {"command": "cmd"}
+_COUNTER = _metrics_stats.Counter(
+    "redis",
+    "Number of redis commands",
+    ["redis"],
+    ["redis"],
+    ["{command}"],
+    {"command": "cmd"},
+    [metrics.InspectType.COUNTER],
 )
 
 
-def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
+def _execute_command_patch(self: Any, command: str, *args: Any, **options: Any) -> Any:
     assert ORIG is not None
-    with _COUNTER.outcome_timer_context(key, tags):
+    with _COUNTER.inspect({"command": command}):
         return ORIG(self, *args, **options)
 
 

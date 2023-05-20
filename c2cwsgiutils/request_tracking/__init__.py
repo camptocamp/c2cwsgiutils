@@ -14,13 +14,13 @@ import requests.adapters
 import requests.models
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import config_utils, metrics_stats, stats
+from c2cwsgiutils import _metrics_stats, config_utils, metrics
 
 ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
 DEFAULT_TIMEOUT: Optional[float] = None
-_Counter = metrics_stats.Counter(
+_Counter = _metrics_stats.Counter(
     "requests",
     "Requests requests",
     ["requests_counter"],
@@ -31,10 +31,9 @@ _Counter = metrics_stats.Counter(
         "host": "host",
         "port": "port",
         "method": "method",
-        "method": "method",
         "status": "status",
     },
-    ["timer", "counter"],
+    [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
     True,
 )
 
@@ -67,15 +66,15 @@ def _patch_requests() -> None:
         assert request.url
         parsed = urllib.parse.urlparse(request.url)
         port = parsed.port or (80 if parsed.scheme == "http" else 443)
-        tags = {
-            "scheme": parsed.scheme,
-            "host": parsed.hostname,
-            "port": port,
-            "method": request.method,
-        }
-        with _Counter.inspect(tags):
+        with _Counter.inspect(
+            {
+                "scheme": parsed.scheme,
+                "host": parsed.hostname,
+                "port": str(port),
+                "method": request.method,
+            }
+        ):
             response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
-            response.status_code
             return response
 
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore

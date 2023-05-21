@@ -193,7 +193,7 @@ class Inspect:
     _start: float = 0
 
     def __init__(
-        self, gauge: "AutoCounter", tags: Optional[Mapping[str, Optional[str]]], add_status: bool = False
+        self, gauge: "CounterInspector", tags: Optional[Mapping[str, Optional[str]]], add_status: bool = False
     ):
         self.gauge = gauge
         self.tags = tags
@@ -262,11 +262,11 @@ class CounterValue(Value):
     def get_value(self) -> Union[int, float]:
         return self.value
 
-    def inc(self, value: Union[int, float] = 1) -> None:
+    def increment(self, value: Union[int, float] = 1) -> None:
         self.value += value
 
 
-class SimpleCounter(_Data[CounterValue]):
+class Counter(_Data[CounterValue]):
     """Provide a counter that should be manually increase."""
 
     def __init__(self, name: str, help_: str, extend: bool = True):
@@ -280,7 +280,7 @@ class SimpleCounter(_Data[CounterValue]):
         return CounterValue()
 
 
-class AutoCounter(_Data[CounterValue]):
+class CounterInspector(_Data[CounterValue]):
     """The provider interface."""
 
     def __init__(
@@ -295,7 +295,7 @@ class AutoCounter(_Data[CounterValue]):
         self.help = help_
         self.extend = extend
         self.add_success = add_success
-        self.sub_counters: Dict[InspectType, SimpleCounter] = {}
+        self.sub_counters: Dict[InspectType, Counter] = {}
         inspect_type = inspect_type or []
         for type_ in inspect_type:
             sub_name = name
@@ -308,7 +308,7 @@ class AutoCounter(_Data[CounterValue]):
                     sub_name += "_count"
                     sub_help += " [nb]"
 
-            self.sub_counters[type_] = SimpleCounter(sub_name, sub_help, extend)
+            self.sub_counters[type_] = Counter(sub_name, sub_help, extend)
         super().__init__()
 
     def new_value(self) -> CounterValue:

@@ -100,13 +100,11 @@ class Counter:
         self.prometheus = os.environ.get("PROMETHEUS_PREFIX") is not None
         if self.prometheus:
             if inspect_type is None:
-                self.prometheus_gauge: Union[
-                    metrics.SimpleCounter, metrics.AutoCounter
-                ] = metrics.SimpleCounter(
+                self.prometheus_gauge: Union[metrics.Counter, metrics.CounterInspector] = metrics.Counter(
                     os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name, description
                 )
             else:
-                self.prometheus_gauge = metrics.AutoCounter(
+                self.prometheus_gauge = metrics.CounterInspector(
                     os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
                     description,
                     inspect_type=inspect_type,
@@ -122,7 +120,7 @@ class Counter:
 
     def inspect(self, tags: Optional[Mapping[str, Optional[str]]] = None) -> Union[metrics.Inspect, _Inspect]:
         if self.prometheus:
-            assert isinstance(self.prometheus_gauge, metrics.AutoCounter)
+            assert isinstance(self.prometheus_gauge, metrics.CounterInspector)
             return self.prometheus_gauge.inspect(tags)
         else:
             return _Inspect(self, tags)

@@ -478,10 +478,10 @@ add_provider(MemoryMapProvider('rss'))
 Just provide a value:
 
 ```python
-from import c2cwsgiutils.metrics import add_provider, Gauge
+from c2cwsgiutils import metrics
 
-gauge = Gauge('my_gauge', 'My Gauge')
-add_provider(gauge)
+gauge = metrics.Gauge('my_gauge', 'My Gauge')
+metrics.add_provider(gauge)
 
 gauge_value = counter.get_value({"label": "value"})
 gauge_value.set_value(42)
@@ -492,50 +492,33 @@ gauge_value.set_value(42)
 Manually count:
 
 ```python
-from import c2cwsgiutils.metrics import add_provider, Counter
+from c2cwsgiutils import metrics
 
-counter = Counter('my_counter', 'My Counter')
-add_provider(counter)
+counter = metrics.Counter('my_counter', 'My Counter')
+metrics.add_provider(counter)
 
 counter_value = counter.get_value({"label": "value"})
-counter_value.inc()
+counter_value.increment()
 ```
 
-Count the number of call:
+Count the number of call and the elapsed time:
 
 ```python
-from import c2cwsgiutils.metrics import add_provider, Counter
+from c2cwsgiutils import metrics
 
-counter = Counter('my_counter', 'My Counter')
-add_provider(counter)
+counter = metrics.CounterInspector(
+  'my_counter', 'My Counter',
+  inspect_type=[metrics.InspectType.CALL, metrics.InspectType.TIME],
+  add_success=True
+)
+metrics.add_provider(counter)
 
-counter_value1 = counter.get_value({"label": "value1"})
-counter_value2 = counter.get_value({"label": "value2"})
 
-@counter_value1.count()
+@counter.inspect({"tag", "value"})
 def my_function():
     ...
 
-with counter_value2.count():
-    ...
-```
-
-Get the elapsed time on call:
-
-```python
-from import c2cwsgiutils.metrics import add_provider, Counter
-
-counter = Counter('my_counter', 'My Counter')
-add_provider(counter)
-
-counter_value1 = counter.get_value({"label": "value1"})
-counter_value2 = counter.get_value({"label": "value2"})
-
-@counter_value1.timer()
-def my_function():
-    ...
-
-with counter_value2.timer():
+with counter.inspect({"tag", "value"}):
     ...
 ```
 

@@ -54,8 +54,17 @@ _DB_TIMER = _metrics_stats.Counter(
     "The to do a database query",
     ["sql", "manual", "health_check", "{check}", "counter"],
     ["sql", "manual", "health_check", "{check}"],
+    ["{connection}"],
+    {"connection": "con"},
+    [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
+)
+_DB_TIMER_ALEMBIC = _metrics_stats.Counter(
+    "health_check_db",
+    "The to do a database query",
+    ["sql", "manual", "health_check", "{check}", "counter"],
+    ["sql", "manual", "health_check", "{check}"],
     ["{configuration}", "{connection}"],
-    {"configuration": "conf", "con": "connection"},
+    {"configuration": "conf", "connection": "con"},
     [metrics.InspectType.TIMER, metrics.InspectType.COUNTER],
 )
 _ALEMBIC_VERSION = _metrics_stats.Counter(
@@ -66,7 +75,6 @@ _ALEMBIC_VERSION = _metrics_stats.Counter(
     ["{version}", "{name}"],
     {"version": "version", "name": "name"},
 )
-
 _VERSION = _metrics_stats.Counter(
     "version",
     "The alembic version of the database",
@@ -318,7 +326,7 @@ class HealthCheck:
                 assert version_table
                 for binding in _get_bindings(self.session, EngineType.READ_AND_WRITE):
                     with binding as binded_session:
-                        with _DB_TIMER.inspect(
+                        with _DB_TIMER_ALEMBIC.inspect(
                             {
                                 "configuration": alembic_ini_path,
                                 "connection": binding.name(),
@@ -544,7 +552,7 @@ class HealthCheck:
         def check(request: pyramid.request.Request) -> None:
             with binding as session:
                 with _DB_TIMER.inspect(
-                    {"configuration": alembic_ini_path, "connection": binding.name(), "check": "database"},
+                    {"connection": binding.name(), "check": "database"},
                 ):
                     return query_cb(session)
 

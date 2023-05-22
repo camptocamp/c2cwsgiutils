@@ -4,6 +4,7 @@ import logging
 from typing import Any, Dict, Optional
 
 import requests
+
 from c2cwsgiutils.acceptance import connection, utils
 
 LOG = logging.getLogger(__name__)

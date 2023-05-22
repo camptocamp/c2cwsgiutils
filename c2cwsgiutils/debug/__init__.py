@@ -2,6 +2,7 @@ import warnings
 from typing import Optional
 
 import pyramid.config
+
 from c2cwsgiutils import auth, config_utils
 from c2cwsgiutils.debug import utils
 

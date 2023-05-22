@@ -1,8 +1,9 @@
 import argparse
 
+import transaction
+
 import c2cwsgiutils.db
 import c2cwsgiutils.setup_process
-import transaction
 
 from c2cwsgiutils_app import models
 

@@ -1,7 +1,8 @@
 from unittest.mock import mock_open, patch
 
-from c2cwsgiutils import get_config_defaults
 from pyramid.scripts.common import get_config_loader
+
+from c2cwsgiutils import get_config_defaults
 
 
 @patch(

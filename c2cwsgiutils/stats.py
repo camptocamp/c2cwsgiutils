@@ -11,6 +11,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, Callable, Dict, Generator, List, Mapping, MutableMapping, Optional, Sequence, Tuple
 
 import pyramid.request
+
 from c2cwsgiutils import config_utils
 
 LOG = logging.getLogger(__name__)

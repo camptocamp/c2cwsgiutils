@@ -4,8 +4,9 @@ import os
 import time
 import unittest
 
-from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 from sqlalchemy import text
+
+from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 
 
 class SqlAlchemyLoggerTests(unittest.TestCase):

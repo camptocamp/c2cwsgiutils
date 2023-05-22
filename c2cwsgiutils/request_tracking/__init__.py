@@ -12,8 +12,9 @@ from typing import Any, Dict, List, Optional, Sequence
 import pyramid.request
 import requests.adapters
 import requests.models
-from c2cwsgiutils import config_utils, stats
 from pyramid.threadlocal import get_current_request
+
+from c2cwsgiutils import config_utils, stats
 
 ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send

@@ -7,6 +7,7 @@ import logging
 import warnings
 
 import pyramid.request
+
 from c2cwsgiutils import auth
 
 ENV_KEY = "C2C_SQL_PROFILER_ENABLED"

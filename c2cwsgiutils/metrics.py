@@ -325,9 +325,9 @@ class CounterInspector(_Data[CounterValue]):
         tags = tags or {}
         for inspect_type, counter in self.sub_counters.items():
             if inspect_type == InspectType.TIMER:
-                counter.get_value(tags).inc(time_)
+                counter.get_value(tags).increment(time_)
             elif inspect_type == InspectType.COUNTER:
-                counter.get_value(tags).inc()
+                counter.get_value(tags).increment()
 
     def inspect(self, tags: Optional[Mapping[str, Optional[str]]] = None) -> Inspect:
         return Inspect(self, tags)

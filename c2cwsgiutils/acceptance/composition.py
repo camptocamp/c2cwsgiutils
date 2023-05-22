@@ -75,7 +75,7 @@ class Composition:
             ).stdout.decode(),
         )
 
-    def dc_proc(self, args: List[str], **kwargs: Any) -> subprocess.CompletedProcess:
+    def dc_proc(self, args: List[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
         kwargs = {
             "cwd": self.cwd,
             "env": Composition._get_env(),
@@ -83,7 +83,10 @@ class Composition:
         }
         return cast(
             str,
-            subprocess.run(self.docker_compose + args, **kwargs).stdout.decode(),  # nosec
+            subprocess.run(
+                self.docker_compose + args,
+                **{"encoding": "utf-8", **kwargs},
+            ).stdout.decode(),  # nosec
         )
 
     def dc_try(self, args: List[str], **kwargs: Any) -> None:
@@ -120,7 +123,7 @@ class Composition:
 
     def run_proc(
         self, container: str, *command: str, **kwargs: Dict[str, Any]
-    ) -> subprocess.CompletedProcess:
+    ) -> subprocess.CompletedProcess[str]:
         return self.dc_proc(
             ["run", "--rm", container] + list(command),
             **kwargs,

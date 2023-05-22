@@ -13,7 +13,7 @@ import requests.exceptions
 from dateutil import parser as dp
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import metrics_stats, stats
+from c2cwsgiutils import _metrics_stats, stats
 
 
 def _ensure_slash(txt: Optional[str]) -> Optional[str]:

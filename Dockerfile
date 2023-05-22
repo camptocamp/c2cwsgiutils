@@ -91,7 +91,8 @@ ENV C2C_BASE_PATH=/c2c \
   SENTRY_URL= \
   SENTRY_CLIENT_ENVIRONMENT=dev \
   SENTRY_CLIENT_RELEASE=latest \
-  SENTRY_TAG_SERVICE=app
+  SENTRY_TAG_SERVICE=app \
+  PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
 
 CMD ["/usr/local/bin/gunicorn"]
 

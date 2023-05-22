@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 """Emits statsd gauges for every tables of a database."""
+
 import argparse
 import logging
 import os
+import socket
 import sys
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional
+from wsgiref.simple_server import WSGIRequestHandler, make_server
 
 import sqlalchemy
 import sqlalchemy.exc
 import sqlalchemy.orm
 import transaction
+from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+from prometheus_client.exposition import ThreadingWSGIServer, make_wsgi_app
 from zope.sqlalchemy import register
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import metrics_stats, stats
-from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
+from c2cwsgiutils import _metrics_stats, stats
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -54,6 +58,29 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _get_best_family(address, port):
+    """Automatically select address family depending on address."""
+
+    # HTTPServer defaults to AF_INET, which will not start properly if
+    # binding an ipv6 address is requested.
+    # This function is based on what upstream python did for http.server
+    # in https://github.com/python/cpython/pull/11767
+    infos = socket.getaddrinfo(address, port)
+    family, _, _, _, sockaddr = next(iter(infos))
+    return family, sockaddr[0]
+
+
+class _SilentHandler(WSGIRequestHandler):
+    """WSGI handler that does not log requests."""
+
+    def log_message(self, format, *args):
+        """Log nothing."""
+
+
+class _TmpServer(ThreadingWSGIServer):
+    """Copy of ThreadingWSGIServer to update address_family locally."""
+
+
 class Reporter:
     """The stats reporter."""
 
@@ -65,16 +92,10 @@ class Reporter:
             )
         else:
             self.statsd = None
+            self.registry = CollectorRegistry()
 
-        if args.prometheus_url:
-            self.prometheus: Optional[PushgatewayGroupPublisher] = PushgatewayGroupPublisher(
-                args.prometheus_url,
-                "db_counts",
-                instance=args.prometheus_instance,
-                labels=stats.get_env_tags(),
-            )
-        else:
-            self.prometheus = None
+        self.prometheus_push = args.prometheus_url is not None
+        self.args = args
 
     def do_report(
         self, metric: List[str], value: int, kind: str, tags: Optional[Dict[str, str]] = None
@@ -86,12 +107,25 @@ class Reporter:
                     self.statsd.gauge([kind], value, tags=tags)
                 else:
                     self.statsd.gauge([kind] + metric, value)
-            if self.prometheus is not None:
-                self.prometheus.add("database_table_" + kind, value, metric_labels=tags)
+
+            if self.prometheus_push:
+                tags = {**(tags or {}), **stats.get_env_tags()}
+                gauge = Gauge(f"database_table_{kind}", "", tags.keys(), registry=self.registry)
+                gauge.labels(**tags).set(value)
+            elif self.statsd is None:
+                tags = {"kind": kind, **(tags or {})}
+                gauge = Gauge("database_table", "", tags.keys(), registry=self.registry)
+                gauge.labels(**tags).set(value)
 
     def commit(self) -> None:
-        if self.prometheus is not None:
-            self.prometheus.commit()
+        if self.prometheus_push:
+            push_to_gateway(self.args.prometheus_url, job="db_counts", registry=self.registry)
+        elif self.statsd is None:
+            port = (int(os.environ.get("PROMETHEUS_PORT", "9090")),)
+            _TmpServer.address_family, addr = _get_best_family(addr, port)
+            app = make_wsgi_app(self.registry)
+            httpd = make_server(addr, port, app, _TmpServer, handler_class=_SilentHandler)
+            httpd.serve_one()
 
     def error(self, metric: List[str], error_: Exception) -> None:
         if self.statsd is not None:

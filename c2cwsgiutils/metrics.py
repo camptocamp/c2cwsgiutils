@@ -142,6 +142,8 @@ def init(config: pyramid.config.Configurator) -> None:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the metrics view."""
+
+    warnings.warn("The metrics view is deprecated; use Prometheus client instead")
     config.add_route("c2c_metrics", r"/metrics", request_method="GET")
     config.add_view(_view, route_name="c2c_metrics", http_cache=0)
     add_provider(MemoryMapProvider())

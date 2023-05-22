@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Mapping, MutableMapping, Optional
 
 import requests
@@ -17,6 +18,7 @@ class PushgatewayGroupPublisher:
     def __init__(
         self, base_url: str, job: str, instance: Optional[str] = None, labels: LabelsType = None
     ) -> None:
+        warnings.warn("PushgatewayGroupPublisher is deprecated; use prometheus_client instead")
         if not base_url.endswith("/"):
             base_url += "/"
         self._url = f"{base_url}metrics/job/{job}"

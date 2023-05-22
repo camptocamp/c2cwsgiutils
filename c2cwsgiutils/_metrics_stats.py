@@ -5,6 +5,8 @@ import os
 import time
 from typing import Any, Callable, Dict, List, Mapping, Optional, Union
 
+import prometheus_client
+
 from c2cwsgiutils import metrics, stats
 
 
@@ -21,18 +23,18 @@ class Gauge:
     ):
         self.prometheus = os.environ.get("PROMETHEUS_PREFIX") is not None
         if self.prometheus:
-            self.prometheus_gauge = metrics.Gauge(
+            self.prometheus_gauge = prometheus_client.Gauge(
                 os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
                 description,
+                statsd_tags_mapping.keys(),
             )
-            metrics.add_provider(self.prometheus_gauge)
         self.statsd_pattern = statsd_pattern
         self.statsd_pattern_no_tags = statsd_pattern_no_tags
         self.statsd_tags_mapping = statsd_tags_mapping
 
     def set(self, value: float, tags: Optional[Mapping[str, Optional[str]]] = None) -> None:
         if self.prometheus:
-            self.prometheus_gauge.get_value(tags).set_value(value)
+            self.prometheus_gauge.labels(**tags).set(value)
         else:
             tags = tags or {}
             if stats.USE_TAGS:
@@ -50,6 +52,43 @@ class Gauge:
                     ],
                     value,
                 )
+
+
+class _PrometheusInspect:
+    """A class used to inspect a part ov code."""
+
+    _start: float = 0
+
+    def __init__(self, gauge: "Counter", tags: Optional[Mapping[str, Optional[str]]]):
+        self.gauge = gauge
+        self.tags = tags or {}
+
+    def __enter__(self) -> "_PrometheusInspect":
+        self.start()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.end(exc_val is None)
+
+    def __call__(self, function: Callable) -> Callable:  # type: ignore[type-arg]
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with self:
+                return function(*args, **kwargs)
+
+        return wrapper
+
+    def start(self) -> None:
+        self._start = time.monotonic()
+
+    def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
+        assert self._start > 0
+
+        assert len(self.gauge.prometheus_gauges) == len(self.gauge.inspect_type)
+        for gauge, inspect_type in zip(self.gauge.prometheus_gauges, self.gauge.inspect_type):
+            if inspect_type == metrics.InspectType.TIMER:
+                gauge.inc(time.monotonic() - self._start)
+            elif inspect_type == metrics.InspectType.COUNTER:
+                gauge.inc()
 
 
 class _Inspect:
@@ -100,17 +139,44 @@ class Counter:
         self.prometheus = os.environ.get("PROMETHEUS_PREFIX") is not None
         if self.prometheus:
             if inspect_type is None:
-                self.prometheus_gauge: Union[metrics.Counter, metrics.CounterInspector] = metrics.Counter(
-                    os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name, description
-                )
+                self.prometheus_gauges: List[Union[prometheus_client.Counter, prometheus_client.Summary]] = [
+                    statsd_tags_mapping.keys.Counter(
+                        os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
+                        description,
+                        statsd_tags_mapping.keys(),
+                    )
+                ]
             else:
-                self.prometheus_gauge = metrics.CounterInspector(
-                    os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
-                    description,
-                    inspect_type=inspect_type,
-                    add_success=add_success,
-                )
-            metrics.add_provider(self.prometheus_gauge)
+                if inspect_type:
+                    self.prometheus_gauges = []
+                    for _type in inspect_type:
+                        if _type == metrics.InspectType.TIMER:
+                            self.prometheus_gauges.append(
+                                prometheus_client.Summary(
+                                    os.environ.get("PROMETHEUS_PREFIX", "")
+                                    + prometheus_name
+                                    + "_processing_seconds",
+                                    description + " processing time [seconds]",
+                                    statsd_tags_mapping.keys(),
+                                )
+                            )
+                        elif _type == metrics.InspectType.COUNTER:
+                            self.prometheus_gauges.append(
+                                prometheus_client.Counter(
+                                    os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name + "_total",
+                                    description + " total",
+                                    statsd_tags_mapping.keys(),
+                                )
+                            )
+                else:
+                    for _type in inspect_type:
+                        self.prometheus_gauges.append(
+                            prometheus_client.Summary(
+                                os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
+                                description,
+                                statsd_tags_mapping.keys(),
+                            )
+                        )
         self.statsd_pattern_counter = statsd_pattern_counter
         self.statsd_pattern_timer = statsd_pattern_timer
         self.statsd_pattern_no_tags = statsd_pattern_no_tags
@@ -118,10 +184,11 @@ class Counter:
         self.inspect_type = inspect_type
         self.add_success = add_success
 
-    def inspect(self, tags: Optional[Mapping[str, Optional[str]]] = None) -> Union[metrics.Inspect, _Inspect]:
+    def inspect(
+        self, tags: Optional[Mapping[str, Optional[str]]] = None
+    ) -> Union[_PrometheusInspect, _Inspect]:
         if self.prometheus:
-            assert isinstance(self.prometheus_gauge, metrics.CounterInspector)
-            return self.prometheus_gauge.inspect(tags)
+            return _PrometheusInspect(self, tags)
         else:
             return _Inspect(self, tags)
 

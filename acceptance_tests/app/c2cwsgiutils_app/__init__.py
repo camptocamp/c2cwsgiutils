@@ -2,7 +2,7 @@ from pyramid.config import Configurator
 from pyramid.httpexceptions import HTTPInternalServerError
 
 import c2cwsgiutils.pyramid
-from c2cwsgiutils import broadcast, db
+from c2cwsgiutils import broadcast, db, prometheus_client
 from c2cwsgiutils.health_check import HealthCheck, JsonCheckException
 
 from c2cwsgiutils_app import models
@@ -25,6 +25,9 @@ def main(_, **settings):
     """
     This function returns a Pyramid WSGI application.
     """
+
+    prometheus_client.start()
+
     config = Configurator(settings=settings, route_prefix="/api")
 
     # Initialize the broadcast view before c2cwsgiutils is initialized. This allows to test the

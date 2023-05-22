@@ -5,6 +5,7 @@ import warnings
 from typing import Dict, Optional, cast
 
 import pyramid.config
+
 from c2cwsgiutils import config_utils, stats
 
 VERSIONS_PATH = "/app/versions.json"

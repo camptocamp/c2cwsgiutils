@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from c2cwsgiutils.acceptance.image import check_image_file
 
 

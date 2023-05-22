@@ -1,8 +1,9 @@
 import logging
 from typing import Dict, Optional, cast
 
-from c2cwsgiutils import get_config_defaults
 from plaster_pastedeploy import Loader as BaseLoader
+
+from c2cwsgiutils import get_config_defaults
 
 LOG = logging.getLogger(__name__)
 

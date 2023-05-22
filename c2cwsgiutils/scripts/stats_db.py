@@ -7,14 +7,15 @@ import sys
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-import c2cwsgiutils.setup_process
 import sqlalchemy
 import sqlalchemy.exc
 import sqlalchemy.orm
 import transaction
+from zope.sqlalchemy import register
+
+import c2cwsgiutils.setup_process
 from c2cwsgiutils import stats
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
-from zope.sqlalchemy import register
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]

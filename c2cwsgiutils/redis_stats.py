@@ -3,6 +3,7 @@ import warnings
 from typing import Any, Callable, Dict, Optional
 
 import pyramid.config
+
 from c2cwsgiutils import config_utils, stats
 
 LOG = logging.getLogger(__name__)

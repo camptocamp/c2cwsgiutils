@@ -5,9 +5,10 @@ from typing import Any, Mapping, Optional, Tuple, TypedDict, cast
 
 import jwt
 import pyramid.request
-from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 from pyramid.httpexceptions import HTTPForbidden
 from requests_oauthlib import OAuth2Session
+
+from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 
 COOKIE_AGE = 7 * 24 * 3600
 SECRET_PROP = "c2c.secret"  # nosec  # noqa

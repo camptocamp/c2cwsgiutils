@@ -7,10 +7,11 @@ from typing import Any, Callable
 
 import pyramid.request
 import sqlalchemy.exc
-from c2cwsgiutils import auth, config_utils
 from cornice import cors
 from pyramid.httpexceptions import HTTPError, HTTPException, HTTPRedirection, HTTPSuccessful
 from webob.request import DisconnectionError
+
+from c2cwsgiutils import auth, config_utils
 
 DEVELOPMENT = os.environ.get("DEVELOPMENT", "0") != "0"
 DEPRECATED_CONFIG_KEY = "c2c.error_details_secret"

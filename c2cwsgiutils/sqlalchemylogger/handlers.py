@@ -6,12 +6,13 @@ import traceback
 from typing import Any, Dict, List
 
 import sqlalchemy
-from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
-from c2cwsgiutils.sqlalchemylogger._models import Base, create_log_class
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
+
+from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
+from c2cwsgiutils.sqlalchemylogger._models import Base, create_log_class
 
 LOG = logging.getLogger(__name__)
 

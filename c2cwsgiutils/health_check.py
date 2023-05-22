@@ -30,15 +30,16 @@ from typing import (
     cast,
 )
 
-import c2cwsgiutils.db
 import pyramid.config
 import pyramid.request
 import requests
 import sqlalchemy.engine
 import sqlalchemy.orm
 import sqlalchemy.sql
-from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
 from pyramid.httpexceptions import HTTPNotFound
+
+import c2cwsgiutils.db
+from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]

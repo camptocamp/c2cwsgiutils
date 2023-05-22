@@ -20,7 +20,7 @@ services:
       - C2C_PROFILER_PATH=/api_profiler
       - C2C_PROFILER_MODULES=c2cwsgiutils c2cwsgiutils_app sqlalchemy request
       - C2C_ENABLE_EXCEPTION_HANDLING=1
-      - LOG_TYPE=json
+      # - LOG_TYPE=json
       - SQL_LOG_LEVEL=DEBUG
       - GUNICORN_CMD_ARGS="--reload" # don't use this in production
       - OTHER_LOG_LEVEL=DEBUG

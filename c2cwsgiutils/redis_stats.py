@@ -23,7 +23,7 @@ _COUNTER = _metrics_stats.Counter(
 def _execute_command_patch(self: Any, command: str, *args: Any, **options: Any) -> Any:
     assert ORIG is not None
     with _COUNTER.inspect({"command": command}):
-        return ORIG(self, *args, **options)
+        return ORIG(self, command, *args, **options)
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:

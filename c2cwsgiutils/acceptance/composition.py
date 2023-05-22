@@ -64,13 +64,26 @@ class Composition:
     def dc(self, args: List[str], **kwargs: Any) -> str:
         return cast(
             str,
-            subprocess.check_output(  # nosec
+            subprocess.run(  # nosec
                 self.docker_compose + args,
                 cwd=self.cwd,
                 env=Composition._get_env(),
                 stderr=subprocess.STDOUT,
+                stdout=subprocess.PIPE,
+                check=True,
                 **kwargs,
-            ).decode(),
+            ).stdout.decode(),
+        )
+
+    def dc_proc(self, args: List[str], **kwargs: Any) -> subprocess.CompletedProcess:
+        kwargs = {
+            "cwd": self.cwd,
+            "env": Composition._get_env(),
+            **kwargs,
+        }
+        return cast(
+            str,
+            subprocess.run(self.docker_compose + args, **kwargs).stdout.decode(),  # nosec
         )
 
     def dc_try(self, args: List[str], **kwargs: Any) -> None:
@@ -101,6 +114,14 @@ class Composition:
 
     def run(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> str:
         return self.dc(
+            ["run", "--rm", container] + list(command),
+            **kwargs,
+        )
+
+    def run_proc(
+        self, container: str, *command: str, **kwargs: Dict[str, Any]
+    ) -> subprocess.CompletedProcess:
+        return self.dc_proc(
             ["run", "--rm", container] + list(command),
             **kwargs,
         )

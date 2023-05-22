@@ -49,7 +49,10 @@ def slave_db_setup(composition):
 
 def _create_table(composition, master):
     name = "master" if master else "slave"
-    composition.run("alembic_" + name, "/app/run_alembic.sh")
+    proc = composition.run_proc("alembic_" + name, "/app/run_alembic.sh")
+    if proc.exit_code != 0:
+        LOG.error("Alembic failed")
+        raise Exception("Alembic failed")
     connection = _connect(master)
     with connection.cursor() as curs:
         LOG.info("Creating data for " + name)

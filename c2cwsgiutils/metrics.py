@@ -216,12 +216,12 @@ class Inspect:
         return wrapper
 
     def start(self) -> None:
-        self._start = time.monotonic()
+        self._start = time.perf_counter()
 
     def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
         assert self._start > 0
         self.gauge.increment(
-            time.monotonic() - self._start,
+            time.perf_counter() - self._start,
             {
                 **({"status": "success" if success else "failure"} if self.add_status else {}),
                 **(self.tags or {}),

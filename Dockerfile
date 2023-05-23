@@ -72,6 +72,8 @@ RUN --mount=type=cache,target=/root/.cache \
   && python3 -m compileall /usr/local/lib/python3.* /usr/lib/python3.* . -q \
   && python3 -c 'import c2cwsgiutils'
 
+VOLUME [ "/prometheus-metrics" ]
+
 ENV C2C_BASE_PATH=/c2c \
   C2C_REDIS_URL= \
   C2C_REDIS_SENTINELS= \

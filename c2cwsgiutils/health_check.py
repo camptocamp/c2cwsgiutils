@@ -527,17 +527,17 @@ class HealthCheck:
         request: pyramid.request.Request,
         results: Dict[str, Dict[str, Any]],
     ) -> None:
-        start = time.monotonic()
+        start = time.perf_counter()
         try:
             result = check(request)
-            results["successes"][name] = {"timing": time.monotonic() - start, "level": level}
+            results["successes"][name] = {"timing": time.perf_counter() - start, "level": level}
             if result is not None:
                 results["successes"][name]["result"] = result
             _HEALTH_CHECKS.increment_counter({"name": name, "outcome": "success"}, 1)
         except Exception as e:  # pylint: disable=broad-except
             _HEALTH_CHECKS.increment_counter({"name": name, "outcome": "failure"}, 1)
             LOG.warning("Health check %s failed", name, exc_info=True)
-            failure = {"message": str(e), "timing": time.monotonic() - start, "level": level}
+            failure = {"message": str(e), "timing": time.perf_counter() - start, "level": level}
             if isinstance(e, JsonCheckException) and e.json_data() is not None:
                 failure["result"] = e.json_data()
             if is_auth or os.environ.get("DEVELOPMENT", "0") != "0":

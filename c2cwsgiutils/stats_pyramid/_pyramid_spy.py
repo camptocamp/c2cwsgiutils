@@ -6,7 +6,7 @@ import pyramid.events
 import pyramid.request
 from pyramid.httpexceptions import HTTPException
 
-from c2cwsgiutils import _metrics_stats, metrics, stats
+from c2cwsgiutils import _metrics_stats, metrics
 
 _COUNTER_ROUTES = _metrics_stats.Counter(
     "routes",

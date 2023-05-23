@@ -81,13 +81,10 @@ class Composition:
             "env": Composition._get_env(),
             **kwargs,
         }
-        return cast(
-            str,
-            subprocess.run(
-                self.docker_compose + args,
-                **{"encoding": "utf-8", **kwargs},
-            ).stdout.decode(),  # nosec
-        )
+        return subprocess.run(  # type: ignore[no-any-return, call-overload] # pylint: disable=subprocess-run-check # noqa
+            self.docker_compose + args,
+            **{"encoding": "utf-8", **kwargs},
+        )  # nosec
 
     def dc_try(self, args: List[str], **kwargs: Any) -> None:
         _try(

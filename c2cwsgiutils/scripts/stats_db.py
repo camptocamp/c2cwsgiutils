@@ -4,22 +4,21 @@
 import argparse
 import logging
 import os
-import socket
 import sys
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional
-from wsgiref.simple_server import WSGIRequestHandler, make_server
+from wsgiref.simple_server import make_server
 
 import sqlalchemy
 import sqlalchemy.exc
 import sqlalchemy.orm
 import transaction
 from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
-from prometheus_client.exposition import ThreadingWSGIServer, make_wsgi_app
+from prometheus_client.exposition import make_wsgi_app
 from zope.sqlalchemy import register
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import _metrics_stats, stats
+from c2cwsgiutils import stats
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -56,29 +55,6 @@ def _parse_args() -> argparse.Namespace:
     )
 
     return parser.parse_args()
-
-
-def _get_best_family(address, port):
-    """Automatically select address family depending on address."""
-
-    # HTTPServer defaults to AF_INET, which will not start properly if
-    # binding an ipv6 address is requested.
-    # This function is based on what upstream python did for http.server
-    # in https://github.com/python/cpython/pull/11767
-    infos = socket.getaddrinfo(address, port)
-    family, _, _, _, sockaddr = next(iter(infos))
-    return family, sockaddr[0]
-
-
-class _SilentHandler(WSGIRequestHandler):
-    """WSGI handler that does not log requests."""
-
-    def log_message(self, format, *args):
-        """Log nothing."""
-
-
-class _TmpServer(ThreadingWSGIServer):
-    """Copy of ThreadingWSGIServer to update address_family locally."""
 
 
 class Reporter:
@@ -121,11 +97,10 @@ class Reporter:
         if self.prometheus_push:
             push_to_gateway(self.args.prometheus_url, job="db_counts", registry=self.registry)
         elif self.statsd is None:
-            port = (int(os.environ.get("PROMETHEUS_PORT", "9090")),)
-            _TmpServer.address_family, addr = _get_best_family(addr, port)
+            port = int(os.environ.get("PROMETHEUS_PORT", "9090"))
             app = make_wsgi_app(self.registry)
-            httpd = make_server(addr, port, app, _TmpServer, handler_class=_SilentHandler)
-            httpd.serve_one()
+            httpd = make_server("localhost", port, app)
+            httpd.handle_request()
 
     def error(self, metric: List[str], error_: Exception) -> None:
         if self.statsd is not None:

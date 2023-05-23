@@ -13,7 +13,7 @@ import requests.exceptions
 from dateutil import parser as dp
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import _metrics_stats, stats
+from c2cwsgiutils import stats
 
 
 def _ensure_slash(txt: Optional[str]) -> Optional[str]:
@@ -67,8 +67,8 @@ def _check_roundtrip() -> None:
     logger.info("Test roundtrip")
 
     query = {"query": {"match_phrase": {"log.logger": logger_name}}}
-    start = time.monotonic()
-    while time.monotonic() < start + LOG_TIMEOUT:
+    start = time.perf_counter()
+    while time.perf_counter() < start + LOG_TIMEOUT:
         exception = None
         for _ in range(int(os.environ.get("C2CWSGIUTILS_CHECK_ES_TRYNUMBER", 10))):
             try:
@@ -89,7 +89,7 @@ def _check_roundtrip() -> None:
             found = found["value"]
         if found > 0:
             LOG.info("Found the test log line.")
-            stats.set_gauge(["roundtrip"], time.monotonic() - start)
+            stats.set_gauge(["roundtrip"], time.perf_counter() - start)
             return
         else:
             LOG.info("Didn't find the test log line. Wait 1s...")

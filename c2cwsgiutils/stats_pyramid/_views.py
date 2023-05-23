@@ -3,7 +3,7 @@ from typing import cast
 
 import pyramid.config
 
-from c2cwsgiutils import _metrics_stats, config_utils, stats
+from c2cwsgiutils import config_utils, stats
 
 
 def init(config: pyramid.config.Configurator) -> None:

@@ -45,10 +45,10 @@ class Timer:
     def __init__(self, key: Optional[Sequence[Any]], tags: TagType) -> None:
         self._key = key
         self._tags = tags
-        self._start = time.monotonic()
+        self._start = time.perf_counter()
 
     def stop(self, key_final: Optional[Sequence[Any]] = None, tags_final: TagType = None) -> float:
-        duration = time.monotonic() - self._start
+        duration = time.perf_counter() - self._start
         if key_final is not None:
             self._key = key_final
         if tags_final is not None:

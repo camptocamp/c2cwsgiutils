@@ -7,7 +7,7 @@ import sqlalchemy.event
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.orm import Session
 
-from c2cwsgiutils import _metrics_stats, metrics, stats
+from c2cwsgiutils import _metrics_stats, metrics
 
 LOG = logging.getLogger(__name__)
 

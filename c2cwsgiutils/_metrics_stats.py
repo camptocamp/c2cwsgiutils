@@ -34,7 +34,7 @@ class Gauge:
 
     def set(self, value: float, tags: Optional[Mapping[str, Optional[str]]] = None) -> None:
         if self.prometheus:
-            self.prometheus_gauge.labels(**tags).set(value)
+            self.prometheus_gauge.labels(**(tags or {})).set(value)
         else:
             tags = tags or {}
             if stats.USE_TAGS:
@@ -78,17 +78,23 @@ class _PrometheusInspect:
         return wrapper
 
     def start(self) -> None:
-        self._start = time.monotonic()
+        self._start = time.perf_counter()
 
-    def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
+    def end(self, success: bool = True, tags: Optional[Dict[str, Optional[str]]] = None) -> None:
         assert self._start > 0
 
-        assert len(self.gauge.prometheus_gauges) == len(self.gauge.inspect_type)
-        for gauge, inspect_type in zip(self.gauge.prometheus_gauges, self.gauge.inspect_type):
-            if inspect_type == metrics.InspectType.TIMER:
-                gauge.inc(time.monotonic() - self._start)
-            elif inspect_type == metrics.InspectType.COUNTER:
-                gauge.inc()
+        tags = {**self.tags, **(tags or {})}
+        if self.gauge.add_success:
+            tags["status"] = "success" if success else "failure"
+
+        if self.gauge.inspect_type is None or (
+            len(self.gauge.inspect_type) == 1 and self.gauge.inspect_type[0] == metrics.InspectType.COUNTER
+        ):
+            assert isinstance(self.gauge.prometheus_gauge, prometheus_client.Counter)
+            self.gauge.prometheus_gauge.labels(**tags).inc()
+        else:
+            assert isinstance(self.gauge.prometheus_gauge, prometheus_client.Summary)
+            self.gauge.prometheus_gauge.labels(**tags).observe(time.perf_counter() - self._start)
 
 
 class _Inspect:
@@ -115,11 +121,13 @@ class _Inspect:
         return wrapper
 
     def start(self) -> None:
-        self._start = time.monotonic()
+        self._start = time.perf_counter()
 
     def end(self, success: bool = True, tags: Optional[Dict[str, str]] = None) -> None:
         assert self._start > 0
-        self.gauge.increment_counter({**self.tags, **(tags or {})}, time.monotonic() - self._start, success)
+        self.gauge.increment_counter(
+            {**self.tags, **(tags or {})}, time.perf_counter() - self._start, success
+        )
 
 
 class Counter:
@@ -138,45 +146,19 @@ class Counter:
     ):
         self.prometheus = os.environ.get("PROMETHEUS_PREFIX") is not None
         if self.prometheus:
-            if inspect_type is None:
-                self.prometheus_gauges: List[Union[prometheus_client.Counter, prometheus_client.Summary]] = [
-                    statsd_tags_mapping.keys.Counter(
-                        os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
-                        description,
-                        statsd_tags_mapping.keys(),
-                    )
-                ]
+            full_name = os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name
+            keys = list(statsd_tags_mapping.keys())
+            if add_success:
+                keys.append("status")
+            if inspect_type is None or (
+                len(inspect_type) == 1 and inspect_type[0] == metrics.InspectType.COUNTER
+            ):
+                self.prometheus_gauge: Union[
+                    prometheus_client.Counter, prometheus_client.Summary
+                ] = prometheus_client.Counter(full_name, description, list(keys))
+
             else:
-                if inspect_type:
-                    self.prometheus_gauges = []
-                    for _type in inspect_type:
-                        if _type == metrics.InspectType.TIMER:
-                            self.prometheus_gauges.append(
-                                prometheus_client.Summary(
-                                    os.environ.get("PROMETHEUS_PREFIX", "")
-                                    + prometheus_name
-                                    + "_processing_seconds",
-                                    description + " processing time [seconds]",
-                                    statsd_tags_mapping.keys(),
-                                )
-                            )
-                        elif _type == metrics.InspectType.COUNTER:
-                            self.prometheus_gauges.append(
-                                prometheus_client.Counter(
-                                    os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name + "_total",
-                                    description + " total",
-                                    statsd_tags_mapping.keys(),
-                                )
-                            )
-                else:
-                    for _type in inspect_type:
-                        self.prometheus_gauges.append(
-                            prometheus_client.Summary(
-                                os.environ.get("PROMETHEUS_PREFIX", "") + prometheus_name,
-                                description,
-                                statsd_tags_mapping.keys(),
-                            )
-                        )
+                self.prometheus_gauge = prometheus_client.Summary(full_name, description, keys)
         self.statsd_pattern_counter = statsd_pattern_counter
         self.statsd_pattern_timer = statsd_pattern_timer
         self.statsd_pattern_no_tags = statsd_pattern_no_tags

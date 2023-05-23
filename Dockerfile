@@ -70,9 +70,8 @@ RUN --mount=type=cache,target=/root/.cache \
   python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m compileall -q \
   && python3 -m compileall /usr/local/lib/python3.* /usr/lib/python3.* . -q \
-  && python3 -c 'import c2cwsgiutils'
-
-VOLUME [ "/prometheus-metrics" ]
+  && python3 -c 'import c2cwsgiutils' \
+  mkdir -p /prometheus-metrics
 
 ENV C2C_BASE_PATH=/c2c \
   C2C_REDIS_URL= \

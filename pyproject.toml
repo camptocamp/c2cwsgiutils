@@ -68,7 +68,7 @@ sentry = "c2cwsgiutils.sentry:filter_factory"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-requests = { version = "2.28.2" }
+requests = "2.31.0"
 pyyaml = { version = "6.0" }
 alembic = { version = "1.9.4", optional = true }
 boltons = { version = "21.0.0", optional = true }

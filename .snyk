@@ -38,8 +38,4 @@ ignore:
     - '*':
         reason: Not working with used Python version
         created: 2023-03-28T06:42:22.672Z
-  SNYK-PYTHON-REQUESTS-5595532:
-    - '*':
-        reason: Not working with used Python version
-        created: 2023-05-25T06:41:02.368Z
 patch: {}

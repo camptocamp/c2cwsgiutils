@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/camptocamp/c2cciutils/1.1/c2cciutils/schema.json
+
 version:
   branch_to_version_re:
     - from: release_([0-9]+)
@@ -13,6 +15,7 @@ checks:
   codespell: False
   isort: False
   dependabot_config: False
+  prospector_config: False
   black:
     ignore_patterns_re:
       - .*\.html

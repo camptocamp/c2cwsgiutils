@@ -17,6 +17,7 @@ checks:
   dependabot_config: False
   prospector_config: False
   prettier: False
+  setup: False
   black:
     ignore_patterns_re:
       - .*\.html

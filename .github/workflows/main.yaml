@@ -12,6 +12,10 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - run: sudo apt-get remove python3-debian python3-distro-info
+      - run: sudo apt-get update
+      - run: sudo apt-get install --yes libxslt1-dev libxml2-dev
+
       - uses: actions/checkout@v1
 
       - uses: camptocamp/initialise-gopass-summon-action@v2
@@ -20,10 +24,9 @@ jobs:
           github-gopass-ci-token: ${{secrets.GOPASS_CI_GITHUB_TOKEN}}
           patterns: pypi docker
 
-      - run: |
-          sudo rm /etc/apt/sources.list.d/*.list
-          sudo apt update
-          sudo apt install --yes python3-wheel python3-setuptools
+      - uses: asdf-vm/actions/install@v2
+      - run: cat /tmp/python-build.*.log
+        if: failure()
 
       - run: sudo python3 -m pip install --requirement=ci/requirements.txt
 

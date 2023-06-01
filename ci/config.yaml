@@ -16,6 +16,7 @@ checks:
   isort: False
   dependabot_config: False
   prospector_config: False
+  prettier: False
   black:
     ignore_patterns_re:
       - .*\.html

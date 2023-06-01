@@ -40,7 +40,7 @@ coverage = "7.2.5"
 
 [tool.poetry.dev-dependencies]
 # pylint = { version = "2.15.6" }
-prospector = { extras = ["with_bandit", "with_mypy"], version = "1.9.0" }
+prospector = { extras = ["with_bandit", "with_mypy"], version = "1.10.2" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

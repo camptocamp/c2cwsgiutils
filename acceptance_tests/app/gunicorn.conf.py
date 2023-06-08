@@ -4,6 +4,8 @@
 ###
 import os
 
+from prometheus_client import multiprocess
+
 from c2cwsgiutils import get_config_defaults, get_logconfig_dict, get_paste_config
 
 bind = ":8080"
@@ -31,3 +33,25 @@ if os.environ.get("DEBUG_LOGCONFIG", "0") == "1":
     print(logconfig_dict)
 
 raw_paste_global_conf = ["=".join(e) for e in get_config_defaults().items()]
+
+
+def on_starting(server):
+    from c2cwsgiutils import prometheus
+
+    del server
+
+    prometheus.start()
+
+
+def post_fork(server, worker):
+    from c2cwsgiutils import prometheus
+
+    del server, worker
+
+    prometheus.cleanup()
+
+
+def child_exit(server, worker):
+    del server
+
+    multiprocess.mark_process_dead(worker.pid)

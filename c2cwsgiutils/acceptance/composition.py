@@ -64,14 +64,27 @@ class Composition:
     def dc(self, args: List[str], **kwargs: Any) -> str:
         return cast(
             str,
-            subprocess.check_output(  # nosec
+            subprocess.run(  # nosec
                 self.docker_compose + args,
                 cwd=self.cwd,
                 env=Composition._get_env(),
                 stderr=subprocess.STDOUT,
+                stdout=subprocess.PIPE,
+                check=True,
                 **kwargs,
-            ).decode(),
+            ).stdout.decode(),
         )
+
+    def dc_process(self, args: List[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        kwargs = {
+            "cwd": self.cwd,
+            "env": Composition._get_env(),
+            **kwargs,
+        }
+        return subprocess.run(  # type: ignore[no-any-return, call-overload] # pylint: disable=subprocess-run-check # noqa
+            self.docker_compose + args,
+            **{"encoding": "utf-8", **kwargs},
+        )  # nosec
 
     def dc_try(self, args: List[str], **kwargs: Any) -> None:
         _try(
@@ -86,9 +99,7 @@ class Composition:
             os.makedirs(target_dir, exist_ok=True)
             for path in self.coverage_paths:
                 try:
-                    subprocess.check_call(  # nosec
-                        ["docker", "cp", path, target_dir], stderr=subprocess.STDOUT
-                    )
+                    subprocess.run(["docker", "cp", path, target_dir], check=True, timeout=60)  # nosec
                 except Exception:
                     self.dc(["ps"])
                     raise
@@ -101,6 +112,14 @@ class Composition:
 
     def run(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> str:
         return self.dc(
+            ["run", "--rm", container] + list(command),
+            **kwargs,
+        )
+
+    def run_proc(
+        self, container: str, *command: str, **kwargs: Dict[str, Any]
+    ) -> subprocess.CompletedProcess[str]:
+        return self.dc_process(
             ["run", "--rm", container] + list(command),
             **kwargs,
         )

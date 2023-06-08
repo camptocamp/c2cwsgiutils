@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
-"""Emits statsd gauges for every tables of a database."""
+"""Provide prometheus gauges for every tables of a database."""
+
 import argparse
 import logging
 import os
 import sys
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional
+from wsgiref.simple_server import make_server
 
 import sqlalchemy
 import sqlalchemy.exc
 import sqlalchemy.orm
 import transaction
+from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+from prometheus_client.exposition import make_wsgi_app
 from zope.sqlalchemy import register
 
 import c2cwsgiutils.setup_process
-from c2cwsgiutils import stats
-from c2cwsgiutils.prometheus import PushgatewayGroupPublisher
+from c2cwsgiutils import prometheus
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -33,13 +36,17 @@ def _parse_args() -> argparse.Namespace:
         "--schema", type=str, action="append", required=True, default=["public"], help="schema to dump"
     )
     parser.add_argument(
-        "--extra", type=str, action="append", help="A SQL query that returns a metric name and a value"
+        "--extra",
+        type=str,
+        action="append",
+        help="A SQL query that returns a metric name and a value",
     )
     parser.add_argument(
-        "--statsd-address", "--statsd_address", type=str, help="address:port for the statsd daemon"
-    )
-    parser.add_argument(
-        "--statsd-prefix", "--statsd_prefix", type=str, default="c2c", help="prefix for the statsd metrics"
+        "--extra-gauge",
+        type=str,
+        action="append",
+        nargs=3,
+        help="A SQL query that returns a metric name and a value, with gauge name and help",
     )
     parser.add_argument(
         "--prometheus-url", "--prometheus_url", type=str, help="Base URL for the Prometheus Pushgateway"
@@ -59,43 +66,39 @@ class Reporter:
 
     def __init__(self, args: argparse.Namespace) -> None:
         self._error: Optional[Exception] = None
-        if args.statsd_address:
-            self.statsd: Optional[stats.StatsDBackend] = stats.StatsDBackend(
-                args.statsd_address, args.statsd_prefix, tags=stats.get_env_tags()
-            )
-        else:
-            self.statsd = None
+        self.registry = CollectorRegistry()
+        self.prometheus_push = args.prometheus_url is not None
+        self.args = args
+        self.gauges: Dict[str, Gauge] = {}
 
-        if args.prometheus_url:
-            self.prometheus: Optional[PushgatewayGroupPublisher] = PushgatewayGroupPublisher(
-                args.prometheus_url,
-                "db_counts",
-                instance=args.prometheus_instance,
-                labels=stats.get_env_tags(),
+    def get_gauge(self, kind: str, kind_help: str, labels: List[str]) -> Gauge:
+        if kind not in self.gauges:
+            self.gauges[kind] = Gauge(
+                prometheus.build_metric_name(f"database_{kind}"),
+                kind_help,
+                labels,
+                registry=self.registry,
             )
-        else:
-            self.prometheus = None
+        return self.gauges[kind]
 
     def do_report(
-        self, metric: List[str], value: int, kind: str, tags: Optional[Dict[str, str]] = None
+        self, metric: List[str], value: int, kind: str, kind_help: str, tags: Dict[str, str]
     ) -> None:
         LOG.debug("%s.%s -> %d", kind, ".".join(metric), value)
-        if value > 0:  # Don't export 0 values. We can always set null=0 in grafana...
-            if self.statsd is not None:
-                if stats.USE_TAGS and tags is not None:
-                    self.statsd.gauge([kind], value, tags=tags)
-                else:
-                    self.statsd.gauge([kind] + metric, value)
-            if self.prometheus is not None:
-                self.prometheus.add("database_table_" + kind, value, metric_labels=tags)
+        gauge = self.get_gauge(kind, kind_help, list(tags.keys()))
+        gauge.labels(**tags).set(value)
 
     def commit(self) -> None:
-        if self.prometheus is not None:
-            self.prometheus.commit()
+        if self.prometheus_push:
+            push_to_gateway(self.args.prometheus_url, job="db_counts", registry=self.registry)
+        else:
+            port = int(os.environ.get("PROMETHEUS_PORT", "9090"))
+            app = make_wsgi_app(self.registry)
+            with make_server("", port, app) as httpd:
+                print(f"Waiting that Prometheus get the metrics served on port {port}...")
+                httpd.handle_request()
 
     def error(self, metric: List[str], error_: Exception) -> None:
-        if self.statsd is not None:
-            self.statsd.counter(["error"] + metric, 1)
         if self._error is None:
             self._error = error_
 
@@ -151,14 +154,16 @@ def _do_indexes(
             reporter.do_report(
                 [schema, table, index_name, fork],
                 value,
-                kind="index_size",
+                kind="table_index_size",
+                kind_help="Size of the index",
                 tags={"schema": schema, "table": table, "index": index_name, "fork": fork},
             )
         for action, value in (("scan", number_of_scans), ("read", tuples_read), ("fetch", tuples_fetched)):
             reporter.do_report(
                 [schema, table, index_name, action],
                 value,
-                kind="index_usage",
+                kind="table_index_usage",
+                kind_help="Usage of the index",
                 tags={"schema": schema, "table": table, "index": index_name, "action": action},
             )
 
@@ -183,7 +188,13 @@ def _do_table_size(
     assert result is not None
     size: int
     (size,) = result
-    reporter.do_report([schema, table], size, kind="size", tags={"schema": schema, "table": table})
+    reporter.do_report(
+        [schema, table],
+        size,
+        kind="table_size",
+        kind_help="Size of the table",
+        tags={"schema": schema, "table": table},
+    )
 
 
 def _do_table_count(
@@ -204,13 +215,22 @@ def _do_table_count(
     ).fetchone()
     assert result is not None
     (count,) = result
-    reporter.do_report([schema, table], count, kind="count", tags={"schema": schema, "table": table})
+    reporter.do_report(
+        [schema, table],
+        count,
+        kind="table_count",
+        kind_help="The number of row in the table",
+        tags={"schema": schema, "table": table},
+    )
 
 
-def do_extra(session: scoped_session, extra: str, reporter: Reporter) -> None:
+def do_extra(session: scoped_session, sql: str, kind: str, gauge_help: str, reporter: Reporter) -> None:
     """Do an extra report."""
-    for metric, count in session.execute(sqlalchemy.text(extra)):
-        reporter.do_report(str(metric).split("."), count, kind="count", tags={"metric": metric})
+
+    for metric, count in session.execute(sqlalchemy.text(sql)):
+        reporter.do_report(
+            str(metric).split("."), count, kind=kind, kind_help=gauge_help, tags={"metric": metric}
+        )
 
 
 def _do_dtats_db(args: argparse.Namespace) -> None:
@@ -245,10 +265,19 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
         for pos, extra in enumerate(args.extra):
             LOG.info("Process extra %s.", extra)
             try:
-                do_extra(session, extra, reporter)
+                do_extra(session, extra, "extra", "Extra metric", reporter)
             except Exception as e:  # pylint: disable=broad-except
                 LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(pos + 1)], e)
+    if args.extra_gauge:
+        for pos, extra in enumerate(args.extra_gauge):
+            sql, gauge, gauge_help = extra
+            LOG.info("Process extra %s.", extra)
+            try:
+                do_extra(session, sql, gauge, gauge_help, reporter)
+            except Exception as e:  # pylint: disable=broad-except
+                LOG.exception("Process extra %s error.", extra)
+                reporter.error(["extra", str(len(args.extra) + pos + 1)], e)
 
     reporter.commit()
     transaction.abort()
@@ -259,12 +288,12 @@ def main() -> None:
     """Run the command."""
     success = False
     args = _parse_args()
-    c2cwsgiutils.setup_process.bootstrap_application_from_options(args)
+    c2cwsgiutils.setup_process.init_logging(args.config_uri)
     for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", 10))):
         try:
             _do_dtats_db(args)
             success = True
-            continue
+            break
         except:  # pylint: disable=bare-except
             LOG.exception("Exception during run")
         time.sleep(float(os.environ.get("C2CWSGIUTILS_STATS_DB_SLEEP", 1)))

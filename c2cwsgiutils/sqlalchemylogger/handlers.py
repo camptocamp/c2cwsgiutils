@@ -54,7 +54,7 @@ class SQLAlchemyHandler(logging.Handler):
         LOG.debug("%s: starting processor thread", __name__)
         while True:
             logs = []
-            time_since_last = time.monotonic()
+            time_since_last = time.perf_counter()
             while True:
                 with self.condition:
                     self.condition.wait(timeout=self.MAX_TIMEOUT)
@@ -66,7 +66,7 @@ class SQLAlchemyHandler(logging.Handler):
                     # by writing chunks of self.MAX_NB_LOGS size,
                     # but also do not wait forever before writing stuff (self.MAX_TIMOUT)
                     if (len(logs) >= self.MAX_NB_LOGS) or (
-                        time.monotonic() >= (time_since_last + self.MAX_TIMEOUT)
+                        time.perf_counter() >= (time_since_last + self.MAX_TIMEOUT)
                     ):
                         self._write_logs(logs)
                         break

@@ -1,25 +1,27 @@
 import logging
 import warnings
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
+import prometheus_client
 import pyramid.config
 
-from c2cwsgiutils import config_utils, stats
+from c2cwsgiutils import config_utils, prometheus
 
 LOG = logging.getLogger(__name__)
 ORIG: Optional[Callable[..., Any]] = None
 
+_PROMETHEUS_REDIS_SUMMARY = prometheus_client.Summary(
+    prometheus.build_metric_name("redis"),
+    "Number of redis commands",
+    ["command"],
+    unit="seconds",
+)
 
-def _execute_command_patch(self: Any, *args: Any, **options: Any) -> Any:
-    if stats.USE_TAGS:
-        key = ["redis"]
-        tags: Optional[Dict[str, str]] = {"cmd": args[0]}
-    else:
-        key = ["redis", args[0]]
-        tags = None
+
+def _execute_command_patch(self: Any, command: str, *args: Any, **options: Any) -> Any:
     assert ORIG is not None
-    with stats.outcome_timer_context(key, tags):
-        return ORIG(self, *args, **options)
+    with _PROMETHEUS_REDIS_SUMMARY.labels(command=command).time():
+        return ORIG(self, command, *args, **options)
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:

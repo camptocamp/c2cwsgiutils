@@ -16,7 +16,7 @@ import pyramid.router
 from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
 
-from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler, stats
+from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler
 
 
 def fill_arguments(
@@ -51,7 +51,6 @@ def init(config_file: str = "c2c:///app/production.ini") -> None:
     coverage_setup.includeme()
     sentry.includeme(config)
     broadcast.includeme(config)
-    stats.init_backends(settings)
     redis_stats.includeme(config)
     sql_profiler.includeme(config)
 

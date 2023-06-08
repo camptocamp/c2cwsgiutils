@@ -12,7 +12,6 @@ import re
 import subprocess  # nosec
 import time
 import traceback
-from collections import Counter
 from enum import Enum
 from types import TracebackType
 from typing import (
@@ -30,6 +29,7 @@ from typing import (
     cast,
 )
 
+import prometheus_client
 import pyramid.config
 import pyramid.request
 import requests
@@ -39,7 +39,7 @@ import sqlalchemy.sql
 from pyramid.httpexceptions import HTTPNotFound
 
 import c2cwsgiutils.db
-from c2cwsgiutils import auth, broadcast, config_utils, redis_utils, stats, version
+from c2cwsgiutils import auth, broadcast, config_utils, prometheus, redis_utils, version
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -48,6 +48,25 @@ else:
 
 LOG = logging.getLogger(__name__)
 ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
+
+_PROMETHEUS_DB_SUMMARY = prometheus_client.Summary(
+    prometheus.build_metric_name("health_check_db"),
+    "The to do a database query",
+    ["configuration", "connection", "check"],
+    unit="seconds",
+)
+_PROMETHEUS_ALEMBIC_VERSION = prometheus_client.Gauge(
+    prometheus.build_metric_name("alembic_version"),
+    "The alembic version of the database",
+    ["version", "name", "configuration"],
+    multiprocess_mode="liveall",
+)
+_PROMETHEUS_HEALTH_CHECKS_FAILURE = prometheus_client.Gauge(
+    prometheus.build_metric_name("health_check_failure"),
+    "The health check",
+    ["name"],
+    multiprocess_mode="livemax",
+)
 
 
 class EngineType(Enum):
@@ -283,20 +302,9 @@ class HealthCheck:
                 assert version_table
                 for binding in _get_bindings(self.session, EngineType.READ_AND_WRITE):
                     with binding as binded_session:
-                        if stats.USE_TAGS:
-                            key = ["sql", "manual", "health_check", "alembic"]
-                            tags: Optional[Dict[str, str]] = {"conf": alembic_ini_path, "con": binding.name()}
-                        else:
-                            key = [
-                                "sql",
-                                "manual",
-                                "health_check",
-                                "alembic",
-                                alembic_ini_path,
-                                binding.name(),
-                            ]
-                            tags = None
-                        with stats.timer_context(key, tags):
+                        with _PROMETHEUS_DB_SUMMARY.labels(
+                            configuration=alembic_ini_path, connection=binding.name(), check="alembic"
+                        ).time():
                             result = binded_session.execute(
                                 sqlalchemy.text(
                                     "SELECT version_num FROM "  # nosec
@@ -306,12 +314,9 @@ class HealthCheck:
                             ).fetchone()
                             assert result is not None
                             (actual_version,) = result
-                            if stats.USE_TAGS:
-                                stats.increment_counter(
-                                    ["alembic_version"], 1, tags={"version": actual_version, "name": name}
-                                )
-                            else:
-                                stats.increment_counter(["alembic_version", name, actual_version], 1)
+                            _PROMETHEUS_ALEMBIC_VERSION.labels(
+                                version=actual_version, name=name, configuration=alembic_ini_path
+                            ).set(1)
                             if actual_version != version_:
                                 raise Exception(  # pylint: disable=broad-exception-raised
                                     f"Invalid alembic version (db: {actual_version}, code: {version_})"
@@ -428,18 +433,11 @@ class HealthCheck:
         """
 
         def check(request: pyramid.request.Request) -> Dict[str, Any]:
+            ref = version.get_version()
             all_versions = _get_all_versions()
             assert all_versions
             versions = [e for e in all_versions if e is not None]
-            # Output the versions we see on the monitoring
-            v: Optional[str]
-            for v, count in Counter(versions).items():
-                if stats.USE_TAGS:
-                    stats.increment_counter(["version"], count, tags={"version": v})
-                else:
-                    stats.increment_counter(["version", v], count)
 
-                ref = versions[0]
             assert all(v == ref for v in versions), "Non identical versions: " + ", ".join(versions)
             return {"version": ref, "count": len(versions)}
 
@@ -493,23 +491,17 @@ class HealthCheck:
         request: pyramid.request.Request,
         results: Dict[str, Dict[str, Any]],
     ) -> None:
-        start = time.monotonic()
+        start = time.perf_counter()
         try:
             result = check(request)
-            results["successes"][name] = {"timing": time.monotonic() - start, "level": level}
+            results["successes"][name] = {"timing": time.perf_counter() - start, "level": level}
             if result is not None:
                 results["successes"][name]["result"] = result
-            if stats.USE_TAGS:
-                stats.increment_counter(["health_check"], 1, tags={"name": name, "outcome": "success"})
-            else:
-                stats.increment_counter(["health_check", name, "success"], 1)
+            _set_success(check_name=name)
         except Exception as e:  # pylint: disable=broad-except
-            if stats.USE_TAGS:
-                stats.increment_counter(["health_check"], 1, tags={"name": name, "outcome": "failure"})
-            else:
-                stats.increment_counter(["health_check", name, "failure"], 1)
+            _PROMETHEUS_HEALTH_CHECKS_FAILURE.labels(name=name).set(1)
             LOG.warning("Health check %s failed", name, exc_info=True)
-            failure = {"message": str(e), "timing": time.monotonic() - start, "level": level}
+            failure = {"message": str(e), "timing": time.perf_counter() - start, "level": level}
             if isinstance(e, JsonCheckException) and e.json_data() is not None:
                 failure["result"] = e.json_data()
             if is_auth or os.environ.get("DEVELOPMENT", "0") != "0":
@@ -523,13 +515,9 @@ class HealthCheck:
     ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
             with binding as session:
-                if stats.USE_TAGS:
-                    key = ["sql", "manual", "health_check", "db"]
-                    tags: Optional[Dict[str, str]] = {"con": binding.name()}
-                else:
-                    key = ["sql", "manual", "health_check", "db", binding.name()]
-                    tags = None
-                with stats.timer_context(key, tags):
+                with _PROMETHEUS_DB_SUMMARY.labels(
+                    connection=binding.name(), check="database", configuration="<default>"
+                ).time():
                     return query_cb(session)
 
         return "db_engine_" + binding.name(), check
@@ -546,6 +534,13 @@ class HealthCheck:
 
 def _maybe_function(what: Any, request: pyramid.request.Request) -> Any:
     return what(request) if callable(what) else what
+
+
+@broadcast.decorator(expect_answers=False)
+def _set_success(check_name: str) -> None:
+    """Set check in success in all process."""
+
+    _PROMETHEUS_HEALTH_CHECKS_FAILURE.labels(name=check_name).set(0)
 
 
 @broadcast.decorator(expect_answers=True)

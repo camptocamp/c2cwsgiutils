@@ -47,7 +47,7 @@ def _dump_memory_impl(
 
     if analyze_type:
         # timeout after one minute, must be set to a bit less that the timeout of the broadcast in _views.py
-        timeout = time.monotonic() + 60
+        timeout = time.perf_counter() + 60
 
         mod_counts: Dict[str, int] = {}
         biggest_objects: List[Tuple[float, Any]] = []
@@ -80,7 +80,7 @@ def _dump_memory_impl(
                     biggest_objects.sort(key=lambda x: x[0])
                     if len(biggest_objects) > limit:
                         biggest_objects = biggest_objects[-limit:]
-            if time.monotonic() > timeout:
+            if time.perf_counter() > timeout:
                 result[analyze_type]["timeout"] = True
                 break
         if analyze_type == "builtins.function":

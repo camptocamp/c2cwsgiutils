@@ -1,14 +1,23 @@
 import logging
 import re
-from typing import Any, Callable, Dict, Optional
+import time
+from typing import Any, Callable
 
+import prometheus_client
 import sqlalchemy.event
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.orm import Session
 
-from c2cwsgiutils import stats
+from c2cwsgiutils import prometheus
 
 LOG = logging.getLogger(__name__)
+
+_PROMETHEUS_DB_SUMMARY = prometheus_client.Summary(
+    prometheus.build_metric_name("database"),
+    "Database requests",
+    ["what"],
+    unit="seconds",
+)
 
 
 def _jump_string(content: str, pos: int) -> int:
@@ -58,17 +67,11 @@ def _simplify_sql(sql: str) -> str:
 
 
 def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
-    if stats.USE_TAGS and what != "commit":
-        key = ["sql"]
-        tags: Optional[Dict[str, str]] = {"query": what}
-    else:
-        key = ["sql", what]
-        tags = None
-    measure = stats.timer(key, tags)
+    start = time.perf_counter()
 
     def after(*_args: Any, **_kwargs: Any) -> None:
-        duration = measure.stop()
-        LOG.debug("Execute statement '%s' in %d.", what, duration)
+        _PROMETHEUS_DB_SUMMARY.labels({"query": what}).observe(time.perf_counter() - start)
+        LOG.debug("Execute statement '%s' in %d.", what, time.perf_counter() - start)
 
     return after
 

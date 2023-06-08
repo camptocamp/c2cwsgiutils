@@ -1,7 +1,7 @@
 version: '2.2'
 
 services:
-  app:
+  app: &app
     image: camptocamp/c2cwsgiutils_test_app
     environment: &app_env
       - SQLALCHEMY_URL
@@ -20,16 +20,17 @@ services:
       - C2C_PROFILER_PATH=/api_profiler
       - C2C_PROFILER_MODULES=c2cwsgiutils c2cwsgiutils_app sqlalchemy request
       - C2C_ENABLE_EXCEPTION_HANDLING=1
-      - LOG_TYPE=json
-      - SQL_LOG_LEVEL=DEBUG
       - GUNICORN_CMD_ARGS="--reload" # don't use this in production
-      - OTHER_LOG_LEVEL=DEBUG
+      - C2CWSGIUTILS_LOG_LEVEL=DEBUG
+      - SQL_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=INFO
       - COVERAGE=1
       - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
       - SENTRY_CLIENT_ENVIRONMENT=local
       - SENTRY_CLIENT_RELEASE=latest
       - SENTRY_TAG_SERVICE=app
       - C2C_REDIS_SENTINELS=redis:26379
+      - C2C_REDIS_DB=1
       - PYTHONMALLOC=debug
       - DEBUG_LOGCONFIG
       - GUNICORN_WORKERS=1
@@ -37,20 +38,72 @@ services:
       # Test problematic environment variable (values contains % and duplicated with different cass)
       - TEST='%1'
       - test='%2'
+      - PROMETHEUS_PORT=9090
+      - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
+      - C2C_PROMETHEUS_APPLICATION_PACKAGES=c2cwsgiutils_app
     links:
       - db
       - db_slave
       - redis
     ports:
       - 8480:8080
+      - 9090:9090
+
+  app2:
+    <<: *app
+    # Same as app but with 2 workers (and different Redis DB 2, broadcast_prefix, ports, and JSON log format)
+    environment:
+      - SQLALCHEMY_URL
+      - SQLALCHEMY_SLAVE_URL
+      - PGOPTIONS=-c statement_timeout=1500
+      - STATS_VIEW=1
+      - STATSD_ADDRESS=${TEST_IP}:8125
+      - STATSD_PREFIX=acceptance
+      - STATSD_TAG_XYZ=zyx
+      - STATSD_USE_TAGS=1
+      - C2C_SECRET=changeme
+      - LOG_TYPE=json
+      - C2C_LOG_VIEW_ENABLED=1
+      - C2C_DB_MAINTENANCE_VIEW_ENABLED=1
+      - C2C_SQL_PROFILER_ENABLED=1
+      - C2C_DEBUG_VIEW_ENABLED=1
+      - C2C_PROFILER_PATH=/api_profiler
+      - C2C_PROFILER_MODULES=c2cwsgiutils c2cwsgiutils_app sqlalchemy request
+      - C2C_ENABLE_EXCEPTION_HANDLING=1
+      - GUNICORN_CMD_ARGS="--reload" # don't use this in production
+      - C2CWSGIUTILS_LOG_LEVEL=DEBUG
+      - SQL_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=INFO
+      - COVERAGE=1
+      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      - SENTRY_CLIENT_ENVIRONMENT=local
+      - SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=app
+      - C2C_REDIS_SENTINELS=redis:26379
+      - C2C_REDIS_DB=2
+      - C2C_BROADCAST_PREFIX=app2
+      - PYTHONMALLOC=debug
+      - DEBUG_LOGCONFIG
+      - GUNICORN_WORKERS=2
+      - GUNICORN_THREADS=10
+      # Test problematic environment variable (values contains % and duplicated with different cass)
+      - TEST='%1'
+      - test='%2'
+      - PROMETHEUS_PORT=9090
+      - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
+      - C2C_PROMETHEUS_APPLICATION_PACKAGES=c2cwsgiutils_app
+    ports:
+      - 8482:8080
+      - 9092:9090
 
   alembic_master:
     image: camptocamp/c2cwsgiutils_test_app
     environment:
       - SQLALCHEMY_URL
       - SQLALCHEMY_SLAVE_URL
+      - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
-      - OTHER_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=INFO
       - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
       - SENTRY_CLIENT_ENVIRONMENT=local
       - SENTRY_CLIENT_RELEASE=latest
@@ -66,8 +119,9 @@ services:
     environment:
       - SQLALCHEMY_URL
       - SQLALCHEMY_SLAVE_URL
+      - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
-      - OTHER_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=INFO
       - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
       - SENTRY_CLIENT_ENVIRONMENT=local
       - SENTRY_CLIENT_RELEASE=latest
@@ -100,11 +154,27 @@ services:
 
   run_test:
     image: camptocamp/c2cwsgiutils_test_app
-    command: 'true'
+    command:
+      - 'true'
     environment: *app_env
     links:
       - db
       - redis
+    ports:
+      - 9098:9090
+
+  stats_db:
+    image: camptocamp/c2cwsgiutils
+    command:
+      - c2cwsgiutils-stats-db
+      - --db=postgresql://www-data:www-data@db:5432/test
+      - --schema=public
+    environment: *app_env
+    links:
+      - db
+      - redis
+    ports:
+      - 9099:9090
 
   redis_master:
     image: redis:6

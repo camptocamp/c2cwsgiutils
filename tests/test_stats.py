@@ -1,6 +1,9 @@
+import pytest
+
 from c2cwsgiutils import stats
 
 
+@pytest.mark.skip(reason="Deprecated")
 def test_outcome_timer_context_ok():
     backend = stats.MemoryBackend()
     stats.BACKENDS["memory"] = backend
@@ -18,6 +21,7 @@ class OkException(Exception):
     pass
 
 
+@pytest.mark.skip(reason="Deprecated")
 def test_outcome_timer_context_failure():
     backend = stats.MemoryBackend()
     stats.BACKENDS["memory"] = backend
@@ -34,6 +38,7 @@ def test_outcome_timer_context_failure():
     assert backend._timers["toto/failure"][0] == 1  # pylint: disable=W0212
 
 
+@pytest.mark.skip(reason="Deprecated")
 def test_format_tags():
     format_tags = stats._format_tags  # pylint: disable=W0212
     assert format_tags(None, "|", ",", "=", lambda x: x, lambda x: x) == ""

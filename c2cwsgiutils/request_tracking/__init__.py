@@ -4,22 +4,30 @@ Allows to track the request_id in the logs, the DB and others.
 Adds a c2c_request_id attribute to the Pyramid Request class to access it.
 """
 import logging
+import time
 import urllib.parse
 import uuid
 import warnings
-from typing import Any, Dict, List, Optional, Sequence
+from typing import List, Mapping, Optional, Tuple, Union
 
+import prometheus_client
 import pyramid.request
 import requests.adapters
 import requests.models
 from pyramid.threadlocal import get_current_request
 
-from c2cwsgiutils import config_utils, stats
+from c2cwsgiutils import config_utils, prometheus
 
 ID_HEADERS: List[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
 DEFAULT_TIMEOUT: Optional[float] = None
+_PROMETHEUS_REQUESTS_SUMMARY = prometheus_client.Summary(
+    prometheus.build_metric_name("requests"),
+    "Requests requests",
+    ["scheme", "hostname", "port", "method", "status", "group"],
+    unit="seconds",
+)
 
 
 def _gen_request_id(request: pyramid.request.Request) -> str:
@@ -33,8 +41,11 @@ def _patch_requests() -> None:
     def send_wrapper(
         self: requests.adapters.HTTPAdapter,
         request: requests.models.PreparedRequest,
-        timeout: Optional[float] = None,
-        **kwargs: Any,
+        stream: bool = False,
+        timeout: Union[None, float, Tuple[float, float], Tuple[float, None]] = None,
+        verify: Union[bool, str] = True,
+        cert: Union[None, bytes, str, Tuple[Union[bytes, str], Union[bytes, str]]] = None,
+        proxies: Optional[Mapping[str, str]] = None,
     ) -> requests.Response:
         pyramid_request = get_current_request()
         header = ID_HEADERS[0]
@@ -47,31 +58,25 @@ def _patch_requests() -> None:
             else:
                 LOG.warning("Doing a %s request without timeout to %s", request.method, request.url)
 
-        status = 999
-        timer = stats.timer()
-        try:
-            response = _HTTPAdapter_send(self, request, timeout=timeout, **kwargs)
-            status = response.status_code
-            return response
-        finally:
-            if request.url is not None:
-                parsed = urllib.parse.urlparse(request.url)
-                port = parsed.port or (80 if parsed.scheme == "http" else 443)
-                if stats.USE_TAGS:
-                    key: Sequence[Any] = ["requests"]
-                    tags: Optional[Dict[str, Any]] = {
-                        "scheme": parsed.scheme,
-                        "host": parsed.hostname,
-                        "port": port,
-                        "method": request.method,
-                        "status": status,
-                    }
-                else:
-                    key = ["requests", parsed.scheme, parsed.hostname, port, request.method, status]
-                    tags = None
-                timer.stop(key, tags)
+        assert request.url
+        parsed = urllib.parse.urlparse(request.url)
+        port = parsed.port or (80 if parsed.scheme == "http" else 443)
+        start = time.perf_counter()
+        response = _HTTPAdapter_send(
+            self, request, timeout=timeout, stream=stream, verify=verify, cert=cert, proxies=proxies
+        )
 
-    requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore
+        _PROMETHEUS_REQUESTS_SUMMARY.labels(
+            scheme=parsed.scheme,
+            hostname=parsed.hostname,
+            port=str(port),
+            method=request.method,
+            status=str(response.status_code),
+            group=str(response.status_code // 100 * 100),
+        ).observe(time.perf_counter() - start)
+        return response
+
+    requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore[method-assign]
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:

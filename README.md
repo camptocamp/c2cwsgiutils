@@ -423,14 +423,14 @@ command line. Usually done in the [Dockerfile](acceptance_tests/app/Dockerfile) 
 It will work in multi process mode with the limitation listed in the
 [`prometheus_client` documentation](https://github.com/prometheus/client_python#multiprocess-mode-eg-gunicorn).
 
-To enable it you should provide the `PROMETHEUS_PORT` environment variable.
+To enable it you should provide the `C2CWSGIUTILS_PROMETHEUS_PORT` environment variable.
 For security reason, this port should not be exposed.
 
 We can customize it with the following environment variables:
 
-- `PROMETHEUS_PREFIX`: to customize the prefix, default is `c2cwsggiutils-`.
+- `C2C_PROMETHEUS_PREFIX`: to customize the prefix, default is `c2cwsggiutils-`.
 - `C2C_PROMETHEUS_PACKAGES` the packages that will be present in the version information, default is `c2cwsgiutils,pyramid,gunicorn,sqlalchemy`.
-- `C2C_PROMETHEUS_APPLICATION_PACKAGES` the packages that will be present in the version information as application.
+- `C2C_PROMETHEUS_APPLICATION_PACKAGE` the packages that will be present in the version information as application.
 
 And you should add in your `gunicorn.conf.py`:
 

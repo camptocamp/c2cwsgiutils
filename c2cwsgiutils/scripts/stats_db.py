@@ -92,7 +92,7 @@ class Reporter:
         if self.prometheus_push:
             push_to_gateway(self.args.prometheus_url, job="db_counts", registry=self.registry)
         else:
-            port = int(os.environ.get("PROMETHEUS_PORT", "9090"))
+            port = int(os.environ.get("C2C_PROMETHEUS_PORT", "9090"))
             app = make_wsgi_app(self.registry)
             with make_server("", port, app) as httpd:
                 print(f"Waiting that Prometheus get the metrics served on port {port}...")

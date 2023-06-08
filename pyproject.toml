@@ -169,7 +169,7 @@ vcs = "git"
 pattern = "^(?P<base>\\d+(\\.\\d+)*)"
 format-jinja = """
 {%- if env.get("VERSION_TYPE") == "version_branch" -%}
-{{serialize_pep440(bump_version(base, 1 if env.get("IS_MASTER") == "TRUE" else 2), dev=distance)}}
+{{serialize_pep440(bump_version(base, 0 if env.get("IS_MASTER") == "TRUE" else 2), dev=distance)}}
 {%- elif distance == 0 -%}
 {{serialize_pep440(base)}}
 {%- else -%}

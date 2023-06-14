@@ -38,9 +38,9 @@ services:
       # Test problematic environment variable (values contains % and duplicated with different cass)
       - TEST='%1'
       - test='%2'
-      - PROMETHEUS_PORT=9090
       - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
-      - C2C_PROMETHEUS_APPLICATION_PACKAGES=c2cwsgiutils_app
+      - C2C_PROMETHEUS_PORT=9090
+      - C2C_PROMETHEUS_APPLICATION_PACKAGE=c2cwsgiutils_app
     links:
       - db
       - db_slave
@@ -89,8 +89,8 @@ services:
       # Test problematic environment variable (values contains % and duplicated with different cass)
       - TEST='%1'
       - test='%2'
-      - PROMETHEUS_PORT=9090
       - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
+      - C2C_PROMETHEUS_PORT=9090
       - C2C_PROMETHEUS_APPLICATION_PACKAGES=c2cwsgiutils_app
     ports:
       - 8482:8080

@@ -24,7 +24,7 @@ MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS = [
 def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> None:
     """Start separate HTTP server to provide the Prometheus metrics."""
 
-    if os.environ.get("PROMETHEUS_PORT") is not None:
+    if os.environ.get("C2C_PROMETHEUS_PORT") is not None:
         broadcast.includeme()
 
         registry = prometheus_client.CollectorRegistry() if registry is None else registry
@@ -32,7 +32,7 @@ def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> Non
         registry.register(prometheus_client.PLATFORM_COLLECTOR)
         registry.register(MultiProcessCustomCollector())
         prometheus_client.multiprocess.MultiProcessCollector(registry)  # type: ignore[no-untyped-call]
-        prometheus_client.start_http_server(int(os.environ["PROMETHEUS_PORT"]), registry=registry)
+        prometheus_client.start_http_server(int(os.environ["C2C_PROMETHEUS_PORT"]), registry=registry)
 
 
 def includeme(config: pyramid.config.Configurator) -> None:
@@ -45,7 +45,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
 def build_metric_name(postfix: str) -> str:
     """Build the metric name with the prefix from the environment variable."""
 
-    return os.environ.get("PROMETHEUS_PREFIX", "c2cwsgiutils_") + postfix
+    return os.environ.get("C2C_PROMETHEUS_PREFIX", "c2cwsgiutils_") + postfix
 
 
 def cleanup() -> None:

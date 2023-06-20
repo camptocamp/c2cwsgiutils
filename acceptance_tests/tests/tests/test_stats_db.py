@@ -96,6 +96,8 @@ def test_standalone(prometheus_stats_db_connection, composition):
     """
     Test that stats db is correctly waiting for the Prometheus call, and exit after the call.
     """
+    # To be able to debug
+    composition.dc_process(["logs", "stats_db"])
     ps = [l for l in composition.dc(["ps"]).split("\n") if "c2cwsgiutils_stats_db_" in l]
     assert len(ps) == 1
     assert " Up " in ps[0]

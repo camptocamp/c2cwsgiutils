@@ -95,7 +95,7 @@ class Reporter:
             port = int(os.environ.get("C2C_PROMETHEUS_PORT", "9090"))
             app = make_wsgi_app(self.registry)
             with make_server("", port, app) as httpd:
-                print(f"Waiting that Prometheus get the metrics served on port {port}...")
+                LOG.info("Waiting that Prometheus get the metrics served on port %s...", port)
                 httpd.handle_request()
 
     def error(self, metric: List[str], error_: Exception) -> None:
@@ -288,7 +288,7 @@ def main() -> None:
     """Run the command."""
     success = False
     args = _parse_args()
-    c2cwsgiutils.setup_process.init_logging(args.config_uri)
+    c2cwsgiutils.setup_process.init(args.config_uri)
     for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", 10))):
         try:
             _do_dtats_db(args)

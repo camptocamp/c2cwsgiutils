@@ -169,7 +169,43 @@ services:
       - c2cwsgiutils-stats-db
       - --db=postgresql://www-data:www-data@db:5432/test
       - --schema=public
-    environment: *app_env
+    environment:
+      - SQLALCHEMY_URL
+      - SQLALCHEMY_SLAVE_URL
+      - PGOPTIONS=-c statement_timeout=1500
+      - STATS_VIEW=1
+      - STATSD_ADDRESS=${TEST_IP}:8125
+      - STATSD_PREFIX=acceptance
+      - STATSD_TAG_XYZ=zyx
+      - STATSD_USE_TAGS=1
+      - C2C_SECRET=changeme
+      - C2C_LOG_VIEW_ENABLED=1
+      - C2C_DB_MAINTENANCE_VIEW_ENABLED=1
+      - C2C_SQL_PROFILER_ENABLED=1
+      - C2C_DEBUG_VIEW_ENABLED=1
+      - C2C_PROFILER_PATH=/api_profiler
+      - C2C_PROFILER_MODULES=c2cwsgiutils c2cwsgiutils_app sqlalchemy request
+      - C2C_ENABLE_EXCEPTION_HANDLING=1
+      - GUNICORN_CMD_ARGS="--reload" # don't use this in production
+      - C2CWSGIUTILS_LOG_LEVEL=DEBUG
+      - SQL_LOG_LEVEL=DEBUG
+      - OTHER_LOG_LEVEL=INFO
+      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
+      - SENTRY_CLIENT_ENVIRONMENT=local
+      - SENTRY_CLIENT_RELEASE=latest
+      - SENTRY_TAG_SERVICE=app
+      - C2C_REDIS_SENTINELS=redis:26379
+      - C2C_REDIS_DB=1
+      - PYTHONMALLOC=debug
+      - DEBUG_LOGCONFIG
+      - GUNICORN_WORKERS=1
+      - GUNICORN_THREADS=10
+      # Test problematic environment variable (values contains % and duplicated with different cass)
+      - TEST='%1'
+      - test='%2'
+      - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
+      - C2C_PROMETHEUS_PORT=9090
+      - C2C_PROMETHEUS_APPLICATION_PACKAGE=c2cwsgiutils_app
     links:
       - db
       - redis

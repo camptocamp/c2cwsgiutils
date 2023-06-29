@@ -26,3 +26,8 @@ def test_wrong():
 def test_mask():
     image = os.path.join(os.path.dirname(__file__), "test.wrong.png")
     check_image_file("/results", image, os.path.join(os.path.dirname(__file__), "test.expected.png"))
+
+
+def test_mask_1_bit():
+    image = os.path.join(os.path.dirname(__file__), "test.wrong.png")
+    check_image_file("/results", image, os.path.join(os.path.dirname(__file__), "test-1-bit.expected.png"))

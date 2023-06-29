@@ -83,6 +83,11 @@ def check_image(
     mask = None
     if mask_filename is not None:
         mask = skimage.io.imread(mask_filename)
+        if len(mask.shape) == 3 and mask.shape[2] == 3:
+            mask = skimage.color.rgb2gray(mask)
+        if len(mask.shape) == 3 and mask.shape[2] == 4:
+            mask = skimage.color.rgba2gray(mask)
+
         assert mask is not None, "Wrong mask: " + mask_filename
         image_to_check[mask == 0] = [255, 255, 255]
 

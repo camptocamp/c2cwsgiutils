@@ -26,27 +26,11 @@
     />
     <title>c2cwsgiutils tools</title>
     <style>
-      form {
-        margin-bottom: 1rem;
-      }
-      label {
-        margin-right: 0.5rem;
-      }
-      input,
-      button,
-      a.btn {
-        margin-right: 1rem;
-      }
-      div.col-lg {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      hr {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
       body {
         margin-top: 0.5rem;
+      }
+      button, p  {
+        margin-bottom: 0.5rem;
       }
     </style>
   </head>

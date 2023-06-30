@@ -64,10 +64,8 @@ def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
     printable_content = "\n".join(content)
     result = f"""
     <div class="row">
-      <div class="col-sm-3"><h2>{title}</h2></div>
-      <div class="col-lg">
+      <h2>{title}</h2>
       {printable_content}
-      </div>
     </div>
     """
     if sep:
@@ -105,7 +103,7 @@ def form(url: Optional[str], *content: str, method: str = "get", target: str = "
         method_attrs = ' method="post" enctype="multipart/form-data"'
     printable_content = "\n".join(content)
     return f"""
-    <form class="form-inline" action="{url}" target="{target}"{method_attrs}>
+    <form action="{url}" target="{target}"{method_attrs}>
       {printable_content}
     </form>
     """
@@ -120,7 +118,7 @@ def input_(
     ELEM_ID += 1
 
     if label is None and type_ != "hidden":
-        label = name
+        label = name.replace("_", " ").capitalize()
     if type_ is None:
         if isinstance(value, int):
             type_ = "number"
@@ -128,8 +126,11 @@ def input_(
             type_ = "text"
     result = ""
     if label is not None:
-        result += f'<div class="form-group form-inline"><label for="{id_}">{label}:</label>'
-    result += f'<input class="form-control" type="{type_}" name="{name}" value="{value}" id="{id_}">'
+        result += f'<div class="row mb-3"><label class="col-sm-2 col-form-label" for="{id_}">{label}</label>'
+    result += (
+        '<div class="col-sm-10"><input class="form-control" '
+        f'type="{type_}" name="{name}" value="{value}" id="{id_}"></div>'
+    )
     if label is not None:
         result += "</div>"
     return result
@@ -137,6 +138,7 @@ def input_(
 
 def button(label: str) -> str:
     """Get en HTML button."""
+
     return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
@@ -200,7 +202,7 @@ def _index(request: pyramid.request.Request) -> Dict[str, str]:
 def _versions(request: pyramid.request.Request) -> str:
     versions_url = _url(request, "c2c_versions")
     if versions_url:
-        return section("Versions", paragraph(link(versions_url, "Get")))
+        return section("Versions", paragraph(link(versions_url, "Get")), sep=False)
     else:
         return ""
 
@@ -208,7 +210,7 @@ def _versions(request: pyramid.request.Request) -> str:
 def _stats(request: pyramid.request.Request) -> str:
     stats_url = _url(request, "c2c_read_stats_json")
     if stats_url:
-        return section("Statistics", paragraph(link(stats_url, "Get")))
+        return section("Statistics", paragraph(link(stats_url, "Get")), sep=False)
     else:
         return ""
 
@@ -223,10 +225,9 @@ def _profiler(request: pyramid.request.Request) -> str:
                 link(sql_profiler_url, "Status"),
                 link(sql_profiler_url + "?enable=1", "Enable"),
                 link(sql_profiler_url + "?enable=0", "Disable"),
-                title="SQL",
             )
 
-        return section("Profiler", result)
+        return section("SQL profiler", result, sep=False)
     else:
         return ""
 
@@ -247,6 +248,7 @@ def _db_maintenance(request: pyramid.request.Request) -> str:
                 button("Set readonly=false"),
                 input_("readonly", value="false", type_="hidden"),
             ),
+            sep=False,
         )
     else:
         return ""
@@ -257,14 +259,19 @@ def _logging(request: pyramid.request.Request) -> str:
     if logging_url:
         return section(
             "Logging",
-            form(logging_url, button("Get"), input_("name", value="c2cwsgiutils")),
             form(
                 logging_url,
-                button("Set"),
+                input_("name", value="c2cwsgiutils"),
+                button("Get"),
+            ),
+            form(
+                logging_url,
                 input_("name", value="c2cwsgiutils"),
                 input_("level", value="INFO"),
+                button("Set"),
             ),
             paragraph(link(logging_url, "List overrides")),
+            sep=False,
         )
     else:
         return ""
@@ -282,31 +289,36 @@ def _debug(request: pyramid.request.Request) -> str:
             ),
             form(
                 dump_memory_url,
-                button("Dump memory usage"),
                 input_("limit", value=30),
                 input_("analyze_type"),
+                button("Dump memory usage"),
             ),
             form(
                 _url(request, "c2c_debug_show_refs"),
-                button("Object refs"),
                 input_("analyze_type", value="gunicorn.app.wsgiapp.WSGIApplication"),
                 input_("max_depth", value=3),
                 input_("too_many", value=10),
                 input_("min_size_kb", type_="number"),
+                button("Object refs"),
             ),
             form(
                 _url(request, "c2c_debug_memory_diff"),
-                button("Memory diff"),
                 input_("path"),
                 input_("limit", value=30),
+                button("Memory diff"),
             ),
-            form(_url(request, "c2c_debug_sleep"), button("Sleep"), input_("time", value=1)),
+            form(
+                _url(request, "c2c_debug_sleep"),
+                input_("time", value=1),
+                button("Sleep"),
+            ),
             form(_url(request, "c2c_debug_time"), button("Time")),
             form(
                 _url(request, "c2c_debug_error"),
-                button("Generate an HTTP error"),
                 input_("status", value=500),
+                button("Generate an HTTP error"),
             ),
+            sep=False,
         )
     else:
         return ""
@@ -317,7 +329,13 @@ def _health_check(request: pyramid.request.Request) -> str:
     if health_check_url:
         return section(
             "Health checks",
-            form(health_check_url, button("Run"), input_("max_level", value=1), input_("checks")),
+            form(
+                health_check_url,
+                input_("max_level", value=1),
+                input_("checks"),
+                button("Run"),
+            ),
+            sep=False,
         )
     else:
         return ""
@@ -325,6 +343,7 @@ def _health_check(request: pyramid.request.Request) -> str:
 
 def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
     """Get the view that start the authentication on GitHub."""
+
     settings = request.registry.settings
     params = dict(request.params)
     callback_url = _url(

@@ -7,6 +7,9 @@
   separateMinorPatch: true,
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
+  cdnurl: {
+    fileMatch: ['\\.html?$', '\\.html?.mako$'],
+  },
   lockFileMaintenance: {
     enabled: true,
     automerge: true,

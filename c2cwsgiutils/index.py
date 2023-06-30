@@ -140,69 +140,33 @@ def button(label: str) -> str:
     return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
-def _index(request: pyramid.request.Request) -> pyramid.response.Response:
+def _index(request: pyramid.request.Request) -> Dict[str, str]:
     response = request.response
 
     auth, user = is_auth_user(request)
     has_access = check_access(request)
 
     response.content_type = "text/html"
-    response.text = """
-    <!doctype html>
-    <html lang="en">
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet"
-              href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-              crossorigin="anonymous">
-        <title>c2cwsgiutils tools</title>
-        <style>
-          form {
-            margin-bottom: 1rem;
-          }
-          label {
-            margin-right: 0.5rem;
-          }
-          input, button, a.btn {
-            margin-right: 1rem;
-          }
-          div.col-lg {
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-          }
-          hr {
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-          }
-          body {
-            margin-top: 0.5rem;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container-fluid">
-    """
 
-    response.text += _health_check(request)
-    response.text += _stats(request)
-    response.text += _versions(request)
+    body = ""
+    body += _health_check(request)
+    body += _stats(request)
+    body += _versions(request)
     if has_access:
-        response.text += _debug(request)
-        response.text += _db_maintenance(request)
-        response.text += _logging(request)
-        response.text += _profiler(request)
+        body += _debug(request)
+        body += _db_maintenance(request)
+        body += _logging(request)
+        body += _profiler(request)
 
     if additional_title is not None and (has_access or additional_noauth):
-        response.text += additional_title
-        response.text += "\n"
+        body += additional_title
+        body += "\n"
 
     if has_access:
-        response.text += "\n".join(additional_auth)
-        response.text += "\n"
+        body += "\n".join(additional_auth)
+        body += "\n"
 
-    response.text += "\n".join(additional_noauth)
+    body += "\n".join(additional_noauth)
 
     settings = request.registry.settings
     auth_type_ = auth_type(settings)
@@ -211,31 +175,26 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
             auth_fields = [input_("secret", type_="password"), button("Login")]
         else:
             auth_fields = [input_("secret", type_="hidden"), button("Logout")]
-        response.text += section(
+        body += section(
             "Authentication",
             form(_url(request, "c2c_index"), *auth_fields, method="post", target="_self"),
             sep=False,
         )
     elif not auth and auth_type_ == AuthenticationType.GITHUB:
-        response.text += section(
+        body += section(
             "Authentication",
             link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
             sep=False,
         )
     elif auth_type_ == AuthenticationType.GITHUB:
-        response.text += section(
+        body += section(
             "Authentication",
             f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
             f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}",
             sep=False,
         )
 
-    response.text += """
-        </div>
-      </body>
-    </html>
-    """
-    return response
+    return {"body": body}
 
 
 def _versions(request: pyramid.request.Request) -> str:
@@ -507,10 +466,14 @@ def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the index page."""
     base_path = config_utils.get_base_path(config)
     if base_path != "":
+        config.add_static_view(name="static", path="c2cwsgiutils:static")
+        config.include("pyramid_mako")
         config.add_route("c2c_index", base_path, request_method=("GET", "POST"))
-        config.add_view(_index, route_name="c2c_index", http_cache=0)
+        config.add_view(_index, route_name="c2c_index", http_cache=0, renderer="./templates/index.html.mako")
         config.add_route("c2c_index_slash", base_path + "/", request_method=("GET", "POST"))
-        config.add_view(_index, route_name="c2c_index_slash", http_cache=0)
+        config.add_view(
+            _index, route_name="c2c_index_slash", http_cache=0, renderer="./templates/index.html.mako"
+        )
 
         settings = config.get_settings()
         auth_type_ = auth_type(settings)

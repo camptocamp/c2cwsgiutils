@@ -80,6 +80,9 @@ def check_image(
     result_filename = os.path.join(result_folder, f"{image_file_basename}.result.png")
     diff_filename = os.path.join(result_folder, f"{image_file_basename}.diff.png")
 
+    if len(image_to_check.shape) == 3 and image_to_check.shape[2] == 4:
+        image_to_check = skimage.color.rgba2rgb(image_to_check)
+
     mask = None
     if mask_filename is not None:
         mask = skimage.io.imread(mask_filename)
@@ -87,11 +90,12 @@ def check_image(
             mask = skimage.color.rgb2gray(mask)
         if len(mask.shape) == 3 and mask.shape[2] == 4:
             mask = skimage.color.rgba2gray(mask)
-        if len(image_to_check.shape) == 3 and image_to_check.shape[2] == 4:
-            image_to_check = skimage.color.rgba2rgb(image_to_check)
 
         assert mask is not None, "Wrong mask: " + mask_filename
         image_to_check[mask == 0] = [255, 255, 255]
+
+    if np.issubdtype(image_to_check.dtype, np.floating):
+        image_to_check = (image_to_check * 255).astype("uint8")
 
     if not os.path.exists(result_folder):
         os.makedirs(result_folder)
@@ -104,6 +108,9 @@ def check_image(
         assert False, "Expected image not found: " + expected_filename
     expected = skimage.io.imread(expected_filename)
     assert expected is not None, "Wrong image: " + expected_filename
+
+    if np.issubdtype(expected.dtype, np.floating):
+        expected = (expected * 255).astype("uint8")
 
     if mask is not None:
         expected[mask == 0] = [255, 255, 255]

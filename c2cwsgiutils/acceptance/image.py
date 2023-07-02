@@ -87,6 +87,8 @@ def check_image(
             mask = skimage.color.rgb2gray(mask)
         if len(mask.shape) == 3 and mask.shape[2] == 4:
             mask = skimage.color.rgba2gray(mask)
+        if len(image_to_check.shape) == 3 and image_to_check.shape[2] == 4:
+            image_to_check = skimage.color.rgba2rgb(image_to_check)
 
         assert mask is not None, "Wrong mask: " + mask_filename
         image_to_check[mask == 0] = [255, 255, 255]

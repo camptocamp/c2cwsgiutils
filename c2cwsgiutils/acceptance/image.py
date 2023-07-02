@@ -92,6 +92,8 @@ def check_image(
             mask = skimage.color.rgba2gray(mask)
 
         assert mask is not None, "Wrong mask: " + mask_filename
+        assert ((0 < mask) & (mask < 255)).sum() == 0, "Mask should be only black and white image"
+
         image_to_check[mask == 0] = [255, 255, 255]
 
     if np.issubdtype(image_to_check.dtype, np.floating):

@@ -64,10 +64,8 @@ def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
     printable_content = "\n".join(content)
     result = f"""
     <div class="row">
-      <div class="col-sm-3"><h2>{title}</h2></div>
-      <div class="col-lg">
+      <h2>{title}</h2>
       {printable_content}
-      </div>
     </div>
     """
     if sep:
@@ -105,7 +103,7 @@ def form(url: Optional[str], *content: str, method: str = "get", target: str = "
         method_attrs = ' method="post" enctype="multipart/form-data"'
     printable_content = "\n".join(content)
     return f"""
-    <form class="form-inline" action="{url}" target="{target}"{method_attrs}>
+    <form action="{url}" target="{target}"{method_attrs}>
       {printable_content}
     </form>
     """
@@ -120,7 +118,7 @@ def input_(
     ELEM_ID += 1
 
     if label is None and type_ != "hidden":
-        label = name
+        label = name.replace("_", " ").capitalize()
     if type_ is None:
         if isinstance(value, int):
             type_ = "number"
@@ -128,8 +126,11 @@ def input_(
             type_ = "text"
     result = ""
     if label is not None:
-        result += f'<div class="form-group form-inline"><label for="{id_}">{label}:</label>'
-    result += f'<input class="form-control" type="{type_}" name="{name}" value="{value}" id="{id_}">'
+        result += f'<div class="row mb-3"><label class="col-sm-2 col-form-label" for="{id_}">{label}</label>'
+    result += (
+        '<div class="col-sm-10"><input class="form-control" '
+        f'type="{type_}" name="{name}" value="{value}" id="{id_}"></div>'
+    )
     if label is not None:
         result += "</div>"
     return result
@@ -137,72 +138,37 @@ def input_(
 
 def button(label: str) -> str:
     """Get en HTML button."""
+
     return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
-def _index(request: pyramid.request.Request) -> pyramid.response.Response:
+def _index(request: pyramid.request.Request) -> Dict[str, str]:
     response = request.response
 
     auth, user = is_auth_user(request)
     has_access = check_access(request)
 
     response.content_type = "text/html"
-    response.text = """
-    <!doctype html>
-    <html lang="en">
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet"
-              href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-              crossorigin="anonymous">
-        <title>c2cwsgiutils tools</title>
-        <style>
-          form {
-            margin-bottom: 1rem;
-          }
-          label {
-            margin-right: 0.5rem;
-          }
-          input, button, a.btn {
-            margin-right: 1rem;
-          }
-          div.col-lg {
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-          }
-          hr {
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-          }
-          body {
-            margin-top: 0.5rem;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container-fluid">
-    """
 
-    response.text += _health_check(request)
-    response.text += _stats(request)
-    response.text += _versions(request)
+    body = ""
+    body += _health_check(request)
+    body += _stats(request)
+    body += _versions(request)
     if has_access:
-        response.text += _debug(request)
-        response.text += _db_maintenance(request)
-        response.text += _logging(request)
-        response.text += _profiler(request)
+        body += _debug(request)
+        body += _db_maintenance(request)
+        body += _logging(request)
+        body += _profiler(request)
 
     if additional_title is not None and (has_access or additional_noauth):
-        response.text += additional_title
-        response.text += "\n"
+        body += additional_title
+        body += "\n"
 
     if has_access:
-        response.text += "\n".join(additional_auth)
-        response.text += "\n"
+        body += "\n".join(additional_auth)
+        body += "\n"
 
-    response.text += "\n".join(additional_noauth)
+    body += "\n".join(additional_noauth)
 
     settings = request.registry.settings
     auth_type_ = auth_type(settings)
@@ -211,37 +177,32 @@ def _index(request: pyramid.request.Request) -> pyramid.response.Response:
             auth_fields = [input_("secret", type_="password"), button("Login")]
         else:
             auth_fields = [input_("secret", type_="hidden"), button("Logout")]
-        response.text += section(
+        body += section(
             "Authentication",
             form(_url(request, "c2c_index"), *auth_fields, method="post", target="_self"),
             sep=False,
         )
     elif not auth and auth_type_ == AuthenticationType.GITHUB:
-        response.text += section(
+        body += section(
             "Authentication",
             link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
             sep=False,
         )
     elif auth_type_ == AuthenticationType.GITHUB:
-        response.text += section(
+        body += section(
             "Authentication",
             f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
             f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}",
             sep=False,
         )
 
-    response.text += """
-        </div>
-      </body>
-    </html>
-    """
-    return response
+    return {"body": body}
 
 
 def _versions(request: pyramid.request.Request) -> str:
     versions_url = _url(request, "c2c_versions")
     if versions_url:
-        return section("Versions", paragraph(link(versions_url, "Get")))
+        return section("Versions", paragraph(link(versions_url, "Get")), sep=False)
     else:
         return ""
 
@@ -249,7 +210,7 @@ def _versions(request: pyramid.request.Request) -> str:
 def _stats(request: pyramid.request.Request) -> str:
     stats_url = _url(request, "c2c_read_stats_json")
     if stats_url:
-        return section("Statistics", paragraph(link(stats_url, "Get")))
+        return section("Statistics", paragraph(link(stats_url, "Get")), sep=False)
     else:
         return ""
 
@@ -264,10 +225,9 @@ def _profiler(request: pyramid.request.Request) -> str:
                 link(sql_profiler_url, "Status"),
                 link(sql_profiler_url + "?enable=1", "Enable"),
                 link(sql_profiler_url + "?enable=0", "Disable"),
-                title="SQL",
             )
 
-        return section("Profiler", result)
+        return section("SQL profiler", result, sep=False)
     else:
         return ""
 
@@ -288,6 +248,7 @@ def _db_maintenance(request: pyramid.request.Request) -> str:
                 button("Set readonly=false"),
                 input_("readonly", value="false", type_="hidden"),
             ),
+            sep=False,
         )
     else:
         return ""
@@ -298,14 +259,19 @@ def _logging(request: pyramid.request.Request) -> str:
     if logging_url:
         return section(
             "Logging",
-            form(logging_url, button("Get"), input_("name", value="c2cwsgiutils")),
             form(
                 logging_url,
-                button("Set"),
+                input_("name", value="c2cwsgiutils"),
+                button("Get"),
+            ),
+            form(
+                logging_url,
                 input_("name", value="c2cwsgiutils"),
                 input_("level", value="INFO"),
+                button("Set"),
             ),
             paragraph(link(logging_url, "List overrides")),
+            sep=False,
         )
     else:
         return ""
@@ -323,31 +289,36 @@ def _debug(request: pyramid.request.Request) -> str:
             ),
             form(
                 dump_memory_url,
-                button("Dump memory usage"),
                 input_("limit", value=30),
                 input_("analyze_type"),
+                button("Dump memory usage"),
             ),
             form(
                 _url(request, "c2c_debug_show_refs"),
-                button("Object refs"),
                 input_("analyze_type", value="gunicorn.app.wsgiapp.WSGIApplication"),
                 input_("max_depth", value=3),
                 input_("too_many", value=10),
                 input_("min_size_kb", type_="number"),
+                button("Object refs"),
             ),
             form(
                 _url(request, "c2c_debug_memory_diff"),
-                button("Memory diff"),
                 input_("path"),
                 input_("limit", value=30),
+                button("Memory diff"),
             ),
-            form(_url(request, "c2c_debug_sleep"), button("Sleep"), input_("time", value=1)),
+            form(
+                _url(request, "c2c_debug_sleep"),
+                input_("time", value=1),
+                button("Sleep"),
+            ),
             form(_url(request, "c2c_debug_time"), button("Time")),
             form(
                 _url(request, "c2c_debug_error"),
-                button("Generate an HTTP error"),
                 input_("status", value=500),
+                button("Generate an HTTP error"),
             ),
+            sep=False,
         )
     else:
         return ""
@@ -358,7 +329,13 @@ def _health_check(request: pyramid.request.Request) -> str:
     if health_check_url:
         return section(
             "Health checks",
-            form(health_check_url, button("Run"), input_("max_level", value=1), input_("checks")),
+            form(
+                health_check_url,
+                input_("max_level", value=1),
+                input_("checks"),
+                button("Run"),
+            ),
+            sep=False,
         )
     else:
         return ""
@@ -366,6 +343,7 @@ def _health_check(request: pyramid.request.Request) -> str:
 
 def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
     """Get the view that start the authentication on GitHub."""
+
     settings = request.registry.settings
     params = dict(request.params)
     callback_url = _url(
@@ -507,10 +485,14 @@ def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the index page."""
     base_path = config_utils.get_base_path(config)
     if base_path != "":
+        config.add_static_view(name="static", path="c2cwsgiutils:static")
+        config.include("pyramid_mako")
         config.add_route("c2c_index", base_path, request_method=("GET", "POST"))
-        config.add_view(_index, route_name="c2c_index", http_cache=0)
+        config.add_view(_index, route_name="c2c_index", http_cache=0, renderer="./templates/index.html.mako")
         config.add_route("c2c_index_slash", base_path + "/", request_method=("GET", "POST"))
-        config.add_view(_index, route_name="c2c_index_slash", http_cache=0)
+        config.add_view(
+            _index, route_name="c2c_index_slash", http_cache=0, renderer="./templates/index.html.mako"
+        )
 
         settings = config.get_settings()
         auth_type_ = auth_type(settings)

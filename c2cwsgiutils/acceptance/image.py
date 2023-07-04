@@ -42,6 +42,20 @@ def check_image_file(
     check_image(result_folder, result, expected_filename, level, generate_expected_image, use_mask)
 
 
+def normalize_image(image: NpNdarrayInt) -> NpNdarrayInt:
+    """
+    Normalize the image to be comparable.
+
+    - Remove the alpha channel
+    - Convert to uint8
+    """
+    if len(image.shape) == 3 and image.shape[2] == 4:
+        image = skimage.color.rgba2rgb(image)
+    if np.issubdtype(image.dtype, np.floating):
+        image = (image * 255).astype("uint8")
+    return image
+
+
 def check_image(
     result_folder: str,
     image_to_check: NpNdarrayInt,
@@ -80,24 +94,30 @@ def check_image(
     result_filename = os.path.join(result_folder, f"{image_file_basename}.result.png")
     diff_filename = os.path.join(result_folder, f"{image_file_basename}.diff.png")
 
-    if len(image_to_check.shape) == 3 and image_to_check.shape[2] == 4:
-        image_to_check = skimage.color.rgba2rgb(image_to_check)
+    image_to_check = normalize_image(image_to_check)
 
     mask = None
     if mask_filename is not None:
         mask = skimage.io.imread(mask_filename)
+
+        assert mask is not None, "Wrong mask: " + mask_filename
+
+        # Normalize the mask
         if len(mask.shape) == 3 and mask.shape[2] == 3:
             mask = skimage.color.rgb2gray(mask)
+
         if len(mask.shape) == 3 and mask.shape[2] == 4:
             mask = skimage.color.rgba2gray(mask)
 
-        assert mask is not None, "Wrong mask: " + mask_filename
+        if np.issubdtype(mask.dtype, np.floating):
+            mask = (mask * 255).astype("uint8")
+
         assert ((0 < mask) & (mask < 255)).sum() == 0, "Mask should be only black and white image"
 
-        image_to_check[mask == 0] = [255, 255, 255]
+        # Convert to boolean
+        mask = mask == 0
 
-    if np.issubdtype(image_to_check.dtype, np.floating):
-        image_to_check = (image_to_check * 255).astype("uint8")
+        image_to_check[mask] = [255, 255, 255]
 
     if not os.path.exists(result_folder):
         os.makedirs(result_folder)
@@ -110,12 +130,10 @@ def check_image(
         assert False, "Expected image not found: " + expected_filename
     expected = skimage.io.imread(expected_filename)
     assert expected is not None, "Wrong image: " + expected_filename
-
-    if np.issubdtype(expected.dtype, np.floating):
-        expected = (expected * 255).astype("uint8")
+    expected = normalize_image(expected)
 
     if mask is not None:
-        expected[mask == 0] = [255, 255, 255]
+        expected[mask] = [255, 255, 255]
 
     score, diff = skimage.metrics.structural_similarity(
         expected, image_to_check, multichannel=True, full=True, channel_axis=2

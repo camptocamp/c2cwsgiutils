@@ -81,7 +81,7 @@ class Composition:
             "env": Composition._get_env(),
             **kwargs,
         }
-        return subprocess.run(  # type: ignore[no-any-return, call-overload] # pylint: disable=subprocess-run-check # noqa
+        return subprocess.run(  # pylint: disable=subprocess-run-check # noqa
             self.docker_compose + args,
             **{"encoding": "utf-8", **kwargs},
         )  # nosec

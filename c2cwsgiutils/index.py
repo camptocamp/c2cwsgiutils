@@ -185,14 +185,14 @@ def _index(request: pyramid.request.Request) -> Dict[str, str]:
     elif not auth and auth_type_ == AuthenticationType.GITHUB:
         body += section(
             "Authentication",
-            link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
+            paragraph(link(_url(request, "c2c_github_login"), "Login with GitHub", target="")),
             sep=False,
         )
     elif auth_type_ == AuthenticationType.GITHUB:
         body += section(
             "Authentication",
-            f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
-            f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}",
+            f"<p>Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
+            f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}</p>",
             sep=False,
         )
 

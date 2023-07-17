@@ -185,14 +185,14 @@ def _index(request: pyramid.request.Request) -> Dict[str, str]:
     elif not auth and auth_type_ == AuthenticationType.GITHUB:
         body += section(
             "Authentication",
-            link(_url(request, "c2c_github_login"), "Login with GitHub", target=""),
+            paragraph(link(_url(request, "c2c_github_login"), "Login with GitHub", target="")),
             sep=False,
         )
     elif auth_type_ == AuthenticationType.GITHUB:
         body += section(
             "Authentication",
-            f"Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
-            f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}",
+            f"<p>Logged as: {link(user['url'], user['name'], cssclass='')}<br />"
+            f"{link(_url(request, 'c2c_github_logout'), 'Logout', target='')}</p>",
             sep=False,
         )
 
@@ -218,16 +218,17 @@ def _stats(request: pyramid.request.Request) -> str:
 def _profiler(request: pyramid.request.Request) -> str:
     sql_profiler_url = _url(request, "c2c_sql_profiler")
     if sql_profiler_url:
-        result = ""
-
-        if sql_profiler_url:
-            result += paragraph(
-                link(sql_profiler_url, "Status"),
-                link(sql_profiler_url + "?enable=1", "Enable"),
-                link(sql_profiler_url + "?enable=0", "Disable"),
-            )
-
-        return section("SQL profiler", result, sep=False)
+        return section(
+            " ".join(
+                [
+                    "SQL profiler",
+                    link(sql_profiler_url, "Status"),
+                    link(sql_profiler_url + "?enable=1", "Enable"),
+                    link(sql_profiler_url + "?enable=0", "Disable"),
+                ]
+            ),
+            sep=False,
+        )
     else:
         return ""
 
@@ -281,11 +282,13 @@ def _debug(request: pyramid.request.Request) -> str:
     dump_memory_url = _url(request, "c2c_debug_memory")
     if dump_memory_url:
         return section(
-            "Debug",
-            paragraph(
-                link(_url(request, "c2c_debug_stacks"), "Stack traces"),
-                link(_url(request, "c2c_debug_headers"), "HTTP headers"),
-                link(_url(request, "c2c_debug_memory_maps"), "Mapped memory"),
+            " ".join(
+                [
+                    "Debug",
+                    link(_url(request, "c2c_debug_stacks"), "Stack traces"),
+                    link(_url(request, "c2c_debug_headers"), "HTTP headers"),
+                    link(_url(request, "c2c_debug_memory_maps"), "Mapped memory"),
+                ]
             ),
             form(
                 dump_memory_url,

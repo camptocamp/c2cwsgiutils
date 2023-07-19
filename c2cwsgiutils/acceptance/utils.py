@@ -1,33 +1,22 @@
 import logging
-import os
 import time
 from typing import Any, Callable, List, Tuple
 
-import boltons.iterutils
-import netifaces
 import pytest
 import requests
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
+_DEFAULT_TIMEOUT = 60
 
 
-def in_docker() -> bool:
-    """Is in Docker mode."""
-    return os.environ.get("DOCKER_RUN") != "0"
-
-
-DOCKER_GATEWAY = netifaces.gateways()[netifaces.AF_INET][0][0] if in_docker() else "localhost"
-DEFAULT_TIMEOUT = 60
-
-
-def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
+def wait_url(url: str, timeout: float = _DEFAULT_TIMEOUT) -> None:
     """Wait the the URL is available without any error."""
 
     def what() -> bool:
-        LOG.info("Trying to connect to %s... ", url)
+        _LOG.info("Trying to connect to %s... ", url)
         r = requests.get(url, timeout=timeout)
         if r.status_code == 200:
-            LOG.info("%s service started", url)
+            _LOG.info("%s service started", url)
             return True
         else:
             return False
@@ -35,7 +24,7 @@ def wait_url(url: str, timeout: float = DEFAULT_TIMEOUT) -> None:
     retry_timeout(what, timeout=timeout)
 
 
-def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, interval: float = 0.5) -> Any:
+def retry_timeout(what: Callable[[], Any], timeout: float = _DEFAULT_TIMEOUT, interval: float = 0.5) -> Any:
     """
     Retry the function until the timeout.
 
@@ -45,6 +34,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
         timeout: the timeout to get a success
         interval: the interval between try
     """
+
     timeout = time.perf_counter() + timeout
     while True:
         error = ""
@@ -56,7 +46,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = DEFAULT_TIMEOUT, int
             raise
         except Exception as e:  # pylint: disable=broad-except
             error = str(e)
-            LOG.info("  Failed: %s", e)
+            _LOG.info("  Failed: %s", e)
         if time.perf_counter() > timeout:
             assert False, "Timeout: " + error
         time.sleep(interval)
@@ -68,6 +58,8 @@ def approx(struct: Any, **kwargs: Any) -> Any:
 
     See pytest.approx
     """
+    import boltons.iterutils
+
     if isinstance(struct, float):
         return pytest.approx(struct, **kwargs)
 

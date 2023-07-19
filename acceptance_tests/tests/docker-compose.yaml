@@ -8,10 +8,6 @@ services:
       - SQLALCHEMY_SLAVE_URL
       - PGOPTIONS=-c statement_timeout=1500
       - STATS_VIEW=1
-      - STATSD_ADDRESS=${TEST_IP}:8125
-      - STATSD_PREFIX=acceptance
-      - STATSD_TAG_XYZ=zyx
-      - STATSD_USE_TAGS=1
       - C2C_SECRET=changeme
       - C2C_LOG_VIEW_ENABLED=1
       - C2C_DB_MAINTENANCE_VIEW_ENABLED=1
@@ -47,7 +43,6 @@ services:
       - redis
     ports:
       - 8480:8080
-      - 9090:9090
 
   app2:
     <<: *app
@@ -57,10 +52,6 @@ services:
       - SQLALCHEMY_SLAVE_URL
       - PGOPTIONS=-c statement_timeout=1500
       - STATS_VIEW=1
-      - STATSD_ADDRESS=${TEST_IP}:8125
-      - STATSD_PREFIX=acceptance
-      - STATSD_TAG_XYZ=zyx
-      - STATSD_USE_TAGS=1
       - C2C_SECRET=changeme
       - LOG_TYPE=json
       - C2C_LOG_VIEW_ENABLED=1
@@ -94,7 +85,6 @@ services:
       - C2C_PROMETHEUS_APPLICATION_PACKAGES=c2cwsgiutils_app
     ports:
       - 8482:8080
-      - 9092:9090
 
   alembic_master:
     image: camptocamp/c2cwsgiutils_test_app
@@ -108,11 +98,10 @@ services:
       - SENTRY_CLIENT_ENVIRONMENT=local
       - SENTRY_CLIENT_RELEASE=latest
       - SENTRY_TAG_SERVICE=alembic_master
-      - STATSD_ADDRESS=${TEST_IP}:8125
-      - STATSD_PREFIX=alembic_master
     links:
       - db
-    command: /bin/true # will use execute with another script from the tests to actually do it
+    command:
+      - /app/run_alembic.sh
 
   alembic_slave:
     image: camptocamp/c2cwsgiutils_test_app
@@ -126,36 +115,27 @@ services:
       - SENTRY_CLIENT_ENVIRONMENT=local
       - SENTRY_CLIENT_RELEASE=latest
       - SENTRY_TAG_SERVICE=alembic_slave
-      - STATSD_ADDRESS=${TEST_IP}:8125
-      - STATSD_PREFIX=alembic_slave
     links:
       - db_slave:db
-    command: /bin/true # will use execute with another script from the tests to actually do it
+    command:
+      - /app/run_alembic.sh
 
-  db:
-    image: camptocamp/postgres:12
-    environment:
-      POSTGRES_USER: www-data
-      POSTGRES_PASSWORD: www-data
-      POSTGRES_DB: test
-    command: postgres -c log_line_prefix="%a "
-    ports:
-      - 15432:5432
-
-  db_slave:
+  db: &db
     image: camptocamp/postgres:12
     environment:
       POSTGRES_USER: www-data
       POSTGRES_PASSWORD: www-data
       POSTGRES_DB: test
     command: postgres -c log_line_prefix="%a " -c log_statement=all
-    ports:
-      - 25432:5432
+
+  db_slave: *db
 
   run_test:
     image: camptocamp/c2cwsgiutils_test_app
     command:
-      - 'true'
+      - tail
+      - -f
+      - /dev/null
     environment: *app_env
     links:
       - db
@@ -174,10 +154,6 @@ services:
       - SQLALCHEMY_SLAVE_URL
       - PGOPTIONS=-c statement_timeout=1500
       - STATS_VIEW=1
-      - STATSD_ADDRESS=${TEST_IP}:8125
-      - STATSD_PREFIX=acceptance
-      - STATSD_TAG_XYZ=zyx
-      - STATSD_USE_TAGS=1
       - C2C_SECRET=changeme
       - C2C_LOG_VIEW_ENABLED=1
       - C2C_DB_MAINTENANCE_VIEW_ENABLED=1
@@ -230,3 +206,16 @@ services:
       - MASTER=redis_master
     depends_on:
       - redis_master
+
+  acceptance:
+    image: camptocamp/c2cwsgiutils:tests
+    volumes:
+      - ./tests:/acceptance_tests/tests:ro
+      - ../../reports:/reports
+    working_dir: /acceptance_tests
+    environment:
+      - WAITRESS
+    command:
+      - tail
+      - -f
+      - /dev/null

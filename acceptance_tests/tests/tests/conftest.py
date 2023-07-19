@@ -1,19 +1,17 @@
 import logging
-import os
 
 import psycopg2
 import pytest
 
 from c2cwsgiutils.acceptance import utils
-from c2cwsgiutils.acceptance.composition import Composition
 from c2cwsgiutils.acceptance.connection import Connection
 
-BASE_URL = "http://" + utils.DOCKER_GATEWAY + ":8480/api/"
-BASE_URL_APP2 = "http://" + utils.DOCKER_GATEWAY + ":8482/api/"
-PROMETHEUS_URL = "http://" + utils.DOCKER_GATEWAY + ":9092/metrics"
-PROMETHEUS_TEST_URL = "http://" + utils.DOCKER_GATEWAY + ":9098/metrics"
-PROMETHEUS_STATS_DB_URL = "http://" + utils.DOCKER_GATEWAY + ":9099/metrics"
-LOG = logging.getLogger(__name__)
+_BASE_URL = "http://app:8080/api/"
+_BASE_URL_APP2 = "http://app2:8080/api/"
+_PROMETHEUS_URL = "http://app2:9090/metrics"
+_PROMETHEUS_TEST_URL = "http://run_test:9090/metrics"
+_PROMETHEUS_STATS_DB_URL = "http://stats_db:9090/metrics"
+_LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="session")
@@ -21,16 +19,8 @@ def composition(request):
     """
     Fixture that start/stop the Docker composition used for all the tests.
     """
-    if os.environ.get("DOCKER_RUN") == "0":
-        print("Bypassing composition")
-        return None
-    result = Composition(
-        request,
-        "/acceptance_tests/docker-compose.yaml",
-        coverage_paths=["c2cwsgiutils_app_1:/tmp/coverage"],
-    )
-    utils.wait_url(BASE_URL + "ping")
-    return result
+    utils.wait_url(_BASE_URL + "ping")
+    return None
 
 
 @pytest.fixture
@@ -38,7 +28,9 @@ def app_connection(composition):
     """
     Fixture that returns a connection to a running batch container.
     """
-    return Connection(base_url=BASE_URL, origin="http://example.com/")
+
+    del composition
+    return Connection(base_url=_BASE_URL, origin="http://example.com/")
 
 
 @pytest.fixture
@@ -46,7 +38,9 @@ def app2_connection(composition):
     """
     Fixture that returns a connection to a running batch container.
     """
-    return Connection(base_url=BASE_URL_APP2, origin="http://example.com/")
+
+    del composition
+    return Connection(base_url=_BASE_URL_APP2, origin="http://example.com/")
 
 
 @pytest.fixture
@@ -54,7 +48,9 @@ def prometheus_connection(composition):
     """
     Fixture that returns a connection to a running batch container.
     """
-    return Connection(base_url=PROMETHEUS_URL, origin="http://example.com/")
+
+    del composition
+    return Connection(base_url=_PROMETHEUS_URL, origin="http://example.com/")
 
 
 @pytest.fixture
@@ -62,7 +58,9 @@ def prometheus_test_connection(composition):
     """
     Fixture that returns a connection to a running batch container.
     """
-    return Connection(base_url=PROMETHEUS_TEST_URL, origin="http://example.com/")
+
+    del composition
+    return Connection(base_url=_PROMETHEUS_TEST_URL, origin="http://example.com/")
 
 
 @pytest.fixture
@@ -70,28 +68,29 @@ def prometheus_stats_db_connection(composition):
     """
     Fixture that returns a connection to a running batch container.
     """
-    return Connection(base_url=PROMETHEUS_STATS_DB_URL, origin="http://example.com/")
+
+    del composition
+    return Connection(base_url=_PROMETHEUS_STATS_DB_URL, origin="http://example.com/")
 
 
 @pytest.fixture(scope="session")
 def master_db_setup(composition):
-    return _create_table(composition, master=True)
+    del composition
+    return _create_table(master=True)
 
 
 @pytest.fixture(scope="session")
 def slave_db_setup(composition):
-    return _create_table(composition, master=False)
+    del composition
+    return _create_table(master=False)
 
 
-def _create_table(composition, master):
+def _create_table(master):
     name = "master" if master else "slave"
-    proc = composition.run_proc("alembic_" + name, "/app/run_alembic.sh")
-    if proc.returncode != 0:
-        LOG.error("Alembic failed")
-        raise Exception("Alembic failed")
     connection = _connect(master)
     with connection.cursor() as curs:
-        LOG.info("Creating data for " + name)
+        _LOG.info("Creating data for %s", name)
+        curs.execute("DELETE FROM hello")
         curs.execute("INSERT INTO hello (value) VALUES (%s)", (name,))
     connection.commit()
     return connection
@@ -103,8 +102,8 @@ def _connect(master):
             database="test",
             user="www-data",
             password="www-data",
-            host=utils.DOCKER_GATEWAY,
-            port=15432 if master else 25432,
+            host="db" if master else "db_slave",
+            port=5432,
         )
     )
 

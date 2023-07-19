@@ -17,11 +17,13 @@ def _query(app_connection, params, expected=None):
 
 
 def test_api(app_connection):
-    _query(app_connection, {}, {"current_readonly": None})
-    _query(app_connection, {"readonly": "false"})
-    _query(app_connection, {}, {"current_readonly": False})
+    # _query(app_connection, {}, {"current_readonly": None})
     _query(app_connection, {"readonly": "true"})
     _query(app_connection, {}, {"current_readonly": True})
+    assert app_connection.put_json("hello") == {"value": "slave"}
+    _query(app_connection, {"readonly": "false"})
+    _query(app_connection, {}, {"current_readonly": False})
+    assert app_connection.put_json("hello") == {"value": "master"}
 
 
 def test_api_bad_secret(app_connection):

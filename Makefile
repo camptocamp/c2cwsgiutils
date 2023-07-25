@@ -18,7 +18,7 @@ help: ## Display this help message
 all: build checks acceptance ## Build checks and acceptance tests
 
 .PHONY: build
-build: build_docker build_acceptance build_test_app ## Build all Docker images
+build: build_docker build_test_app ## Build all Docker images
 
 .PHONY: tests
 tests: build_test_app ## Run the unit tests
@@ -30,10 +30,25 @@ tests: build_test_app ## Run the unit tests
 	$(DOCKER_BASE):tests pytest -vv --color=yes tests
 
 .PHONY: acceptance
-acceptance: tests build_acceptance build_redis_sentinal ## Run the acceptance tests
-	docker run --rm --volume=/var/run/docker.sock:/var/run/docker.sock \
-		--volume=$(shell pwd)/reports:/reports \
-		--env=WAITRESS $(DOCKER_BASE)_acceptance py.test -vv --color=yes $(PYTEST_OPTS) tests
+acceptance: acceptance-in acceptance-out  ## Run the acceptance tests
+
+.PHONY: acceptance-run
+acceptance-run: tests build_redis_sentinal  ## Start the application used to run the acceptance tests
+	cd acceptance_tests/tests/; docker-compose up --detach db db_slave
+	cd acceptance_tests/tests/; docker-compose run -T --no-deps app /app/scripts/wait-db
+	cd acceptance_tests/tests/; docker-compose up --detach
+
+.PHONY: acceptance-in
+acceptance-in: acceptance-run  ## Run the internal acceptance tests
+	cd acceptance_tests/tests/; docker-compose exec -T acceptance pytest -vv --color=yes $(PYTEST_ARGS) tests
+
+.PHONY: acceptance-out
+acceptance-out: acceptance-run  ## Run the external acceptance tests
+	cd acceptance_tests/out/; pytest -vv --color=yes $(PYTEST_ARGS) tests
+
+.PHONY: acceptance-stop
+acceptance-stop:  ## Stop the application used to run the acceptance tests
+	cd acceptance_tests/tests/; docker-compose down
 
 .PHONY: build_docker
 build_docker:
@@ -42,10 +57,6 @@ build_docker:
 .PHONY: build_docker_test
 build_docker_test:
 	docker build --tag=$(DOCKER_BASE):tests --target=tests .
-
-.PHONY: build_acceptance
-build_acceptance: build_docker_test
-	docker build --tag=$(DOCKER_BASE)_acceptance acceptance_tests/tests
 
 .PHONY: build_test_app
 build_test_app: build_docker

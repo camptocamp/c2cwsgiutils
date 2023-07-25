@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Any, Mapping, MutableMapping, Optional, Union
 
 import requests
-from lxml import etree  # nosec
 
 COLON_SPLIT_RE = re.compile(r"\s*,\s*")
 
@@ -82,6 +81,9 @@ class Connection:
         **kwargs: Any,
     ) -> Any:
         """Get the given URL (relative to the root of API)."""
+
+        from lxml import etree  # nosec
+
         with self.session.get(
             self.base_url + url,
             headers=self._merge_headers(headers, cors),

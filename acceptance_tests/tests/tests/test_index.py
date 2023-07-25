@@ -22,8 +22,8 @@ def test_https(app_connection):
     content = app_connection.get(
         "c2c", params={"secret": "changeme"}, headers={"X-Forwarded-Proto": "https"}, cors=False
     )
-    assert "https://" + utils.DOCKER_GATEWAY + ":8480/api/" in content
-    assert "http://" + utils.DOCKER_GATEWAY + ":8480/api/" not in content
+    assert "https://app:8080/api/" in content
+    assert "http://app:8080/api/" not in content
 
 
 def test_with_slash(app_connection):

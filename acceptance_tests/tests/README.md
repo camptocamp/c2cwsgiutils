@@ -6,8 +6,7 @@ tests against the sample application.
 When a container is run with this image, it will start tests. A typical
 test session runs like that:
 
-- Start a test composition (see the [composition](tests/conftest.py)
-  fixture):
+- Start a test composition:
 
   - The sample application
   - Two instances of PostgresQL (master and slave), with the test table

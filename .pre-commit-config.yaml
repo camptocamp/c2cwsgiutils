@@ -5,4 +5,7 @@ repos:
       - id: prettier
         additional_dependencies:
           - prettier@2.8.4
-        exclude: ^Pipfile.lock$
+        exclude: |-
+          (?x)^(
+            |(.*/)?Pipfile\.lock
+          )$

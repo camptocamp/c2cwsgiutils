@@ -99,7 +99,7 @@ waitress = "==2.1.*"
 # Lock dependencies
 async-timeout = "==4.0.*"
 cee-syslog-handler = "==0.6.*"
-certifi = "==2022.12.*"
+certifi = "==2023.7.22"
 charset-normalizer = "==2.0.*"
 deprecated = "==1.2.*"
 graphviz = "==0.20.*"

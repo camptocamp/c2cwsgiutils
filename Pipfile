@@ -73,7 +73,7 @@ SQLAlchemy-Utils = "==0.36.5"
 "zope.sqlalchemy" = "==1.3"
 pyyaml = "==5.4.1"
 # Pin
-certifi = "==2022.12.7"
+certifi = "==2023.7.22"
 "chardet" = "==3.0.4"
 "graphviz" = "==0.14.2"
 "hupper" = "==1.10.3"

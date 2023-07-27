@@ -461,7 +461,7 @@ In your `Dockerfile` you should add:
 
 ```dockerfile
 RUN mkdir -p /prometheus-metrics \
-    chmod a+rwx /prometheus-metrics
+    && chmod a+rwx /prometheus-metrics
 ENV PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
 ```
 

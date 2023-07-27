@@ -21,7 +21,7 @@ all: build checks acceptance ## Build checks and acceptance tests
 build: build_docker build_test_app ## Build all Docker images
 
 .PHONY: tests
-tests: build_test_app ## Run the unit tests
+tests: build_docker_test ## Run the unit tests
 	@docker run --rm $(DOCKER_BASE):tests pytest --version
 	docker run --rm --detach \
 	--volume=$(shell pwd)/results:/results \
@@ -33,7 +33,7 @@ tests: build_test_app ## Run the unit tests
 acceptance: acceptance-in acceptance-out  ## Run the acceptance tests
 
 .PHONY: acceptance-run
-acceptance-run: tests build_redis_sentinal build_docker_test  ## Start the application used to run the acceptance tests
+acceptance-run: tests build_redis_sentinal  ## Start the application used to run the acceptance tests
 	cd acceptance_tests/tests/; docker-compose up --detach db db_slave
 	cd acceptance_tests/tests/; docker-compose run -T --no-deps app /app/scripts/wait-db
 	cd acceptance_tests/tests/; docker-compose up --detach

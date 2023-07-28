@@ -13,7 +13,7 @@ from c2cwsgiutils import config_utils, prometheus
 _VERSIONS_PATH = "/app/versions.json"
 _LOG = logging.getLogger(__name__)
 
-_PACKAGES = os.environ.get("C2C_PROMETHEUS_PACKAGES", "c2cwsgiutils,pyramid,gunicorn,sqlalchemy").split(",")
+_PACKAGES = os.environ.get("C2C_PROMETHEUS_PACKAGES", "c2cwsgiutils,pyramid,gunicorn,SQLAlchemy").split(",")
 _APPLICATION_PACKAGES = os.environ.get("C2C_PROMETHEUS_APPLICATION_PACKAGE")
 _LABEL_RE_NOT_ALLOWED = re.compile(r"[^a-zA-Z0-9]+")
 

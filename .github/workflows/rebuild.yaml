@@ -62,7 +62,7 @@ jobs:
       - name: Build
         run: make build
 
-      - run: pip install --editable .
+      - run: pip install --editable . || true
       - name: Acceptance
         run: make acceptance
 

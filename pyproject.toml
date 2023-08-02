@@ -79,7 +79,7 @@ pyramid-tm = { version = "2.5", optional = true }
 sentry-sdk = { version = "1.29.2", optional = true }
 ujson = { version = "5.8.0", optional = true }
 cee_syslog_handler = { version = "0.6.0", optional = true }
-SQLAlchemy = { version = "2.0.19", optional = true }
+SQLAlchemy = { version = "2.0.16", optional = true }
 SQLAlchemy-Utils = { version = "0.41.1", optional = true }
 "zope.interface" = { version = "6.0", optional = true }
 "zope.sqlalchemy" = { version = "3.0", optional = true }

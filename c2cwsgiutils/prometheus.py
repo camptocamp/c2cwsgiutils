@@ -134,9 +134,7 @@ def _deserialize_collected_data(
         for serialized_metric in serialized_collection:
             if serialized_metric is None:
                 continue
-            import logging
 
-            logging.getLogger(__name__).error("Deserializing metric: %s", serialized_metric)
             if serialized_metric["type"] == "gauge":
                 metric: prometheus_client.core.Metric = prometheus_client.core.GaugeMetricFamily(
                     **serialized_metric["args"]

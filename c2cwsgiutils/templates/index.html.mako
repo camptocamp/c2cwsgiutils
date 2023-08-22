@@ -35,6 +35,14 @@
     </style>
   </head>
   <body>
+    <script>
+      (() => {
+        'use strict'
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+        }
+      })()
+    </script>
     <div class="container-fluid">
       ${ body | n }
     </div>

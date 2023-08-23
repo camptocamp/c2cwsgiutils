@@ -1,16 +1,17 @@
+from collections.abc import Mapping
+from datetime import datetime
 import gc
+from io import StringIO
 import logging
 import re
 import time
-from datetime import datetime
-from io import StringIO
-from typing import Any, Callable, Dict, List, Mapping, cast
+from typing import Any, Callable, cast
 
 import objgraph
 import pyramid.config
+from pyramid.httpexceptions import HTTPException, exception_response
 import pyramid.request
 import pyramid.response
-from pyramid.httpexceptions import HTTPException, exception_response
 
 from c2cwsgiutils import auth, broadcast, config_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
@@ -19,9 +20,9 @@ LOG = logging.getLogger(__name__)
 SPACE_RE = re.compile(r" +")
 
 
-def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+def _beautify_stacks(source: list[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
     """Group the identical stacks together along with a list of threads sporting them."""
-    results: List[Mapping[str, Any]] = []
+    results: list[Mapping[str, Any]] = []
     for host_stacks in source:
         host_id = f"{host_stacks['hostname']}/{host_stacks['pid']:d}"
         for thread, frames in host_stacks["threads"].items():
@@ -35,14 +36,14 @@ def _beautify_stacks(source: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]
     return results
 
 
-def _dump_stacks(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
+def _dump_stacks(request: pyramid.request.Request) -> list[Mapping[str, Any]]:
     auth.auth_view(request)
     result = broadcast.broadcast("c2c_dump_stacks", expect_answers=True)
     assert result is not None
     return _beautify_stacks(result)
 
 
-def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
+def _dump_memory(request: pyramid.request.Request) -> list[Mapping[str, Any]]:
     auth.auth_view(request)
     limit = int(request.params.get("limit", "30"))
     analyze_type = request.params.get("analyze_type")
@@ -57,7 +58,7 @@ def _dump_memory(request: pyramid.request.Request) -> List[Mapping[str, Any]]:
     return result
 
 
-def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
+def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
     auth.auth_view(request)
     limit = int(request.params.get("limit", "30"))
     if "path" in request.matchdict:
@@ -81,7 +82,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> List[Any]:
 
     LOG.debug("checking memory growth for %s", path)
 
-    peak_stats: Dict[Any, Any] = {}
+    peak_stats: dict[Any, Any] = {}
     for i in range(3):
         gc.collect(i)
 
@@ -158,7 +159,7 @@ def _add_view(
     config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)
 
 
-def _dump_memory_maps(request: pyramid.request.Request) -> List[Dict[str, Any]]:
+def _dump_memory_maps(request: pyramid.request.Request) -> list[dict[str, Any]]:
     auth.auth_view(request)
     return sorted(dump_memory_maps(), key=lambda i: cast(int, -i.get("pss_kb", 0)))
 
@@ -168,13 +169,13 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
     for generation in range(3):
         gc.collect(generation)
 
-    objs: List[Any] = []
+    objs: list[Any] = []
     if "analyze_type" in request.params:
         objs = objgraph.by_type(request.params["analyze_type"])
     elif "analyze_id" in request.params:
         objs = [objgraph.by(int(request.params["analyze_id"]))]
 
-    args: Dict[str, Any] = {
+    args: dict[str, Any] = {
         "refcounts": True,
     }
     if request.params.get("max_depth", "") != "":

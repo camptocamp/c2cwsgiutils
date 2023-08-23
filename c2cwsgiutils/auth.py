@@ -1,11 +1,12 @@
+from collections.abc import Mapping
+from enum import Enum
 import hashlib
 import logging
-from enum import Enum
-from typing import Any, Mapping, Optional, Tuple, TypedDict, cast
+from typing import Any, Optional, TypedDict, cast
 
 import jwt
-import pyramid.request
 from pyramid.httpexceptions import HTTPForbidden
+import pyramid.request
 from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
@@ -98,7 +99,7 @@ def _is_auth_secret(request: pyramid.request.Request) -> bool:
     return False
 
 
-def _is_auth_user_github(request: pyramid.request.Request) -> Tuple[bool, UserDetails]:
+def _is_auth_user_github(request: pyramid.request.Request) -> tuple[bool, UserDetails]:
     settings = request.registry.settings
     cookie = request.cookies.get(
         env_or_settings(
@@ -128,7 +129,7 @@ def _is_auth_user_github(request: pyramid.request.Request) -> Tuple[bool, UserDe
     return False, {}
 
 
-def is_auth_user(request: pyramid.request.Request) -> Tuple[bool, UserDetails]:
+def is_auth_user(request: pyramid.request.Request) -> tuple[bool, UserDetails]:
     """
     Check if the client is authenticated.
 

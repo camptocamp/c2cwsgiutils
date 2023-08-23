@@ -1,6 +1,7 @@
-import re
+from collections.abc import Mapping, MutableMapping
 from enum import Enum
-from typing import Any, Mapping, MutableMapping, Optional, Union
+import re
+from typing import Any, Optional, Union
 
 import requests
 

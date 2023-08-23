@@ -3,7 +3,7 @@ import queue
 import threading
 import time
 import traceback
-from typing import Any, Dict, List
+from typing import Any
 
 import sqlalchemy
 from sqlalchemy import create_engine
@@ -25,7 +25,7 @@ class SQLAlchemyHandler(logging.Handler):
 
     def __init__(
         self,
-        sqlalchemy_url: Dict[str, str],
+        sqlalchemy_url: dict[str, str],
         does_not_contain_expression: str = "",
         contains_expression: str = "",
     ) -> None:
@@ -72,7 +72,7 @@ class SQLAlchemyHandler(logging.Handler):
                         break
         LOG.debug("%s: stopping processor thread", __name__)
 
-    def _write_logs(self, logs: List[Any]) -> None:
+    def _write_logs(self, logs: list[Any]) -> None:
         try:
             self.session.bulk_save_objects(logs)
             self.session.commit()

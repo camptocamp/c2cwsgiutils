@@ -1,6 +1,6 @@
 import inspect
 import sys
-from typing import Any, List, Set
+from typing import Any
 
 import sqlalchemy as sa
 
@@ -42,7 +42,7 @@ def _generate_model_graph(module: Any, base: Any) -> None:
     print("}")
 
 
-def _print_node(symbol: Any, interesting: Set[Any]) -> None:
+def _print_node(symbol: Any, interesting: set[Any]) -> None:
     print(f'{symbol.__name__} [label="{_get_table_desc(symbol)}", shape=box];')
     for parent in symbol.__bases__:
         if parent != object:
@@ -62,7 +62,7 @@ def _get_table_desc(symbol: Any) -> str:
     return "\\n".join(cols)
 
 
-def _get_all_cols(symbol: Any) -> List[str]:
+def _get_all_cols(symbol: Any) -> list[str]:
     cols = []
 
     for member_name in symbol.__dict__:
@@ -84,7 +84,7 @@ def _get_all_cols(symbol: Any) -> List[str]:
     return cols
 
 
-def _get_local_cols(symbol: Any) -> List[str]:
+def _get_local_cols(symbol: Any) -> list[str]:
     result = set(_get_all_cols(symbol))
     for parent in symbol.__bases__:
         result -= set(_get_all_cols(parent))

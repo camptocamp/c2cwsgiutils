@@ -1,10 +1,11 @@
+from collections.abc import Mapping
 import json
 import logging
 import random
 import string
 import threading
 import time
-from typing import Any, Callable, List, Mapping, Optional
+from typing import Any, Callable, Optional
 
 import redis
 
@@ -63,7 +64,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
 
     def broadcast(
         self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
-    ) -> Optional[List[Any]]:
+    ) -> Optional[list[Any]]:
         if expect_answers:
             return self._broadcast_with_answer(channel, params, timeout)
         else:
@@ -72,7 +73,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
 
     def _broadcast_with_answer(
         self, channel: str, params: Optional[Mapping[str, Any]], timeout: float
-    ) -> List[Any]:
+    ) -> list[Any]:
         cond = threading.Condition()
         answers = []
         assert self._thread.is_alive()

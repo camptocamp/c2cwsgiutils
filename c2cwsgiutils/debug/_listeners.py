@@ -1,9 +1,10 @@
+from collections.abc import Mapping
 import gc
 import sys
 import threading
 import time
 import traceback
-from typing import Any, Dict, List, Mapping, Optional, Tuple, cast
+from typing import Any, Optional, cast
 
 import objgraph
 
@@ -13,7 +14,7 @@ from c2cwsgiutils.debug.utils import get_size
 FILES_FIELDS = {"__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__"}
 
 
-def _dump_stacks_impl() -> Dict[str, Any]:
+def _dump_stacks_impl() -> dict[str, Any]:
     id2name = {th.ident: th.name for th in threading.enumerate()}
     threads = {}
     for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
@@ -49,8 +50,8 @@ def _dump_memory_impl(
         # timeout after one minute, must be set to a bit less that the timeout of the broadcast in _views.py
         timeout = time.perf_counter() + 60
 
-        mod_counts: Dict[str, int] = {}
-        biggest_objects: List[Tuple[float, Any]] = []
+        mod_counts: dict[str, int] = {}
+        biggest_objects: list[tuple[float, Any]] = []
         result[analyze_type] = {}
         for obj in objgraph.by_type(analyze_type):
             if analyze_type == "builtins.function":

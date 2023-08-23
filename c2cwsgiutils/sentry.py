@@ -1,8 +1,9 @@
+from collections.abc import Generator, MutableMapping
 import contextlib
 import logging
 import os
+from typing import Any, Callable, Optional
 import warnings
-from typing import Any, Callable, Generator, MutableMapping, Optional
 
 import pyramid.config
 import sentry_sdk

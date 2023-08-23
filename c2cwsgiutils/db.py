@@ -1,17 +1,19 @@
 """SQLalchemy models."""
+from collections.abc import Iterable
 import logging
 import re
+from re import Pattern
+from typing import TYPE_CHECKING, Any, Callable, Optional, Union, cast
 import warnings
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, Pattern, Tuple, Union, cast
 
 import pyramid.config
 import pyramid.config.settings
 import pyramid.request
+from sqlalchemy import engine_from_config
 import sqlalchemy.engine
 import sqlalchemy.orm
 import transaction
 import zope.sqlalchemy
-from sqlalchemy import engine_from_config
 from zope.sqlalchemy import register
 
 if TYPE_CHECKING:
@@ -41,7 +43,7 @@ def setup_session(
     slave_prefix: Optional[str] = None,
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
-) -> Tuple[
+) -> tuple[
     Union[sqlalchemy.orm.Session, scoped_session],
     sqlalchemy.engine.Engine,
     sqlalchemy.engine.Engine,

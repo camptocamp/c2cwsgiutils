@@ -6,14 +6,14 @@ Must be imported at the very beginning of the process's life, before any other m
 
 
 import argparse
+from typing import Any, Callable, Optional, TypedDict, cast
 import warnings
-from typing import Any, Callable, Dict, Optional, TypedDict, cast
 
 import pyramid.config
+from pyramid.paster import bootstrap
 import pyramid.registry
 import pyramid.request
 import pyramid.router
-from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
 
 from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler
@@ -70,7 +70,7 @@ class PyramidEnv(TypedDict, total=True):
     registry: pyramid.registry.Registry
     request: pyramid.request.Request
     root_factory: object
-    app: Callable[[Dict[str, str], Any], Any]
+    app: Callable[[dict[str, str], Any], Any]
 
 
 def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEnv:
@@ -87,7 +87,7 @@ def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEn
 
 def bootstrap_application(
     config_uri: str = "c2c:///app/production.ini",
-    options: Optional[Dict[str, Any]] = None,
+    options: Optional[dict[str, Any]] = None,
 ) -> PyramidEnv:
     """
     Initialize all the application.

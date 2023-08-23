@@ -4,42 +4,30 @@ Setup an health_check API.
 To use it, create an instance of this class in your application initialization and do a few calls to its
 methods add_db_check()
 """
+from collections.abc import Mapping
 import configparser
 import copy
+from enum import Enum
 import logging
 import os
 import re
 import subprocess  # nosec
 import time
 import traceback
-from enum import Enum
 from types import TracebackType
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    List,
-    Literal,
-    Mapping,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, Union, cast
 
 import prometheus_client
 import pyramid.config
+from pyramid.httpexceptions import HTTPNotFound
 import pyramid.request
 import requests
 import sqlalchemy.engine
 import sqlalchemy.orm
 import sqlalchemy.sql
-from pyramid.httpexceptions import HTTPNotFound
 
-import c2cwsgiutils.db
 from c2cwsgiutils import auth, broadcast, config_utils, prometheus, redis_utils, version
+import c2cwsgiutils.db
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
@@ -101,7 +89,7 @@ class _Binding:
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
+        exc_type: Optional[type[BaseException]],
         exc_value: Optional[BaseException],
         exc_traceback: Optional[TracebackType],
     ) -> Literal[False]:
@@ -136,7 +124,7 @@ class _OldBinding(_Binding):
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
+        exc_type: Optional[type[BaseException]],
         exc_value: Optional[BaseException],
         exc_traceback: Optional[TracebackType],
     ) -> Literal[False]:
@@ -159,7 +147,7 @@ def _get_binding_class(
 def _get_bindings(
     session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
     engine_type: EngineType,
-) -> List[_Binding]:
+) -> list[_Binding]:
     if isinstance(session, c2cwsgiutils.db.SessionFactory):
         ro_engin = session.ro_engine
         rw_engin = session.rw_engine
@@ -215,7 +203,7 @@ class HealthCheck:
             "c2c_health_check", config_utils.get_base_path(config) + r"/health_check", request_method="GET"
         )
         config.add_view(self._view, route_name="c2c_health_check", renderer="fast_json", http_cache=0)
-        self._checks: List[Tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
+        self._checks: list[tuple[str, Callable[[pyramid.request.Request], Any], int]] = []
 
         self.name = config_utils.env_or_config(
             config,
@@ -432,7 +420,7 @@ class HealthCheck:
             level: the level of the health check
         """
 
-        def check(request: pyramid.request.Request) -> Dict[str, Any]:
+        def check(request: pyramid.request.Request) -> dict[str, Any]:
             ref = version.get_version()
             all_versions = _get_all_versions()
             assert all_versions
@@ -465,7 +453,7 @@ class HealthCheck:
     def _view(self, request: pyramid.request.Request) -> Mapping[str, Any]:
         max_level = int(request.params.get("max_level", "1"))
         is_auth = auth.is_auth(request)
-        results: Dict[str, Dict[str, Any]] = {
+        results: dict[str, dict[str, Any]] = {
             "failures": {},
             "successes": {},
         }
@@ -489,7 +477,7 @@ class HealthCheck:
         level: int,
         name: str,
         request: pyramid.request.Request,
-        results: Dict[str, Dict[str, Any]],
+        results: dict[str, dict[str, Any]],
     ) -> None:
         start = time.perf_counter()
         try:
@@ -512,7 +500,7 @@ class HealthCheck:
     def _create_db_engine_check(
         binding: _Binding,
         query_cb: Callable[[scoped_session], None],
-    ) -> Tuple[str, Callable[[pyramid.request.Request], None]]:
+    ) -> tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
             with binding as session:
                 with _PROMETHEUS_DB_SUMMARY.labels(

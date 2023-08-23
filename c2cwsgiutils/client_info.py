@@ -1,5 +1,5 @@
 import re
-from typing import Any, Callable, Dict
+from typing import Any, Callable
 
 SEP_RE = re.compile(r", *")
 
@@ -12,10 +12,10 @@ class Filter:
     Concerned headers: Forwarded and the X_Forwarded_* Headers.
     """
 
-    def __init__(self, application: Callable[[Dict[str, str], Any], Any]):
+    def __init__(self, application: Callable[[dict[str, str], Any], Any]):
         self._application = application
 
-    def __call__(self, environ: Dict[str, str], start_response: Any) -> Any:
+    def __call__(self, environ: dict[str, str], start_response: Any) -> Any:
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
         if "HTTP_FORWARDED" in environ:
             _handle_forwarded(environ)
@@ -25,7 +25,7 @@ class Filter:
         return self._application(environ, start_response)
 
 
-def _handle_others(environ: Dict[str, str]) -> None:
+def _handle_others(environ: dict[str, str]) -> None:
     # The rest is taken from paste.deploy.config.PrefixMiddleware
     if "HTTP_X_FORWARDED_SERVER" in environ:
         environ["HTTP_ORIGINAL_X_FORWARDED_SERVER"] = environ["HTTP_X_FORWARDED_SERVER"]
@@ -45,7 +45,7 @@ def _handle_others(environ: Dict[str, str]) -> None:
         environ["wsgi.url_scheme"] = environ.pop("HTTP_X_FORWARDED_PROTO")
 
 
-def _handle_forwarded(environ: Dict[str, str]) -> None:
+def _handle_forwarded(environ: dict[str, str]) -> None:
     environ["HTTP_ORIGINAL_FORWARDED"] = environ["HTTP_FORWARDED"]
     for header in (
         "X_FORWARDED_SERVER",

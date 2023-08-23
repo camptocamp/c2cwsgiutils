@@ -1,7 +1,8 @@
+from collections.abc import Mapping
 import logging
 import threading
 import time
-from typing import Any, Mapping, Optional, Tuple
+from typing import Any, Optional
 
 import redis.client
 import redis.exceptions
@@ -39,7 +40,7 @@ def cleanup() -> None:
 
 def get(
     settings: Optional[Mapping[str, bytes]] = None,
-) -> Tuple[
+) -> tuple[
     Optional["redis.client.Redis[str]"],
     Optional["redis.client.Redis[str]"],
     Optional[redis.sentinel.Sentinel],

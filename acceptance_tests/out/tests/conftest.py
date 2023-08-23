@@ -1,6 +1,6 @@
 import logging
 import subprocess  # nosec
-from typing import Any, Dict, List, cast
+from typing import Any, cast
 
 import pytest
 
@@ -24,7 +24,7 @@ class Composition:
         self.cwd = os.path.join(os.getcwd(), cwd)
         self.cwd = cwd
 
-    def dc(self, args: List[str], **kwargs: Any) -> str:
+    def dc(self, args: list[str], **kwargs: Any) -> str:
         return cast(
             str,
             subprocess.run(  # nosec
@@ -40,7 +40,7 @@ class Composition:
             ).stdout,
         )
 
-    def dc_process(self, args: List[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+    def dc_process(self, args: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
         return subprocess.run(  # type: ignore[no-any-return, call-overload] # pylint: disable=subprocess-run-check # noqa
             ["docker-compose", *args],
             **{
@@ -50,11 +50,11 @@ class Composition:
             },
         )  # nosec
 
-    def exec(self, container: str, *command: str, **kwargs: Dict[str, Any]) -> str:
+    def exec(self, container: str, *command: str, **kwargs: dict[str, Any]) -> str:
         return self.dc(["exec", "-T", container] + list(command), **kwargs)
 
     def exec_proc(
-        self, container: str, *command: str, **kwargs: Dict[str, Any]
+        self, container: str, *command: str, **kwargs: dict[str, Any]
     ) -> subprocess.CompletedProcess[str]:
         return self.dc_process(
             ["exec", "-T", container] + list(command),

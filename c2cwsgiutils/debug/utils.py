@@ -1,11 +1,11 @@
+from collections import defaultdict
 import gc
 import logging
 import os
 import re
 import sys
-from collections import defaultdict
 from types import FunctionType, ModuleType
-from typing import Any, Dict, List, Set
+from typing import Any
 
 # 7ff7d33bd000-7ff7d33be000 r--p 00000000 00:65 49                         /usr/lib/toto.so
 SMAPS_LOCATION_RE = re.compile(r"^[0-9a-f]+-[0-9a-f]+ +.... +[0-9a-f]+ +[^ ]+ +\d+ +(.*)$")
@@ -21,7 +21,7 @@ def get_size(obj: Any) -> int:
     """Get the sum size of object & members."""
     if isinstance(obj, BLACKLIST):
         return 0
-    seen_ids: Set[int] = set()
+    seen_ids: set[int] = set()
     size = 0
     objects = [obj]
     while objects:
@@ -35,14 +35,14 @@ def get_size(obj: Any) -> int:
     return size
 
 
-def dump_memory_maps(pid: str = "self") -> List[Dict[str, Any]]:
+def dump_memory_maps(pid: str = "self") -> list[dict[str, Any]]:
     """Get the Linux memory maps."""
     filename = os.path.join("/proc", pid, "smaps")
     if not os.path.exists(filename):
         return []
     with open(filename, encoding="utf-8") as input_:
-        cur_dict: Dict[str, int] = defaultdict(int)
-        sizes: Dict[str, Any] = {}
+        cur_dict: dict[str, int] = defaultdict(int)
+        sizes: dict[str, Any] = {}
         for line in input_:
             line = line.rstrip("\n")
             matcher = SMAPS_LOCATION_RE.match(line)

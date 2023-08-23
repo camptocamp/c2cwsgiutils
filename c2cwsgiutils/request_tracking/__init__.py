@@ -3,22 +3,23 @@ Allows to track the request_id in the logs, the DB and others.
 
 Adds a c2c_request_id attribute to the Pyramid Request class to access it.
 """
+from collections.abc import Mapping
 import logging
 import time
+from typing import Optional, Union
 import urllib.parse
 import uuid
 import warnings
-from typing import List, Mapping, Optional, Tuple, Union
 
 import prometheus_client
 import pyramid.request
+from pyramid.threadlocal import get_current_request
 import requests.adapters
 import requests.models
-from pyramid.threadlocal import get_current_request
 
 from c2cwsgiutils import config_utils, prometheus
 
-ID_HEADERS: List[str] = []
+ID_HEADERS: list[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 LOG = logging.getLogger(__name__)
 DEFAULT_TIMEOUT: Optional[float] = None
@@ -42,9 +43,9 @@ def _patch_requests() -> None:
         self: requests.adapters.HTTPAdapter,
         request: requests.models.PreparedRequest,
         stream: bool = False,
-        timeout: Union[None, float, Tuple[float, float], Tuple[float, None]] = None,
+        timeout: Union[None, float, tuple[float, float], tuple[float, None]] = None,
         verify: Union[bool, str] = True,
-        cert: Union[None, bytes, str, Tuple[Union[bytes, str], Union[bytes, str]]] = None,
+        cert: Union[None, bytes, str, tuple[Union[bytes, str], Union[bytes, str]]] = None,
         proxies: Optional[Mapping[str, str]] = None,
     ) -> requests.Response:
         pyramid_request = get_current_request()

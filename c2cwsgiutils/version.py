@@ -2,8 +2,8 @@ import json
 import logging
 import os
 import re
+from typing import Optional, cast
 import warnings
-from typing import Dict, Optional, cast
 
 import prometheus_client
 import pyramid.config
@@ -75,11 +75,11 @@ def includeme(config: pyramid.config.Configurator) -> None:
         _PROMETHEUS_VERSIONS_INFO.labels(**labels).set(1)
 
 
-def _read_versions() -> Dict[str, Dict[str, str]]:
+def _read_versions() -> dict[str, dict[str, str]]:
     """Read the version."""
     with open(_VERSIONS_PATH, encoding="utf-8") as file:
         versions = json.load(file)
-    return cast(Dict[str, Dict[str, str]], versions)
+    return cast(dict[str, dict[str, str]], versions)
 
 
 def get_version() -> Optional[str]:

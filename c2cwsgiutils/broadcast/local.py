@@ -1,4 +1,5 @@
-from typing import Any, Callable, List, Mapping, MutableMapping, Optional
+from collections.abc import Mapping, MutableMapping
+from typing import Any, Callable, Optional
 
 # noinspection PyProtectedMember
 from c2cwsgiutils.broadcast import interface, utils
@@ -18,7 +19,7 @@ class LocalBroadcaster(interface.BaseBroadcaster):
 
     def broadcast(
         self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
-    ) -> Optional[List[Any]]:
+    ) -> Optional[list[Any]]:
         subscriber = self._subscribers.get(channel, None)
         answers = [utils.add_host_info(subscriber(**params))] if subscriber is not None else []
         return answers if expect_answers else None

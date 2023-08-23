@@ -1,7 +1,7 @@
 import functools
 import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import requests
 
@@ -32,14 +32,14 @@ class PrintConnection(connection.Connection):
     def get_capabilities(self, app: str) -> Any:
         return self.get_json(app + "/capabilities.json", cache_expected=connection.CacheExpected.YES)
 
-    def get_example_requests(self, app: str) -> Dict[str, Any]:
+    def get_example_requests(self, app: str) -> dict[str, Any]:
         samples = self.get_json(app + "/exampleRequest.json", cache_expected=connection.CacheExpected.YES)
         out = {}
         for name, value in samples.items():
             out[name] = json.loads(value)
         return out
 
-    def get_pdf(self, app: str, request: Dict[str, Any], timeout: int = 60) -> requests.Response:
+    def get_pdf(self, app: str, request: dict[str, Any], timeout: int = 60) -> requests.Response:
         create_report = self.post_json(app + "/report.pdf", json=request)
         LOG.debug("create_report=%s", create_report)
         ref = create_report["ref"]

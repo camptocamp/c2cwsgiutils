@@ -9,16 +9,16 @@ import time
 from typing import TYPE_CHECKING, Optional
 from wsgiref.simple_server import make_server
 
-from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
-from prometheus_client.exposition import make_wsgi_app
 import sqlalchemy
 import sqlalchemy.exc
 import sqlalchemy.orm
 import transaction
+from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+from prometheus_client.exposition import make_wsgi_app
 from zope.sqlalchemy import register
 
-from c2cwsgiutils import prometheus
 import c2cwsgiutils.setup_process
+from c2cwsgiutils import prometheus
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]

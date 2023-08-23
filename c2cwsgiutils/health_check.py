@@ -4,30 +4,30 @@ Setup an health_check API.
 To use it, create an instance of this class in your application initialization and do a few calls to its
 methods add_db_check()
 """
-from collections.abc import Mapping
 import configparser
 import copy
-from enum import Enum
 import logging
 import os
 import re
 import subprocess  # nosec
 import time
 import traceback
+from collections.abc import Mapping
+from enum import Enum
 from types import TracebackType
 from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, Union, cast
 
 import prometheus_client
 import pyramid.config
-from pyramid.httpexceptions import HTTPNotFound
 import pyramid.request
 import requests
 import sqlalchemy.engine
 import sqlalchemy.orm
 import sqlalchemy.sql
+from pyramid.httpexceptions import HTTPNotFound
 
-from c2cwsgiutils import auth, broadcast, config_utils, prometheus, redis_utils, version
 import c2cwsgiutils.db
+from c2cwsgiutils import auth, broadcast, config_utils, prometheus, redis_utils, version
 
 if TYPE_CHECKING:
     scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]

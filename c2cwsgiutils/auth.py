@@ -1,12 +1,12 @@
-from collections.abc import Mapping
-from enum import Enum
 import hashlib
 import logging
+from collections.abc import Mapping
+from enum import Enum
 from typing import Any, Optional, TypedDict, cast
 
 import jwt
-from pyramid.httpexceptions import HTTPForbidden
 import pyramid.request
+from pyramid.httpexceptions import HTTPForbidden
 from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings

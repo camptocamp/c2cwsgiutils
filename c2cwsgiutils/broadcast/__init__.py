@@ -1,8 +1,8 @@
 """Broadcast messages to all the processes of Gunicorn in every containers."""
 import functools
 import logging
-from typing import Any, Callable, Optional, TypeVar
 import warnings
+from typing import Any, Callable, Optional, TypeVar
 
 import pyramid.config
 

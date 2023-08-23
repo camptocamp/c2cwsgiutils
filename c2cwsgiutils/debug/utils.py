@@ -1,9 +1,9 @@
-from collections import defaultdict
 import gc
 import logging
 import os
 import re
 import sys
+from collections import defaultdict
 from types import FunctionType, ModuleType
 from typing import Any
 

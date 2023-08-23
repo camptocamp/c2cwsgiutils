@@ -6,14 +6,14 @@ Must be imported at the very beginning of the process's life, before any other m
 
 
 import argparse
-from typing import Any, Callable, Optional, TypedDict, cast
 import warnings
+from typing import Any, Callable, Optional, TypedDict, cast
 
 import pyramid.config
-from pyramid.paster import bootstrap
 import pyramid.registry
 import pyramid.request
 import pyramid.router
+from pyramid.paster import bootstrap
 from pyramid.scripts.common import get_config_loader, parse_vars
 
 from c2cwsgiutils import broadcast, coverage_setup, redis_stats, sentry, sql_profiler

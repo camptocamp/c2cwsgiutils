@@ -1,9 +1,9 @@
 import configparser
-from configparser import SectionProxy
 import logging
 import os
 import re
 import sys
+from configparser import SectionProxy
 from typing import Any
 
 LOG = logging.getLogger(__name__)

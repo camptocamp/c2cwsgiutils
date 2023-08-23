@@ -10,11 +10,11 @@ To add some info about requests:
 
 A pyramid event handler is installed to setup this filter for the current request.
 """
-from collections.abc import Mapping, MutableMapping
 import json
 import logging
 import logging.config
 import socket
+from collections.abc import Mapping, MutableMapping
 from typing import TYPE_CHECKING, Any, Optional, TextIO
 
 import cee_syslog_handler

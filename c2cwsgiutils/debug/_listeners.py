@@ -1,9 +1,9 @@
-from collections.abc import Mapping
 import gc
 import sys
 import threading
 import time
 import traceback
+from collections.abc import Mapping
 from typing import Any, Optional, cast
 
 import objgraph

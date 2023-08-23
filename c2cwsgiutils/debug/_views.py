@@ -1,17 +1,17 @@
-from collections.abc import Mapping
-from datetime import datetime
 import gc
-from io import StringIO
 import logging
 import re
 import time
+from collections.abc import Mapping
+from datetime import datetime
+from io import StringIO
 from typing import Any, Callable, cast
 
 import objgraph
 import pyramid.config
-from pyramid.httpexceptions import HTTPException, exception_response
 import pyramid.request
 import pyramid.response
+from pyramid.httpexceptions import HTTPException, exception_response
 
 from c2cwsgiutils import auth, broadcast, config_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps, get_size

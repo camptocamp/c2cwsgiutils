@@ -1,8 +1,8 @@
 """Every thing we needs to have the metrics in Prometheus."""
 
-from collections.abc import Generator, Iterable
 import os
 import re
+from collections.abc import Generator, Iterable
 from typing import Any, Optional, TypedDict, cast
 
 import prometheus_client

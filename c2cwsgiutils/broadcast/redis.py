@@ -1,10 +1,10 @@
-from collections.abc import Mapping
 import json
 import logging
 import random
 import string
 import threading
 import time
+from collections.abc import Mapping
 from typing import Any, Callable, Optional
 
 import redis

@@ -1,13 +1,13 @@
 import logging
-from typing import Any, Optional, Union, cast
 import urllib.parse
 import warnings
+from typing import Any, Optional, Union, cast
 
 import jwt
 import pyramid.config
-from pyramid.httpexceptions import HTTPFound
 import pyramid.request
 import pyramid.response
+from pyramid.httpexceptions import HTTPFound
 from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils import config_utils

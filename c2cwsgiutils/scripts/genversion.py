@@ -5,8 +5,8 @@ import os
 import re
 import subprocess  # nosec
 import sys
-from typing import Optional, cast
 import warnings
+from typing import Optional, cast
 
 SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
 VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")

@@ -1,7 +1,7 @@
-from collections.abc import Mapping
 import logging
 import threading
 import time
+from collections.abc import Mapping
 from typing import Any, Optional
 
 import redis.client

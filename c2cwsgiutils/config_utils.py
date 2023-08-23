@@ -1,6 +1,6 @@
 """Private utilities."""
-from collections.abc import Mapping
 import os
+from collections.abc import Mapping
 from typing import Any, Callable, Optional, cast
 
 import pyramid.config

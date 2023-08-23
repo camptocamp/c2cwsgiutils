@@ -2,8 +2,8 @@ import json
 import logging
 import os
 import re
-from typing import Optional, cast
 import warnings
+from typing import Optional, cast
 
 import prometheus_client
 import pyramid.config

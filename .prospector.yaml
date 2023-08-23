@@ -1,6 +1,8 @@
+inherits:
+  - duplicated
 strictness: veryhigh
 max-line-length: 110
-doc-warnings: True
+doc-warnings: true
 
 ignore-paths:
   - docs
@@ -26,11 +28,8 @@ pylint:
     - no-else-raise
     - no-self-use
     - import-error
-    - superfluous-parens
-    - ungrouped-imports
     - unused-argument
     - use-symbolic-message-instead
-    - wrong-import-order
     - missing-module-docstring
     - missing-function-docstring
     - missing-timeout # A default timeout is set
@@ -39,13 +38,11 @@ pycodestyle:
   options:
     max-line-length: 110
   disable:
-    - E203 # Whitespace before ':', duplicated with black, with error in array
     - E722 # do not use bare 'except', duplicated with pylint
     - E261 # at least two spaces before inline comment, duplicated with black
 
 pydocstyle:
   disable:
-    - D100 # Missing docstring in public module
     - D102 # Missing docstring in public method
     - D104 # Missing docstring in public package
     - D105 # Missing docstring in magic method
@@ -55,8 +52,6 @@ pydocstyle:
     - D212 # Multi-line docstring summary should start at the first line
     - D407 # Missing dashed underline after section ('Arguments')
     - D412 # No blank lines allowed between a section header and its content ('Arguments')
-    - D413 # Missing blank line after last section ('Arguments')
-
 mypy:
   run: true
 

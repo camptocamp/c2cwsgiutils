@@ -83,7 +83,7 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
             print(_sentinel.sentinels[0].sentinel_masters())
             raise Exception(_sentinel.sentinels[0].sentinel_masters()) from error
     if url:
-        if not url.startswith("redis://"):
+        if "://" not in url:
             url = "redis://" + url
 
         LOG.info("Redis setup using: %s, with options: %s", url, redis_options_)

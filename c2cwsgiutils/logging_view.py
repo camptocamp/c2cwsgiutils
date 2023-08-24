@@ -1,6 +1,7 @@
 import logging
 import warnings
-from typing import Any, Generator, Mapping, Tuple
+from collections.abc import Generator, Mapping
+from typing import Any
 
 import pyramid.request
 
@@ -80,7 +81,7 @@ def _store_override(settings: Mapping[str, Any], name: str, level: str) -> None:
         pass
 
 
-def _list_overrides(settings: Mapping[str, Any]) -> Generator[Tuple[str, str], None, None]:
+def _list_overrides(settings: Mapping[str, Any]) -> Generator[tuple[str, str], None, None]:
     _, slave, _ = redis_utils.get(settings)
     if slave is not None:
         for key in slave.scan_iter(REDIS_PREFIX + "*"):

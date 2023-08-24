@@ -14,7 +14,8 @@ import json
 import logging
 import logging.config
 import socket
-from typing import TYPE_CHECKING, Any, Mapping, MutableMapping, Optional, TextIO
+from collections.abc import Mapping, MutableMapping
+from typing import TYPE_CHECKING, Any, Optional, TextIO
 
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request

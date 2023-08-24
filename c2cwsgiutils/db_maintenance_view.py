@@ -1,6 +1,7 @@
 import logging
 import warnings
-from typing import Any, Mapping, Optional, cast
+from collections.abc import Mapping
+from typing import Any, Optional, cast
 
 import pyramid.request
 

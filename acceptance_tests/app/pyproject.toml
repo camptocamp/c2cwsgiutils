@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 110
-target-version = ['py38']
+target-version = ["py39"]
 
 [tool.isort]
 profile = "black"
@@ -8,7 +8,7 @@ line_length = 110
 known_local_folder = ["c2cwsgiutils_app"]
 
 [tool.mypy]
-python_version = 3.8
+python_version = 3.9
 ignore_missing_imports = true
 warn_redundant_casts = true
 warn_unused_ignores = true

@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Any, Callable, List, Mapping, Optional
+from collections.abc import Mapping
+from typing import Any, Callable, Optional
 
 
 class BaseBroadcaster:
@@ -16,5 +17,5 @@ class BaseBroadcaster:
     @abstractmethod
     def broadcast(
         self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
-    ) -> Optional[List[Any]]:
+    ) -> Optional[list[Any]]:
         pass  # pragma: no cover

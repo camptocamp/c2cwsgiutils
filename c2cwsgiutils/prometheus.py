@@ -2,7 +2,8 @@
 
 import os
 import re
-from typing import Any, Dict, Generator, Iterable, List, Optional, TypedDict, cast
+from collections.abc import Generator, Iterable
+from typing import Any, Optional, TypedDict, cast
 
 import prometheus_client
 import prometheus_client.core
@@ -59,7 +60,7 @@ class SerializedSample(TypedDict):
     """Represent the serialized sample."""
 
     name: str
-    labels: Dict[str, str]
+    labels: dict[str, str]
     value: float
 
 
@@ -67,25 +68,25 @@ class SerializedMetric(TypedDict):
     """Represent the serialized gauge."""
 
     type: str
-    args: Dict[str, Any]
-    samples: List[SerializedSample]
+    args: dict[str, Any]
+    samples: list[SerializedSample]
 
 
-def _broadcast_collector_gc() -> List[SerializedMetric]:
+def _broadcast_collector_gc() -> list[SerializedMetric]:
     """Get the collected GC gauges."""
 
     return serialize_collected_data(prometheus_client.GC_COLLECTOR)
 
 
-def _broadcast_collector_process() -> List[SerializedMetric]:
+def _broadcast_collector_process() -> list[SerializedMetric]:
     """Get the collected process gauges."""
     return serialize_collected_data(prometheus_client.PROCESS_COLLECTOR)
 
 
-def serialize_collected_data(collector: prometheus_client.registry.Collector) -> List[SerializedMetric]:
+def serialize_collected_data(collector: prometheus_client.registry.Collector) -> list[SerializedMetric]:
     """Serialize the data from the custom collector."""
 
-    gauges: List[SerializedMetric] = []
+    gauges: list[SerializedMetric] = []
     for process_gauge in collector.collect():
         gauge: SerializedMetric = {
             "type": "<to be defined>",
@@ -119,16 +120,16 @@ class MultiProcessCustomCollector(prometheus_client.registry.Collector):
     """Get the metrics from the custom collectors."""
 
     def collect(self) -> Generator[prometheus_client.core.Metric, None, None]:
-        results: List[List[SerializedMetric]] = []
+        results: list[list[SerializedMetric]] = []
         for channel in MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS:
             result = broadcast.broadcast(channel, expect_answers=True)
             if result is not None:
-                results.extend(cast(Iterable[List[SerializedMetric]], result))
+                results.extend(cast(Iterable[list[SerializedMetric]], result))
         return _deserialize_collected_data(results)
 
 
 def _deserialize_collected_data(
-    results: List[List[SerializedMetric]],
+    results: list[list[SerializedMetric]],
 ) -> Generator[prometheus_client.core.Metric, None, None]:
     for serialized_collection in results:
         for serialized_metric in serialized_collection:
@@ -153,7 +154,7 @@ def _deserialize_collected_data(
 class MemoryMapCollector(prometheus_client.registry.Collector):
     """The Linux memory map provider."""
 
-    def __init__(self, memory_type: str = "pss", pids: Optional[List[str]] = None):
+    def __init__(self, memory_type: str = "pss", pids: Optional[list[str]] = None):
         """
         Initialize.
 

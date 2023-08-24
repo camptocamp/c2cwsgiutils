@@ -4,12 +4,12 @@ import os
 import re
 import sys
 from configparser import SectionProxy
-from typing import Any, Dict, Set
+from typing import Any
 
 LOG = logging.getLogger(__name__)
 
 
-def get_config_defaults() -> Dict[str, str]:
+def get_config_defaults() -> dict[str, str]:
     """
     Get the environment variables as defaults for configparser.
 
@@ -18,8 +18,8 @@ def get_config_defaults() -> Dict[str, str]:
 
     configparser interpretate the % then we need to escape them
     """
-    result: Dict[str, str] = {}
-    lowercase_keys: Set[str] = set()
+    result: dict[str, str] = {}
+    lowercase_keys: set[str] = set()
     for key, value in os.environ.items():
         if key.lower() in lowercase_keys:
             LOG.warning("The environment variable '%s' is duplicated with different case, ignoring", key)
@@ -29,9 +29,9 @@ def get_config_defaults() -> Dict[str, str]:
     return result
 
 
-def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
+def _create_handlers(config: configparser.ConfigParser) -> dict[str, Any]:
     handlers = [k.strip() for k in config["handlers"]["keys"].split(",")]
-    d_handlers: Dict[str, Any] = {}
+    d_handlers: dict[str, Any] = {}
     stream_re = re.compile(r"\((.*?),\)")
     for hh in handlers:
         block = config[f"handler_{hh}"]
@@ -53,8 +53,8 @@ def _create_handlers(config: configparser.ConfigParser) -> Dict[str, Any]:
     return d_handlers
 
 
-def _filter_logger(block: SectionProxy) -> Dict[str, Any]:
-    out: Dict[str, Any] = {"level": block["level"]}
+def _filter_logger(block: SectionProxy) -> dict[str, Any]:
+    out: dict[str, Any] = {"level": block["level"]}
     handlers = block.get("handlers", "")
     if handlers != "":
         out["handlers"] = [block["handlers"]]
@@ -65,7 +65,7 @@ def _filter_logger(block: SectionProxy) -> Dict[str, Any]:
 # logging configuration
 # https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
 ###
-def get_logconfig_dict(filename: str) -> Dict[str, Any]:
+def get_logconfig_dict(filename: str) -> dict[str, Any]:
     """
     Create a logconfig dictionary based on the provided ini file.
 
@@ -76,8 +76,8 @@ def get_logconfig_dict(filename: str) -> Dict[str, Any]:
     loggers = [k.strip() for k in config["loggers"]["keys"].split(",")]
     formatters = [k.strip() for k in config["formatters"]["keys"].split(",")]
 
-    d_loggers: Dict[str, Any] = {}
-    root: Dict[str, Any] = {}
+    d_loggers: dict[str, Any] = {}
+    root: dict[str, Any] = {}
     for ll in loggers:
         block = config[f"logger_{ll}"]
         if ll == "root":
@@ -86,7 +86,7 @@ def get_logconfig_dict(filename: str) -> Dict[str, Any]:
         qualname = block["qualname"]
         d_loggers[qualname] = _filter_logger(block)
 
-    d_formatters: Dict[str, Any] = {}
+    d_formatters: dict[str, Any] = {}
     for ff in formatters:
         block = config[f"formatter_{ff}"]
         d_formatters[ff] = {

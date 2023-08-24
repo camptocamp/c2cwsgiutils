@@ -5,8 +5,9 @@ That runs an "EXPLAIN ANALYZE" on every SELECT query going through SQLAlchemy.
 """
 import logging
 import re
+from collections.abc import Mapping
 from threading import Lock
-from typing import Any, Mapping, Set
+from typing import Any
 
 import pyramid.request
 import sqlalchemy.engine
@@ -22,7 +23,7 @@ class _Repository:
     def __init__(self) -> None:
         super().__init__()
         self._lock = Lock()
-        self._repo: Set[str] = set()
+        self._repo: set[str] = set()
 
     def profile(
         self,

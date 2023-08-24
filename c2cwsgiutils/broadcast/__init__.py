@@ -2,7 +2,7 @@
 import functools
 import logging
 import warnings
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 import pyramid.config
 
@@ -81,8 +81,8 @@ def unsubscribe(channel: str) -> None:
 
 
 def broadcast(
-    channel: str, params: Optional[Dict[str, Any]] = None, expect_answers: bool = False, timeout: float = 10
-) -> Optional[List[Any]]:
+    channel: str, params: Optional[dict[str, Any]] = None, expect_answers: bool = False, timeout: float = 10
+) -> Optional[list[Any]]:
     """
     Broadcast a message to the given channel.
 
@@ -100,16 +100,16 @@ _DECORATOR_RETURN = TypeVar("_DECORATOR_RETURN")
 
 def decorator(
     channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
-) -> Callable[[Callable[..., _DECORATOR_RETURN]], Callable[..., Optional[List[_DECORATOR_RETURN]]]]:
+) -> Callable[[Callable[..., _DECORATOR_RETURN]], Callable[..., Optional[list[_DECORATOR_RETURN]]]]:
     """
     Decorate function will be called through the broadcast functionality.
 
     If expect_answers is set to True, the returned value will be a list of all the answers.
     """
 
-    def impl(func: Callable[..., _DECORATOR_RETURN]) -> Callable[..., Optional[List[_DECORATOR_RETURN]]]:
+    def impl(func: Callable[..., _DECORATOR_RETURN]) -> Callable[..., Optional[list[_DECORATOR_RETURN]]]:
         @functools.wraps(func)
-        def wrapper(**kwargs: Any) -> Optional[List[_DECORATOR_RETURN]]:
+        def wrapper(**kwargs: Any) -> Optional[list[_DECORATOR_RETURN]]:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
         if channel is None:

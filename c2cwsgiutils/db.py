@@ -2,7 +2,9 @@
 import logging
 import re
 import warnings
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, Pattern, Tuple, Union, cast
+from collections.abc import Iterable
+from re import Pattern
+from typing import TYPE_CHECKING, Any, Callable, Optional, Union, cast
 
 import pyramid.config
 import pyramid.config.settings
@@ -41,7 +43,7 @@ def setup_session(
     slave_prefix: Optional[str] = None,
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
-) -> Tuple[
+) -> tuple[
     Union[sqlalchemy.orm.Session, scoped_session],
     sqlalchemy.engine.Engine,
     sqlalchemy.engine.Engine,

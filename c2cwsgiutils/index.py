@@ -1,7 +1,7 @@
 import logging
 import urllib.parse
 import warnings
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Optional, Union, cast
 
 import jwt
 import pyramid.config
@@ -45,13 +45,13 @@ from c2cwsgiutils.config_utils import env_or_settings
 LOG = logging.getLogger(__name__)
 
 additional_title: Optional[str] = None
-additional_noauth: List[str] = []
-additional_auth: List[str] = []
+additional_noauth: list[str] = []
+additional_auth: list[str] = []
 ELEM_ID = 0
 
 
 def _url(
-    request: pyramid.request.Request, route: str, params: Optional[Dict[str, str]] = None
+    request: pyramid.request.Request, route: str, params: Optional[dict[str, str]] = None
 ) -> Optional[str]:
     try:
         return request.route_url(route, _query=params)  # type: ignore
@@ -142,7 +142,7 @@ def button(label: str) -> str:
     return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
-def _index(request: pyramid.request.Request) -> Dict[str, str]:
+def _index(request: pyramid.request.Request) -> dict[str, str]:
     response = request.response
 
     auth, user = is_auth_user(request)
@@ -344,7 +344,7 @@ def _health_check(request: pyramid.request.Request) -> str:
         return ""
 
 
-def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
+def _github_login(request: pyramid.request.Request) -> dict[str, Any]:
     """Get the view that start the authentication on GitHub."""
 
     settings = request.registry.settings
@@ -380,7 +380,7 @@ def _github_login(request: pyramid.request.Request) -> Dict[str, Any]:
     raise HTTPFound(location=authorization_url, headers=request.response.headers)
 
 
-def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
+def _github_login_callback(request: pyramid.request.Request) -> dict[str, Any]:
     """
     Do the post login operation authentication on GitHub.
 
@@ -447,7 +447,7 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
             "c2c-auth-jwt",
         ),
         jwt.encode(
-            cast(Dict[str, Any], user_information),
+            cast(dict[str, Any], user_information),
             env_or_settings(
                 settings,
                 GITHUB_AUTH_SECRET_ENV,
@@ -462,7 +462,7 @@ def _github_login_callback(request: pyramid.request.Request) -> Dict[str, Any]:
     )
 
 
-def _github_logout(request: pyramid.request.Request) -> Dict[str, Any]:
+def _github_logout(request: pyramid.request.Request) -> dict[str, Any]:
     """Logout the user."""
     request.response.delete_cookie(SECRET_ENV)
     request.response.delete_cookie(

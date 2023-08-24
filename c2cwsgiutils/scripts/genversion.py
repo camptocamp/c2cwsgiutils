@@ -6,14 +6,14 @@ import re
 import subprocess  # nosec
 import sys
 import warnings
-from typing import Dict, Optional, Tuple, cast
+from typing import Optional, cast
 
 SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
 VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")
 LOG = logging.getLogger(__name__)
 
 
-def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
+def _get_package_version(comp: str) -> tuple[Optional[str], Optional[str]]:
     """
     Parse plain and editable versions.
 
@@ -22,14 +22,14 @@ def _get_package_version(comp: str) -> Tuple[Optional[str], Optional[str]]:
     src_matcher = SRC_VERSION_RE.match(comp)
     matcher = src_matcher or VERSION_RE.match(comp)
     if matcher:
-        return cast(Tuple[str, str], matcher.groups())
+        return cast(tuple[str, str], matcher.groups())
     else:
         if len(comp) > 0 and not comp[:3] == "-e ":
             print("Cannot parse package version: " + comp)
         return None, None
 
 
-def _get_packages_version() -> Dict[str, str]:
+def _get_packages_version() -> dict[str, str]:
     result = {}
     with open(os.devnull, "w", encoding="utf-8") as devnull:
         for comp in (

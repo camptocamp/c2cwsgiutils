@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 import time
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Optional
 from wsgiref.simple_server import make_server
 
 import sqlalchemy
@@ -69,9 +69,9 @@ class Reporter:
         self.registry = CollectorRegistry()
         self.prometheus_push = args.prometheus_url is not None
         self.args = args
-        self.gauges: Dict[str, Gauge] = {}
+        self.gauges: dict[str, Gauge] = {}
 
-    def get_gauge(self, kind: str, kind_help: str, labels: List[str]) -> Gauge:
+    def get_gauge(self, kind: str, kind_help: str, labels: list[str]) -> Gauge:
         if kind not in self.gauges:
             self.gauges[kind] = Gauge(
                 prometheus.build_metric_name(f"database_{kind}"),
@@ -82,7 +82,7 @@ class Reporter:
         return self.gauges[kind]
 
     def do_report(
-        self, metric: List[str], value: int, kind: str, kind_help: str, tags: Dict[str, str]
+        self, metric: list[str], value: int, kind: str, kind_help: str, tags: dict[str, str]
     ) -> None:
         LOG.debug("%s.%s -> %d", kind, ".".join(metric), value)
         gauge = self.get_gauge(kind, kind_help, list(tags.keys()))
@@ -98,7 +98,7 @@ class Reporter:
                 LOG.info("Waiting that Prometheus get the metrics served on port %s...", port)
                 httpd.handle_request()
 
-    def error(self, metric: List[str], error_: Exception) -> None:
+    def error(self, metric: list[str], error_: Exception) -> None:
         if self._error is None:
             self._error = error_
 

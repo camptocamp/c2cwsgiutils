@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable
 
 import pytest
 import requests
@@ -63,7 +63,7 @@ def approx(struct: Any, **kwargs: Any) -> Any:
     if isinstance(struct, float):
         return pytest.approx(struct, **kwargs)
 
-    def visit(_path: List[str], key: Any, value: Any) -> Tuple[Any, Any]:
+    def visit(_path: list[str], key: Any, value: Any) -> tuple[Any, Any]:
         if isinstance(value, float):
             value = pytest.approx(value, **kwargs)
         return key, value

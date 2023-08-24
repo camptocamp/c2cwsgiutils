@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 from sqlalchemy import Column
 from sqlalchemy.orm import declarative_base
@@ -8,7 +8,7 @@ from sqlalchemy.types import DateTime, Integer, String
 Base = declarative_base()
 
 
-def create_log_class(tablename: str = "logs", tableargs: Union[str, Dict[str, str]] = "") -> Any:
+def create_log_class(tablename: str = "logs", tableargs: Union[str, dict[str, str]] = "") -> Any:
     """Get the sqlalchemy lgo class."""
 
     class Log(Base):  # type: ignore

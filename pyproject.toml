@@ -33,7 +33,6 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
   "Intended Audience :: Information Technology",
   "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
   "Typing :: Typed",
@@ -63,7 +62,7 @@ client_info = "c2cwsgiutils.client_info:filter_factory"
 sentry = "c2cwsgiutils.sentry:filter_factory"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.9,<4.0"
 requests = { version = "2.31.0" }
 pyyaml = { version = "6.0.1" }
 alembic = { version = "1.11.1", optional = true }

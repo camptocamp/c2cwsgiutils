@@ -87,9 +87,6 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
         _slave = _sentinel.slave_for(service_name)
         return
     if url:
-        if not url.startswith("redis://"):
-            url = "redis://" + url
-
         LOG.info("Redis setup using: %s, with options: %s", url, redis_options_)
         _master = redis.client.Redis.from_url(url, decode_responses=True, **redis_options)
         _slave = _master

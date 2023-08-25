@@ -3,6 +3,7 @@
 ## Release 6.0
 
 - The stats will not anymore be published on StatsD, use Prometheus client instead.
+- The `C2C_REDIS_URL` will not be prefixed by `redis://` anymore, it will be used as is.
 
 ## Release 5.2
 

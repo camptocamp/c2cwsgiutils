@@ -1,4 +1,6 @@
+import json
 import os
+import subprocess  # nosec
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
@@ -149,3 +151,59 @@ def check_image(
         assert (
             score >= level
         ), f"{result_filename} != {expected_filename} => {diff_filename} ({score} < {level})"
+
+
+def check_screenshot(
+    url: str,
+    result_folder: str,
+    expected_filename: str,
+    width: int = 800,
+    height: int = 600,
+    headers: Optional[dict[str, str]] = None,
+    media: Optional[list[dict[str, str]]] = None,
+    level: float = 1.0,
+    generate_expected_image: bool = False,
+    use_mask: bool = True,
+) -> None:
+    """
+    Test that the screenshot of the `url` corresponds to the image `expected_filename`.
+
+    Requires nodejs with puppeteer and commander to be installed.
+    """
+
+    if headers is None:
+        headers = {}
+    if media is None:
+        media = []
+
+    if not os.path.exists(os.path.join(os.path.dirname(__file__), "node_modules")):
+        subprocess.run(["npm", "install"], cwd=os.path.dirname(__file__), check=True)  # nosec
+
+    image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
+    if image_file_basename.endswith(".expected"):
+        image_file_basename = os.path.splitext(image_file_basename)[0]
+
+    result_folder = os.path.abspath(result_folder)
+    actual_filename = os.path.join(result_folder, f"{image_file_basename}.actual.png")
+    subprocess.run(  # nosec
+        [
+            "node",
+            "screenshot.js",
+            f"--url={url}",
+            f"--width={width}",
+            f"--height={height}",
+            f"--headers={json.dumps(headers)}",
+            f"--media={json.dumps(media)}",
+            f"--output={actual_filename}",
+        ],
+        cwd=os.path.dirname(__file__),
+        check=True,
+    )
+    check_image(
+        result_folder,
+        skimage.io.imread(actual_filename)[:, :, :3],
+        expected_filename,
+        level,
+        generate_expected_image,
+        use_mask,
+    )

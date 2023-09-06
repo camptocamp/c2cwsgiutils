@@ -694,6 +694,35 @@ To make a release:
 - Add the new branch name in the `.github/workflows/rebuild.yaml` and
   `.github/workflows/audit.yaml` files.
 
+## Testing
+
+### Screenshots
+
+To test the screenshots, you need to install `node` with `npm`, to do that add the following lines in your `Dockerfile`:
+
+```dockerfile
+RUN --mount=type=cache,target=/var/lib/apt/lists \
+    --mount=type=cache,target=/var/cache,sharing=locked \
+    . /etc/os-release \
+    && echo "deb https://deb.nodesource.com/node_18.x ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/nodesource.list \
+    && curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+    && apt-get update \
+    && apt-get install --assume-yes --no-install-recommends 'nodejs=18.*'
+```
+
+To do the image test call `check_screenshot` e.g.:
+
+```python
+def test_screenshot(app_connection):
+    image.check_screenshot(
+        app_connection.base_url + "my-path",
+        width=800,
+        height=600,
+        result_folder="results",
+        expected_filename=os.path.join(os.path.dirname(__file__), "my-check.expected.png"),
+    )
+```
+
 ## Contributing
 
 Install the pre-commit hooks:

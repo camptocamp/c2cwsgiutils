@@ -65,6 +65,12 @@ jobs:
       - name: Acceptance Dev
         run: WAITRESS=TRUE make acceptance
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Acceptance tests results
+          path: acceptance_tests/out/results
+        if: always()
+
       - name: Publish
         run: c2cciutils-publish
         if: env.HAS_SECRETS == 'HAS_SECRETS'

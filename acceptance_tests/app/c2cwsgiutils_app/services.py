@@ -111,6 +111,6 @@ def empty(request):
 
 @timeout_service.get(match_param="where=sql")
 def timeout_sql(request):
-    request.dbsession.execute("SELECT pg_sleep(2)")
+    request.dbsession.execute(sqlalchemy.sql.expression.text("SELECT pg_sleep(2)"))
     request.response.status_code = 204
     return request.response

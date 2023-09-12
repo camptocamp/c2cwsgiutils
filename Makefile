@@ -44,7 +44,8 @@ acceptance-in: acceptance-run  ## Run the internal acceptance tests
 
 .PHONY: acceptance-out
 acceptance-out: acceptance-run  ## Run the external acceptance tests
-	cd acceptance_tests/out/; pytest -vv --color=yes $(PYTEST_ARGS) tests
+	mkdir acceptance_tests/out/results || true
+	cd acceptance_tests/out; pytest -vv --color=yes $(PYTEST_ARGS) tests
 
 .PHONY: acceptance-stop
 acceptance-stop:  ## Stop the application used to run the acceptance tests

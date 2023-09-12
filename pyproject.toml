@@ -37,7 +37,12 @@ classifiers = [
   "Typing :: Typed",
 ]
 packages = [{ include = "c2cwsgiutils" }]
-include = ["c2cwsgiutils/py.typed"]
+include = [
+"c2cwsgiutils/py.typed",
+"c2cwsgiutils/acceptance/screenshot.js",
+"c2cwsgiutils/acceptance/package.json",
+"c2cwsgiutils/acceptance/package-lock.json",
+]
 
 [tool.poetry.scripts]
 c2cwsgiutils-genversion = "c2cwsgiutils.scripts.genversion:main"

@@ -9,3 +9,5 @@ __pycache__
 /acceptance_tests/tests/docker-compose.override.yaml
 /results/
 /.github/changelog-generator-cache
+/c2cwsgiutils/acceptance/node_modules/
+/acceptance_tests/out/results/

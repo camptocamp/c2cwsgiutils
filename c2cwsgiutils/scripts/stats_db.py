@@ -204,14 +204,13 @@ def _do_table_count(
     table: str,
 ) -> None:
     # We request and estimation of the count as a real count is very slow on big tables
-    # and seems to cause replicatin lags. This estimate is updated on ANALYZE and VACUUM.
+    # and seems to cause replicating lags. This estimate is updated on ANALYZE and VACUUM.
     result = session.execute(
-        # Bandit does not recognize that `sqlalchemy.sql.quoted_name` as a safe function.
         sqlalchemy.text(
-            "SELECT reltuples::bigint AS count FROM pg_class "  # nosec
-            f"WHERE oid = '{sqlalchemy.sql.quoted_name(schema, True)}."
-            f"{sqlalchemy.sql.quoted_name(table, True)}'::regclass;"
-        )
+            "SELECT reltuples FROM pg_class where "
+            "oid=(quote_ident(:schema) || '.' || quote_ident(:table))::regclass;"
+        ),
+        params={"schema": schema, "table": table},
     ).fetchone()
     assert result is not None
     (count,) = result

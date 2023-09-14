@@ -50,40 +50,55 @@ def test_no_call(app2_connection, prometheus_test_connection, composition):
 
 def test_no_extra(app2_connection, prometheus_test_connection, composition):
     with _Prometheus(prometheus_test_connection):
-        composition.exec(
-            "run_test",
-            "c2cwsgiutils-stats-db",
-            "--db=postgresql://www-data:www-data@db:5432/test",
-            "--schema=public",
-            timeout=30,
-        )
+        try:
+            composition.exec(
+                "run_test",
+                "c2cwsgiutils-stats-db",
+                "--db=postgresql://www-data:www-data@db:5432/test",
+                "--schema=public",
+                timeout=30,
+            )
+        except subprocess.CalledProcessError as exception:
+            _LOG.error(exception.output)
+            _LOG.error(exception.stderr)
+            raise
 
 
 def test_with_extra(app2_connection, prometheus_test_connection, composition):
     with _Prometheus(prometheus_test_connection):
-        composition.exec(
-            "run_test",
-            "c2cwsgiutils-stats-db",
-            "--db=postgresql://www-data:www-data@db:5432/test",
-            "--schema=public",
-            "--extra=select 'toto', 42",
-            timeout=30,
-        )
+        try:
+            composition.exec(
+                "run_test",
+                "c2cwsgiutils-stats-db",
+                "--db=postgresql://www-data:www-data@db:5432/test",
+                "--schema=public",
+                "--extra=select 'toto', 42",
+                timeout=30,
+            )
+        except subprocess.CalledProcessError as exception:
+            _LOG.error(exception.output)
+            _LOG.error(exception.stderr)
+            raise
 
 
 def test_with_extra_gauge(app2_connection, prometheus_test_connection, composition):
     with _Prometheus(prometheus_test_connection):
-        composition.exec(
-            "run_test",
-            "c2cwsgiutils-stats-db",
-            "--db=postgresql://www-data:www-data@db:5432/test",
-            "--schema=public",
-            "--extra-gauge",
-            "select 'toto', 42",
-            "toto",
-            "toto help",
-            timeout=30,
-        )
+        try:
+            composition.exec(
+                "run_test",
+                "c2cwsgiutils-stats-db",
+                "--db=postgresql://www-data:www-data@db:5432/test",
+                "--schema=public",
+                "--extra-gauge",
+                "select 'toto', 42",
+                "toto",
+                "toto help",
+                timeout=30,
+            )
+        except subprocess.CalledProcessError as exception:
+            _LOG.error(exception.output)
+            _LOG.error(exception.stderr)
+            raise
 
 
 def test_error(app2_connection, prometheus_test_connection, composition):

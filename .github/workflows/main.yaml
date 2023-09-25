@@ -59,7 +59,8 @@ jobs:
       - name: Acceptance
         run: make acceptance
       - run: (cd acceptance_tests/tests/; c2cciutils-docker-logs)
-        if: failure()
+        if: always()
+        timeout-minutes: 1
       - run: make acceptance-stop
 
       - name: Acceptance Dev

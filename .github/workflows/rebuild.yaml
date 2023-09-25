@@ -29,7 +29,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install --yes libxslt1-dev libxml2-dev
       - run: docker system prune --all --force
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ matrix.branch }}
 

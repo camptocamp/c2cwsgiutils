@@ -204,8 +204,10 @@ services:
       - MASTER_NAME=mymaster
       - QUORUM=1
       - MASTER=redis_master
+      - SLAVES=redis_slave
     depends_on:
       - redis_master
+      - redis_slave
 
   acceptance:
     image: camptocamp/c2cwsgiutils:tests

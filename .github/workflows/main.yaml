@@ -65,7 +65,7 @@ jobs:
       - name: Acceptance Dev
         run: WAITRESS=TRUE make acceptance
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Acceptance tests results
           path: acceptance_tests/out/results

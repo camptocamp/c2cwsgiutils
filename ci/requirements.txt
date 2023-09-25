@@ -2,5 +2,5 @@ c2cciutils[checks,publish]==1.6.8
 poetry-dynamic-versioning[plugin]==1.0.1
 poetry-plugin-export==1.5.0
 pre-commit==3.4.0
-pytest==7.4.0
+pytest==7.4.2
 scikit-image==0.21.0

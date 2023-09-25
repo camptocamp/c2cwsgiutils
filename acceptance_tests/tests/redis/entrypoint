@@ -80,5 +80,7 @@ if [ "$MASTER_NAME" ]; then
   fi
 fi
 
+echo "vm.overcommit_memory = 1" >> $SENTINEL_CONFIGURATION_FILE
+
 cat $SENTINEL_CONFIGURATION_FILE
 exec redis-server $SENTINEL_CONFIGURATION_FILE --sentinel

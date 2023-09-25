@@ -1,4 +1,4 @@
-c2cciutils==1.1.27
+c2cciutils==1.1.28
 pipfile==0.0.2
 wheel==0.40.0
 pip>=21.1 # not directly required, pinned by Snyk to avoid a vulnerability

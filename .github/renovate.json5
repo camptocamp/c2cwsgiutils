@@ -19,7 +19,7 @@
   'pre-commit': { enabled: true },
   'docker-compose': {
     enabled: true,
-    fileMatch: ['(^|/)docker-compose[^/]*\\.yaml$'],
+    fileMatch: ['(^|/)docker-compose[^/]*\\.yaml$', 'acceptance_tests/tests/docker-compose[^/]*\\.yaml$'],
   },
   regexManagers: [
     {

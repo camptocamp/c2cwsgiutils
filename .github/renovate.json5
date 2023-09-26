@@ -76,7 +76,7 @@
       versioning: 'regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$',
     },
     {
-      fileMatch: ['^ci/dpkg-versions\\\\.yaml$'],
+      fileMatch: ['^ci/dpkg-versions\\.yaml$'],
       matchStrings: [" *(?<depName>[^'\\s]+): '?(?<currentValue>[^'\\s/]*[0-9][^'\\s/]*)'?"],
       datasourceTemplate: 'repology',
       versioningTemplate: 'loose',

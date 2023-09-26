@@ -17,10 +17,6 @@
   },
   baseBranches: ['master', '5.2', '5.1', '5.0', 'release_4'],
   'pre-commit': { enabled: true },
-  'docker-compose': {
-    enabled: true,
-    fileMatch: ['(^|/)docker-compose[^/]*\\.yaml$', 'acceptance_tests/tests/docker-compose[^/]*\\.yaml$'],
-  },
   regexManagers: [
     {
       fileMatch: ['^.pre-commit-config.yaml$'],

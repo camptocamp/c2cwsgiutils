@@ -17,7 +17,7 @@
   },
   baseBranches: ['master', '5.2', '5.1', '5.0', 'release_4'],
   'pre-commit': { enabled: true },
-  dockerCompose: {
+  'docker-compose': {
     enabled: true,
     fileMatch: ['(^|/)docker-compose[^/]*\\.yaml$'],
   },

@@ -23,13 +23,13 @@
   },
   regexManagers: [
     {
-      fileMatch: ['^.pre-commit-config.yaml$'],
+      fileMatch: ['^.pre-commit-config\\.yaml$'],
       matchStrings: [" +- '?(?<depName>[^' @=]+)(@|==)(?<currentValue>[^' @=]+)'? # (?<datasource>.+)"],
     },
     {
       fileMatch: ['^ci/config\\\\.yaml$'],
       matchStrings: [
-        '.*https://raw\\\\.githubusercontent\\\\.com/(?<depName>[^\\\\s]+)/(?<currentValue>[0-9\\\\.]+)/.*',
+        '.*https://raw\\.githubusercontent\\.com/(?<depName>[^\\s]+)/(?<currentValue>[0-9\\.]+)/.*',
       ],
       datasourceTemplate: 'github-tags',
     },
@@ -74,6 +74,12 @@
     {
       matchPackageNames: ['shellcheck-py/shellcheck-py'],
       versioning: 'regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$',
+    },
+    {
+      fileMatch: ['^ci/dpkg-versions\\\\.yaml$'],
+      matchStrings: [" *(?<depName>[^'\\s]+): '?(?<currentValue>[^'\\s/]*[0-9][^'\\s/]*)'?"],
+      datasourceTemplate: 'repology',
+      versioningTemplate: 'loose',
     },
   ],
 }

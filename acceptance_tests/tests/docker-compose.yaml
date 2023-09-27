@@ -121,7 +121,7 @@ services:
       - /app/run_alembic.sh
 
   db: &db
-    image: camptocamp/postgres:12
+    image: camptocamp/postgres:14-postgis-3
     environment:
       POSTGRES_USER: www-data
       POSTGRES_PASSWORD: www-data
@@ -189,22 +189,27 @@ services:
       - 9099:9090
 
   redis_master:
-    image: redis:6
+    image: bitnami/redis:7.0
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - ALLOW_EMPTY_PASSWORD=yes
 
   redis_slave:
-    image: redis:6
-    command: redis-server --slaveof redis_master 6379
+    image: bitnami/redis:7.0
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis_master
+      - ALLOW_EMPTY_PASSWORD=yes
     depends_on:
       - redis_master
 
   # Sentinel
   redis:
-    image: camptocamp/c2cwsgiutils-redis-sentinel:6
+    image: bitnami/redis-sentinel:7.0
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=1
-      - MASTER=redis_master
-      - SLAVES=redis_slave
+      - REDIS_MASTER_HOST=redis_master
+      - REDIS_MASTER_SET=mymaster
+      - ALLOW_EMPTY_PASSWORD=yes
     depends_on:
       - redis_master
       - redis_slave

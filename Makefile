@@ -33,7 +33,7 @@ tests: build_docker_test ## Run the unit tests
 acceptance: acceptance-in acceptance-out  ## Run the acceptance tests
 
 .PHONY: acceptance-run
-acceptance-run: tests build_redis_sentinal  ## Start the application used to run the acceptance tests
+acceptance-run: tests  ## Start the application used to run the acceptance tests
 	cd acceptance_tests/tests/; docker-compose up --detach db db_slave
 	cd acceptance_tests/tests/; docker-compose run -T --no-deps app /app/scripts/wait-db
 	cd acceptance_tests/tests/; docker-compose up --detach
@@ -62,10 +62,6 @@ build_docker_test:
 .PHONY: build_test_app
 build_test_app: build_docker
 	docker build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/app
-
-.PHONY: build_redis_sentinal
-build_redis_sentinal:
-	docker build --tag=$(DOCKER_BASE)-redis-sentinel:6 acceptance_tests/tests/redis/
 
 .PHONY: checks
 checks: prospector ## Run the checks

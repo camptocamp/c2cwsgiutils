@@ -18,6 +18,7 @@ jobs:
           - '5.0'
           - '5.1'
           - '5.2'
+          - '6.0'
 
     steps:
       # Remove Python packages with wrong version

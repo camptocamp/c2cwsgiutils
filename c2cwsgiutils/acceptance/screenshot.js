@@ -6,6 +6,7 @@ program
   .option('--output <char>', 'The output filename')
   .option('--width <int>', 'The page width', 800)
   .option('--height <int>', 'The page height', 600)
+  .option('--sleep <int>', 'Sleep that the page is fully loaded [ms]', 0)
   .option('--headers <str>', 'The headers', '{}')
   // see: https://pptr.dev/api/puppeteer.page.emulatemediafeatures
   .option('--media <str>', 'The media feature, see Page.emulateMediaFeatures', '[]');
@@ -54,6 +55,7 @@ const options = program.opts();
     width: parseInt(options.width),
     height: parseInt(options.height),
   });
+  await page.waitForTimeout(parseInt(options.sleep));
   await page.screenshot({
     path: options.output,
     clip: { x: 0, y: 0, width: parseInt(options.width), height: parseInt(options.height) },

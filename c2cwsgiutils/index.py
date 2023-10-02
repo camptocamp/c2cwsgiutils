@@ -488,7 +488,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the index page."""
     base_path = config_utils.get_base_path(config)
     if base_path != "":
-        config.add_static_view(name="static", path="c2cwsgiutils:static")
+        config.add_static_view(name="c2c_static", path="c2cwsgiutils:static")
         config.include("pyramid_mako")
         config.add_route("c2c_index", base_path, request_method=("GET", "POST"))
         config.add_view(_index, route_name="c2c_index", http_cache=0, renderer="./templates/index.html.mako")

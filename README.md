@@ -703,16 +703,22 @@ To test the screenshots, you need to install `node` with `npm`, to do that add t
 ```dockerfile
 RUN --mount=type=cache,target=/var/lib/apt/lists \
     --mount=type=cache,target=/var/cache,sharing=locked \
-    . /etc/os-release \
+    apt-get install --yes --no-install-recommends gnupg \
+    && . /etc/os-release \
     && echo "deb https://deb.nodesource.com/node_18.x ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/nodesource.list \
     && curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
     && apt-get update \
-    && apt-get install --assume-yes --no-install-recommends 'nodejs=18.*'
+    && apt-get install --assume-yes --no-install-recommends 'nodejs=18.*' \
+        libx11-6 libx11-xcb1 libxcomposite1 libxcursor1 \
+        libxdamage1 libxext6 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2 libatk1.0-0 \
+        libatk-bridge2.0-0 libpangocairo-1.0-0 libgtk-3.0 libxcb-dri3-0 libgbm1 libxshmfence1
 ```
 
 To do the image test call `check_screenshot` e.g.:
 
 ```python
+from c2cwsgiutils.acceptance import image
+
 def test_screenshot(app_connection):
     image.check_screenshot(
         app_connection.base_url + "my-path",

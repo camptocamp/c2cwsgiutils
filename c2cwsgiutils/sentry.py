@@ -30,13 +30,15 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
-    """Initialize the Sentry intergation, for backward compatibility."""
+    """Initialize the Sentry integration, for backward compatibility."""
+
     warnings.warn("init function is deprecated; use includeme instead")
     includeme(config)
 
 
 def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
-    """Initialize the Sentry intergation."""
+    """Initialize the Sentry integration."""
+
     global _client_setup
     sentry_url = config_utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
     if sentry_url is not None and not _client_setup:

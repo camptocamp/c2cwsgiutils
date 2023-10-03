@@ -303,7 +303,7 @@ files = [
 name = "cornice"
 version = "6.0.1"
 description = "Define Web Services in Pyramid."
-optional = false
+optional = true
 python-versions = ">=3.5"
 files = [
     {file = "cornice-6.0.1-py2.py3-none-any.whl", hash = "sha256:7530ee9d824fe58c851f28b505e697541f6b05e098fe6dac14d9d26091d6fbda"},
@@ -538,7 +538,7 @@ gitdb = ">=4.0.1,<5"
 name = "greenlet"
 version = "2.0.2"
 description = "Lightweight in-process concurrent programming"
-optional = false
+optional = true
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
 files = [
     {file = "greenlet-2.0.2-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:bdfea8c661e80d3c1c99ad7c3ff74e6e87184895bbaca6ee8cc61209f8b9b85d"},
@@ -635,7 +635,7 @@ tornado = ["tornado (>=0.2)"]
 name = "hupper"
 version = "1.12"
 description = "Integrated process monitor for developing and reloading daemons."
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "hupper-1.12-py3-none-any.whl", hash = "sha256:b8bc41bb75939e816f30f118026d0ba99544af4d6992583df3b4813765af27ef"},
@@ -918,7 +918,7 @@ source = ["Cython (>=0.29.35)"]
 name = "mako"
 version = "1.2.4"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "Mako-1.2.4-py3-none-any.whl", hash = "sha256:c97c79c018b9165ac9922ae4f32da095ffd3c4e6872b45eded42926deea46818"},
@@ -984,6 +984,16 @@ files = [
     {file = "MarkupSafe-2.1.3-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:5bbe06f8eeafd38e5d0a4894ffec89378b6c6a625ff57e3028921f8ff59318ac"},
     {file = "MarkupSafe-2.1.3-cp311-cp311-win32.whl", hash = "sha256:dd15ff04ffd7e05ffcb7fe79f1b98041b8ea30ae9234aed2a9168b5797c3effb"},
     {file = "MarkupSafe-2.1.3-cp311-cp311-win_amd64.whl", hash = "sha256:134da1eca9ec0ae528110ccc9e48041e0828d79f24121a1a146161103c76e686"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:f698de3fd0c4e6972b92290a45bd9b1536bffe8c6759c62471efaa8acb4c37bc"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:aa57bd9cf8ae831a362185ee444e15a93ecb2e344c8e52e4d721ea3ab6ef1823"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ffcc3f7c66b5f5b7931a5aa68fc9cecc51e685ef90282f4a82f0f5e9b704ad11"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:47d4f1c5f80fc62fdd7777d0d40a2e9dda0a05883ab11374334f6c4de38adffd"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1f67c7038d560d92149c060157d623c542173016c4babc0c1913cca0564b9939"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:9aad3c1755095ce347e26488214ef77e0485a3c34a50c5a5e2471dff60b9dd9c"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:14ff806850827afd6b07a5f32bd917fb7f45b046ba40c57abdb636674a8b559c"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:8f9293864fe09b8149f0cc42ce56e3f0e54de883a9de90cd427f191c346eb2e1"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-win32.whl", hash = "sha256:715d3562f79d540f251b99ebd6d8baa547118974341db04f5ad06d5ea3eb8007"},
+    {file = "MarkupSafe-2.1.3-cp312-cp312-win_amd64.whl", hash = "sha256:1b8dd8c3fd14349433c79fa8abeb573a55fc0fdd769133baac1f5e07abf54aeb"},
     {file = "MarkupSafe-2.1.3-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:8e254ae696c88d98da6555f5ace2279cf7cd5b3f52be2b5cf97feafe883b58d2"},
     {file = "MarkupSafe-2.1.3-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cb0932dc158471523c9637e807d9bfb93e06a95cbf010f1a38b98623b929ef2b"},
     {file = "MarkupSafe-2.1.3-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9402b03f1a1b4dc4c19845e5c749e3ab82d5078d16a2a4c2cd2df62d57bb0707"},
@@ -1195,7 +1205,7 @@ files = [
 name = "pastedeploy"
 version = "3.0.1"
 description = "Load, configure, and compose WSGI applications and servers"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "PasteDeploy-3.0.1-py3-none-any.whl", hash = "sha256:6195c921b1c3ed9722e4e3e6aa29b70deebb2429b4ca3ff3d49185c8e80003bb"},
@@ -1314,7 +1324,7 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 name = "plaster"
 version = "1.1.2"
 description = "A loader interface around multiple config file formats."
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "plaster-1.1.2-py2.py3-none-any.whl", hash = "sha256:42992ab1f4865f1278e2ad740e8ad145683bb4022e03534265528f0c23c0df2d"},
@@ -1329,7 +1339,7 @@ testing = ["pytest", "pytest-cov"]
 name = "plaster-pastedeploy"
 version = "1.0.1"
 description = "A loader implementing the PasteDeploy syntax to be used by plaster."
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "plaster_pastedeploy-1.0.1-py2.py3-none-any.whl", hash = "sha256:ad3550cc744648969ed3b810f33c9344f515ee8d8a8cec18e8f2c4a643c2181f"},
@@ -1377,7 +1387,7 @@ testing = ["pytest", "pytest-benchmark"]
 name = "prometheus-client"
 version = "0.17.1"
 description = "Python client for the Prometheus monitoring system."
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "prometheus_client-0.17.1-py3-none-any.whl", hash = "sha256:e537f37160f6807b8202a6fc4764cdd19bac5480ddd3e0d463c3002b34462101"},
@@ -1444,7 +1454,7 @@ files = [
 name = "psycopg2"
 version = "2.9.8"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "psycopg2-2.9.8-cp310-cp310-win32.whl", hash = "sha256:2f8594f92bbb5d8b59ffec04e2686c416401e2d4297de1193f8e75235937e71d"},
@@ -1649,7 +1659,7 @@ tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 name = "pyramid"
 version = "2.0.2"
 description = "The Pyramid Web Framework, a Pylons project"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "pyramid-2.0.2-py3-none-any.whl", hash = "sha256:2e6585ac55c147f0a51bc00dadf72075b3bdd9a871b332ff9e5e04117ccd76fa"},
@@ -1675,7 +1685,7 @@ testing = ["coverage", "pytest (>=5.4.2)", "pytest-cov", "webtest (>=1.3.1)", "z
 name = "pyramid-mako"
 version = "1.1.0"
 description = "Mako template bindings for the Pyramid web framework"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "pyramid_mako-1.1.0-py2.py3-none-any.whl", hash = "sha256:76104592d292b6974cf7080aa52405c51f396a621535f01e274d7fe546e85a43"},
@@ -1694,7 +1704,7 @@ testing = ["WebTest (>=1.3.1)", "coverage", "nose"]
 name = "pyramid-tm"
 version = "2.5"
 description = "A package which allows Pyramid requests to join the active transaction"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "pyramid_tm-2.5-py2.py3-none-any.whl", hash = "sha256:6638721946e809de8b4bf3f405bd2daaaa76d58442cbdf46be30ebc259f1a354"},
@@ -2197,7 +2207,7 @@ files = [
 name = "sqlalchemy"
 version = "2.0.16"
 description = "Database Abstraction Library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "SQLAlchemy-2.0.16-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:7641f6ed2682de84d77c4894cf2e43700f3cf7a729361d7f9cac98febf3d8614"},
@@ -2275,7 +2285,7 @@ sqlcipher = ["sqlcipher3-binary"]
 name = "sqlalchemy-utils"
 version = "0.41.1"
 description = "Various utility functions for SQLAlchemy."
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "SQLAlchemy-Utils-0.41.1.tar.gz", hash = "sha256:a2181bff01eeb84479e38571d2c0718eb52042f9afd8c194d0d02877e84b7d74"},
@@ -2367,7 +2377,7 @@ files = [
 name = "transaction"
 version = "3.1.0"
 description = "Transaction management for Python"
-optional = false
+optional = true
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
 files = [
     {file = "transaction-3.1.0-py2.py3-none-any.whl", hash = "sha256:8376a959aa71821df1bdd7d066858a3f9f34b7f5f1c0a0e1efbd11d626895449"},
@@ -2386,7 +2396,7 @@ testing = ["coverage", "mock", "nose"]
 name = "translationstring"
 version = "1.4"
 description = "Utility library for i18n relied on by various Repoze and Pyramid packages"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "translationstring-1.4-py2.py3-none-any.whl", hash = "sha256:5f4dc4d939573db851c8d840551e1a0fb27b946afe3b95aafc22577eed2d6262"},
@@ -2585,7 +2595,7 @@ zstd = ["zstandard (>=0.18.0)"]
 name = "venusian"
 version = "3.0.0"
 description = "A library for deferring decorator actions"
-optional = false
+optional = true
 python-versions = ">=3.5"
 files = [
     {file = "venusian-3.0.0-py3-none-any.whl", hash = "sha256:06e7385786ad3a15c70740b2af8d30dfb063a946a851dcb4159f9e2a2302578f"},
@@ -2615,7 +2625,7 @@ testing = ["coverage (>=5.0)", "pytest", "pytest-cover"]
 name = "webob"
 version = "1.8.7"
 description = "WSGI request and response object"
-optional = false
+optional = true
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*"
 files = [
     {file = "WebOb-1.8.7-py2.py3-none-any.whl", hash = "sha256:73aae30359291c14fa3b956f8b5ca31960e420c28c1bec002547fb04928cf89b"},
@@ -2714,7 +2724,7 @@ files = [
 name = "zope-deprecation"
 version = "5.0"
 description = "Zope Deprecation Infrastructure"
-optional = false
+optional = true
 python-versions = ">= 3.7"
 files = [
     {file = "zope.deprecation-5.0-py3-none-any.whl", hash = "sha256:28c2ee983812efb4676d33c7a8c6ade0df191c1c6d652bbbfe6e2eeee067b2d4"},
@@ -2732,7 +2742,7 @@ test = ["zope.testrunner"]
 name = "zope-interface"
 version = "6.0"
 description = "Interfaces for Python"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "zope.interface-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f299c020c6679cb389814a3b81200fe55d428012c5e76da7e722491f5d205990"},
@@ -2779,7 +2789,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 name = "zope-sqlalchemy"
 version = "3.1"
 description = "Minimal Zope/SQLAlchemy transaction integration"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "zope.sqlalchemy-3.1-py3-none-any.whl", hash = "sha256:fdc7d65d8da335a34b90fb993e8217ef12808bad3025d2e3a6720db4138e4985"},
@@ -2798,18 +2808,18 @@ test = ["zope.testing"]
 
 [extras]
 alembic = ["alembic"]
-all = ["alembic", "boltons", "gunicorn", "lxml", "objgraph", "pyjwt", "redis", "requests-oauthlib", "sentry-sdk", "waitress"]
+all = ["SQLAlchemy", "SQLAlchemy-Utils", "alembic", "boltons", "cornice", "gunicorn", "lxml", "objgraph", "prometheus-client", "psycopg2", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
 broadcast = ["redis"]
 debug = ["objgraph"]
 dev = ["waitress"]
 oauth2 = ["pyjwt", "requests-oauthlib"]
 sentry = ["sentry-sdk"]
-standard = ["alembic", "gunicorn", "pyjwt", "redis", "requests-oauthlib", "sentry-sdk"]
+standard = ["SQLAlchemy", "SQLAlchemy-Utils", "alembic", "cornice", "gunicorn", "prometheus-client", "psycopg2", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "zope.interface", "zope.sqlalchemy"]
 test-images = ["scikit-image"]
 tests = ["boltons", "lxml"]
-webserver = ["gunicorn"]
+webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "prometheus-client", "psycopg2", "pyramid", "pyramid-tm", "pyramid_mako", "zope.interface", "zope.sqlalchemy"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "d9b0cc7f1302ebaa8b3cf2bef0176ac0bc8c1fc87a9d1e3293998ac44582f9a5"
+content-hash = "8b1c17f86895204b3ab4b676172eedd53f21fb2439492fa3f01e29afa4536d2f"

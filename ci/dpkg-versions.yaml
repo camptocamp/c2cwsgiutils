@@ -24,7 +24,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/findutils: 4.8.0-1ubuntu3
   ubuntu_22_04/gcc-12: 12.3.0-1ubuntu1~22.04
   ubuntu_22_04/gdbm: 1.23-1
-  ubuntu_22_04/glibc: 2.35-0ubuntu3.3
+  ubuntu_22_04/glibc: 2.35-0ubuntu3.4
   ubuntu_22_04/gmp: 2:6.2.1+dfsg-3ubuntu1
   ubuntu_22_04/gnupg2: 2.2.27-3ubuntu2.1
   ubuntu_22_04/gnutls28: 3.7.3-4ubuntu1.2

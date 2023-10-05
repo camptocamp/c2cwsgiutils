@@ -126,8 +126,8 @@ def check_image(
     if generate_expected_image:
         skimage.io.imsave(expected_filename, image_to_check)
         return
+    skimage.io.imsave(result_filename, image_to_check)
     if not os.path.isfile(expected_filename):
-        skimage.io.imsave(result_filename, image_to_check)
         skimage.io.imsave(expected_filename, image_to_check)
         assert False, "Expected image not found: " + expected_filename
     expected = skimage.io.imread(expected_filename)
@@ -137,6 +137,9 @@ def check_image(
     if mask is not None:
         expected[mask] = [255, 255, 255]
 
+    assert (
+        expected.shape == image_to_check.shape
+    ), f"Images have different shapes expected {expected.shape} != actual {image_to_check.shape}"
     score, diff = skimage.metrics.structural_similarity(
         expected, image_to_check, multichannel=True, full=True, channel_axis=2
     )

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/camptocamp/c2cciutils/master/c2cciutils/schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/camptocamp/c2cciutils/1.2.14/c2cciutils/schema.json
 
 version:
   branch_to_version_re:
@@ -15,6 +15,7 @@ checks:
       - .*\.html
   versions: false
 
+  required_workflows: false
 publish:
   pypi:
     packages:

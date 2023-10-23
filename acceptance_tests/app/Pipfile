@@ -8,7 +8,6 @@ setuptools = "==65.5.1"
 
 [dev-packages]
 prospector = { extras = ["with_bandit", "with_mypy"], version = "==1.8.4" }
-pylint-django = "==2.5.4"
 flake8 = ">2.0.0"
 coverage = "==6.3.3"
 # Lock dependencies

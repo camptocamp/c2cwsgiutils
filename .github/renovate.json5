@@ -68,14 +68,9 @@
     },
     /** Accept only the patch on stabilization branches */
     {
-      matchBaseBranches: ['/^[0-9]+\\.[0-9]+$/'],
+      matchBaseBranches: ['/^[0-9]+\\.[0-9]+$/', '/release_.*/'],
       matchUpdateTypes: ['major', 'minor', 'pin', 'digest', 'lockFileMaintenance', 'rollback', 'bump'],
       enabled: false,
-    },
-    /** Monthly update on stabilization branches */
-    {
-      matchBaseBranches: ['/[0-9]\\..*/', '/release_.*/'],
-      schedule: ['on the 1st day of the month'],
     },
     /** Support the 4 parts of shellcheck-py version with a v prefix */
     {
@@ -84,7 +79,7 @@
     },
     /** Update dpkg versions at any time */
     {
-      matchBaseBranches: ['/^[0-9]+\\.[0-9]+$/'],
+      matchBaseBranches: ['/^[0-9]+\\.[0-9]+$/', '/release_.*/'],
       matchPaths: ['^ci/dpkg\\-versions\\.yaml$'],
       schedule: ['at any time'],
       groupName: 'dpkg',

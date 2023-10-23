@@ -8,7 +8,7 @@ setuptools = "==65.5.1"
 
 [dev-packages]
 prospector = { extras = ["with_bandit", "with_mypy"], version = "==1.8.4" }
-pylint-django = "==2.5.3"
+pylint-django = "==2.5.4"
 flake8 = ">2.0.0"
 coverage = "==6.3.3"
 # Lock dependencies
@@ -17,8 +17,8 @@ bandit = "==1.7.5"
 dill = "==0.3.7"
 dodgy = "==0.2.1"
 flake8-polyfill = "==1.0.2"
-gitdb = "==4.0.10"
-gitpython = "==3.1.37"
+gitdb = "==4.0.11"
+gitpython = "==3.1.40"
 isort = "==5.10.1"
 lazy-object-proxy = "==1.8.0"
 mccabe = "==0.7.0"

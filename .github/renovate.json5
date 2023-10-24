@@ -85,5 +85,11 @@
       groupName: 'dpkg',
       automerge: true,
     },
+    /** Don't upgrade node_vm2 because version 0.4.7 (last version) is not working, for branch 5.1 */
+    {
+      matchPackageNames: ['node_vm2'],
+      matchBaseBranches: ['5.1'],
+      enabled: false,
+    },
   ],
 }

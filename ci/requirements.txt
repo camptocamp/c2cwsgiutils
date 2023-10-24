@@ -1,5 +1,5 @@
 c2cciutils==1.2.14
-node_vm2==0.4.6 # Pin because version 0.4.7 is not working
+node_vm2==0.4.5 # Pin because version 0.4.7 is not working
 tomlkit==0.11.8
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
 protobuf>=3.18.3 # not directly required, pinned by Snyk to avoid a vulnerability

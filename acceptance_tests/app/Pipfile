@@ -15,6 +15,7 @@ platformdirs = "==2.3.0"
 six = "==1.16.0"
 virtualenv = "==20.8.1"
 virtualenv-clone = "==0.5.7"
+pip = "==23.3"
 
 [dev-packages]
 prospector = "==1.5.3.1"

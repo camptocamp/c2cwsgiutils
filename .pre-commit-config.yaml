@@ -84,7 +84,7 @@ repos:
       - id: black
         exclude: .*\.html
   - repo: https://github.com/PyCQA/prospector
-    rev: 1.10.2
+    rev: v1.10.3
     hooks:
       - id: prospector
         args:

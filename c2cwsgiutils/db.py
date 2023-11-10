@@ -4,7 +4,7 @@ import re
 import warnings
 from collections.abc import Iterable
 from re import Pattern
-from typing import TYPE_CHECKING, Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, cast
 
 import pyramid.config
 import pyramid.config.settings
@@ -15,14 +15,6 @@ import transaction
 import zope.sqlalchemy
 from sqlalchemy import engine_from_config
 from zope.sqlalchemy import register
-
-if TYPE_CHECKING:
-    scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
-    sessionmaker = sqlalchemy.orm.sessionmaker[sqlalchemy.orm.Session]
-else:
-    scoped_session = sqlalchemy.orm.scoped_session
-    sessionmaker = sqlalchemy.orm.sessionmaker
-
 
 LOG = logging.getLogger(__name__)
 RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
@@ -44,7 +36,7 @@ def setup_session(
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
 ) -> tuple[
-    Union[sqlalchemy.orm.Session, scoped_session],
+    sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
     sqlalchemy.engine.Engine,
     sqlalchemy.engine.Engine,
 ]:
@@ -104,7 +96,7 @@ def create_session(
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
     **engine_config: Any,
-) -> Union[sqlalchemy.orm.Session, scoped_session]:
+) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
     """
     Create a SQLAlchemy session.
 
@@ -156,7 +148,7 @@ def create_session(
 def _add_tween(
     config: pyramid.config.Configurator,
     name: str,
-    db_session: scoped_session,
+    db_session: sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session],
     force_master: Optional[Iterable[str]],
     force_slave: Optional[Iterable[str]],
 ) -> None:
@@ -210,7 +202,7 @@ def _add_tween(
     config.add_tween("c2cwsgiutils.db.tweens." + name, over="pyramid_tm.tm_tween_factory")
 
 
-class SessionFactory(sessionmaker):
+class SessionFactory(sqlalchemy.orm.sessionmaker[sqlalchemy.orm.Session]):
     """The custom session factory that manage the read only and read write sessions."""
 
     def __init__(
@@ -235,7 +227,7 @@ class SessionFactory(sessionmaker):
 
     def __call__(  # type: ignore
         self, request: Optional[pyramid.request.Request], readwrite: Optional[bool] = None, **local_kw: Any
-    ) -> scoped_session:
+    ) -> sqlalchemy.orm.scoped_session(sqlalchemy.orm.Session):
         if readwrite is not None:
             if readwrite and not force_readonly:
                 LOG.debug("Using %s database", self.rw_engine.c2c_name)  # type: ignore
@@ -271,15 +263,15 @@ def get_engine(
 
 def get_session_factory(
     engine: sqlalchemy.engine.Engine,
-) -> sessionmaker:
+) -> sqlalchemy.orm.sessionmaker[sqlalchemy.orm.Session]:
     """Get the session factory from the engine."""
-    factory = sessionmaker()
+    factory = sqlalchemy.orm.sessionmaker()
     factory.configure(bind=engine)
     return factory
 
 
 def get_tm_session(
-    session_factory: sessionmaker,
+    session_factory: sqlalchemy.orm.sessionmaker[sqlalchemy.orm.Session],
     transaction_manager: transaction.TransactionManager,
 ) -> sqlalchemy.orm.Session:
     """
@@ -347,7 +339,7 @@ def get_tm_session_pyramid(
     session_factory: SessionFactory,
     transaction_manager: transaction.TransactionManager,
     request: pyramid.request.Request,
-) -> scoped_session:
+) -> sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]:
     """
     Get a ``sqlalchemy.orm.Session`` instance backed by a transaction.
 

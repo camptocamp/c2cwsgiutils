@@ -21,7 +21,6 @@ jobs:
           - '5.0'
           - '5.1'
           - '5.2'
-          - master
 
     steps:
       # Remove Python packages with wrong version

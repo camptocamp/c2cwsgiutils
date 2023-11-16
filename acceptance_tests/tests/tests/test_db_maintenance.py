@@ -1,4 +1,5 @@
 import logging
+import time
 
 LOG = logging.getLogger(__name__)
 
@@ -6,6 +7,7 @@ LOG = logging.getLogger(__name__)
 def _query(app_connection, params, expected=None):
     all_params = {"secret": "changeme"}
     all_params.update(params)
+    time.sleep(0.1)
     response = app_connection.get_json("c2c/db/maintenance", params=all_params, cors=False)
 
     all_expected = {"status": 200}

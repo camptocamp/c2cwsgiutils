@@ -161,8 +161,23 @@ class Connection:
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
-        """POST the given URL (relative to the root of API)."""
+        """PUT the given URL (relative to the root of API)."""
         with self.session.put(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
+            check_response(r, expected_status, cache_expected)
+            self._check_cors(cors, r)
+            return _get_json(r)
+
+    def patch_json(
+        self,
+        url: str,
+        expected_status: int = 200,
+        headers: Optional[Mapping[str, str]] = None,
+        cors: bool = True,
+        cache_expected: CacheExpected = CacheExpected.NO,
+        **kwargs: Any,
+    ) -> Any:
+        """PATCH the given URL (relative to the root of API)."""
+        with self.session.patch(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
             return _get_json(r)

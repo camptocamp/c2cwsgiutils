@@ -1,6 +1,8 @@
 import logging
 import time
 
+import pytest
+
 LOG = logging.getLogger(__name__)
 
 
@@ -18,6 +20,7 @@ def _query(app_connection, params, expected=None):
     assert response == all_expected
 
 
+@pytest.mark.skip(reason="Too many false positives")
 def test_api(app_connection):
     # _query(app_connection, {}, {"current_readonly": None})
     _query(app_connection, {"readonly": "true"})

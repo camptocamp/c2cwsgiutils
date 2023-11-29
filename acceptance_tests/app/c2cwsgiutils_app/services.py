@@ -98,7 +98,13 @@ def tracking(request):
 
 
 @empty_service.put()
-def empty(request):
+def empty_put(request):
+    request.response.status_code = 204
+    return request.response
+
+
+@empty_service.patch()
+def empty_patch(request):
     request.response.status_code = 204
     return request.response
 

@@ -175,7 +175,9 @@ class Connection:
         **kwargs: Any,
     ) -> Any:
         """PATCH the given URL (relative to the root of API)."""
-        with self.session.patch(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
+        with self.session.patch(
+            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+        ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
             return _get_json(r)

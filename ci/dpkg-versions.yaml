@@ -64,7 +64,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/net-tools: 1.60+git20181103.0eebece-1ubuntu5
   ubuntu_22_04/netbase: '6.3'
   ubuntu_22_04/nettle: 3.7.3-1build2
-  ubuntu_22_04/nghttp2: 1.43.0-1build3
+  ubuntu_22_04/nghttp2: 1.43.0-1ubuntu0.1
   ubuntu_22_04/npth: 1.6-3build2
   ubuntu_22_04/openldap: 2.5.16+dfsg-0ubuntu0.22.04.1
   ubuntu_22_04/openssl: 3.0.2-0ubuntu1.12
@@ -72,14 +72,14 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/pam: 1.4.0-11ubuntu2.3
   ubuntu_22_04/pcre2: 10.39-3ubuntu0.1
   ubuntu_22_04/pcre3: 2:8.39-13ubuntu0.22.04.1
-  ubuntu_22_04/perl: 5.34.0-3ubuntu1.2
+  ubuntu_22_04/perl: 5.34.0-3ubuntu1.3
   ubuntu_22_04/pinentry: 1.1.1-1build2
   ubuntu_22_04/postgresql-14: 14.9-0ubuntu0.22.04.1
-  ubuntu_22_04/procps: 2:3.3.17-6ubuntu2
+  ubuntu_22_04/procps: 2:3.3.17-6ubuntu2.1
   ubuntu_22_04/python-pip: 22.0.2+dfsg-1ubuntu0.3
   ubuntu_22_04/python3-defaults: 3.10.6-1~22.04
   ubuntu_22_04/python3-stdlib-extensions: 3.10.8-1~22.04
-  ubuntu_22_04/python3.10: 3.10.12-1~22.04.2
+  ubuntu_22_04/python3.10: 3.10.12-1~22.04.3
   ubuntu_22_04/readline: 8.1.2-1
   ubuntu_22_04/rtmpdump: 2.4+20151223.gitfa8646d.1-2build4
   ubuntu_22_04/sed: 4.8-1ubuntu2
@@ -87,7 +87,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/setuptools: 59.6.0-1.2ubuntu0.22.04.1
   ubuntu_22_04/shadow: 1:4.8.1-2ubuntu2.1
   ubuntu_22_04/sqlite3: 3.37.2-2ubuntu0.1
-  ubuntu_22_04/systemd: 249.11-0ubuntu3.11
+  ubuntu_22_04/systemd: 249.11-0ubuntu3.7
   ubuntu_22_04/sysvinit: 3.01-1ubuntu1
   ubuntu_22_04/tar: 1.34+dfsg-1ubuntu0.1.22.04.1
   ubuntu_22_04/ubuntu-keyring: 2021.03.26

@@ -57,7 +57,7 @@ def _handle_forwarded(environ: dict[str, str]) -> None:
         if "HTTP_" + header in environ:
             environ["HTTP_ORIGINAL_" + header] = environ.pop("HTTP_" + header)
     forwarded = SEP_RE.split(environ.pop("HTTP_FORWARDED"))[0]
-    fields = dict(tuple(f.split("=", maxsplit=1)) for f in forwarded.split(";"))  # type: ignore
+    fields = dict(tuple(f.split("=", maxsplit=1)) for f in forwarded.split(";"))
     if "by" in fields:
         environ["SERVER_NAME"] = fields["by"]
     if "for" in fields:

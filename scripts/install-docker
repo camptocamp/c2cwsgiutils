@@ -30,7 +30,7 @@ fi
 apt-get update
 apt-get install --yes --no-install-recommends ${PACKAGE}=${DOCKER_VERSION}*
 
-python3 -m pip install docker-compose
+python3 -m pip install 'docker<7.0.0' docker-compose
 
 apt-get clean
 rm -r /var/lib/apt/lists/*

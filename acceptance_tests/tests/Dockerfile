@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
   --mount=type=cache,target=/root/.cache \
   apt-get update \
   && apt-get install --yes --no-install-recommends docker.io \
-  && python3 -m pip install PyYAML==5.3.1 docker-compose==1.29.2
+  && python3 -m pip install PyYAML==5.3.1 'docker<7.0.0' docker-compose==1.29.2
 
 COPY . ./
 

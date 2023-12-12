@@ -10,7 +10,7 @@ RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends docker.io \
   && apt-get clean \
   && rm -r /var/lib/apt/lists/* \
-  && python3 -m pip install PyYAML==5.3.1 docker-compose==1.29.2
+  && python3 -m pip install PyYAML==5.3.1 'docker<7.0.0' docker-compose==1.29.2
 
 COPY . ./
 

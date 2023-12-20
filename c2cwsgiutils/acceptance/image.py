@@ -119,6 +119,9 @@ def check_image(
         # Convert to boolean
         mask = mask == 0
 
+        assert (
+            mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1]
+        ), f"Mask and image should have the same shape ({mask.shape} != {image_to_check.shape})"
         image_to_check[mask] = [255, 255, 255]
 
     if not os.path.exists(result_folder):
@@ -135,7 +138,9 @@ def check_image(
     expected = normalize_image(expected)
 
     if mask is not None:
-        expected[mask] = [255, 255, 255]
+        assert (
+            expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1]
+        ), f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
 
     assert (
         expected.shape == image_to_check.shape

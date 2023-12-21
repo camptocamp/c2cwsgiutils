@@ -28,7 +28,7 @@ def check_image_file(
     """
     Test that the `image_filename_to_check` corresponds to the image `expected_filename`.
 
-    If the images differ too much, `<result_folder>/<image_filename>.result.png` and
+    If the images differ too much, `<result_folder>/<image_filename>.actual-masked.png` and
     `<result_folder>/<image_filename>.diff.png` are created with the corresponding content.
 
     Where `<image_filename>` is the name of the `expected_filename`.
@@ -69,7 +69,7 @@ def check_image(
     """
     Test that the `<image_to_check>` corresponds to the image `expected_filename`.
 
-    If they don't corresponds the images `<result_folder>/<image_filename>.result.png` and
+    If they don't corresponds the images `<result_folder>/<image_filename>.actual-masked.png` and
     `<result_folder>/<image_filename>.diff.png` are created with the corresponding content.
 
     Where `<image_filename>` is the name of the `expected_filename`.
@@ -93,7 +93,7 @@ def check_image(
             )
             if not os.path.isfile(mask_filename):
                 mask_filename = None
-    result_filename = os.path.join(result_folder, f"{image_file_basename}.result.png")
+    result_filename = os.path.join(result_folder, f"{image_file_basename}.actual-masked.png")
     diff_filename = os.path.join(result_folder, f"{image_file_basename}.diff.png")
 
     image_to_check = normalize_image(image_to_check)
@@ -129,7 +129,6 @@ def check_image(
     if generate_expected_image:
         skimage.io.imsave(expected_filename, image_to_check)
         return
-    skimage.io.imsave(result_filename, image_to_check)
     if not os.path.isfile(expected_filename):
         skimage.io.imsave(expected_filename, image_to_check)
         assert False, "Expected image not found: " + expected_filename
@@ -150,15 +149,15 @@ def check_image(
     )
     diff = (255 - diff * 255).astype("uint8")
 
-    if diff is None:
-        skimage.io.imsave(result_filename, image_to_check)
-        assert diff is not None, "No diff generated"
-    if score < level:
-        skimage.io.imsave(result_filename, image_to_check)
+    if diff is not None and score >= level:
+        return
+
+    skimage.io.imsave(result_filename, image_to_check)
+    if diff is not None:
         skimage.io.imsave(diff_filename, diff)
-        assert (
-            score >= level
-        ), f"{result_filename} != {expected_filename} => {diff_filename} ({score} < {level})"
+
+    assert diff is not None, "No diff generated"
+    assert score >= level, f"{result_filename} != {expected_filename} => {diff_filename} ({score} < {level})"
 
 
 def check_screenshot(

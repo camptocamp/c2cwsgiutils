@@ -28,7 +28,7 @@ def check_image_file(
     """
     Test that the `image_filename_to_check` corresponds to the image `expected_filename`.
 
-    If the images differ too much, `<result_folder>/<image_filename>.result.png` and
+    If the images differ too much, `<result_folder>/<image_filename>.actual-masked.png` and
     `<result_folder>/<image_filename>.diff.png` are created with the corresponding content.
 
     Where `<image_filename>` is the name of the `expected_filename`.
@@ -69,7 +69,7 @@ def check_image(
     """
     Test that the `<image_to_check>` corresponds to the image `expected_filename`.
 
-    If they don't corresponds the images `<result_folder>/<image_filename>.result.png` and
+    If they don't corresponds the images `<result_folder>/<image_filename>.actual-masked.png` and
     `<result_folder>/<image_filename>.diff.png` are created with the corresponding content.
 
     Where `<image_filename>` is the name of the `expected_filename`.
@@ -81,6 +81,14 @@ def check_image(
     we use it as a mask.
 
     Note that the `image_to_check` is altered with the mask.
+
+    Args:
+      result_folder: The folder where to store the actual image and the diff
+      image_to_check: The image to check
+      expected_filename: The expected image filename
+      level: The minimum similarity level (between 0.0 and 1.0), default to 1.0
+      generate_expected_image: If `True` generate the expected image instead of checking it
+      use_mask: If `False` don't use the mask event if the file exists
     """
     assert image_to_check is not None, "Image required"
     image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
@@ -93,7 +101,7 @@ def check_image(
             )
             if not os.path.isfile(mask_filename):
                 mask_filename = None
-    result_filename = os.path.join(result_folder, f"{image_file_basename}.result.png")
+    result_filename = os.path.join(result_folder, f"{image_file_basename}.actual-masked.png")
     diff_filename = os.path.join(result_folder, f"{image_file_basename}.diff.png")
 
     image_to_check = normalize_image(image_to_check)
@@ -117,8 +125,11 @@ def check_image(
         assert ((0 < mask) & (mask < 255)).sum() == 0, "Mask should be only black and white image"
 
         # Convert to boolean
-        mask = mask == 0
+        mask = mask != 0
 
+        assert (
+            mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1]
+        ), f"Mask and image should have the same shape ({mask.shape} != {image_to_check.shape})"
         image_to_check[mask] = [255, 255, 255]
 
     if not os.path.exists(result_folder):
@@ -126,7 +137,6 @@ def check_image(
     if generate_expected_image:
         skimage.io.imsave(expected_filename, image_to_check)
         return
-    skimage.io.imsave(result_filename, image_to_check)
     if not os.path.isfile(expected_filename):
         skimage.io.imsave(expected_filename, image_to_check)
         assert False, "Expected image not found: " + expected_filename
@@ -135,7 +145,9 @@ def check_image(
     expected = normalize_image(expected)
 
     if mask is not None:
-        expected[mask] = [255, 255, 255]
+        assert (
+            expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1]
+        ), f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
 
     assert (
         expected.shape == image_to_check.shape
@@ -145,15 +157,15 @@ def check_image(
     )
     diff = (255 - diff * 255).astype("uint8")
 
-    if diff is None:
-        skimage.io.imsave(result_filename, image_to_check)
-        assert diff is not None, "No diff generated"
-    if score < level:
-        skimage.io.imsave(result_filename, image_to_check)
+    if diff is not None and score >= level:
+        return
+
+    skimage.io.imsave(result_filename, image_to_check)
+    if diff is not None:
         skimage.io.imsave(diff_filename, diff)
-        assert (
-            score >= level
-        ), f"{result_filename} != {expected_filename} => {diff_filename} ({score} < {level})"
+
+    assert diff is not None, "No diff generated"
+    assert score >= level, f"{result_filename} != {expected_filename} => {diff_filename} ({score} < {level})"
 
 
 def check_screenshot(
@@ -172,7 +184,22 @@ def check_screenshot(
     """
     Test that the screenshot of the `url` corresponds to the image `expected_filename`.
 
-    Requires nodejs with puppeteer and commander to be installed.
+    Requires nodejs to be installed.
+
+    See also `check_image` for the other parameters.
+
+    Args:
+      url: The URL to screenshot
+      width: The width of the generated screenshot
+      height: The height of the generated screenshot
+      sleep: The number of milliseconds to wait before taking the screenshot
+      headers: The headers to send in the request to the server
+      media: The list of media to emulate in the browser (e.g. to simulate a browser in dark mode)
+      expected_filename: See `check_image`
+      result_folder: See `check_image`
+      level: See `check_image`
+      generate_expected_image: See `check_image`
+      use_mask: See `check_image`
     """
 
     if headers is None:

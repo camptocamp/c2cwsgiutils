@@ -81,6 +81,14 @@ def check_image(
     we use it as a mask.
 
     Note that the `image_to_check` is altered with the mask.
+
+    Args:
+      result_folder: The folder where to store the actual image and the diff
+      image_to_check: The image to check
+      expected_filename: The expected image filename
+      level: The minimum similarity level (between 0.0 and 1.0), default to 1.0
+      generate_expected_image: If `True` generate the expected image instead of checking it
+      use_mask: If `False` don't use the mask event if the file exists
     """
     assert image_to_check is not None, "Image required"
     image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
@@ -176,7 +184,22 @@ def check_screenshot(
     """
     Test that the screenshot of the `url` corresponds to the image `expected_filename`.
 
-    Requires nodejs with puppeteer and commander to be installed.
+    Requires nodejs to be installed.
+
+    See also `check_image` for the other parameters.
+
+    Args:
+      url: The URL to screenshot
+      width: The width of the generated screenshot
+      height: The height of the generated screenshot
+      sleep: The number of milliseconds to wait before taking the screenshot
+      headers: The headers to send in the request to the server
+      media: The list of media to emulate in the browser (e.g. to simulate a browser in dark mode)
+      expected_filename: See `check_image`
+      result_folder: See `check_image`
+      level: See `check_image`
+      generate_expected_image: See `check_image`
+      use_mask: See `check_image`
     """
 
     if headers is None:

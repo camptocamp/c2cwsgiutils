@@ -148,6 +148,7 @@ def check_image(
         assert (
             expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1]
         ), f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
+        expected[mask] = [255, 255, 255]
 
     assert (
         expected.shape == image_to_check.shape

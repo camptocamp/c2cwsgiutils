@@ -49,13 +49,13 @@ const options = program.opts();
     }
   });
 
-  await page.goto(options.url, { timeout: 60000 });
-
   await page.setViewport({
     width: parseInt(options.width),
     height: parseInt(options.height),
   });
-  await page.waitForTimeout(parseInt(options.sleep));
+  await page.goto(options.url, { timeout: 60000 });
+
+  await new Promise((r) => setTimeout(r, parseInt(options.sleep)));
   await page.screenshot({
     path: options.output,
     clip: { x: 0, y: 0, width: parseInt(options.width), height: parseInt(options.height) },

@@ -125,7 +125,7 @@ def check_image(
         assert ((0 < mask) & (mask < 255)).sum() == 0, "Mask should be only black and white image"
 
         # Convert to boolean
-        mask = mask != 0
+        mask = mask == 0
 
         assert (
             mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1]
@@ -148,6 +148,7 @@ def check_image(
         assert (
             expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1]
         ), f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
+        expected[mask] = [255, 255, 255]
 
     assert (
         expected.shape == image_to_check.shape

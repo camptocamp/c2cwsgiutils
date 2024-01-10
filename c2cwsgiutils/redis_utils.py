@@ -118,7 +118,7 @@ class PubSubWorkerThread(threading.Thread):
                     last_was_ok = True
             except redis.exceptions.RedisError:
                 if last_was_ok:
-                    LOG.warning("Redis connection problem", exc_info=True)
+                    LOG.warning("Redis connection problem")
                 last_was_ok = False
                 time.sleep(0.5)
             except Exception:  # pylint: disable=broad-except

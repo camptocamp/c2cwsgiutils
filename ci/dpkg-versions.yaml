@@ -60,8 +60,8 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/libblkid1: 2.37.2-4ubuntu3
   ubuntu_22_04/libbrotli1: 1.0.9-2build6
   ubuntu_22_04/libbz2-1.0: 1.0.8-5build1
-  ubuntu_22_04/libc-bin: 2.35-0ubuntu3.5
-  ubuntu_22_04/libc6: 2.35-0ubuntu3.5
+  ubuntu_22_04/libc-bin: 2.35-0ubuntu3.6
+  ubuntu_22_04/libc6: 2.35-0ubuntu3.6
   ubuntu_22_04/libcap-ng: 0.7.9-2.2build3
   ubuntu_22_04/libcap-ng0: 0.7.9-2.2build3
   ubuntu_22_04/libcap2: 1:2.44-1ubuntu0.22.04.1

@@ -10,7 +10,7 @@ version:
 checks:
   versions: False
   required_workflows: False
-
+  codespell: False
   black:
     ignore_patterns_re:
       - .*\.html

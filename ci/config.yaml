@@ -14,3 +14,4 @@ checks:
   black:
     ignore_patterns_re:
       - .*\.html
+  codespell: false

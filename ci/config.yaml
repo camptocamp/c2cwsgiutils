@@ -14,8 +14,9 @@ checks:
     ignore_patterns_re:
       - .*\.html
   versions: false
-
+  codespell: false
   required_workflows: false
+
 publish:
   pypi:
     packages:

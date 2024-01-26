@@ -58,9 +58,9 @@ jobs:
       - run: pip install --editable .
       - name: Acceptance
         run: make acceptance
-      - run: (cd acceptance_tests/tests/; c2cciutils-docker-logs)
+      - timeout-minutes: 1
+        run: (cd acceptance_tests/tests/; c2cciutils-docker-logs)
         if: always()
-        timeout-minutes: 1
       - run: make acceptance-stop
 
       - name: Acceptance Dev

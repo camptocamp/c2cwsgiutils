@@ -10,6 +10,7 @@ To add some info about requests:
 
 A pyramid event handler is installed to setup this filter for the current request.
 """
+
 import json
 import logging
 import logging.config

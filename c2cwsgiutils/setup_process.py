@@ -4,7 +4,6 @@ Used by standalone (non-wsgi) processes to setup all the bits and pieces of c2cw
 Must be imported at the very beginning of the process's life, before any other module is imported.
 """
 
-
 import argparse
 import warnings
 from typing import Any, Callable, Optional, TypedDict, cast

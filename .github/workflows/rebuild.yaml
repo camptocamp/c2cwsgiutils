@@ -40,7 +40,7 @@ jobs:
 
       - name: Check .tool-versions file existence
         id: tool-versions
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: .tool-versions
       - uses: asdf-vm/actions/install@v3

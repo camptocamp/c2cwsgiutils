@@ -1,4 +1,5 @@
 """Install exception views to have nice JSON error pages."""
+
 import logging
 import os
 import traceback
@@ -20,7 +21,7 @@ DEPRECATED_ENV_KEY = "ERROR_DETAILS_SECRET"
 LOG = logging.getLogger(__name__)
 STATUS_LOGGER = {
     401: LOG.debug,
-    500: LOG.error
+    500: LOG.error,
     # The rest are warnings
 }
 

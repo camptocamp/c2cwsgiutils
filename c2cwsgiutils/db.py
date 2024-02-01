@@ -1,4 +1,5 @@
 """SQLalchemy models."""
+
 import logging
 import re
 import warnings

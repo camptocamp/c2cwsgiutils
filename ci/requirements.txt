@@ -1,9 +1,9 @@
-c2cciutils[checks,publish]==1.4.13
+c2cciutils[checks,publish]==1.4.15
 poetry-dynamic-versioning[plugin]==0.21.4
 poetry-plugin-export==1.3.1
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
 certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerability
-cryptography>=41.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerability
 requests>=2.31.0 # not directly required, pinned by Snyk to avoid a vulnerability
 urllib3>=1.26.17 # not directly required, pinned by Snyk to avoid a vulnerability
 jinja2>=3.1.3 # not directly required, pinned by Snyk to avoid a vulnerability

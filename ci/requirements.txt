@@ -1,9 +1,9 @@
-c2cciutils==1.2.14
+c2cciutils==1.2.15
 node_vm2==0.4.5 # Pin because version 0.4.7 is not working
 ruamel.yaml==0.17.40 # Pin because version 0.18.* is not working
 tomlkit==0.11.8
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
 protobuf>=3.18.3 # not directly required, pinned by Snyk to avoid a vulnerability
 certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerability
-cryptography>=41.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerability
 pip>=23.3 # not directly required, pinned by Snyk to avoid a vulnerability

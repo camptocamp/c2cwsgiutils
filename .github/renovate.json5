@@ -56,8 +56,6 @@
       matchPackagePrefixes: ['poetry-'],
       groupName: 'Poetry',
       automerge: true,
-      separateMajorMinor: false,
-      separateMinorPatch: false,
     },
     /** Accept only the patch on stabilization branches */
     {
@@ -81,8 +79,6 @@
       matchFileNames: ['.github/**', '.pre-commit-config.yaml', 'ci/**'],
       groupName: 'CI dependencies',
       automerge: true,
-      separateMajorMinor: false,
-      separateMinorPatch: false,
     },
   ],
 }

@@ -12,7 +12,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/bzip2: 1.0.8-5build1
   ubuntu_22_04/ca-certificates: 20230311ubuntu0.22.04.1
   ubuntu_22_04/cdebconf: 0.261ubuntu1
-  ubuntu_22_04/coreutils: 8.32-4.1ubuntu1
+  ubuntu_22_04/coreutils: 8.32-4.1ubuntu1.1
   ubuntu_22_04/curl: 7.81.0-1ubuntu1.15
   ubuntu_22_04/cyrus-sasl2: 2.1.27+dfsg2-3ubuntu1.2
   ubuntu_22_04/dash: 0.5.11+git20210903+057cd650a4ed-3build1

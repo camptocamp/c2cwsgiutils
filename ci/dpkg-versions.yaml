@@ -154,7 +154,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/libxxhash0: 0.8.1-1
   ubuntu_22_04/libzstd: 1.4.8+dfsg-3build1
   ubuntu_22_04/libzstd1: 1.4.8+dfsg-3build1
-  ubuntu_22_04/login: 1:4.8.1-2ubuntu2.1
+  ubuntu_22_04/login: 1:4.8.1-2ubuntu2.2
   ubuntu_22_04/logsave: 1.46.5-2ubuntu1.1
   ubuntu_22_04/lsb: 11.1.0ubuntu4
   ubuntu_22_04/lsb-base: 11.1.0ubuntu4
@@ -175,7 +175,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/openssl: 3.0.2-0ubuntu1.14
   ubuntu_22_04/p11-kit: 0.24.0-6build1
   ubuntu_22_04/pam: 1.4.0-11ubuntu2.3
-  ubuntu_22_04/passwd: 1:4.8.1-2ubuntu2.1
+  ubuntu_22_04/passwd: 1:4.8.1-2ubuntu2.2
   ubuntu_22_04/pcre2: 10.39-3ubuntu0.1
   ubuntu_22_04/pcre3: 2:8.39-13ubuntu0.22.04.1
   ubuntu_22_04/perl: 5.34.0-3ubuntu1.3

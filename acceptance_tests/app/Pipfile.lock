@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9893b85e9cecc01b5ff889fffe1575d79c28082c9ab49fdb771b0f120ce42a1c"
+            "sha256": "28b6f4d50931b8f028f447b37ca21dd9f68d00e3df0731264f1727d43b6197cb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -204,11 +204,11 @@
         },
         "gitpython": {
             "hashes": [
-                "sha256:c36b6634d069b3f719610175020a9aed919421c87552185b085e04fbbdb10b7c",
-                "sha256:ed66e624884f76df22c8e16066d567aaa5a37d5b5fa19db2c6df6f7156db9048"
+                "sha256:1bf9cd7c9e7255f77778ea54359e54ac22a72a5b51288c457c881057b7bb9ecd",
+                "sha256:2d99869e0fef71a73cbd242528105af1d6c1b108c60dfabd994bf292f76c3ceb"
             ],
             "index": "pypi",
-            "version": "==3.1.41"
+            "version": "==3.1.42"
         },
         "isort": {
             "hashes": [
@@ -264,7 +264,7 @@
                 "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8",
                 "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_full_version >= '3.7.0'",
             "version": "==0.1.2"
         },
         "mypy": {
@@ -375,7 +375,7 @@
                 "sha256:b27c2826c47d0f3219f29554824c30c5e8945175d888647acd804ddd04af846c",
                 "sha256:da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_full_version >= '3.7.0'",
             "version": "==2.17.2"
         },
         "pylint": {
@@ -482,11 +482,11 @@
         },
         "rich": {
             "hashes": [
-                "sha256:5cb5123b5cf9ee70584244246816e9114227e0b98ad9176eede6ad54bf5403fa",
-                "sha256:6da14c108c4866ee9520bbffa71f6fe3962e193b7da68720583850cd4548e235"
+                "sha256:4edbae314f59eb482f54e9e30bf00d33350aaa94f4bfcd4e9e3110e64d0d7222",
+                "sha256:9be308cb1fe2f1f57d67ce99e95af38a1e2bc71ad9813b0e247cf7ffbcc3a432"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==13.7.0"
+            "markers": "python_full_version >= '3.7.0'",
+            "version": "==13.7.1"
         },
         "setoptconf-tmp": {
             "hashes": [

@@ -132,6 +132,8 @@ def _deserialize_collected_data(
     results: list[list[SerializedMetric]],
 ) -> Generator[prometheus_client.core.Metric, None, None]:
     for serialized_collection in results:
+        if serialized_collection is None:
+            continue
         for serialized_metric in serialized_collection:
             if serialized_metric is None:
                 continue

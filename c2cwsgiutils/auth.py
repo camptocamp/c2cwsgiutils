@@ -217,22 +217,26 @@ def check_access(
     return check_access_config(
         request,
         {
-            "github_repository": env_or_settings(
-                settings,
-                GITHUB_REPOSITORY_ENV,
-                GITHUB_REPOSITORY_PROP,
-                "",
-            )
-            if repo is None
-            else repo,
-            "github_access_type": env_or_settings(
-                settings,
-                GITHUB_ACCESS_TYPE_ENV,
-                GITHUB_ACCESS_TYPE_PROP,
-                "pull",
-            )
-            if access_type is None
-            else access_type,
+            "github_repository": (
+                env_or_settings(
+                    settings,
+                    GITHUB_REPOSITORY_ENV,
+                    GITHUB_REPOSITORY_PROP,
+                    "",
+                )
+                if repo is None
+                else repo
+            ),
+            "github_access_type": (
+                env_or_settings(
+                    settings,
+                    GITHUB_ACCESS_TYPE_ENV,
+                    GITHUB_ACCESS_TYPE_PROP,
+                    "pull",
+                )
+                if access_type is None
+                else access_type
+            ),
         },
     )
 

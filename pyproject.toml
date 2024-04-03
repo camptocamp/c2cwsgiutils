@@ -94,7 +94,7 @@ waitress = { version = "2.1.2", optional = true }
 scikit-image = { version = "0.19.3", optional = true }
 certifi = "2023.7.22"
 scipy = "1.10.1"
-pillow = "10.2.0"
+pillow = "10.3.0"
 urllib3 = "1.26.18"
 
 [tool.poetry.extras]

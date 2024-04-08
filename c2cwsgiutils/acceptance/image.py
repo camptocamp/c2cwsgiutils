@@ -175,7 +175,7 @@ def check_screenshot(
     expected_filename: str,
     width: int = 800,
     height: int = 600,
-    sleep: int = 0,
+    sleep: int = 100,
     headers: Optional[dict[str, str]] = None,
     media: Optional[list[dict[str, str]]] = None,
     level: float = 1.0,

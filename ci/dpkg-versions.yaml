@@ -80,7 +80,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/libgdbm-compat4: 1.23-1
   ubuntu_22_04/libgdbm6: 1.23-1
   ubuntu_22_04/libgmp10: 2:6.2.1+dfsg-3ubuntu1
-  ubuntu_22_04/libgnutls30: 3.7.3-4ubuntu1.4
+  ubuntu_22_04/libgnutls30: 3.7.3-4ubuntu1.5
   ubuntu_22_04/libgpg-error: 1.43-3
   ubuntu_22_04/libgpg-error0: 1.43-3
   ubuntu_22_04/libgssapi-krb5-2: 1.19.2-2ubuntu0.3

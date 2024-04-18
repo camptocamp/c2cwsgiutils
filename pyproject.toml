@@ -73,7 +73,7 @@ alembic = { version = "1.12.1", optional = true }
 boltons = { version = "23.0.0", optional = true }
 cornice = { version = "6.0.1", optional = true }
 redis = { version = "5.0.3", optional = true }
-gunicorn = { version = "21.2.0", optional = true }
+gunicorn = "22.0.0"
 lxml = { version = "4.9.4", optional = true }
 objgraph = { version = "3.6.1", optional = true }
 psycopg2 = { version = "2.9.9", optional = true }

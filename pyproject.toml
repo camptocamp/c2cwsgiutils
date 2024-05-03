@@ -16,7 +16,7 @@ strict = true
 
 [tool.poetry]
 name = "c2cwsgiutils"
-version = "0.1.0"
+version = "0.0.0"
 description = "Common utilities for Camptocamp WSGI applications"
 readme = "README.md"
 authors = ["Camptocamp <info@camptocamp.com>"]
@@ -66,7 +66,7 @@ client_info = "c2cwsgiutils.client_info:filter_factory"
 sentry = "c2cwsgiutils.sentry:filter_factory"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4.0"
+python = ">=3.10,<4.0"
 requests = { version = "2.31.0" }
 pyyaml = { version = "6.0.1" }
 alembic = { version = "1.13.1", optional = true }

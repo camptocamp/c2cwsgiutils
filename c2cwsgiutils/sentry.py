@@ -55,6 +55,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
             "propagate_traces",
             "auto_enabling_integrations",
             "auto_session_tracking",
+            "enable_tracing",
         ):
             if key in client_info:
                 client_info[key] = client_info[key].lower() in ("1", "t", "true")

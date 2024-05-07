@@ -661,7 +661,12 @@ A few other environment variables can be used to tune the info sent with each re
 - `SENTRY_CLIENT_IGNORE_EXCEPTIONS`: list (coma separated) of exceptions to ignore (defaults to SystemExit)
 - `SENTRY_TAG_...`: to add other custom tags
 - `SENTRY_LEVEL`: starting from what logging level to send events to Sentry (defaults to ERROR)
-- `SENTRY_TRACES_SAMPLE_RATE`: The percentage of events to send to sentry in order to compute the performance. Value between 0 and 1, default is 0.
+- `SENTRY_TRACES_SAMPLE_RATE`: The percentage of events to send to sentry in order to compute the performance. Value between 0 and 1 (default is 0)
+- `SENTRY_INTEGRATION_LOGGING`: If set to 0, the Sentry integration will not log anything (default is 1)
+- `SENTRY_INTEGRATION_PYRAMID`: If set to 0, the Sentry integration with Pyramid will not be enabled (default is 1)
+- `SENTRY_INTEGRATION_SQLALCHEMY`: If set to 0, the Sentry integration with SQLAlchemy will not be enabled (default is 1)
+- `SENTRY_INTEGRATION_REDIS`: If set to 0, the Sentry integration with Redis will not be enabled (default is 1)
+- `SENTRY_INTEGRATION_ASYNCIO`: If set to 0, the Sentry integration with asyncio will not be enabled (default is 1)
 
 # Developer info
 

@@ -8,7 +8,8 @@ WORKDIR /acceptance_tests
 ENV DOCKER_RUN=1 \
     PYTHONPATH=/acceptance_tests
 
-RUN DOCKER_VERSION=${DOCKER_VERSION} install-docker
+RUN DOCKER_VERSION=${DOCKER_VERSION} install-docker \
+    && python3 -m pip install 'requests<2.32.0'
 
 COPY . ./
 

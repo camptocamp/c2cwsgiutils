@@ -22,8 +22,8 @@ build: build_docker build_acceptance build_test_app ## Build all Docker images
 
 .PHONY: tests
 tests: build_test_app ## Run the unit tests
-	@docker run --rm $(DOCKER_BASE):tests pytest --version
-	docker run --rm --detach \
+	@`which docker` run --rm $(DOCKER_BASE):tests pytest --version
+	`which docker` run --rm --detach \
 	--volume=$(shell pwd)/results:/results \
 	--volume=$(shell pwd)/c2cwsgiutils:/opt/c2cwsgiutils/c2cwsgiutils \
 	--volume=$(shell pwd)/tests:/opt/c2cwsgiutils/tests \
@@ -31,40 +31,40 @@ tests: build_test_app ## Run the unit tests
 
 .PHONY: acceptance
 acceptance: tests build_acceptance build_redis_sentinal ## Run the acceptance tests
-	docker run --rm --volume=/var/run/docker.sock:/var/run/docker.sock \
+	`which docker` run --rm --volume=/var/run/docker.sock:/var/run/docker.sock \
 		--volume=$(shell pwd)/reports:/reports \
 		--env=WAITRESS $(DOCKER_BASE)_acceptance py.test -vv --color=yes $(PYTEST_OPTS) tests
 
 .PHONY: build_docker
 build_docker:
-	docker build --build-arg=VERSION=$(VERSION) --tag=$(DOCKER_BASE) --target=standard .
+	`which docker` build --build-arg=VERSION=$(VERSION) --tag=$(DOCKER_BASE) --target=standard .
 
 .PHONY: build_docker_test
 build_docker_test:
-	docker build --tag=$(DOCKER_BASE):tests --target=tests .
+	`which docker` build --tag=$(DOCKER_BASE):tests --target=tests .
 
 .PHONY: build_acceptance
 build_acceptance: build_docker_test
-	docker build --tag=$(DOCKER_BASE)_acceptance acceptance_tests/tests
+	`which docker` build --tag=$(DOCKER_BASE)_acceptance acceptance_tests/tests
 
 .PHONY: build_test_app
 build_test_app: build_docker
-	docker build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/app
+	`which docker` build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/app
 
 .PHONY: build_redis_sentinal
 build_redis_sentinal:
-	docker build --tag=$(DOCKER_BASE)-redis-sentinel:6 acceptance_tests/tests/redis/
+	`which docker` build --tag=$(DOCKER_BASE)-redis-sentinel:6 acceptance_tests/tests/redis/
 
 .PHONY: checks
 checks: prospector ## Run the checks
 
 .PHONY: prospector
 prospector: build_docker_test ## Run the prospector checker
-	@docker run --rm $(DOCKER_BASE):tests prospector --version
-	@docker run --rm $(DOCKER_BASE):tests mypy --version
-	@docker run --rm $(DOCKER_BASE):tests pylint --version --rcfile=/dev/null
-	@docker run --rm $(DOCKER_BASE):tests pyflakes --version
-	docker run --rm --volume=$(shell pwd):/opt/c2cwsgiutils $(DOCKER_BASE):tests prospector --output-format=pylint --die-on-tool-error
+	@`which docker` run --rm $(DOCKER_BASE):tests prospector --version
+	@`which docker` run --rm $(DOCKER_BASE):tests mypy --version
+	@`which docker` run --rm $(DOCKER_BASE):tests pylint --version --rcfile=/dev/null
+	@`which docker` run --rm $(DOCKER_BASE):tests pyflakes --version
+	`which docker` run --rm --volume=$(shell pwd):/opt/c2cwsgiutils $(DOCKER_BASE):tests prospector --output-format=pylint --die-on-tool-error
 
 .venv/timestamp: requirements.txt ci/requirements.txt pyproject.toml poetry.lock
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv
@@ -75,8 +75,8 @@ prospector: build_docker_test ## Run the prospector checker
 
 .PHONY: pull
 pull: ## Pull the Docker images
-	for image in `find -name "Dockerfile*" | xargs grep --no-filename FROM | awk '{print $$2}' | sort -u | grep -v c2cwsgiutils`; do docker pull $$image; done
-	for image in `find -name "docker-compose*.yaml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do docker pull $$image; done
+	for image in `find -name "Dockerfile*" | xargs grep --no-filename FROM | awk '{print $$2}' | sort -u | grep -v c2cwsgiutils`; do `which docker` pull $$image; done
+	for image in `find -name "docker-compose*.yaml" | xargs grep --no-filename "image:" | awk '{print $$2}' | sort -u | grep -v $(DOCKER_BASE) | grep -v rancher`; do `which docker` pull $$image; done
 
 .PHONY: run
 run: build_test_app ## Run the test application

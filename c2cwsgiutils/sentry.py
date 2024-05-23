@@ -6,7 +6,8 @@ from collections.abc import Generator, MutableMapping
 from typing import Any, Callable, Optional
 
 import pyramid.config
-import sentry_sdk
+import sentry_sdk.integrations
+from sentry_sdk.integrations.asyncio import AsyncioIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
 from sentry_sdk.integrations.pyramid import PyramidIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
@@ -55,6 +56,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
             "propagate_traces",
             "auto_enabling_integrations",
             "auto_session_tracking",
+            "enable_tracing",
         ):
             if key in client_info:
                 client_info[key] = client_info[key].lower() in ("1", "t", "true")
@@ -73,20 +75,53 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
         client_info["ignore_errors"] = client_info.pop("ignore_exceptions", "SystemExit").split(",")
         tags = {key[11:].lower(): value for key, value in os.environ.items() if key.startswith("SENTRY_TAG_")}
 
-        sentry_logging = LoggingIntegration(
-            level=logging.DEBUG,
-            event_level=config_utils.env_or_config(
-                config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR"
-            ).upper(),
-        )
         traces_sample_rate = float(
             config_utils.env_or_config(
                 config, "SENTRY_TRACES_SAMPLE_RATE", "c2c.sentry_traces_sample_rate", "0.0"
             )
         )
+        integrations: list[sentry_sdk.integrations.Integration] = []
+        if config_utils.config_bool(
+            config_utils.env_or_config(
+                config, "SENTRY_INTEGRATION_LOGGING", "c2c.sentry_integration_logging", "true"
+            )
+        ):
+            integrations.append(
+                LoggingIntegration(
+                    level=logging.DEBUG,
+                    event_level=config_utils.env_or_config(
+                        config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR"
+                    ).upper(),
+                )
+            )
+        if config_utils.config_bool(
+            config_utils.env_or_config(
+                config, "SENTRY_INTEGRATION_PYRAMID", "c2c.sentry_integration_pyramid", "true"
+            )
+        ):
+            integrations.append(PyramidIntegration())
+        if config_utils.config_bool(
+            config_utils.env_or_config(
+                config, "SENTRY_INTEGRATION_SQLALCHEMY", "c2c.sentry_integration_sqlalchemy", "true"
+            )
+        ):
+            integrations.append(SqlalchemyIntegration())
+        if config_utils.config_bool(
+            config_utils.env_or_config(
+                config, "SENTRY_INTEGRATION_REDIS", "c2c.sentry_integration_redis", "true"
+            )
+        ):
+            integrations.append(RedisIntegration())
+        if config_utils.config_bool(
+            config_utils.env_or_config(
+                config, "SENTRY_INTEGRATION_ASYNCIO", "c2c.sentry_integration_asyncio", "true"
+            )
+        ):
+            integrations.append(AsyncioIntegration())
+
         sentry_sdk.init(
             dsn=sentry_url,
-            integrations=[sentry_logging, PyramidIntegration(), SqlalchemyIntegration(), RedisIntegration()],
+            integrations=integrations,
             traces_sample_rate=traces_sample_rate,
             before_send=_create_before_send_filter(tags),
             **client_info,

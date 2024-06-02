@@ -769,12 +769,12 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "junit2html"
-version = "30.1.6"
+version = "31.0.2"
 description = "Generate HTML reports from Junit results"
 optional = false
 python-versions = "*"
 files = [
-    {file = "junit2html-30.1.6-py3-none-any.whl", hash = "sha256:9b377e3088099cfed063aaa363effb95345ecae85bf53ebd2e20a99b40855ca8"},
+    {file = "junit2html-31.0.2-py3-none-any.whl", hash = "sha256:c7fd1f253d423f0df031d0cee8ef7d4d98d9f8bf6383a2d40dca639686814866"},
 ]
 
 [package.dependencies]
@@ -2959,4 +2959,4 @@ webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "prometheu
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "a2650ccfba0cf912b2b87f306fb63556f9ceec3b698d2ad06a0f36a2e127836c"
+content-hash = "3e077fb3486476d8a766e0bdf5fec4f4bf2b0d7addb80895dd9ba242fa255a82"

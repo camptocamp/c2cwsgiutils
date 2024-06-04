@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base-all-0
+FROM ubuntu:24.04 AS base-all-0
 LABEL maintainer Camptocamp "info@camptocamp.com"
 SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 
@@ -6,7 +6,8 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
   --mount=type=cache,target=/var/cache,sharing=locked \
   apt-get update \
   && apt-get upgrade --assume-yes \
-  && apt-get install --assume-yes --no-install-recommends python3-pip
+  && apt-get install --assume-yes --no-install-recommends python3-pip \
+  && rm /usr/lib/python*/EXTERNALLY-MANAGED
 
 # Used to convert the locked packages by poetry to pip requirements format
 # We don't directly use `poetry install` because it force to use a virtual environment.

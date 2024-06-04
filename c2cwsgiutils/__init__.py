@@ -16,7 +16,7 @@ def get_config_defaults() -> dict[str, str]:
     configparser does not support duplicated defaults with different cases, this function filter
     the second one to avoid the issue.
 
-    configparser interpretate the % then we need to escape them
+    configparser interpret the % then we need to escape them
     """
     result: dict[str, str] = {}
     lowercase_keys: set[str] = set()

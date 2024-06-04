@@ -52,10 +52,10 @@
     },
     /** Group Poetry packages */
     {
-      matchPackageNames: ['poetry', 'pip'],
       matchPackagePrefixes: ['poetry-'],
       groupName: 'Poetry',
       automerge: true,
+      matchDepNames: ['poetry', 'pip'],
     },
     /** Accept only the patch on stabilization branches */
     {
@@ -65,14 +65,14 @@
     },
     /** Support the 4 parts of shellcheck-py version with a v prefix */
     {
-      matchPackageNames: ['shellcheck-py/shellcheck-py'],
       versioning: 'regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$',
+      matchDepNames: ['shellcheck-py/shellcheck-py'],
     },
     /** Don't upgrade node_vm2 because version 0.4.7 (last version) is not working, for branch 5.1 */
     {
-      matchPackageNames: ['node_vm2'],
       matchBaseBranches: ['5.1'],
       enabled: false,
+      matchDepNames: ['node_vm2'],
     },
     /** Group and auto merge the CI dependencies */
     {

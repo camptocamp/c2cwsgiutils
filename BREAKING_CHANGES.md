@@ -2,10 +2,10 @@
 
 ## Release 6.1
 
- - The `handlers` in the `.ini` files don't support `args` anymore. You must use `kwargs`
-   arguments. Example `args = (sys.stdout,)` becomes `kwargs = {'stream': 'ext://sys.stdout'}`.
- - SqlAlchemy logger must now be instantiated by your app's `main` method and not by your
-   `.ini` file. Read the example in the sqlalchemylogger folder.
+- The `handlers` in the `.ini` files don't support `args` anymore. You must use `kwargs`
+  arguments. Example `args = (sys.stdout,)` becomes `kwargs = {'stream': 'ext://sys.stdout'}`.
+- SqlAlchemy logger must now be instantiated by your app's `main` method and not by your
+  `.ini` file. Read the example in the sqlalchemylogger folder.
 
 ## Release 6.0
 

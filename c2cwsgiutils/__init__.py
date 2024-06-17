@@ -1,8 +1,7 @@
+import ast
 import configparser
 import logging
 import os
-import re
-import ast
 import sys
 from configparser import SectionProxy
 from typing import Any
@@ -33,7 +32,6 @@ def get_config_defaults() -> dict[str, str]:
 def _create_handlers(config: configparser.ConfigParser) -> dict[str, Any]:
     handlers = [k.strip() for k in config["handlers"]["keys"].split(",")]
     d_handlers: dict[str, Any] = {}
-    stream_re = re.compile(r"\((.*?),\)")
     for hh in handlers:
         block = config[f"handler_{hh}"]
         if "args" in block:

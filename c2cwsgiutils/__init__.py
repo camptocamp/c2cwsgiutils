@@ -1,7 +1,7 @@
+import ast
 import configparser
 import logging
 import os
-import re
 import sys
 from configparser import SectionProxy
 from typing import Any
@@ -32,23 +32,26 @@ def get_config_defaults() -> dict[str, str]:
 def _create_handlers(config: configparser.ConfigParser) -> dict[str, Any]:
     handlers = [k.strip() for k in config["handlers"]["keys"].split(",")]
     d_handlers: dict[str, Any] = {}
-    stream_re = re.compile(r"\((.*?),\)")
     for hh in handlers:
         block = config[f"handler_{hh}"]
-        stream_match = stream_re.match(block["args"])
-        if stream_match is None:
-            raise Exception(f"Could not parse args of handler {hh}")  # pylint: disable=broad-exception-raised
-        args = stream_match.groups()[0]
+        if "args" in block:
+            raise ValueError(f"Can not parse args of handlers {hh}, use kwargs instead.")
         c = block["class"]
         if "." not in c:
             # classes like StreamHandler does not need the prefix in the ini so we add it here
             c = f"logging.{c}"
         conf = {
             "class": c,
-            "stream": f"ext://{args}",  # like ext://sys.stdout
         }
+        if "level" in block:
+            conf["level"] = block["level"]
         if "formatter" in block:
             conf["formatter"] = block["formatter"]
+        if "filters" in block:
+            conf["filters"] = block["filters"]
+        if "kwargs" in block:
+            kwargs = ast.literal_eval(block["kwargs"])
+            conf.update(kwargs)
         d_handlers[hh] = conf
     return d_handlers
 
@@ -57,7 +60,7 @@ def _filter_logger(block: SectionProxy) -> dict[str, Any]:
     out: dict[str, Any] = {"level": block["level"]}
     handlers = block.get("handlers", "")
     if handlers != "":
-        out["handlers"] = [block["handlers"]]
+        out["handlers"] = [k.strip() for k in block["handlers"].split(",")]
     return out
 
 

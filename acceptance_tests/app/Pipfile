@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pipenv = "==2022.4.21"
+pipenv = "==2022.4.30"
 setuptools = "==65.5.1"
 # Lock dependencies
 "backports.entry-points-selectable" = "==1.1.1"

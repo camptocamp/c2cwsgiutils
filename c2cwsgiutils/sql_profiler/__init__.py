@@ -3,6 +3,7 @@ A view (URL=/sql_provider) allowing to enabled/disable a SQL spy.
 
 That runs an "EXPLAIN ANALYZE" on every SELECT query going through SQLAlchemy.
 """
+
 import logging
 import warnings
 

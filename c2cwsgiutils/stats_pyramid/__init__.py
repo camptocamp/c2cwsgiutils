@@ -1,4 +1,5 @@
 """Generate statsd metrics for pyramid and SQLAlchemy events."""
+
 import warnings
 
 import pyramid.config

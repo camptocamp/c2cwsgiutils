@@ -4,6 +4,7 @@ Setup an health_check API.
 To use it, create an instance of this class in your application initialization and do a few calls to its
 methods add_db_check()
 """
+
 import configparser
 import copy
 import logging

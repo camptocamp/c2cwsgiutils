@@ -33,6 +33,15 @@ jobs:
 
       - name: Checks
         run: c2cciutils-checks
+      - name: Checks Fix
+        run: c2cciutils-checks --fix
+        if: failure()
+      - run: git diff --exit-code --patch > /tmp/c2cciutils-checks.patch || true
+        if: failure()
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Update c2cciutils checks.patch
+        if: failure()
 
       - name: Pull
         run: make pull

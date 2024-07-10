@@ -123,7 +123,7 @@ urllib3 = "==1.26.19"
 venusian = "==3.0.*"
 webob = "==1.8.*"
 wrapt = "==1.14.*"
-zipp = "==3.19.1"
+zipp = "==3.19.2"
 "zope.deprecation" = "==4.4.*"
 
 [requires]

@@ -79,7 +79,7 @@ objgraph = { version = "3.6.1", optional = true }
 psycopg2 = { version = "2.9.9", optional = true }
 pyramid = { version = "2.0.2", optional = true }
 pyramid-tm = { version = "2.5", optional = true }
-sentry-sdk = { version = "1.31.0", optional = true }
+sentry-sdk = "2.8.0"
 ujson = { version = "5.8.0" }
 cee_syslog_handler = { version = "0.6.0" }
 SQLAlchemy = { version = "2.0.31", optional = true }

@@ -24,11 +24,12 @@ class Composition:
         self.cwd = os.path.join(os.getcwd(), cwd)
         self.cwd = cwd
 
-    def dc(self, args: list[str], **kwargs: Any) -> str:
+    def dc(self, args: list[str], version=2, **kwargs: Any) -> str:
+        docker_compose = ["docker-compose"] if version == 1 else ["docker", "compose"]
         return cast(
             str,
             subprocess.run(  # nosec
-                ["docker-compose", *args],
+                [*docker_compose, *args],
                 **{
                     "cwd": self.cwd,
                     "stderr": subprocess.STDOUT,
@@ -40,9 +41,10 @@ class Composition:
             ).stdout,
         )
 
-    def dc_process(self, args: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+    def dc_process(self, args: list[str], version=2, **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        docker_compose = ["docker-compose"] if version == 1 else ["docker", "compose"]
         return subprocess.run(  # type: ignore[no-any-return, call-overload] # pylint: disable=subprocess-run-check # noqa
-            ["docker-compose", *args],
+            [*docker_compose, *args],
             **{
                 "encoding": "utf-8",
                 "cwd": self.cwd,

@@ -34,13 +34,13 @@ acceptance: acceptance-in acceptance-out  ## Run the acceptance tests
 
 .PHONY: acceptance-run
 acceptance-run: tests  ## Start the application used to run the acceptance tests
-	cd acceptance_tests/tests/; docker-compose up --detach db db_slave
-	cd acceptance_tests/tests/; docker-compose run -T --no-deps app /app/scripts/wait-db
-	cd acceptance_tests/tests/; docker-compose up --detach
+	cd acceptance_tests/tests/; docker compose up --detach db db_slave
+	cd acceptance_tests/tests/; docker compose run -T --no-deps app /app/scripts/wait-db
+	cd acceptance_tests/tests/; docker compose up --detach
 
 .PHONY: acceptance-in
 acceptance-in: acceptance-run  ## Run the internal acceptance tests
-	cd acceptance_tests/tests/; docker-compose exec -T acceptance pytest -vv --color=yes $(PYTEST_ARGS) tests
+	cd acceptance_tests/tests/; docker compose exec -T acceptance pytest -vv --color=yes $(PYTEST_ARGS) tests
 
 .PHONY: acceptance-out
 acceptance-out: acceptance-run  ## Run the external acceptance tests
@@ -49,7 +49,7 @@ acceptance-out: acceptance-run  ## Run the external acceptance tests
 
 .PHONY: acceptance-stop
 acceptance-stop:  ## Stop the application used to run the acceptance tests
-	cd acceptance_tests/tests/; docker-compose down
+	cd acceptance_tests/tests/; docker compose down
 
 .PHONY: build_docker
 build_docker:
@@ -89,7 +89,7 @@ pull: ## Pull the Docker images
 .PHONY: run
 run: build_test_app build_docker ## Run the test application
 	# cp acceptance_tests/tests/docker-compose.override.sample.yaml acceptance_tests/tests/docker-compose.override.yaml
-	cd acceptance_tests/tests/; docker-compose up --detach
+	cd acceptance_tests/tests/; docker compose up --detach
 
 .PHONY: mypy_local
 mypy_local: .venv/timestamp

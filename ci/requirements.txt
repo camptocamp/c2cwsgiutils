@@ -7,4 +7,4 @@ scikit-image==0.24.0
 poetry-plugin-tweak-dependencies-version==1.5.2
 poetry-dynamic-versioning==1.4.0
 poetry-plugin-drop-python-upper-constraint==0.1.0
-importlib-metadata<8.2.1
+importlib-metadata<8.4.1

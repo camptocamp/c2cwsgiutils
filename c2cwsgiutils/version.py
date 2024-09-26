@@ -8,7 +8,7 @@ from typing import Optional, cast
 import prometheus_client
 import pyramid.config
 
-from c2cwsgiutils import config_utils, prometheus
+from c2cwsgiutils import auth, config_utils, prometheus
 
 _VERSIONS_PATH = "/app/versions.json"
 _LOG = logging.getLogger(__name__)
@@ -41,6 +41,15 @@ def init(config: pyramid.config.Configurator) -> None:
     includeme(config)
 
 
+class _View:
+    def __init__(self, versions: dict[str, dict[str, str]]) -> None:
+        self.versions = versions
+
+    def __call__(self, request: pyramid.request.Request) -> dict[str, dict[str, str]]:
+        auth.auth_view(request)
+        return self.versions
+
+
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view."""
 
@@ -49,9 +58,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
         config.add_route(
             "c2c_versions", config_utils.get_base_path(config) + r"/versions.json", request_method="GET"
         )
-        config.add_view(
-            lambda request: versions, route_name="c2c_versions", renderer="fast_json", http_cache=0
-        )
+        config.add_view(_View(versions), route_name="c2c_versions", renderer="fast_json", http_cache=0)
         _LOG.info("Installed the /versions.json service")
         git_hash = versions["main"]["git_hash"]
 

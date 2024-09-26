@@ -153,8 +153,8 @@ def _index(request: pyramid.request.Request) -> dict[str, str]:
     body = ""
     body += _health_check(request)
     body += _stats(request)
-    body += _versions(request)
     if has_access:
+        body += _versions(request)
         body += _debug(request)
         body += _db_maintenance(request)
         body += _logging(request)

@@ -22,7 +22,7 @@ flake8 = "==3.9.2"
 coverage = "==6.4.4"
 # Lock dependencies
 astroid = "==2.11.7"
-bandit = "==1.7.9"
+bandit = "==1.7.10"
 dill = "==0.3.8"
 dodgy = "==0.2.1"
 flake8-polyfill = "==1.0.2"

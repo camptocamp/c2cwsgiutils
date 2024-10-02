@@ -12,7 +12,7 @@ distlib = "==0.3.8"
 filelock = "==3.8.2"
 pip = "==23.3.2"
 platformdirs = "==2.5.4"
-virtualenv = "==20.16.7"
+virtualenv = "==20.26.6"
 virtualenv-clone = "==0.5.7"
 
 [dev-packages]

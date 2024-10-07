@@ -9,3 +9,4 @@ cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerab
 requests>=2.31.0 # not directly required, pinned by Snyk to avoid a vulnerability
 pygments>=2.15.0 # not directly required, pinned by Snyk to avoid a vulnerability
 requests<=2.32.3 # Workaround for docker-compose: docker.errors.DockerException: Error while fetching server API version: Not supported URL scheme http+docker
+virtualenv>=20.26.6 # not directly required, pinned by Snyk to avoid a vulnerability

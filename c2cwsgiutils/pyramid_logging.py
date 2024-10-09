@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Any, Optional, TextIO
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class _PyramidFilter(logging.Filter):

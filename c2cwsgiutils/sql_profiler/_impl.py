@@ -16,8 +16,8 @@ import sqlalchemy.event
 
 from c2cwsgiutils import auth, broadcast, config_utils
 
-LOG = logging.getLogger(__name__)
-repository = None
+_LOG = logging.getLogger(__name__)
+_REPOSITORY = None
 
 
 class _Repository:
@@ -35,7 +35,8 @@ class _Repository:
         _context: Any,
         _executemany: Any,
     ) -> None:
-        if statement.startswith("SELECT ") and LOG.isEnabledFor(logging.INFO):
+        """Profile the SQL statement."""
+        if statement.startswith("SELECT ") and _LOG.isEnabledFor(logging.INFO):
             do_it = False
             with self._lock:
                 if statement not in self._repo:
@@ -43,8 +44,8 @@ class _Repository:
                     self._repo.add(statement)
             if do_it:
                 try:
-                    LOG.info("statement:\n%s", _indent(_beautify_sql(statement)))
-                    LOG.info("parameters: %s", repr(parameters))
+                    _LOG.info("statement:\n%s", _indent(_beautify_sql(statement)))
+                    _LOG.info("parameters: %s", repr(parameters))
                     with conn.engine.begin() as c:
                         output = "\n  ".join(
                             [
@@ -54,7 +55,7 @@ class _Repository:
                                 )
                             ]
                         )
-                    LOG.info(output)
+                    _LOG.info(output)
                 except Exception:  # nosec  # pylint: disable=broad-except
                     pass
 
@@ -64,21 +65,21 @@ def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
     enable = request.params.get("enable")
     if enable is not None:
         broadcast.broadcast("c2c_sql_profiler", params={"enable": enable}, expect_answers=True)
-    return {"status": 200, "enabled": repository is not None}
+    return {"status": 200, "enabled": _REPOSITORY is not None}
 
 
 def _setup_profiler(enable: str) -> None:
-    global repository
+    global _REPOSITORY  # pylint: disable=global-statement
     if config_utils.config_bool(enable):
-        if repository is None:
-            LOG.info("Enabling the SQL profiler")
-            repository = _Repository()
-            sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute", repository.profile)
+        if _REPOSITORY is None:
+            _LOG.info("Enabling the SQL profiler")
+            _REPOSITORY = _Repository()
+            sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute", _REPOSITORY.profile)
     else:
-        if repository is not None:
-            LOG.info("Disabling the SQL profiler")
-            sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute", repository.profile)
-            repository = None
+        if _REPOSITORY is not None:
+            _LOG.info("Disabling the SQL profiler")
+            sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute", _REPOSITORY.profile)
+            _REPOSITORY = None
 
 
 def _beautify_sql(statement: str) -> str:
@@ -102,4 +103,4 @@ def init(config: pyramid.config.Configurator) -> None:
         "c2c_sql_profiler", config_utils.get_base_path(config) + r"/sql_profiler", request_method="GET"
     )
     config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="fast_json", http_cache=0)
-    LOG.info("Enabled the /sql_profiler API")
+    _LOG.info("Enabled the /sql_profiler API")

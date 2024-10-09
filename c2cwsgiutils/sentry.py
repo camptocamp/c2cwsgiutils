@@ -16,14 +16,15 @@ from sentry_sdk.integrations.wsgi import SentryWsgiMiddleware
 
 from c2cwsgiutils import config_utils
 
-LOG = logging.getLogger(__name__)
-_client_setup = False
+_LOG = logging.getLogger(__name__)
+_CLIENT_SETUP = False
 
 
 def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any, Any], Any]:
     """Create a filter that adds tags to every events."""
 
     def do_filter(event: Any, hint: Any) -> Any:
+        del hint
         event.setdefault("tags", {}).update(tags)
         return event
 
@@ -32,17 +33,15 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the Sentry integration, for backward compatibility."""
-
     warnings.warn("init function is deprecated; use includeme instead")
     includeme(config)
 
 
 def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the Sentry integration."""
-
-    global _client_setup
+    global _CLIENT_SETUP  # pylint: disable=global-statement
     sentry_url = config_utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
-    if sentry_url is not None and not _client_setup:
+    if sentry_url is not None and not _CLIENT_SETUP:
         client_info: MutableMapping[str, Any] = {
             key[14:].lower(): value for key, value in os.environ.items() if key.startswith("SENTRY_CLIENT_")
         }
@@ -126,7 +125,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
             before_send=_create_before_send_filter(tags),
             **client_info,
         )
-        _client_setup = True
+        _CLIENT_SETUP = True
 
         excludes = config_utils.env_or_config(
             config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "sentry_sdk"
@@ -134,7 +133,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
         for exclude in excludes:
             ignore_logger(exclude)
 
-        LOG.info("Configured sentry reporting with client=%s and tags=%s", repr(client_info), repr(tags))
+        _LOG.info("Configured sentry reporting with client=%s and tags=%s", repr(client_info), repr(tags))
 
 
 @contextlib.contextmanager
@@ -145,7 +144,7 @@ def capture_exceptions() -> Generator[None, None, None]:
     You don't need to use that for exception terminating the process (those not caught). Sentry does that
     already.
     """
-    if _client_setup:
+    if _CLIENT_SETUP:
         try:
             yield
         except Exception:
@@ -157,12 +156,12 @@ def capture_exceptions() -> Generator[None, None, None]:
 
 def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
     """If sentry is configured, add a Sentry filter around the application."""
-    if _client_setup:
+    if _CLIENT_SETUP:
         try:
-            LOG.info("Enable WSGI filter for Sentry")
+            _LOG.info("Enable WSGI filter for Sentry")
             return SentryWsgiMiddleware(application)
         except Exception:  # pylint: disable=broad-except
-            LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
+            _LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
             return application
     else:
         return application
@@ -170,4 +169,5 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
 
 def filter_factory(*args: Any, **kwargs: Any) -> Callable[..., Any]:
     """Get the filter."""
+    del args, kwargs
     return filter_wsgi_app

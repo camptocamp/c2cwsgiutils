@@ -3,7 +3,7 @@ import time
 import typing
 from functools import wraps
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def retry(
@@ -16,7 +16,6 @@ def retry(
     original from: http://wiki.python.org/moin/PythonDecoratorLibrary#Retry
 
     Arguments:
-
         exception_to_check: the exception to check. may be a tuple of exceptions to check
         tries: number of times to try (not retry) before giving up
         delay: initial delay between retries in seconds
@@ -32,7 +31,7 @@ def retry(
                     return f(*args, **kwargs)
                 except exception_to_check as e:
                     msg = f"{e:s}, Retrying in {mdelay:d} seconds..."
-                    LOG.warning(msg)
+                    _LOG.warning(msg)
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff

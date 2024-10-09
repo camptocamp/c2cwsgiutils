@@ -7,8 +7,8 @@ import pyramid.config
 
 from c2cwsgiutils import config_utils, prometheus
 
-LOG = logging.getLogger(__name__)
-ORIG: Optional[Callable[..., Any]] = None
+_LOG = logging.getLogger(__name__)
+_ORIG: Optional[Callable[..., Any]] = None
 
 _PROMETHEUS_REDIS_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("redis"),
@@ -19,9 +19,9 @@ _PROMETHEUS_REDIS_SUMMARY = prometheus_client.Summary(
 
 
 def _execute_command_patch(self: Any, command: str, *args: Any, **options: Any) -> Any:
-    assert ORIG is not None
+    assert _ORIG is not None
     with _PROMETHEUS_REDIS_SUMMARY.labels(command=command).time():
-        return ORIG(self, command, *args, **options)
+        return _ORIG(self, command, *args, **options)
 
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
@@ -32,15 +32,15 @@ def init(config: Optional[pyramid.config.Configurator] = None) -> None:
 
 def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the Redis tracking."""
-    global ORIG
+    global _ORIG  # pylint: disable=global-statement
     if config_utils.env_or_config(
         config, "C2C_TRACK_REDIS", "c2c.track_redis", True, config_utils.config_bool
     ):
         try:
-            import redis.client
+            import redis.client  # pylint: disable=import-outside-toplevel
 
-            ORIG = redis.client.Redis.execute_command
+            _ORIG = redis.client.Redis.execute_command
             redis.client.Redis.execute_command = _execute_command_patch  # type: ignore
-            LOG.info("Enabled the redis tracking")
+            _LOG.info("Enabled the redis tracking")
         except Exception:  # pragma: nocover  # pylint: disable=broad-except
-            LOG.warning("Cannot enable redis tracking", exc_info=True)
+            _LOG.warning("Cannot enable redis tracking", exc_info=True)

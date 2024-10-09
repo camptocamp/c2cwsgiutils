@@ -1,7 +1,9 @@
 inherits:
+  - utils:base
+  - utils:no-design-checks
+  - utils:fix
   - duplicated
-strictness: veryhigh
-max-line-length: 110
+
 doc-warnings: true
 
 ignore-paths:
@@ -15,56 +17,23 @@ pylint:
       - ujson
       - lxml
   disable:
-    - too-many-return-statements
-    - too-many-arguments
-    - too-many-branches
-    - too-many-instance-attributes
-    - too-few-public-methods
-    - global-statement
-    - line-too-long
-    - import-outside-toplevel
-    - invalid-name
     - no-else-return
     - no-else-raise
-    - no-self-use
-    - import-error
-    - unused-argument
-    - use-symbolic-message-instead
     - missing-module-docstring
-    - missing-function-docstring
     - missing-timeout # A default timeout is set
-
-pycodestyle:
-  options:
-    max-line-length: 110
-  disable:
-    - E722 # do not use bare 'except', duplicated with pylint
-    - E261 # at least two spaces before inline comment, duplicated with black
 
 pydocstyle:
   disable:
-    - D102 # Missing docstring in public method
     - D104 # Missing docstring in public package
     - D105 # Missing docstring in magic method
     - D107 # Missing docstring in __init__
-    - D202 # No blank lines allowed after function docstring (found 1)
-    - D203 # 1 blank line required before class docstring (found 0)
-    - D212 # Multi-line docstring summary should start at the first line
-    - D407 # Missing dashed underline after section ('Arguments')
-    - D412 # No blank lines allowed between a section header and its content ('Arguments')
-mypy:
-  run: true
+
+pycodestyle:
+  disable:
+    # Buggy checks with Python 3.12
+    - E221 # multiple spaces before operator
+    - E702 # multiple statements on one line (semicolon)
 
 bandit:
-  run: true
   options:
     config: .bandit.yaml
-
-pyroma:
-  run: true
-
-mccabe:
-  run: false
-
-dodgy:
-  run: false

@@ -98,7 +98,7 @@ ENV C2C_BASE_PATH=/c2c \
   SENTRY_CLIENT_RELEASE=latest \
   SENTRY_TAG_SERVICE=app
 
-CMD ["/usr/local/bin/gunicorn"]
+CMD ["/venv/bin/gunicorn"]
 
 COPY production.ini /app/
 

@@ -8,9 +8,9 @@ import sys
 import warnings
 from typing import Optional, cast
 
-SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
-VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")
-LOG = logging.getLogger(__name__)
+_SRC_VERSION_RE = re.compile(r"^.*\(([^=]*)===?([^=]*)\)$")
+_VERSION_RE = re.compile(r"^([^=]*)==([^=]*)$")
+_LOG = logging.getLogger(__name__)
 
 
 def _get_package_version(comp: str) -> tuple[Optional[str], Optional[str]]:
@@ -19,8 +19,8 @@ def _get_package_version(comp: str) -> tuple[Optional[str], Optional[str]]:
 
     See test_genversion.py for examples.
     """
-    src_matcher = SRC_VERSION_RE.match(comp)
-    matcher = src_matcher or VERSION_RE.match(comp)
+    src_matcher = _SRC_VERSION_RE.match(comp)
+    matcher = src_matcher or _VERSION_RE.match(comp)
     if matcher:
         return cast(tuple[str, str], matcher.groups())
     else:

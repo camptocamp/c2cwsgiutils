@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from c2cwsgiutils import prometheus
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 _PROMETHEUS_DB_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("database"),
@@ -71,7 +71,7 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
 
     def after(*_args: Any, **_kwargs: Any) -> None:
         _PROMETHEUS_DB_SUMMARY.labels({"query": what}).observe(time.perf_counter() - start)
-        LOG.debug("Execute statement '%s' in %d.", what, time.perf_counter() - start)
+        _LOG.debug("Execute statement '%s' in %d.", what, time.perf_counter() - start)
 
     return after
 

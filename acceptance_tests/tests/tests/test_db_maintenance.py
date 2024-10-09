@@ -3,7 +3,7 @@ import time
 
 import pytest
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def _query(app_connection, params, expected=None):

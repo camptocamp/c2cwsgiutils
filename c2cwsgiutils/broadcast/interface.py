@@ -8,14 +8,14 @@ class BaseBroadcaster:
 
     @abstractmethod
     def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:
-        pass  # pragma: no cover
+        """Subscribe to a channel."""
 
     @abstractmethod
     def unsubscribe(self, channel: str) -> None:
-        pass  # pragma: no cover
+        """Unsubscribe from a channel."""
 
     @abstractmethod
     def broadcast(
         self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
     ) -> Optional[list[Any]]:
-        pass  # pragma: no cover
+        """Broadcast a message to a channel."""

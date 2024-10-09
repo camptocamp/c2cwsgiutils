@@ -11,10 +11,9 @@ import pyramid.request
 
 from c2cwsgiutils import auth
 
-ENV_KEY = "C2C_SQL_PROFILER_ENABLED"
-CONFIG_KEY = "c2c.sql_profiler_enabled"
-LOG = logging.getLogger(__name__)
-repository = None
+_ENV_KEY = "C2C_SQL_PROFILER_ENABLED"
+_CONFIG_KEY = "c2c.sql_profiler_enabled"
+_LOG = logging.getLogger(__name__)
 
 
 def init(config: pyramid.config.Configurator) -> None:
@@ -25,7 +24,7 @@ def init(config: pyramid.config.Configurator) -> None:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Install a pyramid  event handler that adds the request information."""
-    if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
-        from . import _impl
+    if auth.is_enabled(config, _ENV_KEY, _CONFIG_KEY):
+        from . import _impl  # pylint: disable=import-outside-toplevel
 
         _impl.init(config)

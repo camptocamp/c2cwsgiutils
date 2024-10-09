@@ -5,7 +5,7 @@ import re
 import warnings
 from collections.abc import Iterable
 from re import Pattern
-from typing import TYPE_CHECKING, Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast
 
 import pyramid.config
 import pyramid.config.settings
@@ -17,18 +17,14 @@ import zope.sqlalchemy
 from sqlalchemy import engine_from_config
 from zope.sqlalchemy import register
 
-if TYPE_CHECKING:
-    scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
-    sessionmaker = sqlalchemy.orm.sessionmaker[sqlalchemy.orm.Session]
-else:
-    scoped_session = sqlalchemy.orm.scoped_session
-    sessionmaker = sqlalchemy.orm.sessionmaker
+_scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
+_sessionmaker = sqlalchemy.orm.sessionmaker[sqlalchemy.orm.Session]  # pylint: disable=unsubscriptable-object
 
 
-LOG = logging.getLogger(__name__)
-RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
+_LOG = logging.getLogger(__name__)
+_RE_COMPILE: Callable[[str], Pattern[str]] = re.compile
 
-force_readonly = False
+FORCE_READONLY = False
 
 
 class Tweens:
@@ -45,7 +41,7 @@ def setup_session(
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
 ) -> tuple[
-    Union[sqlalchemy.orm.Session, scoped_session],
+    Union[sqlalchemy.orm.Session, _scoped_session],
     sqlalchemy.engine.Engine,
     sqlalchemy.engine.Engine,
 ]:
@@ -60,8 +56,7 @@ def setup_session(
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
 
-    Keyword Arguments:
-
+    Arguments:
         config: The pyramid Configuration object
         master_prefix: The prefix for the master connection configuration entries in the application \
                           settings
@@ -84,7 +79,7 @@ def setup_session(
 
     # Setup a slave DB connection and add a tween to use it.
     if settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
-        LOG.info("Using a slave DB for reading %s", master_prefix)
+        _LOG.info("Using a slave DB for reading %s", master_prefix)
         ro_engine = sqlalchemy.engine_from_config(config.get_settings(), slave_prefix + ".")
         ro_engine.c2c_name = slave_prefix  # type: ignore
         tween_name = master_prefix.replace(".", "_")
@@ -105,7 +100,7 @@ def create_session(
     force_master: Optional[Iterable[str]] = None,
     force_slave: Optional[Iterable[str]] = None,
     **engine_config: Any,
-) -> Union[sqlalchemy.orm.Session, scoped_session]:
+) -> Union[sqlalchemy.orm.Session, _scoped_session]:
     """
     Create a SQLAlchemy session.
 
@@ -117,8 +112,7 @@ def create_session(
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
 
-    Keyword Arguments:
-
+    Arguments:
         config: The pyramid Configuration object. If None, only master is used
         name: The name of the check
         url: The URL for the master DB
@@ -140,7 +134,7 @@ def create_session(
 
     # Setup a slave DB connection and add a tween to use it.
     if url != slave_url and config is not None:
-        LOG.info("Using a slave DB for reading %s", name)
+        _LOG.info("Using a slave DB for reading %s", name)
         ro_engine = sqlalchemy.create_engine(slave_url, **engine_config)
         _add_tween(config, name, db_session, force_master, force_slave)
         rw_engine.c2c_name = name + "_master"  # type: ignore
@@ -157,15 +151,15 @@ def create_session(
 def _add_tween(
     config: pyramid.config.Configurator,
     name: str,
-    db_session: scoped_session,
+    db_session: _scoped_session,
     force_master: Optional[Iterable[str]],
     force_slave: Optional[Iterable[str]],
 ) -> None:
     master_paths: Iterable[Pattern[str]] = (
-        list(map(RE_COMPILE, force_master)) if force_master is not None else []
+        list(map(_RE_COMPILE, force_master)) if force_master is not None else []
     )
     slave_paths: Iterable[Pattern[str]] = (
-        list(map(RE_COMPILE, force_slave)) if force_slave is not None else []
+        list(map(_RE_COMPILE, force_slave)) if force_slave is not None else []
     )
 
     def db_chooser_tween_factory(
@@ -182,18 +176,18 @@ def _add_tween(
             old = session.bind
             method_path: Any = f"{request.method} {request.path}"
             has_force_master = any(r.match(method_path) for r in master_paths)
-            if force_readonly or (
+            if FORCE_READONLY or (
                 not has_force_master
                 and (request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths))
             ):
-                LOG.debug(
+                _LOG.debug(
                     "Using %s database for: %s",
                     db_session.c2c_ro_bind.c2c_name,  # type: ignore
                     method_path,
                 )
                 session.bind = db_session.c2c_ro_bind  # type: ignore
             else:
-                LOG.debug(
+                _LOG.debug(
                     "Using %s database for: %s",
                     db_session.c2c_rw_bind.c2c_name,  # type: ignore
                     method_path,
@@ -211,7 +205,7 @@ def _add_tween(
     config.add_tween("c2cwsgiutils.db.tweens." + name, over="pyramid_tm.tm_tween_factory")
 
 
-class SessionFactory(sessionmaker):
+class SessionFactory(_sessionmaker):
     """The custom session factory that manage the read only and read write sessions."""
 
     def __init__(
@@ -223,42 +217,43 @@ class SessionFactory(sessionmaker):
     ):
         super().__init__()
         self.master_paths: Iterable[Pattern[str]] = (
-            list(map(RE_COMPILE, force_master)) if force_master else []
+            list(map(_RE_COMPILE, force_master)) if force_master else []
         )
-        self.slave_paths: Iterable[Pattern[str]] = list(map(RE_COMPILE, force_slave)) if force_slave else []
+        self.slave_paths: Iterable[Pattern[str]] = list(map(_RE_COMPILE, force_slave)) if force_slave else []
         self.ro_engine = ro_engine
         self.rw_engine = rw_engine
 
     def engine_name(self, readwrite: bool) -> str:
+        """Get the engine name."""
         if readwrite:
             return cast(str, self.rw_engine.c2c_name)  # type: ignore
         return cast(str, self.ro_engine.c2c_name)  # type: ignore
 
     def __call__(  # type: ignore
         self, request: Optional[pyramid.request.Request], readwrite: Optional[bool] = None, **local_kw: Any
-    ) -> scoped_session:
+    ) -> _scoped_session:
         if readwrite is not None:
-            if readwrite and not force_readonly:
-                LOG.debug("Using %s database", self.rw_engine.c2c_name)  # type: ignore
+            if readwrite and not FORCE_READONLY:
+                _LOG.debug("Using %s database", self.rw_engine.c2c_name)  # type: ignore
                 self.configure(bind=self.rw_engine)
             else:
-                LOG.debug("Using %s database", self.ro_engine.c2c_name)  # type: ignore
+                _LOG.debug("Using %s database", self.ro_engine.c2c_name)  # type: ignore
                 self.configure(bind=self.ro_engine)
         else:
             assert request is not None
             method_path: str = f"{request.method} {request.path}" if request is not None else ""
             has_force_master = any(r.match(method_path) for r in self.master_paths)
-            if force_readonly or (
+            if FORCE_READONLY or (
                 not has_force_master
                 and (
                     request.method in ("GET", "OPTIONS")
                     or any(r.match(method_path) for r in self.slave_paths)
                 )
             ):
-                LOG.debug("Using %s database for: %s", self.ro_engine.c2c_name, method_path)  # type: ignore
+                _LOG.debug("Using %s database for: %s", self.ro_engine.c2c_name, method_path)  # type: ignore
                 self.configure(bind=self.ro_engine)
             else:
-                LOG.debug("Using %s database for: %s", self.rw_engine.c2c_name, method_path)  # type: ignore
+                _LOG.debug("Using %s database for: %s", self.rw_engine.c2c_name, method_path)  # type: ignore
                 self.configure(bind=self.rw_engine)
         return super().__call__(**local_kw)  # type: ignore
 
@@ -272,15 +267,15 @@ def get_engine(
 
 def get_session_factory(
     engine: sqlalchemy.engine.Engine,
-) -> sessionmaker:
+) -> _sessionmaker:
     """Get the session factory from the engine."""
-    factory = sessionmaker()
+    factory = _sessionmaker()
     factory.configure(bind=engine)
     return factory
 
 
 def get_tm_session(
-    session_factory: sessionmaker,
+    session_factory: _sessionmaker,
     transaction_manager: transaction.TransactionManager,
 ) -> sqlalchemy.orm.Session:
     """
@@ -348,7 +343,7 @@ def get_tm_session_pyramid(
     session_factory: SessionFactory,
     transaction_manager: transaction.TransactionManager,
     request: pyramid.request.Request,
-) -> scoped_session:
+) -> _scoped_session:
     """
     Get a ``sqlalchemy.orm.Session`` instance backed by a transaction.
 
@@ -369,8 +364,7 @@ def init(
     """
     Initialize the database for a Pyramid app.
 
-    Keyword Arguments:
-
+    Arguments:
         config: The pyramid Configuration object
         master_prefix: The prefix for the master connection configuration entries in the application \
                           settings
@@ -392,7 +386,7 @@ def init(
 
         # Setup a slave DB connection and add a tween to use it.
         if slave_prefix and settings[master_prefix + ".url"] != settings.get(slave_prefix + ".url"):
-            LOG.info("Using a slave DB for reading %s", master_prefix)
+            _LOG.info("Using a slave DB for reading %s", master_prefix)
             ro_engine = get_engine(config.get_settings(), slave_prefix + ".")
             ro_engine.c2c_name = slave_prefix  # type: ignore
         else:

@@ -42,12 +42,12 @@ from c2cwsgiutils.auth import (
 )
 from c2cwsgiutils.config_utils import env_or_settings
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
-additional_title: Optional[str] = None
-additional_noauth: list[str] = []
-additional_auth: list[str] = []
-ELEM_ID = 0
+_additional_title: Optional[str] = None
+_additional_noauth: list[str] = []
+_additional_auth: list[str] = []
+_ELEM_ID = 0
 
 
 def _url(
@@ -113,9 +113,9 @@ def input_(
     name: str, label: Optional[str] = None, type_: Optional[str] = None, value: Union[str, int] = ""
 ) -> str:
     """Get an HTML input."""
-    global ELEM_ID
-    id_ = ELEM_ID
-    ELEM_ID += 1
+    global _ELEM_ID  # pylint: disable=global-statement
+    id_ = _ELEM_ID
+    _ELEM_ID += 1
 
     if label is None and type_ != "hidden":
         label = name.replace("_", " ").capitalize()
@@ -138,7 +138,6 @@ def input_(
 
 def button(label: str) -> str:
     """Get en HTML button."""
-
     return f'<button class="btn btn-primary" type="submit">{label}</button>'
 
 
@@ -160,15 +159,15 @@ def _index(request: pyramid.request.Request) -> dict[str, str]:
         body += _logging(request)
         body += _profiler(request)
 
-    if additional_title is not None and (has_access or additional_noauth):
-        body += additional_title
+    if _additional_title is not None and (has_access or _additional_noauth):
+        body += _additional_title
         body += "\n"
 
     if has_access:
-        body += "\n".join(additional_auth)
+        body += "\n".join(_additional_auth)
         body += "\n"
 
-    body += "\n".join(additional_noauth)
+    body += "\n".join(_additional_noauth)
 
     settings = request.registry.settings
     auth_type_ = auth_type(settings)
@@ -346,7 +345,6 @@ def _health_check(request: pyramid.request.Request) -> str:
 
 def _github_login(request: pyramid.request.Request) -> dict[str, Any]:
     """Get the view that start the authentication on GitHub."""
-
     settings = request.registry.settings
     params = dict(request.params)
     callback_url = _url(
@@ -500,7 +498,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
         settings = config.get_settings()
         auth_type_ = auth_type(settings)
         if auth_type_ == AuthenticationType.SECRET:
-            LOG.warning(
+            _LOG.warning(
                 "It is recommended to use OAuth2 with GitHub login instead of the `C2C_SECRET` because it "
                 "protects from brute force attacks and the access grant is personal and can be revoked."
             )

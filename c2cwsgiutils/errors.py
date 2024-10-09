@@ -14,14 +14,12 @@ from webob.request import DisconnectionError
 
 from c2cwsgiutils import auth, config_utils
 
-DEVELOPMENT = os.environ.get("DEVELOPMENT", "0") != "0"
-DEPRECATED_CONFIG_KEY = "c2c.error_details_secret"
-DEPRECATED_ENV_KEY = "ERROR_DETAILS_SECRET"
+_DEVELOPMENT = os.environ.get("DEVELOPMENT", "0") != "0"
 
-LOG = logging.getLogger(__name__)
-STATUS_LOGGER = {
-    401: LOG.debug,
-    500: LOG.error,
+_LOG = logging.getLogger(__name__)
+_STATUS_LOGGER = {
+    401: _LOG.debug,
+    500: _LOG.error,
     # The rest are warnings
 }
 
@@ -53,7 +51,7 @@ def _do_error(
     request: pyramid.request.Request,
     status: int,
     exception: Exception,
-    logger: Callable[..., None] = LOG.error,
+    logger: Callable[..., None] = _LOG.error,
     reduce_info_sent: Callable[[Exception], None] = lambda e: None,
 ) -> pyramid.response.Response:
     logger(
@@ -82,7 +80,7 @@ def _do_error(
 
 def _http_error(exception: HTTPException, request: pyramid.request.Request) -> Any:
     if request.method != "OPTIONS":
-        log = STATUS_LOGGER.get(exception.status_code, LOG.warning)
+        log = _STATUS_LOGGER.get(exception.status_code, _LOG.warning)
         log(
             "%s %s returned status code %s: %s",
             request.method,
@@ -102,7 +100,7 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
 
 
 def _include_dev_details(request: pyramid.request.Request) -> bool:
-    return DEVELOPMENT or auth.is_auth(request)
+    return _DEVELOPMENT or auth.is_auth(request)
 
 
 def _integrity_error(
@@ -121,7 +119,7 @@ def _client_interrupted_error(
     exception: Exception, request: pyramid.request.Request
 ) -> pyramid.response.Response:
     # No need to cry wolf if it's just the client that interrupted the connection
-    return _do_error(request, 500, exception, logger=LOG.info)
+    return _do_error(request, 500, exception, logger=_LOG.info)
 
 
 def _boto_client_error(exception: Any, request: pyramid.request.Request) -> pyramid.response.Response:
@@ -132,7 +130,7 @@ def _boto_client_error(exception: Any, request: pyramid.request.Request) -> pyra
         status_code = exception.response["ResponseMetadata"]["HTTPStatusCode"]
     else:
         status_code = int(exception.response["Error"]["Code"])
-    log = STATUS_LOGGER.get(status_code, LOG.warning)
+    log = _STATUS_LOGGER.get(status_code, _LOG.warning)
     return _do_error(request, status_code, exception, logger=log)
 
 
@@ -143,7 +141,7 @@ def _other_error(exception: Exception, request: pyramid.request.Request) -> pyra
     status = 500
     if exception_class == "beaker.exceptions.BeakerException" and str(exception) == "Invalid signature":
         status = 401
-    LOG.debug("Actual exception: %s.%s", exception.__class__.__module__, exception.__class__.__name__)
+    _LOG.debug("Actual exception: %s.%s", exception.__class__.__module__, exception.__class__.__name__)
     return _do_error(request, status, exception)
 
 
@@ -179,4 +177,4 @@ def includeme(config: pyramid.config.Configurator) -> None:
             config.add_view(view=_client_interrupted_error, context=exception, **common_options)
 
         config.add_view(view=_other_error, context=Exception, **common_options)
-        LOG.info("Installed the error catching views")
+        _LOG.info("Installed the error catching views")

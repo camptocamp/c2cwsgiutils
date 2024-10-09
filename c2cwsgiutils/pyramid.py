@@ -30,7 +30,6 @@ def includeme(config: pyramid.config.Configurator) -> None:
     Initialize all the pyramid services and event handlers provided by this library.
 
     Arguments:
-
         config: The pyramid Configuration
     """
     logging.captureWarnings(True)

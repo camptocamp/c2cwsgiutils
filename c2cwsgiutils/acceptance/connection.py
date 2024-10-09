@@ -82,8 +82,7 @@ class Connection:
         **kwargs: Any,
     ) -> Any:
         """Get the given URL (relative to the root of API)."""
-
-        from lxml import etree  # nosec
+        from lxml import etree  # nosec # pylint: disable=import-outside-toplevel
 
         with self.session.get(
             self.base_url + url,

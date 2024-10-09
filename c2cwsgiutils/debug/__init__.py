@@ -23,7 +23,7 @@ def init(config: pyramid.config.Configurator) -> None:
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the debug tools."""
     if auth.is_enabled(config, ENV_KEY, CONFIG_KEY):
-        from c2cwsgiutils.debug import _views
+        from c2cwsgiutils.debug import _views  # pylint: disable=import-outside-toplevel
 
         init_daemon(config)
         _views.init(config)
@@ -37,6 +37,6 @@ def init_daemon(config: Optional[pyramid.config.Configurator] = None) -> None:
     those requests.
     """
     if config_utils.env_or_config(config, ENV_KEY, CONFIG_KEY, type_=config_utils.config_bool):
-        from c2cwsgiutils.debug import _listeners
+        from c2cwsgiutils.debug import _listeners  # pylint: disable=import-outside-toplevel
 
         _listeners.init()

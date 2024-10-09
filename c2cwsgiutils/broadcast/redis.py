@@ -11,7 +11,7 @@ import redis
 
 from c2cwsgiutils.broadcast import interface, local, utils
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class RedisBroadcaster(interface.BaseBroadcaster):
@@ -23,7 +23,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         master: "redis.client.Redis[str]",
         slave: "redis.client.Redis[str]",
     ) -> None:
-        from c2cwsgiutils import redis_utils
+        from c2cwsgiutils import redis_utils  # pylint: disable=import-outside-toplevel
 
         self._master = master
         self._slave = slave
@@ -41,24 +41,24 @@ class RedisBroadcaster(interface.BaseBroadcaster):
 
     def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:
         def wrapper(message: Mapping[str, Any]) -> None:
-            LOG.debug("Received a broadcast on %s: %s", message["channel"], repr(message["data"]))
+            _LOG.debug("Received a broadcast on %s: %s", message["channel"], repr(message["data"]))
             data = json.loads(message["data"])
             try:
                 response = callback(**data["params"])
             except Exception as e:  # pragma: no cover  # pylint: disable=broad-except
-                LOG.error("Failed handling a broadcast message", exc_info=True)
+                _LOG.error("Failed handling a broadcast message", exc_info=True)
                 response = {"status": 500, "message": str(e)}
             answer_channel = data.get("answer_channel")
             if answer_channel is not None:
-                LOG.debug("Sending broadcast answer on %s", answer_channel)
+                _LOG.debug("Sending broadcast answer on %s", answer_channel)
                 self._master.publish(answer_channel, json.dumps(utils.add_host_info(response)))
 
         actual_channel = self._get_channel(channel)
-        LOG.debug("Subscribing %s.%s to %s", callback.__module__, callback.__name__, actual_channel)
+        _LOG.debug("Subscribing %s.%s to %s", callback.__module__, callback.__name__, actual_channel)
         self._pub_sub.subscribe(**{actual_channel: wrapper})
 
     def unsubscribe(self, channel: str) -> None:
-        LOG.debug("Unsubscribing from %s")
+        _LOG.debug("Unsubscribing from %s")
         actual_channel = self._get_channel(channel)
         self._pub_sub.unsubscribe(actual_channel)
 
@@ -79,7 +79,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         assert self._thread.is_alive()
 
         def callback(msg: Mapping[str, Any]) -> None:
-            LOG.debug("Received a broadcast answer on %s", msg["channel"])
+            _LOG.debug("Received a broadcast answer on %s", msg["channel"])
             with cond:
                 answers.append(json.loads(msg["data"]))
                 cond.notify()
@@ -87,7 +87,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         answer_channel = self._get_channel(channel) + "".join(
             random.choice(string.ascii_uppercase + string.digits) for _ in range(10)  # nosec
         )
-        LOG.debug("Subscribing for broadcast answers on %s", answer_channel)
+        _LOG.debug("Subscribing for broadcast answers on %s", answer_channel)
         self._pub_sub.subscribe(**{answer_channel: callback})
         message = {"params": params, "answer_channel": answer_channel}
 
@@ -99,7 +99,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 while len(answers) < nb_received:
                     to_wait = timeout_time - time.perf_counter()
                     if to_wait <= 0.0:  # pragma: no cover
-                        LOG.warning(
+                        _LOG.warning(
                             "timeout waiting for %d/%d answers on %s",
                             len(answers),
                             nb_received,
@@ -115,11 +115,12 @@ class RedisBroadcaster(interface.BaseBroadcaster):
 
     def _broadcast(self, channel: str, message: Mapping[str, Any]) -> int:
         actual_channel = self._get_channel(channel)
-        LOG.debug("Sending a broadcast on %s", actual_channel)
+        _LOG.debug("Sending a broadcast on %s", actual_channel)
         nb_received = self._master.publish(actual_channel, json.dumps(message))
-        LOG.debug("Broadcast on %s sent to %d listeners", actual_channel, nb_received)
+        _LOG.debug("Broadcast on %s sent to %d listeners", actual_channel, nb_received)
         return nb_received
 
     def copy_local_subscriptions(self, prev_broadcaster: local.LocalBroadcaster) -> None:
+        """Copy the subscriptions from a local broadcaster."""
         for channel, callback in prev_broadcaster.get_subscribers().items():
             self.subscribe(channel, callback)

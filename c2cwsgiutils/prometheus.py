@@ -24,7 +24,6 @@ MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS = [
 
 def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> None:
     """Start separate HTTP server to provide the Prometheus metrics."""
-
     if os.environ.get("C2C_PROMETHEUS_PORT") is not None:
         broadcast.includeme()
 
@@ -38,20 +37,18 @@ def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> Non
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize prometheus_client in pyramid context."""
-
+    del config  # unused
     broadcast.subscribe("c2cwsgiutils_prometheus_collector_gc", _broadcast_collector_gc)
     broadcast.subscribe("c2cwsgiutils_prometheus_collector_process", _broadcast_collector_process)
 
 
 def build_metric_name(postfix: str) -> str:
     """Build the metric name with the prefix from the environment variable."""
-
     return os.environ.get("C2C_PROMETHEUS_PREFIX", "c2cwsgiutils_") + postfix
 
 
 def cleanup() -> None:
     """Cleanup the prometheus_client registry."""
-
     redis_utils.cleanup()
     broadcast.cleanup()
 
@@ -74,7 +71,6 @@ class SerializedMetric(TypedDict):
 
 def _broadcast_collector_gc() -> list[SerializedMetric]:
     """Get the collected GC gauges."""
-
     return serialize_collected_data(prometheus_client.GC_COLLECTOR)
 
 
@@ -85,7 +81,6 @@ def _broadcast_collector_process() -> list[SerializedMetric]:
 
 def serialize_collected_data(collector: prometheus_client.registry.Collector) -> list[SerializedMetric]:
     """Serialize the data from the custom collector."""
-
     gauges: list[SerializedMetric] = []
     for process_gauge in collector.collect():
         gauge: SerializedMetric = {
@@ -162,7 +157,6 @@ class MemoryMapCollector(prometheus_client.registry.Collector):
         Initialize.
 
         Arguments:
-
             memory_type: can be rss, pss or size
             pids: the list of pids or none
         """

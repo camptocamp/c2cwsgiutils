@@ -5,7 +5,7 @@ from typing import Optional
 
 import pyramid.config
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def init() -> None:
@@ -16,11 +16,12 @@ def init() -> None:
 
 def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the code coverage."""
+    del config  # unused
     if os.environ.get("COVERAGE", "0") != "1":
         return
-    import coverage
+    import coverage  # pylint: disable=import-outside-toplevel
 
-    LOG.warning("Setting up code coverage")
+    _LOG.warning("Setting up code coverage")
     report_dir = "/tmp/coverage/api"  # nosec
     os.makedirs(report_dir, exist_ok=True)
     cov = coverage.Coverage(

@@ -8,18 +8,18 @@ from types import FunctionType, ModuleType
 from typing import Any
 
 # 7ff7d33bd000-7ff7d33be000 r--p 00000000 00:65 49                         /usr/lib/toto.so
-SMAPS_LOCATION_RE = re.compile(r"^[0-9a-f]+-[0-9a-f]+ +.... +[0-9a-f]+ +[^ ]+ +\d+ +(.*)$")
+_SMAPS_LOCATION_RE = re.compile(r"^[0-9a-f]+-[0-9a-f]+ +.... +[0-9a-f]+ +[^ ]+ +\d+ +(.*)$")
 
 # Size:                  4 kB
-SMAPS_ENTRY_RE = re.compile(r"^([\w]+): +(\d+) kB$")
+_SMAPS_ENTRY_RE = re.compile(r"^([\w]+): +(\d+) kB$")
 
-BLACKLIST = type, ModuleType, FunctionType
-LOG = logging.getLogger(__name__)
+_BLACKLIST = type, ModuleType, FunctionType
+_LOG = logging.getLogger(__name__)
 
 
 def get_size(obj: Any) -> int:
     """Get the sum size of object & members."""
-    if isinstance(obj, BLACKLIST):
+    if isinstance(obj, _BLACKLIST):
         return 0
     seen_ids: set[int] = set()
     size = 0
@@ -27,7 +27,7 @@ def get_size(obj: Any) -> int:
     while objects:
         need_referents = []
         for obj_ in objects:
-            if not isinstance(obj_, BLACKLIST) and id(obj_) not in seen_ids:
+            if not isinstance(obj_, _BLACKLIST) and id(obj_) not in seen_ids:
                 seen_ids.add(id(obj_))
                 size += sys.getsizeof(obj_)
                 need_referents.append(obj_)
@@ -45,11 +45,11 @@ def dump_memory_maps(pid: str = "self") -> list[dict[str, Any]]:
         sizes: dict[str, Any] = {}
         for line in input_:
             line = line.rstrip("\n")
-            matcher = SMAPS_LOCATION_RE.match(line)
+            matcher = _SMAPS_LOCATION_RE.match(line)
             if matcher:
                 cur_dict = sizes.setdefault(matcher.group(1), defaultdict(int))
             else:
-                matcher = SMAPS_ENTRY_RE.match(line)
+                matcher = _SMAPS_ENTRY_RE.match(line)
                 if matcher:
                     name = matcher.group(1)
                     if name in ("Size", "Rss", "Pss"):
@@ -59,5 +59,5 @@ def dump_memory_maps(pid: str = "self") -> list[dict[str, Any]]:
                     and not line.startswith("ProtectionKey:")
                     and not line.startswith("THPeligible:")
                 ):
-                    LOG.debug("Don't know how to parse /proc/%s/smaps line: %s", pid, line)
+                    _LOG.debug("Don't know how to parse /proc/%s/smaps line: %s", pid, line)
         return [{"name": name, **value} for name, value in sizes.items() if value.get("pss_kb", 0) > 0]

@@ -90,7 +90,7 @@ def _dump_memory_impl(
                 for i in sorted(mod_counts.items(), key=lambda x: -x[1])[:limit]
             ]
         elif analyze_type == "linecache":
-            import linecache
+            import linecache  # pylint: disable=import-outside-toplevel
 
             cache = linecache.cache
             result[analyze_type]["biggest_objects"] = sorted(

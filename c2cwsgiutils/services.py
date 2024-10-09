@@ -5,7 +5,7 @@ from cornice import Service
 from pyramid.request import Request
 from pyramid.response import Response
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def create(name: str, path: str, *args: Any, **kwargs: Any) -> Service:
@@ -31,6 +31,6 @@ def _cache_cors(response: Response, request: Request) -> Response:
     except Exception:
         # cornice catches exceptions from filters, and tries call back the filter with only the request.
         # This leads to a useless message in case of error...
-        LOG.error("Failed fixing cache headers for CORS", exc_info=True)
+        _LOG.error("Failed fixing cache headers for CORS", exc_info=True)
         raise
     return response

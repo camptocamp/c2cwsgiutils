@@ -52,7 +52,6 @@ class _View:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view."""
-
     if os.path.isfile(_VERSIONS_PATH):
         versions = _read_versions()
         config.add_route(

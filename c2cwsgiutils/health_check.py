@@ -16,7 +16,7 @@ import traceback
 from collections.abc import Mapping
 from enum import Enum
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, Union, cast
+from typing import Any, Callable, Literal, Optional, Union, cast
 
 import prometheus_client
 import pyramid.config
@@ -30,13 +30,10 @@ from pyramid.httpexceptions import HTTPNotFound
 import c2cwsgiutils.db
 from c2cwsgiutils import auth, broadcast, config_utils, prometheus, redis_utils, version
 
-if TYPE_CHECKING:
-    scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
-else:
-    scoped_session = sqlalchemy.orm.scoped_session
+_scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
 
-LOG = logging.getLogger(__name__)
-ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
+_LOG = logging.getLogger(__name__)
+_ALEMBIC_HEAD_RE = re.compile(r"^([a-f0-9]+) \(head\)\n$")
 
 _PROMETHEUS_DB_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("health_check_db"),
@@ -78,14 +75,16 @@ class JsonCheckException(Exception):
         return self.message
 
     def json_data(self) -> Any:
+        """Return the JSON data to be returned in the response."""
         return self.json
 
 
 class _Binding:
     def name(self) -> str:
+        """Return the name of the binding."""
         raise NotImplementedError()
 
-    def __enter__(self) -> scoped_session:
+    def __enter__(self) -> _scoped_session:
         raise NotImplementedError()
 
     def __exit__(
@@ -105,12 +104,12 @@ class _NewBinding(_Binding):
     def name(self) -> str:
         return self.session.engine_name(self.readwrite)
 
-    def __enter__(self) -> scoped_session:
+    def __enter__(self) -> _scoped_session:
         return self.session(None, self.readwrite)
 
 
 class _OldBinding(_Binding):
-    def __init__(self, session: scoped_session, engine: sqlalchemy.engine.Engine):
+    def __init__(self, session: _scoped_session, engine: sqlalchemy.engine.Engine):
         self.session = session
         self.engine = engine
         self.prev_bind = None
@@ -118,7 +117,7 @@ class _OldBinding(_Binding):
     def name(self) -> str:
         return cast(str, self.engine.c2c_name)  # type: ignore
 
-    def __enter__(self) -> scoped_session:
+    def __enter__(self) -> _scoped_session:
         self.prev_bind = self.session.bind  # type: ignore
         self.session.bind = self.engine
         return self.session
@@ -134,7 +133,7 @@ class _OldBinding(_Binding):
 
 
 def _get_binding_class(
-    session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
+    session: Union[_scoped_session, c2cwsgiutils.db.SessionFactory],
     ro_engin: sqlalchemy.engine.Engine,
     rw_engin: sqlalchemy.engine.Engine,
     readwrite: bool,
@@ -146,7 +145,7 @@ def _get_binding_class(
 
 
 def _get_bindings(
-    session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
+    session: Union[_scoped_session, c2cwsgiutils.db.SessionFactory],
     engine_type: EngineType,
 ) -> list[_Binding]:
     if isinstance(session, c2cwsgiutils.db.SessionFactory):
@@ -184,7 +183,7 @@ def _get_alembic_version(alembic_ini_path: str, name: str) -> str:
     out = subprocess.check_output(  # nosec
         ["alembic", "--config", alembic_ini_path, "--name", name, "heads"], cwd=dirname, env=env
     ).decode("utf-8")
-    out_match = ALEMBIC_HEAD_RE.match(out)
+    out_match = _ALEMBIC_HEAD_RE.match(out)
     if not out_match:
         raise Exception(  # pylint: disable=broad-exception-raised
             "Cannot get the alembic HEAD version from: " + out
@@ -219,8 +218,8 @@ class HealthCheck:
 
     def add_db_session_check(
         self,
-        session: Union[scoped_session, c2cwsgiutils.db.SessionFactory],
-        query_cb: Optional[Callable[[scoped_session], Any]] = None,
+        session: Union[_scoped_session, c2cwsgiutils.db.SessionFactory],
+        query_cb: Optional[Callable[[_scoped_session], Any]] = None,
         at_least_one_model: Optional[object] = None,
         level: int = 1,
         engine_type: EngineType = EngineType.READ_AND_WRITE,
@@ -229,7 +228,6 @@ class HealthCheck:
         Check a DB session is working. You can specify either query_cb or at_least_one_model.
 
         Arguments:
-
             session: a DB session created by c2cwsgiutils.db.init()
             query_cb: a callable that take a session as parameter and check it works
             at_least_one_model: a model that must have at least one entry in the DB
@@ -247,7 +245,7 @@ class HealthCheck:
 
     def add_alembic_check(
         self,
-        session: scoped_session,
+        session: _scoped_session,
         alembic_ini_path: str,
         level: int = 2,
         name: str = "alembic",
@@ -258,7 +256,6 @@ class HealthCheck:
         Check the DB version against the HEAD version of Alembic.
 
         Arguments:
-
             session: A DB session created by c2cwsgiutils.db.init() giving access to the DB \
                         managed by Alembic
             alembic_ini_path: Path to the Alembic INI file
@@ -283,7 +280,7 @@ class HealthCheck:
         assert version_table
 
         class _Check:
-            def __init__(self, session: scoped_session) -> None:
+            def __init__(self, session: _scoped_session) -> None:
                 self.session = session
 
             def __call__(self, request: pyramid.request.Request) -> str:
@@ -334,7 +331,6 @@ class HealthCheck:
         Check that a GET on an URL returns 2xx.
 
         Arguments:
-
             url: the URL to query or a function taking the request and returning it
             params: the parameters or a function taking the request and returning them
             headers: the headers or a function taking the request and returning them
@@ -367,7 +363,6 @@ class HealthCheck:
         One such check is automatically added if the broadcaster is configured with redis.
 
         Arguments:
-
             name: the name of the check (defaults to url)
             level: the level of the health check
         """
@@ -415,13 +410,13 @@ class HealthCheck:
         """
         Check that the version matches across all instances.
 
-        Keyword Arguments:
-
+        Arguments:
             name: the name of the check (defaults to "version")
             level: the level of the health check
         """
 
         def check(request: pyramid.request.Request) -> dict[str, Any]:
+            del request  # unused
             ref = version.get_version()
             all_versions = _get_all_versions()
             assert all_versions
@@ -443,7 +438,6 @@ class HealthCheck:
         in the response. In case of failure it must raise an exception.
 
         Arguments:
-
             name: the name of the check
             check_cb: the callback to call (takes the request as parameter)
             level: the level of the health check
@@ -489,7 +483,7 @@ class HealthCheck:
             _set_success(check_name=name)
         except Exception as e:  # pylint: disable=broad-except
             _PROMETHEUS_HEALTH_CHECKS_FAILURE.labels(name=name).set(1)
-            LOG.warning("Health check %s failed", name, exc_info=True)
+            _LOG.warning("Health check %s failed", name, exc_info=True)
             failure = {"message": str(e), "timing": time.perf_counter() - start, "level": level}
             if isinstance(e, JsonCheckException) and e.json_data() is not None:
                 failure["result"] = e.json_data()
@@ -500,9 +494,10 @@ class HealthCheck:
     @staticmethod
     def _create_db_engine_check(
         binding: _Binding,
-        query_cb: Callable[[scoped_session], None],
+        query_cb: Callable[[_scoped_session], None],
     ) -> tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
+            del request  # unused
             with binding as session:
                 with _PROMETHEUS_DB_SUMMARY.labels(
                     connection=binding.name(), check="database", configuration="<default>"
@@ -512,8 +507,8 @@ class HealthCheck:
         return "db_engine_" + binding.name(), check
 
     @staticmethod
-    def _at_least_one(model: Any) -> Callable[[scoped_session], Any]:
-        def query(session: scoped_session) -> None:
+    def _at_least_one(model: Any) -> Callable[[_scoped_session], Any]:
+        def query(session: _scoped_session) -> None:
             result = session.query(model).first()
             if result is None:
                 raise HTTPNotFound(model.__name__ + " record not found")
@@ -528,7 +523,6 @@ def _maybe_function(what: Any, request: pyramid.request.Request) -> Any:
 @broadcast.decorator(expect_answers=False)
 def _set_success(check_name: str) -> None:
     """Set check in success in all process."""
-
     _PROMETHEUS_HEALTH_CHECKS_FAILURE.labels(name=check_name).set(0)
 
 

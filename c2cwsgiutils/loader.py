@@ -5,7 +5,7 @@ from plaster_pastedeploy import Loader as BaseLoader
 
 from c2cwsgiutils import get_config_defaults
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class Loader(BaseLoader):  # type: ignore

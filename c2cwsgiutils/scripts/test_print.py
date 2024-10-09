@@ -8,7 +8,7 @@ import warnings
 import c2cwsgiutils.setup_process
 from c2cwsgiutils.acceptance.print import PrintConnection
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -38,7 +38,7 @@ def main() -> None:
     if args.app is None:
         for app in print_.get_apps():
             if app != "default":
-                LOG.info("\n\n%s=================", app)
+                _LOG.info("\n\n%s=================", app)
                 test_app(print_, app)
     else:
         test_app(print_, args.app)
@@ -47,13 +47,13 @@ def main() -> None:
 def test_app(print_: PrintConnection, app: str) -> None:
     """Test the application."""
     capabilities = print_.get_capabilities(app)
-    LOG.debug("Capabilities:\n%s", pprint.pformat(capabilities))
+    _LOG.debug("Capabilities:\n%s", pprint.pformat(capabilities))
     examples = print_.get_example_requests(app)
     for name, request in examples.items():
-        LOG.info("\n%s-----------------", name)
+        _LOG.info("\n%s-----------------", name)
         pdf = print_.get_pdf(app, request)
         size = len(pdf.content)
-        LOG.info("Size=%d", size)
+        _LOG.info("Size=%d", size)
 
 
 if __name__ == "__main__":

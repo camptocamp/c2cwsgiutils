@@ -86,7 +86,6 @@ def init(config: pyramid.config.Configurator) -> None:  # pragma: nocover
     Subscribe to Pyramid events in order to get some stats on route time execution.
 
     Arguments:
-
         config: The Pyramid config
     """
     config.add_subscriber(_request_callback, pyramid.events.NewRequest)

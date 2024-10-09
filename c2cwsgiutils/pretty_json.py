@@ -34,7 +34,6 @@ def init(config: pyramid.config.Configurator) -> None:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize json and fast_json renderer."""
-
     pretty_print = config_bool(
         env_or_config(config, "C2C_JSON_PRETTY_PRINT", "c2c.json.pretty_print", "false")
     )

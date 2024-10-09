@@ -6,7 +6,7 @@ import sys
 from configparser import SectionProxy
 from typing import Any
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def get_config_defaults() -> dict[str, str]:
@@ -22,7 +22,7 @@ def get_config_defaults() -> dict[str, str]:
     lowercase_keys: set[str] = set()
     for key, value in os.environ.items():
         if key.lower() in lowercase_keys:
-            LOG.warning("The environment variable '%s' is duplicated with different case, ignoring", key)
+            _LOG.warning("The environment variable '%s' is duplicated with different case, ignoring", key)
             continue
         lowercase_keys.add(key.lower())
         result[key] = value.replace("%", "%%")

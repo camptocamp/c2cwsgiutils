@@ -29,12 +29,10 @@ def retry_timeout(what: Callable[[], Any], timeout: float = _DEFAULT_TIMEOUT, in
     Retry the function until the timeout.
 
     Arguments:
-
         what: the function to try
         timeout: the timeout to get a success
         interval: the interval between try
     """
-
     timeout = time.perf_counter() + timeout
     while True:
         error = ""
@@ -58,7 +56,7 @@ def approx(struct: Any, **kwargs: Any) -> Any:
 
     See pytest.approx
     """
-    import boltons.iterutils
+    import boltons.iterutils  # pylint: disable=import-outside-toplevel
 
     if isinstance(struct, float):
         return pytest.approx(struct, **kwargs)

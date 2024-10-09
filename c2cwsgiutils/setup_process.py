@@ -24,7 +24,6 @@ def fill_arguments(
     default_config_uri: str = "c2c:///app/production.ini",
 ) -> None:
     """Add the needed arguments to the parser like it's done in pshell."""
-
     parser.add_argument(
         "--config-uri" if use_attribute else "config_uri",
         nargs="?",

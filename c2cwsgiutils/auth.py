@@ -11,21 +11,21 @@ from requests_oauthlib import OAuth2Session
 
 from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 
-COOKIE_AGE = 7 * 24 * 3600
+_COOKIE_AGE = 7 * 24 * 3600
 SECRET_PROP = "c2c.secret"  # nosec  # noqa
 SECRET_ENV = "C2C_SECRET"  # nosec  # noqa
-GITHUB_REPOSITORY_PROP = "c2c.auth.github.repository"
-GITHUB_REPOSITORY_ENV = "C2C_AUTH_GITHUB_REPOSITORY"
-GITHUB_ACCESS_TYPE_PROP = "c2c.auth.github.access_type"
-GITHUB_ACCESS_TYPE_ENV = "C2C_AUTH_GITHUB_ACCESS_TYPE"
+_GITHUB_REPOSITORY_PROP = "c2c.auth.github.repository"
+_GITHUB_REPOSITORY_ENV = "C2C_AUTH_GITHUB_REPOSITORY"
+_GITHUB_ACCESS_TYPE_PROP = "c2c.auth.github.access_type"
+_GITHUB_ACCESS_TYPE_ENV = "C2C_AUTH_GITHUB_ACCESS_TYPE"
 GITHUB_AUTH_URL_PROP = "c2c.auth.github.auth_url"
 GITHUB_AUTH_URL_ENV = "C2C_AUTH_GITHUB_AUTH_URL"
 GITHUB_TOKEN_URL_PROP = "c2c.auth.github.token_url"  # nosec
 GITHUB_TOKEN_URL_ENV = "C2C_AUTH_GITHUB_TOKEN_URL"  # nosec
 GITHUB_USER_URL_PROP = "c2c.auth.github.user_url"
 GITHUB_USER_URL_ENV = "C2C_AUTH_GITHUB_USER_URL"
-GITHUB_REPO_URL_PROP = "c2c.auth.github.repo_url"
-GITHUB_REPO_URL_ENV = "C2C_AUTH_GITHUB_REPO_URL"
+_GITHUB_REPO_URL_PROP = "c2c.auth.github.repo_url"
+_GITHUB_REPO_URL_ENV = "C2C_AUTH_GITHUB_REPO_URL"
 GITHUB_CLIENT_ID_PROP = "c2c.auth.github.client_id"
 GITHUB_CLIENT_ID_ENV = "C2C_AUTH_GITHUB_CLIENT_ID"
 GITHUB_CLIENT_SECRET_PROP = "c2c.auth.github.client_secret"  # nosec # noqa
@@ -44,7 +44,7 @@ USE_SESSION_PROP = "c2c.use_session"
 USE_SESSION_ENV = "C2C_USE_SESSION"
 
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class AuthConfig(TypedDict, total=False):
@@ -87,14 +87,16 @@ def _is_auth_secret(request: pyramid.request.Request) -> bool:
 
     if secret_hash is not None:
         if secret_hash == "" or secret == "":  # nosec
-            # logout
+            # Logout
             request.response.delete_cookie(SECRET_ENV)
             return False
         if secret_hash != _hash_secret(expected):
             return False
-        # login or refresh the cookie
-        request.response.set_cookie(SECRET_ENV, secret_hash, max_age=COOKIE_AGE, httponly=True)
-        # since this could be used from outside c2cwsgiutils views, we cannot set the path to c2c
+        # Login or refresh the cookie
+        request.response.set_cookie(
+            SECRET_ENV, secret_hash, max_age=_COOKIE_AGE, httponly=True, secure=True, samesite="Strict"
+        )
+        # Since this could be used from outside c2cwsgiutils views, we cannot set the path to c2c
         return True
     return False
 
@@ -125,7 +127,7 @@ def _is_auth_user_github(request: pyramid.request.Request) -> tuple[bool, UserDe
                 ),
             )
         except jwt.exceptions.InvalidTokenError as e:
-            LOG.warning("Error on decoding JWT token: %s", e)
+            _LOG.warning("Error on decoding JWT token: %s", e)
     return False, {}
 
 
@@ -179,11 +181,11 @@ def auth_type(settings: Optional[Mapping[str, Any]]) -> Optional[AuthenticationT
     has_client_secret = (
         env_or_settings(settings, GITHUB_CLIENT_SECRET_ENV, GITHUB_CLIENT_SECRET_PROP, "") != ""
     )
-    has_repo = env_or_settings(settings, GITHUB_REPOSITORY_ENV, GITHUB_REPOSITORY_PROP, "") != ""
+    has_repo = env_or_settings(settings, _GITHUB_REPOSITORY_ENV, _GITHUB_REPOSITORY_PROP, "") != ""
     secret = env_or_settings(settings, GITHUB_AUTH_SECRET_ENV, GITHUB_AUTH_SECRET_PROP, "")
     has_secret = len(secret) >= 16
     if secret and not has_secret:
-        LOG.error(
+        _LOG.error(
             "You set a too short secret (length: %i) to protect the admin page, it should have "
             "at lease a length of 16",
             len(secret),
@@ -203,10 +205,11 @@ def check_access(
 
     If the authentication type is not GitHub, this function is equivalent to is_auth.
 
-    `repo` is the repository to check access to (<organization>/<repository>).
-    `access_type` is the type of access to check (admin|push|pull).
+    Arguments:
+        request: is the request object.
+        repo: is the repository to check access to (<organization>/<repository>).
+        access_type: is the type of access to check (admin|push|pull).
     """
-
     if not is_auth(request):
         return False
 
@@ -220,8 +223,8 @@ def check_access(
             "github_repository": (
                 env_or_settings(
                     settings,
-                    GITHUB_REPOSITORY_ENV,
-                    GITHUB_REPOSITORY_PROP,
+                    _GITHUB_REPOSITORY_ENV,
+                    _GITHUB_REPOSITORY_PROP,
                     "",
                 )
                 if repo is None
@@ -230,8 +233,8 @@ def check_access(
             "github_access_type": (
                 env_or_settings(
                     settings,
-                    GITHUB_ACCESS_TYPE_ENV,
-                    GITHUB_ACCESS_TYPE_PROP,
+                    _GITHUB_ACCESS_TYPE_ENV,
+                    _GITHUB_ACCESS_TYPE_PROP,
                     "pull",
                 )
                 if access_type is None
@@ -243,7 +246,6 @@ def check_access(
 
 def check_access_config(request: pyramid.request.Request, auth_config: AuthConfig) -> bool:
     """Check if the user has access to the resource."""
-
     auth, user = is_auth_user(request)
     if not auth:
         return False
@@ -259,8 +261,8 @@ def check_access_config(request: pyramid.request.Request, auth_config: AuthConfi
 
     repo_url = env_or_settings(
         settings,
-        GITHUB_REPO_URL_ENV,
-        GITHUB_REPO_URL_PROP,
+        _GITHUB_REPO_URL_ENV,
+        _GITHUB_REPO_URL_PROP,
         "https://api.github.com/repos",
     )
     repository = oauth.get(f"{repo_url}/{auth_config.get('github_repository')}").json()

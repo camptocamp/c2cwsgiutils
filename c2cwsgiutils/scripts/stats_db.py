@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 import time
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 from wsgiref.simple_server import make_server
 
 import sqlalchemy
@@ -20,12 +20,9 @@ from zope.sqlalchemy import register
 import c2cwsgiutils.setup_process
 from c2cwsgiutils import prometheus
 
-if TYPE_CHECKING:
-    scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
-else:
-    scoped_session = sqlalchemy.orm.scoped_session
+scoped_session = sqlalchemy.orm.scoped_session[sqlalchemy.orm.Session]
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -72,6 +69,7 @@ class Reporter:
         self.gauges: dict[str, Gauge] = {}
 
     def get_gauge(self, kind: str, kind_help: str, labels: list[str]) -> Gauge:
+        """Get a gauge."""
         if kind not in self.gauges:
             self.gauges[kind] = Gauge(
                 prometheus.build_metric_name(f"database_{kind}"),
@@ -84,25 +82,30 @@ class Reporter:
     def do_report(
         self, metric: list[str], value: int, kind: str, kind_help: str, tags: dict[str, str]
     ) -> None:
-        LOG.debug("%s.%s -> %d", kind, ".".join(metric), value)
+        """Report a metric."""
+        _LOG.debug("%s.%s -> %d", kind, ".".join(metric), value)
         gauge = self.get_gauge(kind, kind_help, list(tags.keys()))
         gauge.labels(**tags).set(value)
 
     def commit(self) -> None:
+        """Commit the metrics."""
         if self.prometheus_push:
             push_to_gateway(self.args.prometheus_url, job="db_counts", registry=self.registry)
         else:
             port = int(os.environ.get("C2C_PROMETHEUS_PORT", "9090"))
             app = make_wsgi_app(self.registry)
             with make_server("", port, app) as httpd:
-                LOG.info("Waiting that Prometheus get the metrics served on port %s...", port)
+                _LOG.info("Waiting that Prometheus get the metrics served on port %s...", port)
                 httpd.handle_request()
 
     def error(self, metric: list[str], error_: Exception) -> None:
+        """Report an error."""
+        del metric
         if self._error is None:
             self._error = error_
 
     def report_error(self) -> None:
+        """Raise the error if any."""
         if self._error is not None:
             raise self._error
 
@@ -225,7 +228,6 @@ def _do_table_count(
 
 def do_extra(session: scoped_session, sql: str, kind: str, gauge_help: str, reporter: Reporter) -> None:
     """Do an extra report."""
-
     for metric, count in session.execute(sqlalchemy.text(sql)):
         reporter.do_report(
             str(metric).split("."), count, kind=kind, kind_help=gauge_help, tags={"metric": metric}
@@ -253,29 +255,29 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
         params={"schemas": tuple(args.schema)},
     ).fetchall()
     for schema, table in tables:
-        LOG.info("Process table %s.%s.", schema, table)
+        _LOG.info("Process table %s.%s.", schema, table)
         try:
             do_table(session, schema, table, reporter)
         except Exception as e:  # pylint: disable=broad-except
-            LOG.exception("Process table %s.%s error.", schema, table)
+            _LOG.exception("Process table %s.%s error.", schema, table)
             reporter.error([schema, table], e)
 
     if args.extra:
         for pos, extra in enumerate(args.extra):
-            LOG.info("Process extra %s.", extra)
+            _LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, extra, "extra", "Extra metric", reporter)
             except Exception as e:  # pylint: disable=broad-except
-                LOG.exception("Process extra %s error.", extra)
+                _LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(pos + 1)], e)
     if args.extra_gauge:
         for pos, extra in enumerate(args.extra_gauge):
             sql, gauge, gauge_help = extra
-            LOG.info("Process extra %s.", extra)
+            _LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, sql, gauge, gauge_help, reporter)
             except Exception as e:  # pylint: disable=broad-except
-                LOG.exception("Process extra %s error.", extra)
+                _LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(len(args.extra) + pos + 1)], e)
 
     reporter.commit()
@@ -294,11 +296,11 @@ def main() -> None:
             success = True
             break
         except:  # pylint: disable=bare-except
-            LOG.exception("Exception during run")
+            _LOG.exception("Exception during run")
         time.sleep(float(os.environ.get("C2CWSGIUTILS_STATS_DB_SLEEP", 1)))
 
     if not success:
-        LOG.error("Not in success, exiting")
+        _LOG.error("Not in success, exiting")
         sys.exit(1)
 
 

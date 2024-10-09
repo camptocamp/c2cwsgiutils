@@ -25,4 +25,5 @@ class LocalBroadcaster(interface.BaseBroadcaster):
         return answers if expect_answers else None
 
     def get_subscribers(self) -> Mapping[str, Callable[..., Any]]:
+        """Get the subscribers for testing purposes."""
         return self._subscribers

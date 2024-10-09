@@ -14,7 +14,7 @@ from sqlalchemy_utils import create_database, database_exists
 from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
 from c2cwsgiutils.sqlalchemylogger._models import Base, create_log_class
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class SQLAlchemyHandler(logging.Handler):
@@ -30,28 +30,28 @@ class SQLAlchemyHandler(logging.Handler):
         contains_expression: str = "",
     ) -> None:
         super().__init__()
-        # initialize DB session
+        # Initialize DB session
         self.engine = create_engine(sqlalchemy_url["url"])
-        self.Log = create_log_class(
+        self.Log = create_log_class(  # pylint: disable=invalid-name
             tablename=sqlalchemy_url.get("tablename", "logs"),
             tableargs=sqlalchemy_url.get("tableargs", None),  # type: ignore
         )
         Base.metadata.bind = self.engine
         self.session = sessionmaker(bind=self.engine)()  # noqa
-        # initialize log queue
+        # Initialize log queue
         self.log_queue: Any = queue.Queue()
-        # initialize a thread to process the logs Asynchronously
+        # Initialize a thread to process the logs Asynchronously
         self.condition = threading.Condition()
         self.processor_thread = threading.Thread(target=self._processor, daemon=True)
         self.processor_thread.start()
-        # initialize filters
+        # Initialize filters
         if does_not_contain_expression:
             self.addFilter(DoesNotContainExpression(does_not_contain_expression))
         if contains_expression:
             self.addFilter(ContainsExpression(contains_expression))
 
     def _processor(self) -> None:
-        LOG.debug("%s: starting processor thread", __name__)
+        _LOG.debug("%s: starting processor thread", __name__)
         while True:
             logs = []
             time_since_last = time.perf_counter()
@@ -70,7 +70,7 @@ class SQLAlchemyHandler(logging.Handler):
                     ):
                         self._write_logs(logs)
                         break
-        LOG.debug("%s: stopping processor thread", __name__)
+        _LOG.debug("%s: stopping processor thread", __name__)
 
     def _write_logs(self, logs: list[Any]) -> None:
         try:
@@ -85,12 +85,13 @@ class SQLAlchemyHandler(logging.Handler):
             except Exception as e:  # pylint: disable=broad-except
                 # if we really cannot commit the log to DB, do not lock the
                 # thread and do not crash the application
-                LOG.critical(e)
+                _LOG.critical(e)
         finally:
             self.session.expunge_all()
 
     def create_db(self) -> None:
-        LOG.info("%s: creating new database", __name__)
+        """Create the database if it does not exist."""
+        _LOG.info("%s: creating new database", __name__)
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__

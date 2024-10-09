@@ -3,11 +3,11 @@ import os
 import subprocess  # nosec
 from typing import TYPE_CHECKING, Any, Optional
 
-import numpy as np
-import skimage.color
-import skimage.io
-import skimage.metrics
-import skimage.transform
+import numpy as np  # pylint: disable=import-error
+import skimage.color  # pylint: disable=import-error
+import skimage.io  # pylint: disable=import-error
+import skimage.metrics  # pylint: disable=import-error
+import skimage.transform  # pylint: disable=import-error
 
 if TYPE_CHECKING:
     from typing import TypeAlias
@@ -189,7 +189,7 @@ def check_screenshot(
 
     See also `check_image` for the other parameters.
 
-    Args:
+    Arguments:
       url: The URL to screenshot
       width: The width of the generated screenshot
       height: The height of the generated screenshot
@@ -202,7 +202,6 @@ def check_screenshot(
       generate_expected_image: See `check_image`
       use_mask: See `check_image`
     """
-
     if headers is None:
         headers = {}
     if media is None:

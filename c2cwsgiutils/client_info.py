@@ -71,4 +71,5 @@ def _handle_forwarded(environ: dict[str, str]) -> None:
 
 def filter_factory(*args: Any, **kwargs: Any) -> Callable[..., Any]:
     """Get the filter."""
+    del args, kwargs  # unused
     return Filter

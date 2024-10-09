@@ -7,7 +7,7 @@ import requests
 
 from c2cwsgiutils.acceptance import connection, utils
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 
 class PrintConnection(connection.Connection):
@@ -30,9 +30,11 @@ class PrintConnection(connection.Connection):
         utils.retry_timeout(functools.partial(self.get_capabilities, app=app), timeout=timeout)
 
     def get_capabilities(self, app: str) -> Any:
+        """Get the capabilities for the given application."""
         return self.get_json(app + "/capabilities.json", cache_expected=connection.CacheExpected.YES)
 
     def get_example_requests(self, app: str) -> dict[str, Any]:
+        """Get the example requests for the given application."""
         samples = self.get_json(app + "/exampleRequest.json", cache_expected=connection.CacheExpected.YES)
         out = {}
         for name, value in samples.items():
@@ -40,12 +42,13 @@ class PrintConnection(connection.Connection):
         return out
 
     def get_pdf(self, app: str, request: dict[str, Any], timeout: int = 60) -> requests.Response:
+        """Create a report and wait for it to be ready."""
         create_report = self.post_json(app + "/report.pdf", json=request)
-        LOG.debug("create_report=%s", create_report)
+        _LOG.debug("create_report=%s", create_report)
         ref = create_report["ref"]
 
         status = utils.retry_timeout(functools.partial(self._check_completion, ref), timeout=timeout)
-        LOG.debug("status=%s", repr(status))
+        _LOG.debug("status=%s", repr(status))
         assert status["status"] == "finished"
 
         report = self.get_raw("report/" + ref)
@@ -59,4 +62,5 @@ class PrintConnection(connection.Connection):
         return None
 
     def get_apps(self) -> Any:
+        """Get the list of available applications."""
         return self.get_json("apps.json", cache_expected=connection.CacheExpected.YES)

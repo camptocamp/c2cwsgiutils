@@ -7,7 +7,6 @@ import sqlalchemy as sa
 
 def generate_model_graph(module: Any) -> None:
     """Generate a graphical model of the database classes."""
-
     base_name = None
     if len(sys.argv) == 1:
         base_name = "Base"

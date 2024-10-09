@@ -16,8 +16,8 @@ from pyramid.httpexceptions import HTTPException, exception_response
 from c2cwsgiutils import auth, broadcast, config_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps, get_size
 
-LOG = logging.getLogger(__name__)
-SPACE_RE = re.compile(r" +")
+_LOG = logging.getLogger(__name__)
+_SPACE_RE = re.compile(r" +")
 
 
 def _beautify_stacks(source: list[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
@@ -80,7 +80,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
     except Exception:  # nosec  # pylint: disable=broad-except
         pass
 
-    LOG.debug("checking memory growth for %s", path)
+    _LOG.debug("checking memory growth for %s", path)
 
     peak_stats: dict[Any, Any] = {}
     for i in range(3):
@@ -91,10 +91,10 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
     response = None
     try:
         response = request.invoke_subrequest(sub_request)
-        LOG.debug("response was %d", response.status_code)
+        _LOG.debug("response was %d", response.status_code)
 
     except HTTPException as ex:
-        LOG.debug("response was %s", str(ex))
+        _LOG.debug("response was %s", str(ex))
 
     del response
 
@@ -142,6 +142,7 @@ def _error(request: pyramid.request.Request) -> Any:
 
 
 def _time(request: pyramid.request.Request) -> Any:
+    del request  # unused
     return {
         "local_time": str(datetime.now()),
         "gmt_time": str(datetime.utcnow()),
@@ -211,4 +212,4 @@ def init(config: pyramid.config.Configurator) -> None:
     _add_view(config, "error", "error", _error)
     _add_view(config, "time", "time", _time)
     _add_view(config, "show_refs", "show_refs.dot", _show_refs)
-    LOG.info("Enabled the /debug/... API")
+    _LOG.info("Enabled the /debug/... API")

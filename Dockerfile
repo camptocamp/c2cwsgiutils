@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base-all-0
+FROM ubuntu:24.04 AS base-all-0
 LABEL maintainer Camptocamp "info@camptocamp.com"
 SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 
@@ -6,7 +6,10 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
   --mount=type=cache,target=/var/cache,sharing=locked \
   apt-get update \
   && apt-get upgrade --assume-yes \
-  && apt-get install --assume-yes --no-install-recommends python3-pip
+  && apt-get install --assume-yes --no-install-recommends python3-pip python3-venv \
+  && python3 -m venv /venv
+
+ENV PATH=/venv/bin:$PATH
 
 # Used to convert the locked packages by poetry to pip requirements format
 # We don't directly use `poetry install` because it force to use a virtual environment.
@@ -40,7 +43,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
     libpq5 curl postgresql-client net-tools iputils-ping gnupg apt-transport-https \
     $DEV_PACKAGES \
   && python3 -m pip install --disable-pip-version-check --no-deps --requirement=/poetry/requirements.txt \
-  && strip /usr/local/lib/python3.*/dist-packages/*/*.so \
+  && strip /venv/lib/python3.*/site-packages/*/*.so \
   && apt-get remove --purge --autoremove --yes $DEV_PACKAGES binutils
 
 ENV LOG_TYPE=console \
@@ -95,7 +98,7 @@ ENV C2C_BASE_PATH=/c2c \
   SENTRY_CLIENT_RELEASE=latest \
   SENTRY_TAG_SERVICE=app
 
-CMD ["/usr/local/bin/gunicorn"]
+CMD ["/venv/bin/gunicorn"]
 
 COPY production.ini /app/
 

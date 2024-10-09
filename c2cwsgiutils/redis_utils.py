@@ -11,19 +11,19 @@ import yaml
 
 import c2cwsgiutils.config_utils
 
-LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger(__name__)
 
 REDIS_URL_KEY = "C2C_REDIS_URL"
-REDIS_OPTIONS_KEY = "C2C_REDIS_OPTIONS"
+_REDIS_OPTIONS_KEY = "C2C_REDIS_OPTIONS"
 REDIS_SENTINELS_KEY = "C2C_REDIS_SENTINELS"
 REDIS_SERVICENAME_KEY = "C2C_REDIS_SERVICENAME"
-REDIS_DB_KEY = "C2C_REDIS_DB"
+_REDIS_DB_KEY = "C2C_REDIS_DB"
 
 REDIS_URL_KEY_PROP = "c2c.redis_url"
-REDIS_OPTIONS_KEY_PROP = "c2c.redis_options"
+_REDIS_OPTIONS_KEY_PROP = "c2c.redis_options"
 REDIS_SENTINELS_KEY_PROP = "c2c.redis_sentinels"
 REDIS_SERVICENAME_KEY_PROP = "c2c.redis_servicename"
-REDIS_DB_KEY_PROP = "c2c.redis_db"
+_REDIS_DB_KEY_PROP = "c2c.redis_db"
 
 _master: Optional["redis.client.Redis[str]"] = None
 _slave: Optional["redis.client.Redis[str]"] = None
@@ -32,7 +32,7 @@ _sentinel: Optional[redis.sentinel.Sentinel] = None
 
 def cleanup() -> None:
     """Cleanup the redis connections."""
-    global _master, _slave, _sentinel
+    global _master, _slave, _sentinel  # pylint: disable=global-statement
     _master = None
     _slave = None
     _sentinel = None
@@ -52,17 +52,17 @@ def get(
 
 
 def _init(settings: Optional[Mapping[str, Any]]) -> None:
-    global _master, _slave, _sentinel
+    global _master, _slave, _sentinel  # pylint: disable=global-statement
     sentinels = c2cwsgiutils.config_utils.env_or_settings(
         settings, REDIS_SENTINELS_KEY, REDIS_SENTINELS_KEY_PROP
     )
     service_name = c2cwsgiutils.config_utils.env_or_settings(
         settings, REDIS_SERVICENAME_KEY, REDIS_SERVICENAME_KEY_PROP
     )
-    db = c2cwsgiutils.config_utils.env_or_settings(settings, REDIS_DB_KEY, REDIS_DB_KEY_PROP)
+    db = c2cwsgiutils.config_utils.env_or_settings(settings, _REDIS_DB_KEY, _REDIS_DB_KEY_PROP)
     url = c2cwsgiutils.config_utils.env_or_settings(settings, REDIS_URL_KEY, REDIS_URL_KEY_PROP)
     redis_options_ = c2cwsgiutils.config_utils.env_or_settings(
-        settings, REDIS_OPTIONS_KEY, REDIS_OPTIONS_KEY_PROP
+        settings, _REDIS_OPTIONS_KEY, _REDIS_OPTIONS_KEY_PROP
     )
 
     redis_options = (
@@ -82,16 +82,16 @@ def _init(settings: Optional[Mapping[str, Any]]) -> None:
             db=db,
             **redis_options,
         )
-        LOG.info("Redis setup using: %s, %s, %s", sentinels, service_name, redis_options_)
+        _LOG.info("Redis setup using: %s, %s, %s", sentinels, service_name, redis_options_)
         _master = _sentinel.master_for(service_name)
         _slave = _sentinel.slave_for(service_name)
         return
     if url:
-        LOG.info("Redis setup using: %s, with options: %s", url, redis_options_)
+        _LOG.info("Redis setup using: %s, with options: %s", url, redis_options_)
         _master = redis.client.Redis.from_url(url, decode_responses=True, **redis_options)
         _slave = _master
     else:
-        LOG.info(
+        _LOG.info(
             "No Redis configuration found, use %s or %s to configure it", REDIS_URL_KEY, REDIS_SENTINELS_KEY
         )
 
@@ -114,22 +114,23 @@ class PubSubWorkerThread(threading.Thread):
             try:
                 pubsub.get_message(ignore_subscribe_messages=True, timeout=1)
                 if not last_was_ok:
-                    LOG.info("Redis is back")
+                    _LOG.info("Redis is back")
                     last_was_ok = True
             except redis.exceptions.RedisError:
                 if last_was_ok:
-                    LOG.warning("Redis connection problem")
+                    _LOG.warning("Redis connection problem")
                 last_was_ok = False
                 time.sleep(0.5)
             except Exception:  # pylint: disable=broad-except
-                LOG.warning("Unexpected error", exc_info=True)
-        LOG.info("Redis subscription worker stopped")
+                _LOG.warning("Unexpected error", exc_info=True)
+        _LOG.info("Redis subscription worker stopped")
         pubsub.close()
         self._running = False
 
     def stop(self) -> None:
-        # stopping simply unsubscribes from all channels and patterns.
-        # the unsubscribe responses that are generated will short circuit
+        """Stop the worker."""
+        # Stopping simply unsubscribes from all channels and patterns.
+        # The unsubscribe responses that are generated will short circuit
         # the loop in run(), calling pubsub.close() to clean up the connection
         self.pubsub.unsubscribe()
         self.pubsub.punsubscribe()

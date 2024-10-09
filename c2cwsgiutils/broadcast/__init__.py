@@ -10,9 +10,9 @@ import pyramid.config
 from c2cwsgiutils import config_utils, redis_utils
 from c2cwsgiutils.broadcast import interface, local, redis
 
-LOG = logging.getLogger(__name__)
-BROADCAST_ENV_KEY = "C2C_BROADCAST_PREFIX"
-BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
+_LOG = logging.getLogger(__name__)
+_BROADCAST_ENV_KEY = "C2C_BROADCAST_PREFIX"
+_BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 
 _broadcaster: Optional[interface.BaseBroadcaster] = None
 
@@ -29,38 +29,37 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
 
     Otherwise, fall back to a fake local implementation.
     """
-    global _broadcaster
+    global _broadcaster  # pylint: disable=global-statement
     broadcast_prefix = config_utils.env_or_config(
-        config, BROADCAST_ENV_KEY, BROADCAST_CONFIG_KEY, "broadcast_api_"
+        config, _BROADCAST_ENV_KEY, _BROADCAST_CONFIG_KEY, "broadcast_api_"
     )
     master, slave, _ = redis_utils.get(config.get_settings() if config else None)
     if _broadcaster is None:
         if master is not None and slave is not None:
             _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)
-            LOG.info("Broadcast service setup using Redis implementation")
+            _LOG.info("Broadcast service setup using Redis implementation")
         else:
             _broadcaster = local.LocalBroadcaster()
-            LOG.info("Broadcast service setup using local implementation")
+            _LOG.info("Broadcast service setup using local implementation")
     elif isinstance(_broadcaster, local.LocalBroadcaster) and master is not None and slave is not None:
-        LOG.info("Switching from a local broadcaster to a Redis broadcaster")
+        _LOG.info("Switching from a local broadcaster to a Redis broadcaster")
         prev_broadcaster = _broadcaster
         _broadcaster = redis.RedisBroadcaster(broadcast_prefix, master, slave)
         _broadcaster.copy_local_subscriptions(prev_broadcaster)
 
 
 def _get(need_init: bool = False) -> interface.BaseBroadcaster:
-    global _broadcaster
+    global _broadcaster  # pylint: disable=global-statement
     if _broadcaster is None:
         if need_init:
-            LOG.error("Broadcast functionality used before it is setup")
+            _LOG.error("Broadcast functionality used before it is setup")
         _broadcaster = local.LocalBroadcaster()
     return _broadcaster
 
 
 def cleanup() -> None:
     """Cleanup the broadcaster to force to reinitialize it."""
-
-    global _broadcaster
+    global _broadcaster  # pylint: disable=global-statement
     _broadcaster = None
 
 
@@ -96,21 +95,21 @@ def broadcast(
 
 # We can also templatise the argument with Python 3.10
 # See: https://www.python.org/dev/peps/pep-0612/
-_DECORATOR_RETURN = TypeVar("_DECORATOR_RETURN")
+_DecoratorReturn = TypeVar("_DecoratorReturn")
 
 
 def decorator(
     channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
-) -> Callable[[Callable[..., _DECORATOR_RETURN]], Callable[..., Optional[list[_DECORATOR_RETURN]]]]:
+) -> Callable[[Callable[..., _DecoratorReturn]], Callable[..., Optional[list[_DecoratorReturn]]]]:
     """
     Decorate function will be called through the broadcast functionality.
 
     If expect_answers is set to True, the returned value will be a list of all the answers.
     """
 
-    def impl(func: Callable[..., _DECORATOR_RETURN]) -> Callable[..., Optional[list[_DECORATOR_RETURN]]]:
+    def impl(func: Callable[..., _DecoratorReturn]) -> Callable[..., Optional[list[_DecoratorReturn]]]:
         @functools.wraps(func)
-        def wrapper(**kwargs: Any) -> Optional[list[_DECORATOR_RETURN]]:
+        def wrapper(**kwargs: Any) -> Optional[list[_DecoratorReturn]]:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
         if channel is None:

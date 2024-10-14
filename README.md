@@ -670,7 +670,7 @@ A few other environment variables can be used to tune the info sent with each re
 
 # Developer info
 
-You will need `docker` (>=1.12.0), `docker-compose` (>=1.10.0) and
+You will need `docker` (>=1.12.0), `docker compose` and
 `make` installed on the machine to play with this project.
 Check available versions of `docker-engine` with
 `apt-get policy docker-engine` and eventually force install the
@@ -698,6 +698,13 @@ To make a release:
 - Tag the GIT commit.
 - Add the new branch name in the `.github/workflows/rebuild.yaml` and
   `.github/workflows/audit.yaml` files.
+
+## Pserve
+
+Pserve will not set the headers in the environment then if you are behind a reverse proxy, you will have
+wrong values in client information, you can force them by using the environment variables:
+`C2CWSGIUTILS_FORCE_PROTO`, `C2CWSGIUTILS_FORCE_HOST` `C2CWSGIUTILS_FORCE_SERVER_NAME` and
+`C2CWSGIUTILS_FORCE_REMOTE_ADDR`.
 
 ## Testing
 

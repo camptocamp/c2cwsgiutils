@@ -1,7 +1,9 @@
+import logging
 import os
 import re
 from typing import Any, Callable
 
+_LOG = logging.getLogger(__name__)
 SEP_RE = re.compile(r", *")
 
 
@@ -67,7 +69,12 @@ def _handle_forwarded(environ: dict[str, str]) -> None:
         if "HTTP_" + header in environ:
             environ["HTTP_ORIGINAL_" + header] = environ.pop("HTTP_" + header)
     forwarded = SEP_RE.split(environ.pop("HTTP_FORWARDED"))[0]
-    fields = dict(tuple(f.split("=", maxsplit=1)) for f in forwarded.split(";"))
+    parts = forwarded.split(";")
+    ignored_parts = [part for part in parts if "=" not in part]
+    if ignored_parts:
+        _LOG.warning("Some parts of the Forwarded header are ignored: %s", ";".join(ignored_parts))
+    parts = [part for part in parts if "=" in part]
+    fields = dict(tuple(f.split("=", maxsplit=1)) for f in parts)
     if "by" in fields:
         environ["SERVER_NAME"] = fields["by"]
     if "for" in fields:

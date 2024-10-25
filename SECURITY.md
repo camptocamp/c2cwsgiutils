@@ -10,3 +10,4 @@
 | 5.1     | 27/06/2027      |
 | 5.2     | Best effort     |
 | 6.0     | Best effort     |
+| 6.1     | Best effort     |

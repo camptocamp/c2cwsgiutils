@@ -15,7 +15,7 @@
     automerge: true,
     schedule: 'after 5pm on the first day of the month',
   },
-  baseBranches: ['release_4', '5.0', '5.1', '5.2', '6.0', 'master'],
+  baseBranches: ['release_4', '5.0', '5.1', '5.2', '6.0', '6.1', 'master'],
   'pre-commit': { enabled: true },
   regexManagers: [
     /** Do updates on pre-commit additional dependencies */

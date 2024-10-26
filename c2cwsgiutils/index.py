@@ -44,9 +44,9 @@ from c2cwsgiutils.config_utils import env_or_settings
 
 _LOG = logging.getLogger(__name__)
 
-_additional_title: Optional[str] = None
-_additional_noauth: list[str] = []
-_additional_auth: list[str] = []
+additional_title: Optional[str] = None
+additional_noauth: list[str] = []
+additional_auth: list[str] = []
 _ELEM_ID = 0
 
 
@@ -159,15 +159,15 @@ def _index(request: pyramid.request.Request) -> dict[str, str]:
         body += _logging(request)
         body += _profiler(request)
 
-    if _additional_title is not None and (has_access or _additional_noauth):
-        body += _additional_title
+    if additional_title is not None and (has_access or additional_noauth):
+        body += additional_title
         body += "\n"
 
     if has_access:
-        body += "\n".join(_additional_auth)
+        body += "\n".join(additional_auth)
         body += "\n"
 
-    body += "\n".join(_additional_noauth)
+    body += "\n".join(additional_noauth)
 
     settings = request.registry.settings
     auth_type_ = auth_type(settings)

@@ -26,13 +26,13 @@ class Filter:
             _handle_others(environ)
 
         if "C2CWSGIUTILS_FORCE_PROTO" in os.environ:
-            os.environ["wsgi.url_scheme"] = os.environ.pop("C2CWSGIUTILS_FORCE_PROTO")
+            environ["wsgi.url_scheme"] = os.environ["C2CWSGIUTILS_FORCE_PROTO"]
         if "C2CWSGIUTILS_FORCE_HOST" in os.environ:
-            os.environ["HTTP_HOST"] = os.environ.pop("C2CWSGIUTILS_FORCE_HOST")
+            environ["HTTP_HOST"] = os.environ["C2CWSGIUTILS_FORCE_HOST"]
         if "C2CWSGIUTILS_FORCE_SERVER_NAME" in os.environ:
-            os.environ["SERVER_NAME"] = os.environ.pop("C2CWSGIUTILS_FORCE_SERVER_NAME")
+            environ["SERVER_NAME"] = os.environ["C2CWSGIUTILS_FORCE_SERVER_NAME"]
         if "C2CWSGIUTILS_FORCE_REMOTE_ADDR" in os.environ:
-            os.environ["REMOTE_ADDR"] = os.environ.pop("C2CWSGIUTILS_FORCE_REMOTE_ADDR")
+            environ["REMOTE_ADDR"] = os.environ["C2CWSGIUTILS_FORCE_REMOTE_ADDR"]
 
         return self._application(environ, start_response)
 

@@ -101,7 +101,7 @@ class SQLAlchemyHandler(logging.Handler):
             with self.engine.begin() as connection:
                 if not self.engine.dialect.has_schema(connection, self.Log.__table_args__["schema"]):
                     connection.execute(
-                        sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]),  # type: ignore
+                        sqlalchemy.schema.CreateSchema(self.Log.__table_args__["schema"]),
                     )
         Base.metadata.create_all(self.engine)
 

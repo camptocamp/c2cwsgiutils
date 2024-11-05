@@ -1,6 +1,6 @@
 # Camptocamp WSGI utilities
 
-This is a Python 3 library (>=3.5) providing common tools for Camptocamp WSGI
+This is a Python 3 library providing common tools for Camptocamp WSGI
 applications:
 
 - Provide prometheus metrics

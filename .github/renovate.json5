@@ -97,5 +97,10 @@
       matchDepNames: ['python'],
       groupName: 'Python',
     },
+    /** Ignore .github/workflows/rebuild-*.yaml */
+    {
+      matchFileNames: ['.github/workflows/rebuild.yaml'],
+      enabled: false,
+    },
   ],
 }

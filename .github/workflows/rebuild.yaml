@@ -38,6 +38,10 @@ jobs:
           github-gopass-ci-token: ${{secrets.GOPASS_CI_GITHUB_TOKEN}}
           patterns: pypi docker
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Check .tool-versions file existence
         id: tool-versions
         uses: andstor/file-existence-action@v3

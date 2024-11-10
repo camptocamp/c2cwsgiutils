@@ -2,13 +2,13 @@
 
 [[package]]
 name = "alembic"
-version = "1.13.3"
+version = "1.14.0"
 description = "A database migration tool for SQLAlchemy."
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "alembic-1.13.3-py3-none-any.whl", hash = "sha256:908e905976d15235fae59c9ac42c4c5b75cfcefe3d27c0fbf7ae15a37715d80e"},
-    {file = "alembic-1.13.3.tar.gz", hash = "sha256:203503117415561e203aa14541740643a611f641517f0209fcae63e9fa09f1a2"},
+    {file = "alembic-1.14.0-py3-none-any.whl", hash = "sha256:99bd884ca390466db5e27ffccff1d179ec5c05c965cfefc0607e69f9e411cb25"},
+    {file = "alembic-1.14.0.tar.gz", hash = "sha256:b00892b53b3642d0b8dbedba234dbf1924b69be83a9a769d5a624b01094e304b"},
 ]
 
 [package.dependencies]
@@ -70,13 +70,13 @@ yaml = ["PyYAML"]
 
 [[package]]
 name = "boltons"
-version = "24.0.0"
+version = "24.1.0"
 description = "When they're not builtins, they're boltons."
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "boltons-24.0.0-py3-none-any.whl", hash = "sha256:9618695a6ec4f50412e7072e5d78910a00b4111d0b9b549e4a3d60bc321e7807"},
-    {file = "boltons-24.0.0.tar.gz", hash = "sha256:7153feccaea1ff2e1472f68d4b57fadb796a2ee49d29f638f1c9cd8fb5ebd916"},
+    {file = "boltons-24.1.0-py3-none-any.whl", hash = "sha256:a1776d47fdc387fb730fba1fe245f405ee184ee0be2fb447dd289773a84aed3b"},
+    {file = "boltons-24.1.0.tar.gz", hash = "sha256:4a49b7d57ee055b83a458c8682a2a6f199d263a8aa517098bda9bab813554b87"},
 ]
 
 [[package]]
@@ -1551,19 +1551,18 @@ twisted = ["twisted"]
 
 [[package]]
 name = "prospector"
-version = "1.12.1"
+version = "1.13.0"
 description = "Prospector is a tool to analyse Python code by aggregating the result of other tools."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "prospector-1.12.1-py3-none-any.whl", hash = "sha256:e2440b51f40626cbaea80edd97263d8c0a71a79e729415fb505096d4d39e2287"},
-    {file = "prospector-1.12.1.tar.gz", hash = "sha256:b9bb4bcdd77b943c597ee4f374960e851cdd2a0b4b60eaeeaf0da465facafc60"},
+    {file = "prospector-1.13.0-py3-none-any.whl", hash = "sha256:a4868809ef0e5e4d9837404fa4fd691d8f28621422e24340e2d7c63ad054cf55"},
+    {file = "prospector-1.13.0.tar.gz", hash = "sha256:d7061ac2e0ee419266c7b958f59912ed39441769d4029250a7135a6ec7440420"},
 ]
 
 [package.dependencies]
 bandit = {version = ">=1.5.1", optional = true, markers = "extra == \"with-bandit\" or extra == \"with_everything\""}
 dodgy = ">=0.2.1,<0.3.0"
-flake8 = "*"
 GitPython = ">=3.1.27,<4.0.0"
 mccabe = ">=0.7.0,<0.8.0"
 mypy = {version = ">=0.600", optional = true, markers = "extra == \"with-mypy\" or extra == \"with_everything\""}
@@ -1578,16 +1577,17 @@ pylint-django = ">=2.6.1"
 pylint-flask = "0.6"
 pyroma = {version = ">=2.4", optional = true, markers = "extra == \"with-pyroma\" or extra == \"with_everything\""}
 PyYAML = "*"
-requirements-detector = ">=1.3.1"
+requirements-detector = ">=1.3.2"
 setoptconf-tmp = ">=0.3.1,<0.4.0"
 toml = ">=0.10.2,<0.11.0"
 
 [package.extras]
 with-bandit = ["bandit (>=1.5.1)"]
-with-everything = ["bandit (>=1.5.1)", "mypy (>=0.600)", "pyright (>=1.1.3)", "pyroma (>=2.4)", "vulture (>=1.5)"]
+with-everything = ["bandit (>=1.5.1)", "mypy (>=0.600)", "pyright (>=1.1.3)", "pyroma (>=2.4)", "ruff", "vulture (>=1.5)"]
 with-mypy = ["mypy (>=0.600)"]
 with-pyright = ["pyright (>=1.1.3)"]
 with-pyroma = ["pyroma (>=2.4)"]
+with-ruff = ["ruff"]
 with-vulture = ["vulture (>=1.5)"]
 
 [[package]]
@@ -2096,20 +2096,20 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
 name = "requirements-detector"
-version = "1.3.1"
+version = "1.3.2"
 description = "Python tool to find and list requirements of a Python project"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "requirements_detector-1.3.1-py3-none-any.whl", hash = "sha256:3ef72e1c5c3ad11100058e8f074a5762a4902985e698099d2e7f1283758d4045"},
-    {file = "requirements_detector-1.3.1.tar.gz", hash = "sha256:b89e34faf0e4d17f5736923918bd5401949cbe723294ccfefd698b3cda28e676"},
+    {file = "requirements_detector-1.3.2-py3-none-any.whl", hash = "sha256:e7595a32a21e5273dd54d3727bfef4591bbb96de341f6d95c9671981440876ee"},
+    {file = "requirements_detector-1.3.2.tar.gz", hash = "sha256:af5a3ea98ca703d14cf7b66751b2aeb3656d02d9e5fc1c97d7d4da02b057b601"},
 ]
 
 [package.dependencies]
 astroid = ">=3.0,<4.0"
 packaging = ">=21.3"
 semver = ">=3.0.0,<4.0.0"
-toml = ">=0.10.2,<0.11.0"
+toml = {version = ">=0.10.2,<0.11.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "rich"
@@ -2241,13 +2241,13 @@ files = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.17.0"
+version = "2.18.0"
 description = "Python client for Sentry (https://sentry.io)"
 optional = true
 python-versions = ">=3.6"
 files = [
-    {file = "sentry_sdk-2.17.0-py2.py3-none-any.whl", hash = "sha256:625955884b862cc58748920f9e21efdfb8e0d4f98cca4ab0d3918576d5b606ad"},
-    {file = "sentry_sdk-2.17.0.tar.gz", hash = "sha256:dd0a05352b78ffeacced73a94e86f38b32e2eae15fff5f30ca5abb568a72eacf"},
+    {file = "sentry_sdk-2.18.0-py2.py3-none-any.whl", hash = "sha256:ee70e27d1bbe4cd52a38e1bd28a5fadb9b17bc29d91b5f2b97ae29c0a7610442"},
+    {file = "sentry_sdk-2.18.0.tar.gz", hash = "sha256:0dc21febd1ab35c648391c664df96f5f79fb0d92d7d4225cd9832e53a617cafd"},
 ]
 
 [package.dependencies]
@@ -2275,9 +2275,11 @@ httpx = ["httpx (>=0.16.0)"]
 huey = ["huey (>=2)"]
 huggingface-hub = ["huggingface-hub (>=0.22)"]
 langchain = ["langchain (>=0.0.210)"]
+launchdarkly = ["launchdarkly-server-sdk (>=9.8.0)"]
 litestar = ["litestar (>=2.0.0)"]
 loguru = ["loguru (>=0.5)"]
 openai = ["openai (>=1.0.0)", "tiktoken (>=0.3.0)"]
+openfeature = ["openfeature-sdk (>=0.7.1)"]
 opentelemetry = ["opentelemetry-distro (>=0.35b0)"]
 opentelemetry-experimental = ["opentelemetry-distro"]
 pure-eval = ["asttokens", "executing", "pure-eval"]
@@ -2975,4 +2977,4 @@ webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "prometheu
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "32686fa19ca5af1f7ee9477ea5e4bde0f00dff4999d9b24171543e5b2cfea451"
+content-hash = "d2a9cde784ec645710bf3014913b30faac9f0ea48a5307df23a6bd1417ccd2c5"

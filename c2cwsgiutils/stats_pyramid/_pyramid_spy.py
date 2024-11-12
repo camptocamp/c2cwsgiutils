@@ -1,3 +1,4 @@
+import logging
 import time
 from typing import Callable, Optional
 
@@ -8,6 +9,8 @@ import pyramid.request
 from pyramid.httpexceptions import HTTPException
 
 from c2cwsgiutils import prometheus
+
+_LOG = logging.getLogger(__name__)
 
 _PROMETHEUS_PYRAMID_ROUTES_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("pyramid_routes"),
@@ -61,6 +64,15 @@ def _create_finished_cb(
             name = request.matched_route.name
             if kind == "route":
                 _add_server_metric(request, "route", description=name)
+        if status >= 500:
+            _LOG.warning(
+                "Request %s %s %s route %s return status %s",
+                request.method,
+                request.path,
+                kind,
+                name,
+                status,
+            )
         measure.labels(
             method=request.method, route=name, status=status, group=str(status // 100 * 100)
         ).observe(time.process_time() - start)

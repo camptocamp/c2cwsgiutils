@@ -189,10 +189,17 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
         args["extra_info"] = lambda obj: f"{get_size(obj) / 1024:.3f} kb\n{id(obj)}"
 
     result = StringIO()
-    if request.params.get("backrefs", "") != "":
-        objgraph.show_backrefs(objs, output=result, **args)
-    else:
-        objgraph.show_refs(objs, output=result, filter=lambda x: not objgraph.inspect.isclass(x), **args)
+    if request.params.get("backrefs", "") == "":
+
+        def new_filter(x: Any) -> bool:
+            return not objgraph.inspect.isclass(x)
+
+        if "filter" in args:
+            old_filter = args["filter"]
+            args["filter"] = lambda x: old_filter(x) and new_filter(x)
+        else:
+            args["filter"] = new_filter
+    objgraph.show_backrefs(objs, output=result, **args)
 
     request.response.content_type = "text/vnd.graphviz"
     request.response.text = result.getvalue()

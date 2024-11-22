@@ -122,8 +122,20 @@ def input_(
     if type_ is None:
         if isinstance(value, int):
             type_ = "number"
+        elif isinstance(value, bool):
+            type_ = "checkbox"
         else:
             type_ = "text"
+    if type_ == "checkbox":
+        checked = " checked" if value else ""
+        return f"""
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" name="{name}" value="true" id="{id_}"{checked}>
+  <label class="form-check-label" for="{id_}">
+    {label}
+  </label>
+</div>"""
+
     result = ""
     if label is not None:
         result += f'<div class="row mb-3"><label class="col-sm-2 col-form-label" for="{id_}">{label}</label>'
@@ -201,7 +213,7 @@ def _index(request: pyramid.request.Request) -> dict[str, str]:
 def _versions(request: pyramid.request.Request) -> str:
     versions_url = _url(request, "c2c_versions")
     if versions_url:
-        return section("Versions", paragraph(link(versions_url, "Get")), sep=False)
+        return section("Versions " + link(versions_url, "Get"), sep=False)
     else:
         return ""
 
@@ -280,6 +292,7 @@ def _logging(request: pyramid.request.Request) -> str:
 def _debug(request: pyramid.request.Request) -> str:
     dump_memory_url = _url(request, "c2c_debug_memory")
     if dump_memory_url:
+        as_dot = 'as <a href="https://graphviz.org/">dot diagram</a>, can be open with <a href="https://pypi.org/project/xdot/">xdot</a>'
         return section(
             " ".join(
                 [
@@ -289,32 +302,42 @@ def _debug(request: pyramid.request.Request) -> str:
                     link(_url(request, "c2c_debug_memory_maps"), "Mapped memory"),
                 ]
             ),
+            '<h2>Memory usage<span style="font-size: 0.5em;">, with <a href="https://mg.pov.lt/objgraph/">objgraph</a></span></h2>',
+            "<p>Runs the garbage collector and dumps the memory usage as JSON.</p>",
             form(
                 dump_memory_url,
                 input_("limit", value=30),
                 input_("analyze_type"),
+                input_("python_internals_map", type_="checkbox"),
                 button("Dump memory usage"),
             ),
+            f"<p>Runs the garbage collector and dumps the memory refs {as_dot}.</p>",
             form(
                 _url(request, "c2c_debug_show_refs"),
                 input_("analyze_type", value="gunicorn.app.wsgiapp.WSGIApplication"),
-                input_("max_depth", value=3),
-                input_("too_many", value=10),
+                input_("analyze_id", type_="number"),
+                input_("max_depth", type_="number", value=3),
+                input_("too_many", type_="number", value=10),
                 input_("min_size_kb", type_="number"),
                 button("Object refs"),
             ),
+            "<p>Runs the garbage collector, query the path, runs the garbage collector again, get the memory diff as JSON.</p>",
             form(
                 _url(request, "c2c_debug_memory_diff"),
                 input_("path"),
                 input_("limit", value=30),
+                input_("no_warmup", type_="checkbox"),
                 button("Memory diff"),
             ),
+            "<h2>Sleep</h2>",
             form(
                 _url(request, "c2c_debug_sleep"),
                 input_("time", value=1),
                 button("Sleep"),
             ),
-            form(_url(request, "c2c_debug_time"), button("Time")),
+            "<h2>Server times</h2>",
+            form(_url(request, "c2c_debug_time"), button("Get")),
+            "<h2>HTTP error</h2>",
             form(
                 _url(request, "c2c_debug_error"),
                 input_("status", value=500),

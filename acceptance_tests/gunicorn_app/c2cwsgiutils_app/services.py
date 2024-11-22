@@ -2,7 +2,6 @@ import logging
 
 import prometheus_client
 import requests
-from c2cwsgiutils_app import models
 from pyramid.httpexceptions import (
     HTTPBadRequest,
     HTTPForbidden,
@@ -12,6 +11,8 @@ from pyramid.httpexceptions import (
 )
 
 from c2cwsgiutils import sentry, services
+
+from c2cwsgiutils_app import models
 
 _PROMETHEUS_TEST_COUNTER = prometheus_client.Counter("test_counter", "Test counter")
 _PROMETHEUS_TEST_GAUGE = prometheus_client.Gauge("test_gauge", "Test gauge", ["value", "toto"])

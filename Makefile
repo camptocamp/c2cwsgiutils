@@ -33,7 +33,7 @@ tests: build_docker_test ## Run the unit tests
 acceptance: acceptance-in acceptance-out  ## Run the acceptance tests
 
 .PHONY: acceptance-run
-acceptance-run: tests  ## Start the application used to run the acceptance tests
+acceptance-run: tests build_test_app  ## Start the application used to run the acceptance tests
 	cd acceptance_tests/tests/; docker compose up --detach db db_slave
 	cd acceptance_tests/tests/; docker compose run -T --no-deps app /app/scripts/wait-db
 	cd acceptance_tests/tests/; docker compose up --detach
@@ -60,8 +60,15 @@ build_docker_test:
 	docker build --tag=$(DOCKER_BASE):tests --target=tests .
 
 .PHONY: build_test_app
-build_test_app: build_docker
-	docker build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/app
+build_test_app: build_test_app_gunicorn build_test_app_waitress
+
+.PHONY: build_test_app_gunicorn
+build_test_app_gunicorn: build_docker
+	docker build --tag=$(DOCKER_BASE)_test_app --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/gunicorn_app
+
+.PHONY: build_test_app_waitress
+build_test_app_waitress: build_docker
+	docker build --tag=$(DOCKER_BASE)_test_app_waitress --build-arg="GIT_HASH=$(GIT_HASH)" acceptance_tests/waitress_app
 
 .PHONY: checks
 checks: prospector ## Run the checks

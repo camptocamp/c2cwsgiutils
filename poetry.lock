@@ -1343,6 +1343,24 @@ files = [
 ]
 
 [[package]]
+name = "paste"
+version = "3.10.1"
+description = "Tools for using a Web Server Gateway Interface stack"
+optional = true
+python-versions = ">=3"
+files = [
+    {file = "Paste-3.10.1-py3-none-any.whl", hash = "sha256:995e9994b6a94a2bdd8bd9654fb70ca3946ffab75442468bacf31b4d06481c3d"},
+    {file = "paste-3.10.1.tar.gz", hash = "sha256:1c3d12065a5e8a7a18c0c7be1653a97cf38cc3e9a5a0c8334a9dd992d3a05e4a"},
+]
+
+[package.dependencies]
+setuptools = "*"
+
+[package.extras]
+flup = ["flup"]
+openid = ["python-openid"]
+
+[[package]]
 name = "pastedeploy"
 version = "3.1.0"
 description = "Load, configure, and compose WSGI applications and servers"
@@ -3058,18 +3076,19 @@ test = ["zope.testing"]
 
 [extras]
 alembic = ["alembic"]
-all = ["SQLAlchemy", "SQLAlchemy-Utils", "alembic", "boltons", "cornice", "gunicorn", "lxml", "objgraph", "prometheus-client", "psutil", "psycopg2", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
+all = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "alembic", "boltons", "cornice", "gunicorn", "lxml", "objgraph", "prometheus-client", "psutil", "psycopg2", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
 broadcast = ["redis"]
 debug = ["objgraph", "psutil"]
 dev = ["waitress"]
 oauth2 = ["pyjwt", "requests-oauthlib"]
 sentry = ["sentry-sdk"]
-standard = ["SQLAlchemy", "SQLAlchemy-Utils", "alembic", "cornice", "gunicorn", "prometheus-client", "psycopg2", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "zope.interface", "zope.sqlalchemy"]
+standard = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "alembic", "cornice", "gunicorn", "prometheus-client", "psycopg2", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
 test-images = ["scikit-image"]
 tests = ["boltons", "lxml"]
+waitress = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "cornice", "prometheus-client", "psycopg2", "pyramid", "pyramid-tm", "pyramid_mako", "waitress", "zope.interface", "zope.sqlalchemy"]
 webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "prometheus-client", "psycopg2", "pyramid", "pyramid-tm", "pyramid_mako", "zope.interface", "zope.sqlalchemy"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "4de06f12b3dc92afce3f2b37accdd2baa1a35f8503cf19304207fafa1633b3b2"
+content-hash = "5f8fdf0d442126d0760eb4cf776ba890d336047498e308e403efdcc2d829b030"

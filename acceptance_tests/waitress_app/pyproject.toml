@@ -1,0 +1,47 @@
+[tool.black]
+line-length = 110
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 110
+known_local_folder = ["c2cwsgiutils_app"]
+
+[tool.mypy]
+python_version = 3.9
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+strict = true
+
+[tool.poetry]
+name = "c2cwsgiutils_app"
+version = "0.1.0"
+description = "Test application for c2cwsgiutils"
+authors = ["Camptocamp <info@camptocamp.com>"]
+classifiers = [
+  "Programming Language :: Python",
+  "Framework :: Pyramid",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+]
+packages = [{ include = "c2cwsgiutils_app" }]
+
+[tool.poetry.scripts]
+get-hello = "c2cwsgiutils_app.get_hello:main"
+
+[tool.poetry.plugins."paste.app_factory"]
+main = "c2cwsgiutils_app:main"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+
+[tool.poetry.dev-dependencies]
+prospector = { version = "1.13.3", extras = ["with_bandit", "with_mypy", "with_ruff"] }
+prospector-profile-duplicated = "1.8.1"
+prospector-profile-utils = "1.14.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -47,7 +47,7 @@ def _dump_memory(request: pyramid.request.Request) -> list[Mapping[str, Any]]:
     auth.auth_view(request)
     limit = int(request.params.get("limit", "30"))
     analyze_type = request.params.get("analyze_type")
-    python_internals_map = request.params.get("python_internals_map", "0").lower() in ("", "1", "true", "on")
+    python_internals_map = request.params.get("python_internals_map", "0").lower() in ("1", "true", "on")
     result = broadcast.broadcast(
         "c2c_dump_memory",
         params={"limit": limit, "analyze_type": analyze_type, "python_internals_map": python_internals_map},
@@ -75,7 +75,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
 
     # warm-up run
     try:
-        if "no_warmup" not in request.params:
+        if request.params.get("no_warmup", "0").lower() in ("1", "true", "on"):
             request.invoke_subrequest(sub_request)
     except Exception:  # nosec  # pylint: disable=broad-except
         pass

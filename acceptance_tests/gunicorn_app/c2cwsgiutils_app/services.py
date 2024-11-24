@@ -2,6 +2,7 @@ import logging
 
 import prometheus_client
 import requests
+import sqlalchemy.sql.expression
 from pyramid.httpexceptions import (
     HTTPBadRequest,
     HTTPForbidden,

@@ -612,7 +612,7 @@ def hello_get(request):
 
 In production mode we usually use Gunicorn but we can also use Waitress.
 
-The advantage to use Waitress it that he creates only one process, that makes it easier to manage especially on Kubernetes:
+The advantage to use Waitress is that it creates only one process, that makes it easier to manage especially on Kubernetes:
 
 - The memory is more stable.
 - The OOM killer will restart the container.

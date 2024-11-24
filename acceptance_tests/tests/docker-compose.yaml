@@ -44,7 +44,7 @@ services:
   app2:
     <<: *app
     image: camptocamp/c2cwsgiutils_test_app_waitress
-    # Same as app but with 2 workers (and different Redis DB 2, broadcast_prefix, ports, and JSON log format)
+    # Same as app but with Waitress (and different Redis DB 2, broadcast_prefix, ports, and JSON log format)
     environment:
       - SQLALCHEMY_URL
       - SQLALCHEMY_SLAVE_URL
@@ -88,10 +88,6 @@ services:
       - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=INFO
-      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      - SENTRY_CLIENT_ENVIRONMENT=local
-      - SENTRY_CLIENT_RELEASE=latest
-      - SENTRY_TAG_SERVICE=alembic_master
     links:
       - db
     command:
@@ -105,10 +101,6 @@ services:
       - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=INFO
-      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      - SENTRY_CLIENT_ENVIRONMENT=local
-      - SENTRY_CLIENT_RELEASE=latest
-      - SENTRY_TAG_SERVICE=alembic_slave
     links:
       - db_slave:db
     command:

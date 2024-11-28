@@ -1,5 +1,6 @@
 import gc
 import logging
+import os
 import re
 import time
 from collections.abc import Mapping
@@ -8,6 +9,7 @@ from io import StringIO
 from typing import Any, Callable, cast
 
 import objgraph
+import psutil
 import pyramid.config
 import pyramid.request
 import pyramid.response
@@ -87,6 +89,9 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
         gc.collect(i)
 
     objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)
+    process = psutil.Process(os.getpid())
+    mem_before = process.memory_info()
+    start_time = time.time()
 
     response = None
     try:
@@ -96,12 +101,26 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
     except HTTPException as ex:
         _LOG.debug("response was %s", str(ex))
 
+    elapsed_time = time.time() - start_time
     del response
 
     for i in range(3):
         gc.collect(i)
 
-    return objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False)  # type: ignore
+    mem_after = process.memory_info()
+    return {
+        "memory.growth": {
+            "rss_kb": (mem_after.rss - mem_before.rss) / 1024,
+            "vms_kb": (mem_after.vms - mem_before.vms) / 1024,
+            "shared_kb": (mem_after.shared - mem_before.shared) / 1024,
+            "text_kb": (mem_after.text - mem_before.text) / 1024,
+            "lib_kb": (mem_after.lib - mem_before.lib) / 1024,
+            "data_kb": (mem_after.data - mem_before.data) / 1024,
+            "dirty_kb": (mem_after.dirty - mem_before.dirty) / 1024,
+        },
+        "elapsed_time": elapsed_time,
+        "objgraph.growth": objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False),  # type: ignore
+    }
 
 
 def _sleep(request: pyramid.request.Request) -> pyramid.response.Response:

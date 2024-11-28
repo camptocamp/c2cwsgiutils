@@ -77,7 +77,7 @@ def test_headers(app_connection):
 
 def _check_leak_there(response):
     print("response=" + json.dumps(response, indent=4))
-    leaked = {v[0]: v[2] for v in response}
+    leaked = {v[0]: v[2] for v in response["objgraph.growth"]}
     assert "c2cwsgiutils_app.services.LeakedObject" in leaked, leaked.keys()
     assert leaked["c2cwsgiutils_app.services.LeakedObject"] == 1
 

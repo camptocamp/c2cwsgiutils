@@ -12,14 +12,14 @@ from c2cwsgiutils.acceptance import image
         pytest.param(
             "c2c-auth.expected.png",
             650,
-            2000,
+            2500,
             {"X-API-Key": "changeme"},
             [{"name": "prefers-color-scheme", "value": "light"}],
         ),
         pytest.param(
             "c2c-auth-dark.expected.png",
             650,
-            2000,
+            2500,
             {"X-API-Key": "changeme"},
             [
                 {"name": "prefers-color-scheme", "value": "dark"},

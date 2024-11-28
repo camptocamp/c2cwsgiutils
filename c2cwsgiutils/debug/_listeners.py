@@ -68,12 +68,7 @@ def _dump_memory_impl(
                         and not (FILES_FIELDS - set(obj["globals"].keys()))
                     ):
                         python_internal = True
-                    if (
-                        python_internal
-                        and not python_internals_map
-                        or not python_internal
-                        and python_internals_map
-                    ):
+                    if python_internal != python_internals_map:
                         continue
                 size = get_size(obj) / 1024
                 if len(biggest_objects) < limit or size > biggest_objects[0][0]:

@@ -24,13 +24,16 @@
         crossorigin="anonymous"
         referrerpolicy="no-referrer"
     />
-    <title>c2cwsgiutils tools</title>
+    <title>C2C WSGI Utils tools</title>
     <style>
       body {
         margin-top: 0.5rem;
       }
       button, p  {
         margin-bottom: 0.5rem;
+      }
+      .row > h2 {
+        margin-top: 1rem;
       }
     </style>
   </head>

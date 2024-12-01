@@ -88,7 +88,7 @@ SQLAlchemy-Utils = { version = "0.41.2", optional = true }
 "zope.sqlalchemy" = { version = "3.1", optional = true }
 pyjwt = { version = "2.9.0", optional = true }
 requests-oauthlib = { version = "2.0.0", optional = true }
-waitress = "3.0.1"
+waitress = "3.0.2"
 scikit-image = { version = "0.24.0", optional = true }
 prometheus-client = { version = "0.21.0", optional = true}
 pyramid_mako = { version = "1.1.0", optional = true}
@@ -173,7 +173,7 @@ test_images = ["scikit-image"]
 prospector = { extras = ["with_bandit", "with_mypy", "with_pyroma"], version = "1.12.1" }
 prospector-profile-duplicated = "1.6.0"
 prospector-profile-utils = "1.9.1"
-coverage = "7.6.4"
+coverage = "7.6.8"
 junit2html = "31.0.2"
 pytest = "8.3.3"
 pytest-cov = "5.0.0"

@@ -15,7 +15,7 @@ _REDIS_PREFIX = "c2c_db_maintenance_"
 
 def install_subscriber(config: pyramid.config.Configurator) -> None:
     """Install the view to configure the loggers, if configured to do so, for backward compatibility."""
-    warnings.warn("install_subscriber function is deprecated; use includeme instead")
+    warnings.warn("install_subscriber function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

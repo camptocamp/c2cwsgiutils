@@ -115,6 +115,7 @@ class MultiProcessCustomCollector(prometheus_client.registry.Collector):
     """Get the metrics from the custom collectors."""
 
     def collect(self) -> Generator[prometheus_client.core.Metric, None, None]:
+        """Get the metrics from the custom collectors."""
         results: list[list[SerializedMetric]] = []
         for channel in MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS:
             result = broadcast.broadcast(channel, expect_answers=True)
@@ -159,6 +160,7 @@ class MemoryMapCollector(prometheus_client.registry.Collector):
         Arguments:
             memory_type: can be rss, pss or size
             pids: the list of pids or none
+
         """
         super().__init__()
         self.memory_type = memory_type

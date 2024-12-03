@@ -18,7 +18,7 @@ _LOG = logging.getLogger(__name__)
 
 def init(config: pyramid.config.Configurator) -> None:
     """Install a pyramid  event handler that adds the request information, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

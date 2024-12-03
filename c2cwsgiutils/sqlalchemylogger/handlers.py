@@ -11,7 +11,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
-from c2cwsgiutils.sqlalchemylogger._filters import ContainsExpression, DoesNotContainExpression
+from c2cwsgiutils.sqlalchemylogger._filters import (
+    ContainsExpression,
+    DoesNotContainExpression,
+)
 from c2cwsgiutils.sqlalchemylogger._models import Base, create_log_class
 
 _LOG = logging.getLogger(__name__)
@@ -29,12 +32,13 @@ class SQLAlchemyHandler(logging.Handler):
         does_not_contain_expression: str = "",
         contains_expression: str = "",
     ) -> None:
+        """Initialize the SQLAlchemyHandler."""
         super().__init__()
         # Initialize DB session
         self.engine = create_engine(sqlalchemy_url["url"])
         self.Log = create_log_class(  # pylint: disable=invalid-name
             tablename=sqlalchemy_url.get("tablename", "logs"),
-            tableargs=sqlalchemy_url.get("tableargs", None),  # type: ignore
+            tableargs=sqlalchemy_url.get("tableargs"),  # type: ignore
         )
         Base.metadata.bind = self.engine
         self.session = sessionmaker(bind=self.engine)()  # noqa
@@ -61,15 +65,16 @@ class SQLAlchemyHandler(logging.Handler):
                     if not self.log_queue.empty():
                         logs.append(self.log_queue.get())
                         self.log_queue.task_done()
-                if logs:
-                    # try to reduce the number of INSERT requests to the DB
-                    # by writing chunks of self.MAX_NB_LOGS size,
-                    # but also do not wait forever before writing stuff (self.MAX_TIMOUT)
-                    if (len(logs) >= self.MAX_NB_LOGS) or (
-                        time.perf_counter() >= (time_since_last + self.MAX_TIMEOUT)
-                    ):
-                        self._write_logs(logs)
-                        break
+                # try to reduce the number of INSERT requests to the DB
+                # by writing chunks of self.MAX_NB_LOGS size,
+                # but also do not wait forever before writing stuff (self.MAX_TIMOUT)
+                if (
+                    logs
+                    and (len(logs) >= self.MAX_NB_LOGS)
+                    or (time.perf_counter() >= (time_since_last + self.MAX_TIMEOUT))
+                ):
+                    self._write_logs(logs)
+                    break
         _LOG.debug("%s: stopping processor thread", __name__)
 
     def _write_logs(self, logs: list[Any]) -> None:
@@ -94,7 +99,7 @@ class SQLAlchemyHandler(logging.Handler):
         _LOG.info("%s: creating new database", __name__)
         if not database_exists(self.engine.url):
             create_database(self.engine.url)
-        # FIXME: we should not access directly the private __table_args__
+        # FIXME: we should not access directly the private __table_args__ # pylint: disable=fixme
         # variable, but add an accessor method in models.Log class
         if not isinstance(self.Log.__table_args__, type(None)) and self.Log.__table_args__.get(
             "schema", None
@@ -107,6 +112,7 @@ class SQLAlchemyHandler(logging.Handler):
         Base.metadata.create_all(self.engine)
 
     def emit(self, record: Any) -> None:
+        """Emit the log."""
         trace = None
         exc = record.__dict__["exc_info"]
         if exc:

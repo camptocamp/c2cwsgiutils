@@ -19,7 +19,7 @@ _broadcaster: Optional[interface.BaseBroadcaster] = None
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the broadcaster with Redis, if configured, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

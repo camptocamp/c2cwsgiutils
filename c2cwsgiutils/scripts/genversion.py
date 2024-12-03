@@ -24,7 +24,7 @@ def _get_package_version(comp: str) -> tuple[Optional[str], Optional[str]]:
     if matcher:
         return cast(tuple[str, str], matcher.groups())
     else:
-        if len(comp) > 0 and not comp[:3] == "-e ":
+        if len(comp) > 0 and comp[:3] != "-e ":
             print("Cannot parse package version: " + comp)
         return None, None
 
@@ -46,7 +46,9 @@ def _get_packages_version() -> dict[str, str]:
 
 def deprecated() -> None:
     """Run the command and print a deprecated notice."""
-    warnings.warn("c2cwsgiutils_genversion.py is deprecated; use c2cwsgiutils-genversion instead")
+    warnings.warn(
+        "c2cwsgiutils_genversion.py is deprecated; use c2cwsgiutils-genversion instead", stacklevel=2
+    )
     return main()
 
 

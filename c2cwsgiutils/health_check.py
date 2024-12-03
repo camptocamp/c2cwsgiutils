@@ -67,6 +67,7 @@ class JsonCheckException(Exception):
     """Checker exception used to add some structured content to a failure."""
 
     def __init__(self, message: str, json: Any):
+        """Initialize the exception."""
         super().__init__()
         self.message = message
         self.json = json
@@ -199,6 +200,7 @@ class HealthCheck:
     """
 
     def __init__(self, config: pyramid.config.Configurator) -> None:
+        """Initialize the health check view."""
         config.add_route(
             "c2c_health_check", config_utils.get_base_path(config) + r"/health_check", request_method="GET"
         )
@@ -235,6 +237,7 @@ class HealthCheck:
             engine_type: whether to check only the RW, RO or both engines
             rw_engin: the RW engine to use (if None, use the session one)
             ro_engin: the RO engine to use (if None, use the session one)
+
         """
         if query_cb is None:
             query_cb = self._at_least_one(at_least_one_model)
@@ -265,6 +268,7 @@ class HealthCheck:
             version_table: override the table name for the version
             rw_engin: the RW engine to use (if None, use the session one)
             ro_engin: the RO engine to use (if None, use the session one)
+
         """
         version_ = _get_alembic_version(alembic_ini_path, name)
 
@@ -287,26 +291,28 @@ class HealthCheck:
                 assert version_schema
                 assert version_table
                 for binding in _get_bindings(self.session, EngineType.READ_AND_WRITE):
-                    with binding as binded_session:
-                        with _PROMETHEUS_DB_SUMMARY.labels(
+                    with (
+                        binding as binded_session,
+                        _PROMETHEUS_DB_SUMMARY.labels(
                             configuration=alembic_ini_path, connection=binding.name(), check="alembic"
-                        ).time():
-                            result = binded_session.execute(
-                                sqlalchemy.text(
-                                    "SELECT version_num FROM "  # nosec
-                                    f"{sqlalchemy.sql.quoted_name(version_schema, True)}."
-                                    f"{sqlalchemy.sql.quoted_name(version_table, True)}"
-                                )
-                            ).fetchone()
-                            assert result is not None
-                            (actual_version,) = result
-                            _PROMETHEUS_ALEMBIC_VERSION.labels(
-                                version=actual_version, name=name, configuration=alembic_ini_path
-                            ).set(1)
-                            if actual_version != version_:
-                                raise Exception(  # pylint: disable=broad-exception-raised
-                                    f"Invalid alembic version (db: {actual_version}, code: {version_})"
-                                )
+                        ).time(),
+                    ):
+                        result = binded_session.execute(
+                            sqlalchemy.text(
+                                "SELECT version_num FROM "  # noqa: S608
+                                f"{sqlalchemy.sql.quoted_name(version_schema, True)}."
+                                f"{sqlalchemy.sql.quoted_name(version_table, True)}"
+                            )
+                        ).fetchone()
+                        assert result is not None
+                        (actual_version,) = result
+                        _PROMETHEUS_ALEMBIC_VERSION.labels(
+                            version=actual_version, name=name, configuration=alembic_ini_path
+                        ).set(1)
+                        if actual_version != version_:
+                            raise Exception(  # pylint: disable=broad-exception-raised
+                                f"Invalid alembic version (db: {actual_version}, code: {version_})"
+                            )
                 return version_
 
         self._checks.append(
@@ -321,9 +327,8 @@ class HealthCheck:
             Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]], None
         ] = None,
         name: Optional[str] = None,
-        check_cb: Callable[
-            [pyramid.request.Request, requests.Response], Any
-        ] = lambda request, response: None,
+        check_cb: Callable[[pyramid.request.Request, requests.Response], Any] = lambda request,
+        response: None,
         timeout: float = 3,
         level: int = 1,
     ) -> None:
@@ -339,6 +344,7 @@ class HealthCheck:
                          response as parameters)
             timeout: the timeout
             level: the level of the health check
+
         """
 
         def check(request: pyramid.request.Request) -> Any:
@@ -365,6 +371,7 @@ class HealthCheck:
         Arguments:
             name: the name of the check (defaults to url)
             level: the level of the health check
+
         """
 
         def check(request: pyramid.request.Request) -> Any:
@@ -413,6 +420,7 @@ class HealthCheck:
         Arguments:
             name: the name of the check (defaults to "version")
             level: the level of the health check
+
         """
 
         def check(request: pyramid.request.Request) -> dict[str, Any]:
@@ -441,6 +449,7 @@ class HealthCheck:
             name: the name of the check
             check_cb: the callback to call (takes the request as parameter)
             level: the level of the health check
+
         """
         assert name
         self._checks.append((name, check_cb, level))
@@ -453,9 +462,8 @@ class HealthCheck:
             "successes": {},
         }
         checks = None
-        if "checks" in request.params:
-            if request.params["checks"] != "":
-                checks = request.params["checks"].split(",")
+        if "checks" in request.params and request.params["checks"] != "":
+            checks = request.params["checks"].split(",")
         for name, check, level in self._checks:
             if level <= max_level and (checks is None or name in checks):
                 self._run_one(check, is_auth, level, name, request, results)
@@ -498,11 +506,13 @@ class HealthCheck:
     ) -> tuple[str, Callable[[pyramid.request.Request], None]]:
         def check(request: pyramid.request.Request) -> None:
             del request  # unused
-            with binding as session:
-                with _PROMETHEUS_DB_SUMMARY.labels(
+            with (
+                binding as session,
+                _PROMETHEUS_DB_SUMMARY.labels(
                     connection=binding.name(), check="database", configuration="<default>"
-                ).time():
-                    return query_cb(session)
+                ).time(),
+            ):
+                return query_cb(session)
 
         return "db_engine_" + binding.name(), check
 

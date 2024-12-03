@@ -62,6 +62,7 @@ class Reporter:
     """The stats reporter."""
 
     def __init__(self, args: argparse.Namespace) -> None:
+        """Initialize the reporter."""
         self._error: Optional[Exception] = None
         self.registry = CollectorRegistry()
         self.prometheus_push = args.prometheus_url is not None

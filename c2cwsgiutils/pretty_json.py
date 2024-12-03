@@ -28,7 +28,7 @@ class _FastDumps:
 
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize json and fast_json renderer, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

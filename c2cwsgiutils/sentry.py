@@ -33,7 +33,7 @@ def _create_before_send_filter(tags: MutableMapping[str, str]) -> Callable[[Any,
 
 def init(config: Optional[pyramid.config.Configurator] = None) -> None:
     """Initialize the Sentry integration, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

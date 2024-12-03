@@ -99,6 +99,7 @@ def init(config: pyramid.config.Configurator) -> None:  # pragma: nocover
 
     Arguments:
         config: The Pyramid config
+
     """
     config.add_subscriber(_request_callback, pyramid.events.NewRequest)
     config.add_subscriber(_before_rendered_callback, pyramid.events.BeforeRender)

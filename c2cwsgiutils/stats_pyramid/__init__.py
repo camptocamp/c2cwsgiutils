@@ -10,7 +10,7 @@ from c2cwsgiutils.stats_pyramid import _pyramid_spy
 
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the whole stats module, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 
@@ -20,6 +20,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
 
     Arguments:
         config: The Pyramid config
+
     """
     _pyramid_spy.init(config)
     init_db_spy()

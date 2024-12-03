@@ -56,7 +56,7 @@ class _Repository:
                             ]
                         )
                     _LOG.info(output)
-                except Exception:  # nosec  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except # noqa: S110
                     pass
 
 

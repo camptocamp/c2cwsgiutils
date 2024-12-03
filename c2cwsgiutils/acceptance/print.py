@@ -21,6 +21,7 @@ class PrintConnection(connection.Connection):
             base_url: The base URL to the print server (including the /print)
             app: The name of the application to use
             origin: The origin and referrer to include in the requests
+
         """
         super().__init__(base_url=base_url, origin=origin)
         self.session.headers["Referrer"] = origin

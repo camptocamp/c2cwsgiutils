@@ -9,6 +9,7 @@ class Profile(contextlib.ContextDecorator):
     """Used to profile a function with a decorator or with a with statement."""
 
     def __init__(self, path: str, print_number: int = 0) -> None:
+        """Initialize the profiler."""
         self.path = path
         self.print_number = print_number
         self.pr = cProfile.Profile()

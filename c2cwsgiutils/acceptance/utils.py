@@ -32,6 +32,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = _DEFAULT_TIMEOUT, in
         what: the function to try
         timeout: the timeout to get a success
         interval: the interval between try
+
     """
     timeout = time.perf_counter() + timeout
     while True:
@@ -46,7 +47,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = _DEFAULT_TIMEOUT, in
             error = str(e)
             _LOG.info("  Failed: %s", e)
         if time.perf_counter() > timeout:
-            assert False, "Timeout: " + error
+            raise AssertionError("Timeout: " + error)
         time.sleep(interval)
 
 

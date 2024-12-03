@@ -1,10 +1,10 @@
 inherits:
   - utils:base
   - utils:no-design-checks
+  - utils:c2cwsgiutils
   - utils:fix
+  - utils:unsafe
   - duplicated
-
-doc-warnings: true
 
 ignore-paths:
   - docs
@@ -16,24 +16,7 @@ pylint:
     extension-pkg-allow-list:
       - ujson
       - lxml
-  disable:
-    - no-else-return
-    - no-else-raise
-    - missing-module-docstring
-    - missing-timeout # A default timeout is set
 
-pydocstyle:
-  disable:
-    - D104 # Missing docstring in public package
-    - D105 # Missing docstring in magic method
-    - D107 # Missing docstring in __init__
-
-pycodestyle:
-  disable:
-    # Buggy checks with Python 3.12
-    - E221 # multiple spaces before operator
-    - E702 # multiple statements on one line (semicolon)
-
-bandit:
+mypy:
   options:
-    config: .bandit.yaml
+    python_version: '3.10'

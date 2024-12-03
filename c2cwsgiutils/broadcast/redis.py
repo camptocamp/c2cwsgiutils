@@ -23,6 +23,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         master: "redis.client.Redis[str]",
         slave: "redis.client.Redis[str]",
     ) -> None:
+        """Initialize the broadcaster."""
         from c2cwsgiutils import redis_utils  # pylint: disable=import-outside-toplevel
 
         self._master = master
@@ -40,6 +41,8 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         return self._broadcast_prefix + channel
 
     def subscribe(self, channel: str, callback: Callable[..., Any]) -> None:
+        """Subscribe to a channel."""
+
         def wrapper(message: Mapping[str, Any]) -> None:
             _LOG.debug("Received a broadcast on %s: %s", message["channel"], repr(message["data"]))
             data = json.loads(message["data"])
@@ -58,6 +61,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         self._pub_sub.subscribe(**{actual_channel: wrapper})
 
     def unsubscribe(self, channel: str) -> None:
+        """Unsubscribe from a channel."""
         _LOG.debug("Unsubscribing from %s")
         actual_channel = self._get_channel(channel)
         self._pub_sub.unsubscribe(actual_channel)
@@ -65,6 +69,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
     def broadcast(
         self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
     ) -> Optional[list[Any]]:
+        """Broadcast a message to all the listeners."""
         if expect_answers:
             return self._broadcast_with_answer(channel, params, timeout)
         else:
@@ -85,7 +90,8 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 cond.notify()
 
         answer_channel = self._get_channel(channel) + "".join(
-            random.choice(string.ascii_uppercase + string.digits) for _ in range(10)  # nosec
+            random.choice(string.ascii_uppercase + string.digits)  # noqa: S311
+            for _ in range(10)
         )
         _LOG.debug("Subscribing for broadcast answers on %s", answer_channel)
         self._pub_sub.subscribe(**{answer_channel: callback})
@@ -98,7 +104,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             with cond:
                 while len(answers) < nb_received:
                     to_wait = timeout_time - time.perf_counter()
-                    if to_wait <= 0.0:  # pragma: no cover
+                    if to_wait <= 0.0:
                         _LOG.warning(
                             "timeout waiting for %d/%d answers on %s",
                             len(answers),

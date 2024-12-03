@@ -20,6 +20,7 @@ class Connection:
     """The connection."""
 
     def __init__(self, base_url: str, origin: str) -> None:
+        """Initialize the connection."""
         self.base_url = base_url
         if not self.base_url.endswith("/"):
             self.base_url += "/"
@@ -93,10 +94,10 @@ class Connection:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
             r.raw.decode_content = True
-            doc = etree.parse(r.raw)  # nosec
+            doc = etree.parse(r.raw)  # noqa: S320
             if schema is not None:
                 with open(schema, encoding="utf-8") as schema_file:
-                    xml_schema = etree.XMLSchema(etree.parse(schema_file))  # nosec
+                    xml_schema = etree.XMLSchema(etree.parse(schema_file))  # noqa: S320
                 xml_schema.assertValid(doc)
             return doc
 

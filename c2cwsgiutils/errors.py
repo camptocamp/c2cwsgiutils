@@ -9,7 +9,12 @@ from typing import Any, Callable
 import pyramid.request
 import sqlalchemy.exc
 from cornice import cors
-from pyramid.httpexceptions import HTTPError, HTTPException, HTTPRedirection, HTTPSuccessful
+from pyramid.httpexceptions import (
+    HTTPError,
+    HTTPException,
+    HTTPRedirection,
+    HTTPSuccessful,
+)
 from webob.request import DisconnectionError
 
 from c2cwsgiutils import auth, config_utils
@@ -152,7 +157,7 @@ def _passthrough(exception: HTTPException, request: pyramid.request.Request) -> 
 
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the error views, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

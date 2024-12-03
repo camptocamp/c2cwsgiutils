@@ -44,7 +44,7 @@ def _generate_model_graph(module: Any, base: Any) -> None:
 def _print_node(symbol: Any, interesting: set[Any]) -> None:
     print(f'{symbol.__name__} [label="{_get_table_desc(symbol)}", shape=box];')
     for parent in symbol.__bases__:
-        if parent != object:
+        if parent is not object:
             if parent not in interesting:
                 _print_node(parent, interesting)
                 interesting.add(parent)

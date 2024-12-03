@@ -40,8 +40,8 @@ coverage = "7.6.8"
 
 [tool.poetry.dev-dependencies]
 # pylint = { version = "2.15.6" }
-prospector = { extras = ["with_bandit", "with_mypy"], version = "1.13.3" }
-prospector-profile-duplicated = "1.8.0"
+prospector = { version = "1.13.3", extras = ["with_bandit", "with_mypy", "with_ruff"] }
+prospector-profile-duplicated = "1.8.1"
 prospector-profile-utils = "1.14.0"
 
 [build-system]

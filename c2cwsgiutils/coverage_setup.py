@@ -10,7 +10,7 @@ _LOG = logging.getLogger(__name__)
 
 def init() -> None:
     """Initialize the code coverage, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme()
 
 
@@ -22,7 +22,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     import coverage  # pylint: disable=import-outside-toplevel
 
     _LOG.warning("Setting up code coverage")
-    report_dir = "/tmp/coverage/api"  # nosec
+    report_dir = "/tmp/coverage/api"  # noqa: S108
     os.makedirs(report_dir, exist_ok=True)
     cov = coverage.Coverage(
         data_file=os.path.join(report_dir, "coverage"),

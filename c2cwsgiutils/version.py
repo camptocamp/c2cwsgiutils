@@ -37,7 +37,7 @@ _PROMETHEUS_VERSIONS_INFO = prometheus_client.Gauge(
 
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 

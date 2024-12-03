@@ -172,8 +172,8 @@ test_images = ["scikit-image"]
 
 [tool.poetry.group.dev.dependencies]
 # pylint = { version = "2.15.6" }
-prospector = { extras = ["with_bandit", "with_mypy", "with_pyroma"], version = "1.13.3" }
-prospector-profile-duplicated = "1.8.0"
+prospector = { version = "1.13.3", extras = ["with_bandit", "with_mypy", "with_pyroma", "with_ruff"] }
+prospector-profile-duplicated = "1.9.0"
 prospector-profile-utils = "1.14.0"
 coverage = "7.6.8"
 junit2html = "31.0.2"

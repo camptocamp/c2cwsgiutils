@@ -87,10 +87,12 @@ class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ign
     """A CEE (JSON format) log handler with additional information about the current request."""
 
     def __init__(self, *args: Any, **kargv: Any) -> None:
+        """Initialize the handler."""
         super().__init__(*args, **kargv)
         self.addFilter(_PYRAMID_FILTER)
 
     def format(self, record: Any) -> str:
+        """Format the record into a CEE string."""
         message = _make_message_dict(
             record,
             self._fqdn,
@@ -112,11 +114,13 @@ class JsonLogHandler(Base):
     """Log to stdout in JSON."""
 
     def __init__(self, stream: Optional[TextIO] = None):
+        """Initialize the handler."""
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
         self._fqdn = socket.getfqdn()
 
     def format(self, record: Any) -> str:
+        """Format the record into a JSON string."""
         message = _make_message_dict(
             record, self._fqdn, debugging_fields=True, extra_fields=True, facility=None, static_fields={}
         )

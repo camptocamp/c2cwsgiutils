@@ -20,6 +20,7 @@ def retry(
         tries: number of times to try (not retry) before giving up
         delay: initial delay between retries in seconds
         backoff: backoff multiplier e.g. value of 2 will double the delay each retry
+
     """
 
     def deco_retry(f: typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]:

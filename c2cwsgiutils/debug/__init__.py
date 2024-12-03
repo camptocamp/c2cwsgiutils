@@ -16,7 +16,7 @@ dump_memory_maps = utils.dump_memory_maps
 
 def init(config: pyramid.config.Configurator) -> None:
     """Initialize the debug tools, for backward compatibility."""
-    warnings.warn("init function is deprecated; use includeme instead")
+    warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 
@@ -37,6 +37,8 @@ def init_daemon(config: Optional[pyramid.config.Configurator] = None) -> None:
     those requests.
     """
     if config_utils.env_or_config(config, ENV_KEY, CONFIG_KEY, type_=config_utils.config_bool):
-        from c2cwsgiutils.debug import _listeners  # pylint: disable=import-outside-toplevel
+        from c2cwsgiutils.debug import (  # pylint: disable=import-outside-toplevel
+            _listeners,
+        )
 
         _listeners.init()

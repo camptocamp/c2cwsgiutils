@@ -66,8 +66,11 @@ def setup_session(
         force_slave: The method/paths that needs to use the slave
 
     Returns: The SQLAlchemy session, the R/W engine and the R/O engine
+
     """
-    warnings.warn("setup_session function is deprecated; use init and request.dbsession instead")
+    warnings.warn(
+        "setup_session function is deprecated; use init and request.dbsession instead", stacklevel=2
+    )
     if slave_prefix is None:
         slave_prefix = master_prefix
     settings = config.registry.settings
@@ -122,8 +125,11 @@ def create_session(
         engine_config: The rest of the parameters are passed as is to the sqlalchemy.create_engine function
 
     Returns: The SQLAlchemy session
+
     """
-    warnings.warn("create_session function is deprecated; use init and request.dbsession instead")
+    warnings.warn(
+        "create_session function is deprecated; use init and request.dbsession instead", stacklevel=2
+    )
     if slave_url is None:
         slave_url = url
 
@@ -215,6 +221,7 @@ class SessionFactory(_sessionmaker):
         ro_engine: sqlalchemy.engine.Engine,
         rw_engine: sqlalchemy.engine.Engine,
     ):
+        """Initialize the session factory."""
         super().__init__()
         self.master_paths: Iterable[Pattern[str]] = (
             list(map(_RE_COMPILE, force_master)) if force_master else []
@@ -232,6 +239,7 @@ class SessionFactory(_sessionmaker):
     def __call__(  # type: ignore
         self, request: Optional[pyramid.request.Request], readwrite: Optional[bool] = None, **local_kw: Any
     ) -> _scoped_session:
+        """Set the engine based on the request."""
         if readwrite is not None:
             if readwrite and not FORCE_READONLY:
                 _LOG.debug("Using %s database", self.rw_engine.c2c_name)  # type: ignore
@@ -374,6 +382,7 @@ def init(
         force_slave: The method/paths that needs to use the slave
 
     Returns: The SQLAlchemy session
+
     """
     settings = config.get_settings()
     settings["tm.manager_hook"] = "pyramid_tm.explicit_manager"

@@ -16,9 +16,11 @@ class Filter:
     """
 
     def __init__(self, application: Callable[[dict[str, str], Any], Any]):
+        """Initialize the filter."""
         self._application = application
 
     def __call__(self, environ: dict[str, str], start_response: Any) -> Any:
+        """Update the environ with the headers."""
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
         if "HTTP_FORWARDED" in environ:
             _handle_forwarded(environ)

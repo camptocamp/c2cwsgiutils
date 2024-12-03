@@ -10,7 +10,7 @@ import skimage.metrics  # pylint: disable=import-error
 import skimage.transform  # pylint: disable=import-error
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
     NpNdarrayInt: TypeAlias = np.ndarray[np.uint8, Any]
 else:
@@ -89,6 +89,7 @@ def check_image(
       level: The minimum similarity level (between 0.0 and 1.0), default to 1.0
       generate_expected_image: If `True` generate the expected image instead of checking it
       use_mask: If `False` don't use the mask event if the file exists
+
     """
     assert image_to_check is not None, "Image required"
     image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
@@ -122,7 +123,7 @@ def check_image(
         if np.issubdtype(mask.dtype, np.floating):
             mask = (mask * 255).astype("uint8")
 
-        assert ((0 < mask) & (mask < 255)).sum() == 0, "Mask should be only black and white image"
+        assert ((mask > 0) & (mask < 255)).sum() == 0, "Mask should be only black and white image"
 
         # Convert to boolean
         mask = mask == 0
@@ -139,7 +140,7 @@ def check_image(
         return
     if not os.path.isfile(expected_filename):
         skimage.io.imsave(expected_filename, image_to_check)
-        assert False, "Expected image not found: " + expected_filename
+        raise AssertionError("Expected image not found: " + expected_filename)
     expected = skimage.io.imread(expected_filename)
     assert expected is not None, "Wrong image: " + expected_filename
     expected = normalize_image(expected)
@@ -201,6 +202,7 @@ def check_screenshot(
       level: See `check_image`
       generate_expected_image: See `check_image`
       use_mask: See `check_image`
+
     """
     if headers is None:
         headers = {}

@@ -31,6 +31,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
 
     Arguments:
         config: The pyramid Configuration
+
     """
     logging.captureWarnings(True)
     config.include(coverage_setup.includeme)

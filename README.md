@@ -608,6 +608,64 @@ def hello_get(request):
     return {'hello': True}
 ```
 
+## Waitress
+
+In production mode we usually use Gunicorn but we can also use Waitress.
+
+The advantage to use Waitress it that he creates only one process, that makes it easier to manage especially on Kubernetes:
+
+- The memory is more stable.
+- The OOM killer will restart the container.
+- Prometheus didn't request trick to aggregate the metrics.
+
+Then to migrate from Gunicorn to Waitress you should do:
+
+Add call to `c2cwsgiutils.prometheus.start_single_process()` on your application main function.
+
+Changes to do in your docker file:
+
+```diff
+
+ ENV \
+-   GUNICORN_LOG_LEVEL=WARNING \
++   WAITRESS_LOG_LEVEL=WARNING \
++   WAITRESS_THREADS=10 \
+
+-RUN mkdir -p /prometheus-metrics \
+-  && chmod a+rwx /prometheus-metrics
+-ENV PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
+
+
+-CMD ["/venv/bin/gunicorn", "--paste=/app/production.ini"]
++CMD ["/venv/bin/pserve", "c2c:///app/production.ini"]
+```
+
+Remove the no more needed file `gunicorn.conf.py`.
+
+Update the `production.ini` file:
+
+```diff
+
+-# this file should be used by gunicorn.
+
+ [server:main]
++threads = %(WAITRESS_THREADS)s
++trusted_proxy = True
++clear_untrusted_proxy_headers = False
+
+ [loggers]
+-keys = root, gunicorn, sqlalchemy, c2cwsgiutils, c2cwsgiutils_app
++keys = root, waitress, sqlalchemy, c2cwsgiutils, c2cwsgiutils_app
+
+-[logger_gunicorn]
+-level = %(GUNICORN_LOG_LEVEL)s
++[logger_waitress]
++level = %(WAITRESS_LOG_LEVEL)s
+ handlers =
+-qualname = gunicorn.error
++qualname = waitress
+```
+
 # Exception handling
 
 c2cwsgiutils can install exception handling views that will catch any exception raised by the

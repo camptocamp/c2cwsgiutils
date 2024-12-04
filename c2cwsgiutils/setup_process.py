@@ -5,6 +5,7 @@ Must be imported at the very beginning of the process's life, before any other m
 """
 
 import argparse
+import logging
 import warnings
 from typing import Any, Callable, Optional, TypedDict, cast
 
@@ -97,4 +98,5 @@ def bootstrap_application(
     """
     loader = get_config_loader(config_uri)
     loader.setup_logging(options)
+    logging.getLogger(__name__).info("Loading the application from %s", config_uri)
     return cast(PyramidEnv, bootstrap(config_uri, options=options))

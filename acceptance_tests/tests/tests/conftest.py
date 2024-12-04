@@ -8,7 +8,8 @@ from c2cwsgiutils.acceptance.connection import Connection
 
 _BASE_URL = "http://app:8080/api/"
 _BASE_URL_APP2 = "http://app2:8080/api/"
-_PROMETHEUS_URL = "http://app2:9090/metrics"
+_PROMETHEUS_URL_1 = "http://app:9090/metrics"
+_PROMETHEUS_URL_2 = "http://app2:9090/metrics"
 _PROMETHEUS_TEST_URL = "http://run_test:9090/metrics"
 _PROMETHEUS_STATS_DB_URL = "http://stats_db:9090/metrics"
 _LOG = logging.getLogger(__name__)
@@ -44,13 +45,23 @@ def app2_connection(composition):
 
 
 @pytest.fixture
-def prometheus_connection(composition):
+def prometheus_1_connection(composition):
     """
     Fixture that returns a connection to a running batch container.
     """
 
     del composition
-    return Connection(base_url=_PROMETHEUS_URL, origin="http://example.com/")
+    return Connection(base_url=_PROMETHEUS_URL_1, origin="http://example.com/")
+
+
+@pytest.fixture
+def prometheus_2_connection(composition):
+    """
+    Fixture that returns a connection to a running batch container.
+    """
+
+    del composition
+    return Connection(base_url=_PROMETHEUS_URL_2, origin="http://example.com/")
 
 
 @pytest.fixture

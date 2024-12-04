@@ -1,10 +1,10 @@
-FROM camptocamp/c2cwsgiutils as base-all
+FROM camptocamp/c2cwsgiutils AS base-all
 LABEL maintainer Camptocamp "info@camptocamp.com"
 SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 
 # Used to convert the locked packages by poetry to pip requirements format
 # We don't directly use `poetry install` because it force to use a virtual environment.
-FROM base-all as poetry
+FROM base-all AS poetry
 
 RUN --mount=type=cache,target=/var/lib/apt/lists \
   --mount=type=cache,target=/var/cache,sharing=locked \
@@ -22,7 +22,7 @@ RUN poetry export --output=requirements.txt \
   && poetry export --with=dev --output=requirements-dev.txt
 
 # Base, the biggest thing is to install the Python packages
-FROM base-all as base
+FROM base-all AS base
 
 WORKDIR /app
 
@@ -51,12 +51,17 @@ ENV \
   SQLALCHEMY_MAX_OVERFLOW=25 \
   SQLALCHEMY_SLAVE_POOL_RECYCLE=30 \
   SQLALCHEMY_SLAVE_POOL_SIZE=5 \
-  SQLALCHEMY_SLAVE_MAX_OVERFLOW=25 LOG_TYPE=console \
+  SQLALCHEMY_SLAVE_MAX_OVERFLOW=25 \
+  LOG_TYPE=console \
   OTHER_LOG_LEVEL=WARNING \
-  GUNICORN_LOG_LEVEL=WARNING \
+  WAITRESS_LOG_LEVEL=WARNING \
   SQL_LOG_LEVEL=WARNING \
   C2CWSGIUTILS_LOG_LEVEL=WARNING \
-  LOG_LEVEL=INFO
+  LOG_LEVEL=INFO \
+  WAITRESS_THREADS=10 \
+  VISIBLE_ENTRY_POINT=/
 
 # www-data
 USER 33
+
+CMD ["/venv/bin/pserve", "c2c:///app/production.ini"]

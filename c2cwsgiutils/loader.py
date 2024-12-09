@@ -22,15 +22,16 @@ class Loader(BaseLoader):  # type: ignore
 
     def setup_logging(self, defaults: Optional[dict[str, str]] = None) -> None:
         """
-        Set up logging via :func:`logging.config.fileConfig`.
+        Set up logging via :func:`logging.config.dictConfig` with value returned from c2cwsgiutils.get_logconfig_dict.
 
         Defaults are specified for the special ``__file__`` and ``here``
         variables, similar to PasteDeploy config loading. Extra defaults can
         optionally be specified as a dict in ``defaults``.
 
         Arguments:
-            defaults: The defaults that will be used when passed to
-                :func:`logging.config.fileConfig`.
+        ---------
+        defaults: The defaults that will be used when passed to
+            :func:`logging.config.fileConfig`.
 
         """
         if "loggers" in self.get_sections():

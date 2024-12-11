@@ -13,7 +13,7 @@ ENV PATH=/venv/bin:$PATH
 
 # Used to convert the locked packages by poetry to pip requirements format
 # We don't directly use `poetry install` because it force to use a virtual environment.
-FROM base-all-0 as poetry
+FROM base-all-0 AS poetry
 
 # Install Poetry
 WORKDIR /tmp
@@ -28,7 +28,7 @@ RUN poetry export --extras=all --output=requirements.txt \
   && poetry export --extras=all --with=dev --output=requirements-dev.txt
 
 # Base, the biggest thing is to install the Python packages
-FROM base-all-0 as base-all
+FROM base-all-0 AS base-all
 
 # The /poetry/requirements.txt file is build with the command
 # poetry export --extras=all --output=requirements.txt, see above
@@ -102,7 +102,7 @@ CMD ["/venv/bin/gunicorn"]
 
 COPY production.ini /app/
 
-FROM base-lint as tests
+FROM base-lint AS tests
 
 WORKDIR /opt/c2cwsgiutils
 COPY c2cwsgiutils ./c2cwsgiutils
@@ -113,4 +113,4 @@ RUN --mount=type=cache,target=/root/.cache \
   POETRY_DYNAMIC_VERSIONING_BYPASS=${VERSION} python3 -m pip install --disable-pip-version-check --no-deps --editable=. \
   && python3 -m pip freeze > /requirements.txt
 
-FROM base as standard
+FROM base AS standard

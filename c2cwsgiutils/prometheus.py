@@ -2,6 +2,7 @@
 
 import os
 import re
+import resource
 from collections.abc import Generator, Iterable
 from typing import Any, Optional, TypedDict, cast
 
@@ -15,11 +16,25 @@ import pyramid.config
 from c2cwsgiutils import broadcast, redis_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps
 
+PSUTILS = True
+try:
+    import psutil
+except ImportError:
+    PSUTILS = False
+
 _NUMBER_RE = re.compile(r"^[0-9]+$")
 MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS = [
     "c2cwsgiutils_prometheus_collector_gc",
     "c2cwsgiutils_prometheus_collector_process",
 ]
+
+
+def start_single_process() -> None:
+    """Start separate HTTP server to provide the Prometheus metrics."""
+    if os.environ.get("C2C_PROMETHEUS_PORT") is not None:
+        prometheus_client.REGISTRY.register(ResourceCollector())
+        prometheus_client.REGISTRY.register(MemoryInfoCollector())
+        prometheus_client.start_http_server(int(os.environ["C2C_PROMETHEUS_PORT"]))
 
 
 def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> None:
@@ -28,6 +43,7 @@ def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> Non
         broadcast.includeme()
 
         registry = prometheus_client.CollectorRegistry() if registry is None else registry
+        registry.register(ResourceCollector())
         registry.register(MemoryMapCollector())
         registry.register(prometheus_client.PLATFORM_COLLECTOR)
         registry.register(MultiProcessCustomCollector())
@@ -180,4 +196,44 @@ class MemoryMapCollector(prometheus_client.registry.Collector):
         ):
             for e in dump_memory_maps(pid):
                 gauge.add_metric([pid, e["name"]], e[self.memory_type + "_kb"] * 1024)
+        yield gauge
+
+
+class ResourceCollector(prometheus_client.registry.Collector):
+    """Collect the resources used by Python."""
+
+    def collect(self) -> Generator[prometheus_client.core.GaugeMetricFamily, None, None]:
+        """Get the gauge from smap file."""
+        gauge = prometheus_client.core.GaugeMetricFamily(
+            build_metric_name("python_resource"),
+            "Python resources",
+            labels=["name"],
+        )
+        r = resource.getrusage(resource.RUSAGE_SELF)
+        for field in dir(r):
+            if field.startswith("ru_"):
+                gauge.add_metric([field[3:]], getattr(r, field))
+        yield gauge
+
+
+class MemoryInfoCollector(prometheus_client.registry.Collector):
+    """Collect the resources used by Python."""
+
+    process = psutil.Process(os.getpid())
+
+    def collect(self) -> Generator[prometheus_client.core.GaugeMetricFamily, None, None]:
+        """Get the gauge from smap file."""
+        gauge = prometheus_client.core.GaugeMetricFamily(
+            build_metric_name("python_memory_info"),
+            "Python memory info",
+            labels=["name"],
+        )
+        memory_info = self.process.memory_info()
+        gauge.add_metric(["rss"], memory_info.rss)
+        gauge.add_metric(["vms"], memory_info.vms)
+        gauge.add_metric(["shared"], memory_info.shared)
+        gauge.add_metric(["text"], memory_info.text)
+        gauge.add_metric(["lib"], memory_info.lib)
+        gauge.add_metric(["data"], memory_info.data)
+        gauge.add_metric(["dirty"], memory_info.dirty)
         yield gauge

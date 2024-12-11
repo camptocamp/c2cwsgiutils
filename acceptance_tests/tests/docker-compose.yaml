@@ -1,5 +1,3 @@
-version: '2.2'
-
 services:
   app: &app
     image: camptocamp/c2cwsgiutils_test_app
@@ -34,7 +32,6 @@ services:
       # Test problematic environment variable (values contains % and duplicated with different cass)
       - TEST='%1'
       - test='%2'
-      - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
       - C2C_PROMETHEUS_PORT=9090
       - C2C_PROMETHEUS_APPLICATION_PACKAGE=c2cwsgiutils_app
     links:
@@ -46,7 +43,8 @@ services:
 
   app2:
     <<: *app
-    # Same as app but with 2 workers (and different Redis DB 2, broadcast_prefix, ports, and JSON log format)
+    image: camptocamp/c2cwsgiutils_test_app_waitress
+    # Same as app but with Waitress (and different Redis DB 2, broadcast_prefix, ports, and JSON log format)
     environment:
       - SQLALCHEMY_URL
       - SQLALCHEMY_SLAVE_URL
@@ -61,7 +59,6 @@ services:
       - C2C_PROFILER_PATH=/api_profiler
       - C2C_PROFILER_MODULES=c2cwsgiutils c2cwsgiutils_app sqlalchemy request
       - C2C_ENABLE_EXCEPTION_HANDLING=1
-      - GUNICORN_CMD_ARGS="--reload" # don't use this in production
       - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=INFO
@@ -75,12 +72,9 @@ services:
       - C2C_BROADCAST_PREFIX=app2
       - PYTHONMALLOC=debug
       - DEBUG_LOGCONFIG
-      - GUNICORN_WORKERS=2
-      - GUNICORN_THREADS=10
       # Test problematic environment variable (values contains % and duplicated with different cass)
       - TEST='%1'
       - test='%2'
-      - PROMETHEUS_MULTIPROC_DIR=/prometheus-metrics
       - C2C_PROMETHEUS_PORT=9090
       - C2C_PROMETHEUS_APPLICATION_PACKAGES=c2cwsgiutils_app
     ports:
@@ -94,31 +88,23 @@ services:
       - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=INFO
-      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      - SENTRY_CLIENT_ENVIRONMENT=local
-      - SENTRY_CLIENT_RELEASE=latest
-      - SENTRY_TAG_SERVICE=alembic_master
     links:
       - db
     command:
-      - /app/run_alembic.sh
+      - /app/run-alembic
 
   alembic_slave:
-    image: camptocamp/c2cwsgiutils_test_app
+    image: camptocamp/c2cwsgiutils_test_app_waitress
     environment:
       - SQLALCHEMY_URL
       - SQLALCHEMY_SLAVE_URL
       - C2CWSGIUTILS_LOG_LEVEL=DEBUG
       - SQL_LOG_LEVEL=DEBUG
       - OTHER_LOG_LEVEL=INFO
-      - SENTRY_URL=https://14bdb65de3f247c4a89cc7ed53ddec72@sentry.camptocamp.com/5
-      - SENTRY_CLIENT_ENVIRONMENT=local
-      - SENTRY_CLIENT_RELEASE=latest
-      - SENTRY_TAG_SERVICE=alembic_slave
     links:
       - db_slave:db
     command:
-      - /app/run_alembic.sh
+      - /app/run-alembic
 
   db: &db
     image: camptocamp/postgres:14-postgis-3

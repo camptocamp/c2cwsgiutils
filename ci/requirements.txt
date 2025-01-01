@@ -2,7 +2,7 @@ c2cciutils[checks,publish]==1.6.23
 poetry-dynamic-versioning[plugin]==1.4.1
 poetry-plugin-export==1.8.0
 pre-commit==3.8.0
-pytest==8.3.3
+pytest==8.3.4
 scikit-image==0.24.0
 poetry-plugin-tweak-dependencies-version==1.5.2
 poetry-dynamic-versioning==1.4.1

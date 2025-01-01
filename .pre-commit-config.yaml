@@ -24,7 +24,7 @@ repos:
       - id: copyright
       - id: poetry-lock
         additional_dependencies:
-          - poetry==1.8.4 # pypi
+          - poetry==1.8.5 # pypi
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
@@ -59,7 +59,7 @@ repos:
     hooks:
       - id: ripsecrets
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.1
+    rev: v0.8.4
     hooks:
       - id: ruff-format
         args:
@@ -74,8 +74,8 @@ repos:
           - --output-format=pylint
         additional_dependencies:
           - prospector-profile-duplicated==1.8.1 # pypi
-          - prospector-profile-utils==1.14.0 # pypi
-          - ruff==0.8.1 # pypi
+          - prospector-profile-utils==1.14.1 # pypi
+          - ruff==0.8.4 # pypi
   - repo: https://github.com/sbrunner/jsonschema-validator
     rev: 0.3.2
     hooks:

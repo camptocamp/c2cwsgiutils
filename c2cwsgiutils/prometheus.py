@@ -1,5 +1,6 @@
 """Every thing we needs to have the metrics in Prometheus."""
 
+import logging
 import os
 import re
 from collections.abc import Generator, Iterable
@@ -11,10 +12,12 @@ import prometheus_client.metrics_core
 import prometheus_client.multiprocess
 import prometheus_client.registry
 import pyramid.config
+import redis.exceptions
 
 from c2cwsgiutils import broadcast, redis_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps
 
+_LOG = logging.getLogger(__name__)
 _NUMBER_RE = re.compile(r"^[0-9]+$")
 MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS = [
     "c2cwsgiutils_prometheus_collector_gc",
@@ -117,9 +120,12 @@ class MultiProcessCustomCollector(prometheus_client.registry.Collector):
     def collect(self) -> Generator[prometheus_client.core.Metric, None, None]:
         results: list[list[SerializedMetric]] = []
         for channel in MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS:
-            result = broadcast.broadcast(channel, expect_answers=True)
-            if result is not None:
-                results.extend(cast(Iterable[list[SerializedMetric]], result))
+            try:
+                result = broadcast.broadcast(channel, expect_answers=True)
+                if result is not None:
+                    results.extend(cast(Iterable[list[SerializedMetric]], result))
+            except redis.exceptions.ConnectionError:
+                _LOG.error("Failed to get the metrics from the other processes")
         return _deserialize_collected_data(results)
 
 

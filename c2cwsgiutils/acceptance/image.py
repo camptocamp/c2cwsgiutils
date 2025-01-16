@@ -58,7 +58,7 @@ def normalize_image(image: NpNdarrayInt) -> NpNdarrayInt:
     return image
 
 
-def check_image(
+def check_image(  # pylint: disable=too-many-locals,too-many-statements
     result_folder: str,
     image_to_check: NpNdarrayInt,
     expected_filename: str,
@@ -108,6 +108,13 @@ def check_image(
 
     mask = None
     if mask_filename is not None:
+        background_color = [255, 255, 255]
+        for color in range(3):
+            img_hist, _ = skimage.exposure.histogram(
+                image_to_check[..., color], nbins=256, source_range="dtype"
+            )
+            background_color[color] = np.argmax(img_hist)
+
         mask = skimage.io.imread(mask_filename)
 
         assert mask is not None, "Wrong mask: " + mask_filename
@@ -130,7 +137,7 @@ def check_image(
         assert (
             mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1]
         ), f"Mask and image should have the same shape ({mask.shape} != {image_to_check.shape})"
-        image_to_check[mask] = [255, 255, 255]
+        image_to_check[mask] = background_color
 
     if not os.path.exists(result_folder):
         os.makedirs(result_folder)
@@ -148,7 +155,7 @@ def check_image(
         assert (
             expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1]
         ), f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
-        expected[mask] = [255, 255, 255]
+        expected[mask] = background_color
 
     assert (
         expected.shape == image_to_check.shape

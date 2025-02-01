@@ -69,7 +69,7 @@ sentry = "c2cwsgiutils.sentry:filter_factory"
 python = ">=3.10,<4.0"
 requests = { version = "2.32.3" }
 pyyaml = { version = "6.0.2" }
-alembic = { version = "1.14.0", optional = true }
+alembic = { version = "1.14.1", optional = true }
 boltons = { version = "24.1.0", optional = true }
 cornice = { version = "6.1.0", optional = true }
 redis = { version = "5.2.1", optional = true }
@@ -82,14 +82,14 @@ pyramid-tm = { version = "2.6", optional = true }
 sentry-sdk = { version = "2.19.2", optional = true }
 ujson = { version = "5.10.0" }
 cee_syslog_handler = { version = "0.6.0" }
-SQLAlchemy = { version = "2.0.36", optional = true }
+SQLAlchemy = { version = "2.0.37", optional = true }
 SQLAlchemy-Utils = { version = "0.41.2", optional = true }
 "zope.interface" = { version = "7.2", optional = true }
 "zope.sqlalchemy" = { version = "3.1", optional = true }
 pyjwt = { version = "2.10.1", optional = true }
 requests-oauthlib = { version = "2.0.0", optional = true }
 waitress = { version = "3.0.2", optional = true }
-scikit-image = { version = "0.25.0", optional = true }
+scikit-image = { version = "0.25.1", optional = true }
 prometheus-client = { version = "0.21.1", optional = true}
 pyramid_mako = { version = "1.1.0", optional = true}
 psutil = { version = "6.1.1", optional = true}

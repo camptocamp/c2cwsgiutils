@@ -22,7 +22,7 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     import coverage  # pylint: disable=import-outside-toplevel
 
     _LOG.warning("Setting up code coverage")
-    report_dir = "/tmp/coverage/api"  # noqa: S108
+    report_dir = "/tmp/coverage/api"  # noqa: S108 # nosec
     os.makedirs(report_dir, exist_ok=True)
     cov = coverage.Coverage(
         data_file=os.path.join(report_dir, "coverage"),

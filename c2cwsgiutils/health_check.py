@@ -299,7 +299,7 @@ class HealthCheck:
                     ):
                         result = binded_session.execute(
                             sqlalchemy.text(
-                                "SELECT version_num FROM "  # noqa: S608
+                                "SELECT version_num FROM "  # noqa: S608 # nosec
                                 f"{sqlalchemy.sql.quoted_name(version_schema, True)}."
                                 f"{sqlalchemy.sql.quoted_name(version_table, True)}"
                             )
@@ -493,8 +493,8 @@ class HealthCheck:
             _PROMETHEUS_HEALTH_CHECKS_FAILURE.labels(name=name).set(1)
             _LOG.warning("Health check %s failed", name, exc_info=True)
             failure = {"message": str(e), "timing": time.perf_counter() - start, "level": level}
-            if isinstance(e, JsonCheckException) and e.json_data() is not None:
-                failure["result"] = e.json_data()
+            if isinstance(e, JsonCheckException) and e.json_data() is not None:  # pylint: disable=no-member
+                failure["result"] = e.json_data()  # pylint: disable=no-member
             if is_auth or os.environ.get("DEVELOPMENT", "0") != "0":
                 failure["stacktrace"] = traceback.format_exc()
             results["failures"][name] = failure

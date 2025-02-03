@@ -12,32 +12,32 @@ from requests_oauthlib import OAuth2Session
 from c2cwsgiutils.config_utils import config_bool, env_or_config, env_or_settings
 
 _COOKIE_AGE = 7 * 24 * 3600
-SECRET_PROP = "c2c.secret"  # noqa: S105
-SECRET_ENV = "C2C_SECRET"  # noqa: S105
+SECRET_PROP = "c2c.secret"  # noqa: S105, secret # nosec
+SECRET_ENV = "C2C_SECRET"  # noqa: S105, secret # nosec
 _GITHUB_REPOSITORY_PROP = "c2c.auth.github.repository"
 _GITHUB_REPOSITORY_ENV = "C2C_AUTH_GITHUB_REPOSITORY"
 _GITHUB_ACCESS_TYPE_PROP = "c2c.auth.github.access_type"
 _GITHUB_ACCESS_TYPE_ENV = "C2C_AUTH_GITHUB_ACCESS_TYPE"
 GITHUB_AUTH_URL_PROP = "c2c.auth.github.auth_url"
 GITHUB_AUTH_URL_ENV = "C2C_AUTH_GITHUB_AUTH_URL"
-GITHUB_TOKEN_URL_PROP = "c2c.auth.github.token_url"  # noqa: S105
-GITHUB_TOKEN_URL_ENV = "C2C_AUTH_GITHUB_TOKEN_URL"  # noqa: S105
+GITHUB_TOKEN_URL_PROP = "c2c.auth.github.token_url"  # noqa: S105, secret # nosec
+GITHUB_TOKEN_URL_ENV = "C2C_AUTH_GITHUB_TOKEN_URL"  # noqa: S105, secret # nosec
 GITHUB_USER_URL_PROP = "c2c.auth.github.user_url"
 GITHUB_USER_URL_ENV = "C2C_AUTH_GITHUB_USER_URL"
 _GITHUB_REPO_URL_PROP = "c2c.auth.github.repo_url"
 _GITHUB_REPO_URL_ENV = "C2C_AUTH_GITHUB_REPO_URL"
 GITHUB_CLIENT_ID_PROP = "c2c.auth.github.client_id"
 GITHUB_CLIENT_ID_ENV = "C2C_AUTH_GITHUB_CLIENT_ID"
-GITHUB_CLIENT_SECRET_PROP = "c2c.auth.github.client_secret"  # noqa: S105
-GITHUB_CLIENT_SECRET_ENV = "C2C_AUTH_GITHUB_CLIENT_SECRET"  # noqa: S105
+GITHUB_CLIENT_SECRET_PROP = "c2c.auth.github.client_secret"  # noqa: S105, secret # nosec
+GITHUB_CLIENT_SECRET_ENV = "C2C_AUTH_GITHUB_CLIENT_SECRET"  # noqa: S105, secret # nosec
 GITHUB_SCOPE_PROP = "c2c.auth.github.scope"
 GITHUB_SCOPE_ENV = "C2C_AUTH_GITHUB_SCOPE"
 # To be able to use private repository
 GITHUB_SCOPE_DEFAULT = "repo"
 GITHUB_AUTH_COOKIE_PROP = "c2c.auth.github.auth.cookie"
 GITHUB_AUTH_COOKIE_ENV = "C2C_AUTH_GITHUB_COOKIE"
-GITHUB_AUTH_SECRET_PROP = "c2c.auth.github.auth.secret"  # noqa: S105
-GITHUB_AUTH_SECRET_ENV = "C2C_AUTH_GITHUB_SECRET"  # noqa: S105
+GITHUB_AUTH_SECRET_PROP = "c2c.auth.github.auth.secret"  # noqa: S105, secret # nosec
+GITHUB_AUTH_SECRET_ENV = "C2C_AUTH_GITHUB_SECRET"  # noqa: S105, secret # nosec
 GITHUB_AUTH_PROXY_URL_PROP = "c2c.auth.github.auth.proxy_url"
 GITHUB_AUTH_PROXY_URL_ENV = "C2C_AUTH_GITHUB_PROXY_URL"
 USE_SESSION_PROP = "c2c.use_session"

@@ -192,7 +192,7 @@ def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:
     if "analyze_type" in request.params:
         objs = objgraph.by_type(request.params["analyze_type"])
     elif "analyze_id" in request.params:
-        objs = [objgraph.by(int(request.params["analyze_id"]))]
+        objs = [objgraph.by(int(request.params["analyze_id"]))]  # pylint: disable=no-member
 
     args: dict[str, Any] = {
         "refcounts": True,

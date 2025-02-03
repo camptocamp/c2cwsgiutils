@@ -90,7 +90,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
                 cond.notify()
 
         answer_channel = self._get_channel(channel) + "".join(
-            random.choice(string.ascii_uppercase + string.digits)  # noqa: S311
+            random.choice(string.ascii_uppercase + string.digits)  # noqa: S311 # nosec
             for _ in range(10)
         )
         _LOG.debug("Subscribing for broadcast answers on %s", answer_channel)

@@ -5,7 +5,6 @@ import c2cwsgiutils.prometheus
 import c2cwsgiutils.pyramid
 from c2cwsgiutils import broadcast, db
 from c2cwsgiutils.health_check import HealthCheck, JsonCheckException
-
 from c2cwsgiutils_app import models
 
 
@@ -23,10 +22,7 @@ def broadcast_view():
 
 
 def main(_, **settings):
-    """
-    This function returns a Pyramid WSGI application.
-    """
-
+    """This function returns a Pyramid WSGI application."""
     c2cwsgiutils.prometheus.start_single_process()
 
     config = Configurator(settings=settings, route_prefix="/api")

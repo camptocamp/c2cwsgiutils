@@ -135,9 +135,9 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
         # Convert to boolean
         mask = mask == 0
 
-        assert (
-            mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1]
-        ), f"Mask and image should have the same shape ({mask.shape} != {image_to_check.shape})"
+        assert mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1], (
+            f"Mask and image should have the same shape ({mask.shape} != {image_to_check.shape})"
+        )
         image_to_check[mask] = background_color
 
     if not os.path.exists(result_folder):
@@ -153,14 +153,14 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
     expected = normalize_image(expected)
 
     if mask is not None:
-        assert (
-            expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1]
-        ), f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
+        assert expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1], (
+            f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
+        )
         expected[mask] = background_color
 
-    assert (
-        expected.shape == image_to_check.shape
-    ), f"Images have different shapes expected {expected.shape} != actual {image_to_check.shape}"
+    assert expected.shape == image_to_check.shape, (
+        f"Images have different shapes expected {expected.shape} != actual {image_to_check.shape}"
+    )
     score, diff = skimage.metrics.structural_similarity(
         expected, image_to_check, multichannel=True, full=True, channel_axis=2
     )

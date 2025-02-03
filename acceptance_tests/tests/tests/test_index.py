@@ -1,4 +1,3 @@
-from c2cwsgiutils.acceptance import utils
 
 
 def test_without_secret(app_connection):

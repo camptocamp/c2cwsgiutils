@@ -66,9 +66,7 @@ class Composition:
 
 @pytest.fixture(scope="session")
 def composition():
-    """
-    Fixture that start/stop the Docker composition used for all the tests.
-    """
+    """Fixture that start/stop the Docker composition used for all the tests."""
     result = Composition("../tests")
     utils.wait_url(_BASE_URL + "ping")
     return result
@@ -76,29 +74,20 @@ def composition():
 
 @pytest.fixture
 def app_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_BASE_URL, origin="http://example.com/")
 
 
 @pytest.fixture
 def app2_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     return Connection(base_url=_BASE_URL_APP2, origin="http://example.com/")
 
 
 @pytest.fixture
 def prometheus_test_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     for line in composition.exec("run_test", "ps", "x").split("\n"):
         if "/usr/local/bin/c2cwsgiutils-stats-db" in line.split():
             print("Killing", line.strip().split()[0])
@@ -114,7 +103,5 @@ def prometheus_test_connection(composition):
 
 @pytest.fixture
 def prometheus_stats_db_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
+    """Fixture that returns a connection to a running batch container."""
     return Connection(base_url=_PROMETHEUS_STATS_DB_URL, origin="http://example.com/")

@@ -115,9 +115,7 @@ def test_error(app2_connection, prometheus_test_connection, composition):
 
 
 def test_standalone(prometheus_stats_db_connection, composition):
-    """
-    Test that stats db is correctly waiting for the Prometheus call, and exit after the call.
-    """
+    """Test that stats db is correctly waiting for the Prometheus call, and exit after the call."""
     # To be able to debug
     composition.dc_process(["logs", "stats_db"])
     ps = [l for l in composition.dc(["ps"]).split("\n")]

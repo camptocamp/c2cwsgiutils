@@ -17,69 +17,49 @@ _LOG = logging.getLogger(__name__)
 
 @pytest.fixture(scope="session")
 def composition(request):
-    """
-    Fixture that start/stop the Docker composition used for all the tests.
-    """
+    """Fixture that start/stop the Docker composition used for all the tests."""
     utils.wait_url(_BASE_URL + "ping")
     return None
 
 
 @pytest.fixture
 def app_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_BASE_URL, origin="http://example.com/")
 
 
 @pytest.fixture
 def app2_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_BASE_URL_APP2, origin="http://example.com/")
 
 
 @pytest.fixture
 def prometheus_1_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_PROMETHEUS_URL_1, origin="http://example.com/")
 
 
 @pytest.fixture
 def prometheus_2_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_PROMETHEUS_URL_2, origin="http://example.com/")
 
 
 @pytest.fixture
 def prometheus_test_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_PROMETHEUS_TEST_URL, origin="http://example.com/")
 
 
 @pytest.fixture
 def prometheus_stats_db_connection(composition):
-    """
-    Fixture that returns a connection to a running batch container.
-    """
-
+    """Fixture that returns a connection to a running batch container."""
     del composition
     return Connection(base_url=_PROMETHEUS_STATS_DB_URL, origin="http://example.com/")
 

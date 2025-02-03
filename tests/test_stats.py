@@ -28,7 +28,7 @@ def test_outcome_timer_context_failure():
     try:
         with stats.outcome_timer_context(["toto"]):
             raise OkException("Boom")
-        assert False
+        raise AssertionError()
     except OkException:
         pass  # expected
     finally:

@@ -12,7 +12,6 @@ from pyramid.httpexceptions import (
 )
 
 from c2cwsgiutils import sentry, services
-
 from c2cwsgiutils_app import models
 
 _PROMETHEUS_TEST_COUNTER = prometheus_client.Counter("test_counter", "Test counter")
@@ -42,9 +41,7 @@ def ping(_):
 
 @hello_service.get()
 def hello_get(request):
-    """
-    Will use the slave.
-    """
+    """Will use the slave."""
     with _PROMETHEUS_TEST_SUMMARY.time():
         hello = request.dbsession.query(models.Hello).first()
     _PROMETHEUS_TEST_COUNTER.inc()
@@ -54,9 +51,7 @@ def hello_get(request):
 
 @hello_service.put()
 def hello_put(request):
-    """
-    Will use the master.
-    """
+    """Will use the master."""
     with sentry.capture_exceptions():
         hello = request.dbsession.query(models.Hello).first()
         return {"value": hello.value}
@@ -64,9 +59,7 @@ def hello_put(request):
 
 @hello_service.post()
 def hello_post(request):
-    """
-    Will use the slave (overridden by the config).
-    """
+    """Will use the slave (overridden by the config)."""
     return hello_put(request)
 
 

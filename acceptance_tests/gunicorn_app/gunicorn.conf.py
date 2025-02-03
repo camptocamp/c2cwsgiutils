@@ -8,7 +8,12 @@ import gunicorn.arbiter
 import gunicorn.workers.base
 from prometheus_client import multiprocess
 
-from c2cwsgiutils import get_config_defaults, get_logconfig_dict, get_paste_config, prometheus
+from c2cwsgiutils import (
+    get_config_defaults,
+    get_logconfig_dict,
+    get_paste_config,
+    prometheus,
+)
 
 bind = ":8080"
 
@@ -43,7 +48,6 @@ def on_starting(server: gunicorn.arbiter.Arbiter) -> None:
 
     Called just before the master process is initialized.
     """
-
     del server
 
     prometheus.start()
@@ -55,7 +59,6 @@ def post_fork(server: gunicorn.arbiter.Arbiter, worker: gunicorn.workers.base.Wo
 
     Called just after a worker has been forked.
     """
-
     del server, worker
 
     prometheus.cleanup()
@@ -67,7 +70,6 @@ def child_exit(server: gunicorn.arbiter.Arbiter, worker: gunicorn.workers.base.W
 
     Called just after a worker has been exited, in the master process.
     """
-
     del server
 
     multiprocess.mark_process_dead(worker.pid)  # type: ignore [no-untyped-call]

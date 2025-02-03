@@ -1,6 +1,3 @@
-from c2cwsgiutils.acceptance import utils
-
-
 def test_without_secret(app_connection):
     content = app_connection.get("c2c", cors=False)
     assert "Health checks" in content

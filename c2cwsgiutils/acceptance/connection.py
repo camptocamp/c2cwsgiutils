@@ -267,7 +267,7 @@ def _get_json(r: requests.Response) -> Any:
         return None
     else:
         content_type = r.headers["Content-Type"].split(";")[0]
-        assert content_type == "application/json" or content_type.endswith(
-            "+json"
-        ), f"{r.status_code}, {content_type}, {r.text}"
+        assert content_type == "application/json" or content_type.endswith("+json"), (
+            f"{r.status_code}, {content_type}, {r.text}"
+        )
         return r.json()

@@ -5,7 +5,6 @@ import transaction
 
 import c2cwsgiutils.db
 import c2cwsgiutils.setup_process
-
 from c2cwsgiutils_app import models
 
 
@@ -22,7 +21,6 @@ def _fill_db():
 
 def main() -> None:
     """Get the fist hello value."""
-
     parser = argparse.ArgumentParser(description="Get the first hello value.")
     c2cwsgiutils.setup_process.fill_arguments(parser)
     args = parser.parse_args()

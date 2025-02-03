@@ -4,7 +4,7 @@ import json
 def _remove_timings(response):
     for status in ("successes", "failures"):
         assert status in response
-        for key, value in response[status].items():
+        for _key, value in response[status].items():
             assert "timing" in value
             del value["timing"]
     return response
@@ -56,7 +56,7 @@ def test_failure(app_connection):
         "c2c/health_check", params={"max_level": "2"}, expected_status=500, cors=False
     )
     print("response=" + json.dumps(response))
-    assert "redis:26379" in response["successes"].keys()
+    assert "redis:26379" in response["successes"]
     assert _remove_timings(response) == {
         "successes": {
             "db_engine_sqlalchemy": {"level": 1},
@@ -82,7 +82,7 @@ def test_failure_with_stack(app_connection):
         "c2c/health_check", params={"max_level": "2", "secret": "changeme"}, expected_status=500, cors=False
     )
     print("response=" + json.dumps(response))
-    assert "redis:26379" in response["successes"].keys()
+    assert "redis:26379" in response["successes"]
     assert _remove_timings(response) == {
         "successes": {
             "db_engine_sqlalchemy": {"level": 1},

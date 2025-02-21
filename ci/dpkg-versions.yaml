@@ -57,7 +57,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libgdbm-compat4t64: 1.23-5.1build1
   ubuntu_24_04/libgdbm6t64: 1.23-5.1build1
   ubuntu_24_04/libgmp10: 2:6.3.0+dfsg-2ubuntu6.1
-  ubuntu_24_04/libgnutls30t64: 3.8.3-1.1ubuntu3.2
+  ubuntu_24_04/libgnutls30t64: 3.8.3-1.1ubuntu3.3
   ubuntu_24_04/libgpg-error0: 1.47-3build2.1
   ubuntu_24_04/libgssapi-krb5-2: 1.20.1-6ubuntu2.4
   ubuntu_24_04/libhogweed6t64: 3.9.1-2.2build1.1
@@ -87,8 +87,8 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libproc2-0: 2:4.0.4-4ubuntu3.2
   ubuntu_24_04/libpsl5t64: 0.21.2-1.1build1
   ubuntu_24_04/libpython3-stdlib: 3.12.3-0ubuntu2
-  ubuntu_24_04/libpython3.12-minimal: 3.12.3-1ubuntu0.4
-  ubuntu_24_04/libpython3.12-stdlib: 3.12.3-1ubuntu0.4
+  ubuntu_24_04/libpython3.12-minimal: 3.12.3-1ubuntu0.5
+  ubuntu_24_04/libpython3.12-stdlib: 3.12.3-1ubuntu0.5
   ubuntu_24_04/libreadline8t64: 8.2-4build1
   ubuntu_24_04/librtmp1: 2.4+20151223.gitfa8646d.1-2build7
   ubuntu_24_04/libsasl2-2: 2.1.28+dfsg1-5ubuntu3.1
@@ -102,10 +102,10 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libsqlite3-0: 3.45.1-1ubuntu2.1
   ubuntu_24_04/libss2: 1.47.0-2.4~exp1ubuntu4.1
   ubuntu_24_04/libssh-4: 0.10.6-2build2
-  ubuntu_24_04/libssl3t64: 3.0.13-0ubuntu3.4
+  ubuntu_24_04/libssl3t64: 3.0.13-0ubuntu3.5
   ubuntu_24_04/libstdc++6: 14.2.0-4ubuntu2~24.04
   ubuntu_24_04/libsystemd0: 255.4-1ubuntu8.5
-  ubuntu_24_04/libtasn1-6: 4.19.0-3build1
+  ubuntu_24_04/libtasn1-6: 4.19.0-3ubuntu0.24.04.1
   ubuntu_24_04/libtinfo6: 6.4+20240113-1ubuntu2
   ubuntu_24_04/libudev1: 255.4-1ubuntu8.5
   ubuntu_24_04/libunistring5: 1.1-2build1.1
@@ -121,7 +121,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/ncurses-bin: 6.4+20240113-1ubuntu2
   ubuntu_24_04/net-tools: 2.10-0.1ubuntu4
   ubuntu_24_04/netbase: '6.4'
-  ubuntu_24_04/openssl: 3.0.13-0ubuntu3.4
+  ubuntu_24_04/openssl: 3.0.13-0ubuntu3.5
   ubuntu_24_04/passwd: 1:4.13+dfsg1-4ubuntu3.2
   ubuntu_24_04/perl: 5.38.2-3.2build2.1
   ubuntu_24_04/perl-base: 5.38.2-3.2build2.1
@@ -140,9 +140,9 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/python3-setuptools-whl: 68.1.2-2ubuntu1.1
   ubuntu_24_04/python3-venv: 3.12.3-0ubuntu2
   ubuntu_24_04/python3-wheel: 0.42.0-2
-  ubuntu_24_04/python3.12: 3.12.3-1ubuntu0.4
-  ubuntu_24_04/python3.12-minimal: 3.12.3-1ubuntu0.4
-  ubuntu_24_04/python3.12-venv: 3.12.3-1ubuntu0.4
+  ubuntu_24_04/python3.12: 3.12.3-1ubuntu0.5
+  ubuntu_24_04/python3.12-minimal: 3.12.3-1ubuntu0.5
+  ubuntu_24_04/python3.12-venv: 3.12.3-1ubuntu0.5
   ubuntu_24_04/readline-common: 8.2-4build1
   ubuntu_24_04/sed: 4.9-2build1
   ubuntu_24_04/sensible-utils: 0.0.22

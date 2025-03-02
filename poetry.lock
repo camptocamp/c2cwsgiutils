@@ -1562,13 +1562,13 @@ twisted = ["twisted"]
 
 [[package]]
 name = "prospector"
-version = "1.14.1"
+version = "1.15.2"
 description = "Prospector is a tool to analyse Python code by aggregating the result of other tools."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "prospector-1.14.1-py3-none-any.whl", hash = "sha256:3cdb71c20c26a72a370e94de7f47f8492299d8843af3be5c5d7d5118d591e910"},
-    {file = "prospector-1.14.1.tar.gz", hash = "sha256:4f969c7d3df9f81c3c626e92ea25c243627da2d707285805ad36ed7c378ee3ec"},
+    {file = "prospector-1.15.2-py3-none-any.whl", hash = "sha256:06f8986e96a2d7f82904821710745418496e5c163241a922cac8dc3e3bc7dd43"},
+    {file = "prospector-1.15.2.tar.gz", hash = "sha256:e080667fc33baa93f5b2ab3d88650bbef201a9edcb1982a3ccf6b0696e1f4ab0"},
 ]
 
 [package.dependencies]
@@ -1615,17 +1615,17 @@ files = [
 
 [[package]]
 name = "prospector-profile-utils"
-version = "1.17.0"
+version = "1.21.9"
 description = "Some utility Prospector profiles."
 optional = false
-python-versions = "<4.0,>=3.9"
+python-versions = "*"
 files = [
-    {file = "prospector_profile_utils-1.17.0-py3-none-any.whl", hash = "sha256:0cb7fe9dfca2b49c21733bbc4d3aabd51c7c0890c5e636b8d2f7b81c342aef6e"},
-    {file = "prospector_profile_utils-1.17.0.tar.gz", hash = "sha256:ac75faf9b13a6b6c18173cad71e6879e6ac40c5f5fda57c69f064b8a955705bd"},
+    {file = "prospector_profile_utils-1.21.9-py2.py3-none-any.whl", hash = "sha256:bbd8b91d0b7ccc2bda3e2f6b6188303ea3415193382d8ce79052a2a8a2a2a9c2"},
+    {file = "prospector_profile_utils-1.21.9.tar.gz", hash = "sha256:08dd034d3022cacf4e911a36094b84d54314c1b4bf7c9f52932c41b0abe0ed1c"},
 ]
 
 [package.dependencies]
-prospector = ">=1.13.0"
+prospector = {version = ">=1.14.0", extras = ["with-mypy", "with-ruff"]}
 
 [[package]]
 name = "psutil"
@@ -2322,13 +2322,13 @@ files = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.20.0"
+version = "2.22.0"
 description = "Python client for Sentry (https://sentry.io)"
 optional = true
 python-versions = ">=3.6"
 files = [
-    {file = "sentry_sdk-2.20.0-py2.py3-none-any.whl", hash = "sha256:c359a1edf950eb5e80cffd7d9111f3dbeef57994cb4415df37d39fda2cf22364"},
-    {file = "sentry_sdk-2.20.0.tar.gz", hash = "sha256:afa82713a92facf847df3c6f63cec71eb488d826a50965def3d7722aa6f0fdab"},
+    {file = "sentry_sdk-2.22.0-py2.py3-none-any.whl", hash = "sha256:3d791d631a6c97aad4da7074081a57073126c69487560c6f8bffcf586461de66"},
+    {file = "sentry_sdk-2.22.0.tar.gz", hash = "sha256:b4bf43bb38f547c84b2eadcefbe389b36ef75f3f38253d7a74d6b928c07ae944"},
 ]
 
 [package.dependencies]
@@ -2372,6 +2372,7 @@ sanic = ["sanic (>=0.8)"]
 sqlalchemy = ["sqlalchemy (>=1.2)"]
 starlette = ["starlette (>=0.19.1)"]
 starlite = ["starlite (>=1.48)"]
+statsig = ["statsig (>=0.55.3)"]
 tornado = ["tornado (>=6)"]
 unleash = ["UnleashClient (>=6.0.1)"]
 
@@ -3090,4 +3091,4 @@ webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "prometheu
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "e237ea08da363bd3f9653cb18b619c75a7d3a2e0d5d4b0f3b6bccd5dd1348b08"
+content-hash = "8d8ba85da07b8321a95e9489138725360ba426b27f2f7c40143e14b17729e6d7"

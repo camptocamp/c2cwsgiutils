@@ -150,4 +150,5 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/tar: 1.35+dfsg-3build1
   ubuntu_24_04/tzdata: 2024a-3ubuntu1.1
   ubuntu_24_04/ubuntu-keyring: 2023.11.28.1
+  ubuntu_24_04/unminimize: 0.2.1
   ubuntu_24_04/util-linux: 2.39.3-9ubuntu6.1

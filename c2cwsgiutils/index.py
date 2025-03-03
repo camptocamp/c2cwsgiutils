@@ -50,9 +50,7 @@ additional_auth: list[str] = []
 _ELEM_ID = 0
 
 
-def _url(
-    request: pyramid.request.Request, route: str, params: dict[str, str] | None = None
-) -> str | None:
+def _url(request: pyramid.request.Request, route: str, params: dict[str, str] | None = None) -> str | None:
     try:
         return request.route_url(route, _query=params)  # type: ignore
     except KeyError:
@@ -109,9 +107,7 @@ def form(url: str | None, *content: str, method: str = "get", target: str = "_bl
     """
 
 
-def input_(
-    name: str, label: str | None = None, type_: str | None = None, value: str | int = ""
-) -> str:
+def input_(name: str, label: str | None = None, type_: str | None = None, value: str | int = "") -> str:
     """Get an HTML input."""
     global _ELEM_ID  # pylint: disable=global-statement
     id_ = _ELEM_ID

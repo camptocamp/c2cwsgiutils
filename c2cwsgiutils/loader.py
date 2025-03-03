@@ -1,5 +1,5 @@
 import logging.config
-from typing import Optional, cast
+from typing import cast
 
 from plaster_pastedeploy import Loader as BaseLoader
 
@@ -11,7 +11,7 @@ _LOG = logging.getLogger(__name__)
 class Loader(BaseLoader):  # type: ignore
     """The application loader."""
 
-    def _get_defaults(self, defaults: Optional[dict[str, str]] = None) -> dict[str, str]:
+    def _get_defaults(self, defaults: dict[str, str] | None = None) -> dict[str, str]:
         d = get_config_defaults()
         d.update(defaults or {})
         return cast(dict[str, str], super()._get_defaults(d))
@@ -20,7 +20,7 @@ class Loader(BaseLoader):  # type: ignore
         """Get the object representation."""
         return f'c2cwsgiutils.loader.Loader(uri="{self.uri}")'
 
-    def setup_logging(self, defaults: Optional[dict[str, str]] = None) -> None:
+    def setup_logging(self, defaults: dict[str, str] | None = None) -> None:
         """
         Set up logging via :func:`logging.config.dictConfig` with value returned from c2cwsgiutils.get_logconfig_dict.
 

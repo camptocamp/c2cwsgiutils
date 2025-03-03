@@ -16,7 +16,7 @@ import logging
 import logging.config
 import socket
 from collections.abc import Mapping, MutableMapping
-from typing import TYPE_CHECKING, Any, Optional, TextIO
+from typing import TYPE_CHECKING, Any, TextIO
 
 import cee_syslog_handler
 from pyramid.threadlocal import get_current_request
@@ -113,7 +113,7 @@ else:
 class JsonLogHandler(Base):
     """Log to stdout in JSON."""
 
-    def __init__(self, stream: Optional[TextIO] = None):
+    def __init__(self, stream: TextIO | None = None):
         """Initialize the handler."""
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)

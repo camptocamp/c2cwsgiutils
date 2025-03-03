@@ -1,7 +1,8 @@
 import logging
 import os
 import re
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 _LOG = logging.getLogger(__name__)
 SEP_RE = re.compile(r", *")

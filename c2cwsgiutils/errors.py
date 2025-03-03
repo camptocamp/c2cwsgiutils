@@ -4,7 +4,8 @@ import logging
 import os
 import traceback
 import warnings
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import pyramid.request
 import sqlalchemy.exc

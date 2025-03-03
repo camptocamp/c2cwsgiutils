@@ -23,7 +23,7 @@ from c2cwsgiutils import config_utils, prometheus
 _ID_HEADERS: list[str] = []
 _HTTPAdapter_send = requests.adapters.HTTPAdapter.send
 _LOG = logging.getLogger(__name__)
-_DEFAULT_TIMEOUT: Optional[float] = None
+_DEFAULT_TIMEOUT: float | None = None
 _PROMETHEUS_REQUESTS_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("requests"),
     "Requests requests",
@@ -44,10 +44,10 @@ def _patch_requests() -> None:
         self: requests.adapters.HTTPAdapter,
         request: requests.models.PreparedRequest,
         stream: bool = False,
-        timeout: Union[None, float, tuple[float, float], tuple[float, None]] = None,
-        verify: Union[bool, str] = True,
-        cert: Union[None, bytes, str, tuple[Union[bytes, str], Union[bytes, str]]] = None,
-        proxies: Optional[Mapping[str, str]] = None,
+        timeout: None | float | tuple[float, float] | tuple[float, None] = None,
+        verify: bool | str = True,
+        cert: None | bytes | str | tuple[bytes | str, bytes | str] = None,
+        proxies: Mapping[str, str] | None = None,
     ) -> requests.Response:
         pyramid_request = get_current_request()
         header = _ID_HEADERS[0]
@@ -81,13 +81,13 @@ def _patch_requests() -> None:
     requests.adapters.HTTPAdapter.send = send_wrapper  # type: ignore[method-assign]
 
 
-def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+def init(config: pyramid.config.Configurator | None = None) -> None:
     """Initialize the request tracking, for backward compatibility."""
     warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 
-def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
+def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """
     Initialize the request tracking.
 

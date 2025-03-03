@@ -1,7 +1,7 @@
 import logging
 import warnings
 from collections.abc import Mapping
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import pyramid.request
 
@@ -74,7 +74,7 @@ def _store(settings: Mapping[str, Any], readonly: bool) -> None:
         master.set(_REDIS_PREFIX + "force_readonly", "true" if readonly else "false")
 
 
-def _get_redis_value(settings: Mapping[str, Any]) -> Optional[str]:
+def _get_redis_value(settings: Mapping[str, Any]) -> str | None:
     _, slave, _ = redis_utils.get(settings)
     if slave is not None:
         value = slave.get(_REDIS_PREFIX + "force_readonly")

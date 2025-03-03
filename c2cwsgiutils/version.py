@@ -3,7 +3,7 @@ import logging
 import os
 import re
 import warnings
-from typing import Optional, cast
+from typing import cast
 
 import prometheus_client
 import pyramid.config
@@ -88,7 +88,7 @@ def _read_versions() -> dict[str, dict[str, str]]:
     return cast(dict[str, dict[str, str]], versions)
 
 
-def get_version() -> Optional[str]:
+def get_version() -> str | None:
     """Get the version."""
     if not os.path.isfile(_VERSIONS_PATH):
         return None

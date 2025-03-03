@@ -4,7 +4,7 @@ import os
 import re
 import resource
 from collections.abc import Generator, Iterable
-from typing import Any, Optional, TypedDict, cast
+from typing import Any, TypedDict, cast
 
 import prometheus_client
 import prometheus_client.core
@@ -37,7 +37,7 @@ def start_single_process() -> None:
         prometheus_client.start_http_server(int(os.environ["C2C_PROMETHEUS_PORT"]))
 
 
-def start(registry: Optional[prometheus_client.CollectorRegistry] = None) -> None:
+def start(registry: prometheus_client.CollectorRegistry | None = None) -> None:
     """Start separate HTTP server to provide the Prometheus metrics."""
     if os.environ.get("C2C_PROMETHEUS_PORT") is not None:
         broadcast.includeme()
@@ -169,7 +169,7 @@ def _deserialize_collected_data(
 class MemoryMapCollector(prometheus_client.registry.Collector):
     """The Linux memory map provider."""
 
-    def __init__(self, memory_type: str = "pss", pids: Optional[list[str]] = None):
+    def __init__(self, memory_type: str = "pss", pids: list[str] | None = None):
         """
         Initialize.
 

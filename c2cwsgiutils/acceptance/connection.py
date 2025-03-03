@@ -1,7 +1,7 @@
 import re
 from collections.abc import Mapping, MutableMapping
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any
 
 import requests
 
@@ -32,10 +32,10 @@ class Connection:
         url: str,
         expected_status: int = 200,
         cors: bool = True,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """Get the given URL (relative to the root of API)."""
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
@@ -46,7 +46,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -61,7 +61,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -75,9 +75,9 @@ class Connection:
     def get_xml(
         self,
         url: str,
-        schema: Optional[str] = None,
+        schema: str | None = None,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -105,7 +105,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -122,7 +122,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -139,11 +139,11 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """POST the given URL (relative to the root of API)."""
         with self.session.post(
             self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
@@ -156,7 +156,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -171,7 +171,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -188,7 +188,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 204,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -205,7 +205,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> requests.Response:
@@ -230,8 +230,8 @@ class Connection:
                 assert r.headers["Access-Control-Allow-Origin"] == "*"
 
     def _merge_headers(
-        self, headers: Optional[Mapping[str, Union[str, bytes]]], cors: bool
-    ) -> MutableMapping[str, Union[str, bytes]]:
+        self, headers: Mapping[str, str | bytes] | None, cors: bool
+    ) -> MutableMapping[str, str | bytes]:
         merged = dict(headers) if headers is not None else {}
         if self.session.headers is not None:
             merged.update(self.session.headers)

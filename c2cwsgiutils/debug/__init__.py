@@ -29,7 +29,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
         _views.init(config)
 
 
-def init_daemon(config: Optional[pyramid.config.Configurator] = None) -> None:
+def init_daemon(config: pyramid.config.Configurator | None = None) -> None:
     """
     Initialize the debug broadcast listeners.
 

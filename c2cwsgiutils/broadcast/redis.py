@@ -4,8 +4,8 @@ import random
 import string
 import threading
 import time
-from collections.abc import Mapping
-from typing import Any, Callable, Optional
+from collections.abc import Callable, Mapping
+from typing import Any
 
 import redis
 
@@ -68,7 +68,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
 
     def broadcast(
         self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
-    ) -> Optional[list[Any]]:
+    ) -> list[Any] | None:
         """Broadcast a message to all the listeners."""
         if expect_answers:
             return self._broadcast_with_answer(channel, params, timeout)
@@ -77,7 +77,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             return None
 
     def _broadcast_with_answer(
-        self, channel: str, params: Optional[Mapping[str, Any]], timeout: float
+        self, channel: str, params: Mapping[str, Any] | None, timeout: float
     ) -> list[Any]:
         cond = threading.Condition()
         answers = []

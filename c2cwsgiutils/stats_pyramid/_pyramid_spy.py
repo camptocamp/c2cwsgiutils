@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import prometheus_client
 import pyramid.config
@@ -29,8 +29,8 @@ _PROMETHEUS_PYRAMID_VIEWS_SUMMARY = prometheus_client.Summary(
 def _add_server_metric(
     request: pyramid.request.Request,
     name: str,
-    duration: Optional[float] = None,
-    description: Optional[str] = None,
+    duration: float | None = None,
+    description: str | None = None,
 ) -> None:
     # format: <name>;due=<duration>;desc=<description>
     metric = name

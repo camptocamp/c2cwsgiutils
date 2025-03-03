@@ -3,9 +3,9 @@
 import logging
 import re
 import warnings
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from re import Pattern
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, cast
 
 import pyramid.config
 import pyramid.config.settings
@@ -37,11 +37,11 @@ tweens = Tweens()
 def setup_session(
     config: pyramid.config.Configurator,
     master_prefix: str,
-    slave_prefix: Optional[str] = None,
-    force_master: Optional[Iterable[str]] = None,
-    force_slave: Optional[Iterable[str]] = None,
+    slave_prefix: str | None = None,
+    force_master: Iterable[str] | None = None,
+    force_slave: Iterable[str] | None = None,
 ) -> tuple[
-    Union[sqlalchemy.orm.Session, _scoped_session],
+    sqlalchemy.orm.Session | _scoped_session,
     sqlalchemy.engine.Engine,
     sqlalchemy.engine.Engine,
 ]:
@@ -96,14 +96,14 @@ def setup_session(
 
 
 def create_session(
-    config: Optional[pyramid.config.Configurator],
+    config: pyramid.config.Configurator | None,
     name: str,
     url: str,
-    slave_url: Optional[str] = None,
-    force_master: Optional[Iterable[str]] = None,
-    force_slave: Optional[Iterable[str]] = None,
+    slave_url: str | None = None,
+    force_master: Iterable[str] | None = None,
+    force_slave: Iterable[str] | None = None,
     **engine_config: Any,
-) -> Union[sqlalchemy.orm.Session, _scoped_session]:
+) -> sqlalchemy.orm.Session | _scoped_session:
     """
     Create a SQLAlchemy session.
 
@@ -158,8 +158,8 @@ def _add_tween(
     config: pyramid.config.Configurator,
     name: str,
     db_session: _scoped_session,
-    force_master: Optional[Iterable[str]],
-    force_slave: Optional[Iterable[str]],
+    force_master: Iterable[str] | None,
+    force_slave: Iterable[str] | None,
 ) -> None:
     master_paths: Iterable[Pattern[str]] = (
         list(map(_RE_COMPILE, force_master)) if force_master is not None else []
@@ -216,8 +216,8 @@ class SessionFactory(_sessionmaker):
 
     def __init__(
         self,
-        force_master: Optional[Iterable[str]],
-        force_slave: Optional[Iterable[str]],
+        force_master: Iterable[str] | None,
+        force_slave: Iterable[str] | None,
         ro_engine: sqlalchemy.engine.Engine,
         rw_engine: sqlalchemy.engine.Engine,
     ):
@@ -237,7 +237,7 @@ class SessionFactory(_sessionmaker):
         return cast(str, self.ro_engine.c2c_name)  # type: ignore
 
     def __call__(  # type: ignore
-        self, request: Optional[pyramid.request.Request], readwrite: Optional[bool] = None, **local_kw: Any
+        self, request: pyramid.request.Request | None, readwrite: bool | None = None, **local_kw: Any
     ) -> _scoped_session:
         """Set the engine based on the request."""
         if readwrite is not None:
@@ -365,9 +365,9 @@ def get_tm_session_pyramid(
 def init(
     config: pyramid.config.Configurator,
     master_prefix: str,
-    slave_prefix: Optional[str] = None,
-    force_master: Optional[Iterable[str]] = None,
-    force_slave: Optional[Iterable[str]] = None,
+    slave_prefix: str | None = None,
+    force_master: Iterable[str] | None = None,
+    force_slave: Iterable[str] | None = None,
 ) -> SessionFactory:
     """
     Initialize the database for a Pyramid app.

@@ -1,7 +1,6 @@
 import logging
 import os
 import warnings
-from typing import Optional
 
 import pyramid.config
 
@@ -14,7 +13,7 @@ def init() -> None:
     includeme()
 
 
-def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
+def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """Initialize the code coverage."""
     del config  # unused
     if os.environ.get("COVERAGE", "0") != "1":

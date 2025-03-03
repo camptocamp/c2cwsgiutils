@@ -1,7 +1,7 @@
 import functools
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import requests
 
@@ -56,7 +56,7 @@ class PrintConnection(connection.Connection):
         assert report.headers["Content-Type"] == "application/pdf"
         return report
 
-    def _check_completion(self, ref: str) -> Optional[Any]:
+    def _check_completion(self, ref: str) -> Any | None:
         status = self.get_json(f"status/{ref}.json")
         if status["done"]:
             return status

@@ -3,10 +3,10 @@ import logging
 import os
 import re
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from datetime import datetime
 from io import StringIO
-from typing import Any, Callable, cast
+from typing import Any, cast
 
 import objgraph
 import psutil

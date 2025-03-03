@@ -4,7 +4,7 @@ import threading
 import time
 import traceback
 from collections.abc import Mapping
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import objgraph
 
@@ -31,7 +31,7 @@ def _dump_stacks_impl() -> dict[str, Any]:
 # pylint: disable=too-many-branches
 def _dump_memory_impl(
     limit: int,
-    analyze_type: Optional[str],
+    analyze_type: str | None,
     python_internals_map: bool = False,
 ) -> Mapping[str, Any]:
     nb_collected = [gc.collect(generation) for generation in range(3)]

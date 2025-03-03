@@ -1,7 +1,7 @@
 import json
 import os
 import subprocess  # nosec
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import numpy as np  # pylint: disable=import-error
 import skimage.color  # pylint: disable=import-error
@@ -10,7 +10,7 @@ import skimage.metrics  # pylint: disable=import-error
 import skimage.transform  # pylint: disable=import-error
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
+    from typing import TypeAlias
 
     NpNdarrayInt: TypeAlias = np.ndarray[np.uint8, Any]
 else:
@@ -93,7 +93,7 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
     """
     assert image_to_check is not None, "Image required"
     image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
-    mask_filename: Optional[str] = None
+    mask_filename: str | None = None
     if image_file_basename.endswith(".expected"):
         image_file_basename = os.path.splitext(image_file_basename)[0]
         if use_mask:
@@ -184,8 +184,8 @@ def check_screenshot(
     width: int = 800,
     height: int = 600,
     sleep: int = 100,
-    headers: Optional[dict[str, str]] = None,
-    media: Optional[list[dict[str, str]]] = None,
+    headers: dict[str, str] | None = None,
+    media: list[dict[str, str]] | None = None,
     level: float = 1.0,
     generate_expected_image: bool = False,
     use_mask: bool = True,

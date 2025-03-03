@@ -1,8 +1,8 @@
 """Private utilities."""
 
 import os
-from collections.abc import Mapping
-from typing import Any, Callable, Optional, cast
+from collections.abc import Callable, Mapping
+from typing import Any, cast
 
 import pyramid.config
 
@@ -13,9 +13,9 @@ def get_base_path(config: pyramid.config.Configurator) -> str:
 
 
 def env_or_config(
-    config: Optional[pyramid.config.Configurator],
-    env_name: Optional[str] = None,
-    config_name: Optional[str] = None,
+    config: pyramid.config.Configurator | None,
+    env_name: str | None = None,
+    config_name: str | None = None,
     default: Any = None,
     type_: Callable[[str], Any] = str,
 ) -> Any:
@@ -26,9 +26,9 @@ def env_or_config(
 
 
 def env_or_settings(
-    settings: Optional[Mapping[str, Any]],
-    env_name: Optional[str] = None,
-    settings_name: Optional[str] = None,
+    settings: Mapping[str, Any] | None,
+    env_name: str | None = None,
+    settings_name: str | None = None,
     default: Any = None,
     type_: Callable[[str], Any] = str,
 ) -> Any:
@@ -40,7 +40,7 @@ def env_or_settings(
     return default
 
 
-def config_bool(value: Optional[str]) -> bool:
+def config_bool(value: str | None) -> bool:
     """Get boolean from the value."""
     if value is None:
         return False

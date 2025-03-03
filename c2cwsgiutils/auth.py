@@ -2,7 +2,7 @@ import hashlib
 import logging
 from collections.abc import Mapping
 from enum import Enum
-from typing import Any, Optional, TypedDict, cast
+from typing import Any, TypedDict, cast
 
 import jwt
 import pyramid.request
@@ -51,9 +51,9 @@ class AuthConfig(TypedDict, total=False):
     """Configuration of the authentication."""
 
     # The repository to check access to (<organization>/<repository>).
-    github_repository: Optional[str]
+    github_repository: str | None
     # The type of access to check (admin|push|pull).
-    github_access_type: Optional[str]
+    github_access_type: str | None
 
 
 def get_expected_secret(request: pyramid.request.Request) -> str:
@@ -172,7 +172,7 @@ class AuthenticationType(Enum):
     GITHUB = 2
 
 
-def auth_type(settings: Optional[Mapping[str, Any]]) -> Optional[AuthenticationType]:
+def auth_type(settings: Mapping[str, Any] | None) -> AuthenticationType | None:
     """Get the authentication type."""
     if env_or_settings(settings, SECRET_ENV, SECRET_PROP, "") != "":
         return AuthenticationType.SECRET
@@ -198,7 +198,7 @@ def auth_type(settings: Optional[Mapping[str, Any]]) -> Optional[AuthenticationT
 
 
 def check_access(
-    request: pyramid.request.Request, repo: Optional[str] = None, access_type: Optional[str] = None
+    request: pyramid.request.Request, repo: str | None = None, access_type: str | None = None
 ) -> bool:
     """
     Check if the user has access to the resource.
@@ -274,7 +274,7 @@ def check_access_config(request: pyramid.request.Request, auth_config: AuthConfi
 
 
 def is_enabled(
-    config: pyramid.config.Configurator, env_name: Optional[str] = None, config_name: Optional[str] = None
+    config: pyramid.config.Configurator, env_name: str | None = None, config_name: str | None = None
 ) -> bool:
     """Is the authentication enable."""
     return (

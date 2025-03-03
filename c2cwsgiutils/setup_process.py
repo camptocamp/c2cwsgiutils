@@ -7,7 +7,8 @@ Must be imported at the very beginning of the process's life, before any other m
 import argparse
 import logging
 import warnings
-from typing import Any, Callable, Optional, TypedDict, cast
+from collections.abc import Callable
+from typing import Any, TypedDict, cast
 
 import pyramid.config
 import pyramid.registry
@@ -88,7 +89,7 @@ def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEn
 
 def bootstrap_application(
     config_uri: str = "c2c:///app/production.ini",
-    options: Optional[dict[str, Any]] = None,
+    options: dict[str, Any] | None = None,
 ) -> PyramidEnv:
     """
     Initialize all the application.

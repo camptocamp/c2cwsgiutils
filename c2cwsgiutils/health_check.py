@@ -13,10 +13,10 @@ import re
 import subprocess  # nosec
 import time
 import traceback
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from enum import Enum
 from types import TracebackType
-from typing import Any, Callable, Literal, Optional, Union, cast
+from typing import Any, Literal, cast
 
 import prometheus_client
 import pyramid.config
@@ -90,9 +90,9 @@ class _Binding:
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        exc_traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        exc_traceback: TracebackType | None,
     ) -> Literal[False]:
         return False
 
@@ -125,16 +125,16 @@ class _OldBinding(_Binding):
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        exc_traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        exc_traceback: TracebackType | None,
     ) -> Literal[False]:
         self.session.bind = self.prev_bind
         return False
 
 
 def _get_binding_class(
-    session: Union[_scoped_session, c2cwsgiutils.db.SessionFactory],
+    session: _scoped_session | c2cwsgiutils.db.SessionFactory,
     ro_engin: sqlalchemy.engine.Engine,
     rw_engin: sqlalchemy.engine.Engine,
     readwrite: bool,
@@ -146,7 +146,7 @@ def _get_binding_class(
 
 
 def _get_bindings(
-    session: Union[_scoped_session, c2cwsgiutils.db.SessionFactory],
+    session: _scoped_session | c2cwsgiutils.db.SessionFactory,
     engine_type: EngineType,
 ) -> list[_Binding]:
     if isinstance(session, c2cwsgiutils.db.SessionFactory):
@@ -220,9 +220,9 @@ class HealthCheck:
 
     def add_db_session_check(
         self,
-        session: Union[_scoped_session, c2cwsgiutils.db.SessionFactory],
-        query_cb: Optional[Callable[[_scoped_session], Any]] = None,
-        at_least_one_model: Optional[object] = None,
+        session: _scoped_session | c2cwsgiutils.db.SessionFactory,
+        query_cb: Callable[[_scoped_session], Any] | None = None,
+        at_least_one_model: object | None = None,
         level: int = 1,
         engine_type: EngineType = EngineType.READ_AND_WRITE,
     ) -> None:
@@ -252,8 +252,8 @@ class HealthCheck:
         alembic_ini_path: str,
         level: int = 2,
         name: str = "alembic",
-        version_schema: Optional[str] = None,
-        version_table: Optional[str] = None,
+        version_schema: str | None = None,
+        version_table: str | None = None,
     ) -> None:
         """
         Check the DB version against the HEAD version of Alembic.
@@ -321,12 +321,10 @@ class HealthCheck:
 
     def add_url_check(
         self,
-        url: Union[str, Callable[[pyramid.request.Request], str]],
-        params: Union[Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]], None] = None,
-        headers: Union[
-            Mapping[str, str], Callable[[pyramid.request.Request], Mapping[str, str]], None
-        ] = None,
-        name: Optional[str] = None,
+        url: str | Callable[[pyramid.request.Request], str],
+        params: Mapping[str, str] | Callable[[pyramid.request.Request], Mapping[str, str]] | None = None,
+        headers: Mapping[str, str] | Callable[[pyramid.request.Request], Mapping[str, str]] | None = None,
+        name: str | None = None,
         check_cb: Callable[[pyramid.request.Request, requests.Response], Any] = lambda request,
         response: None,
         timeout: float = 3,
@@ -362,7 +360,7 @@ class HealthCheck:
         assert name
         self._checks.append((name, check, level))
 
-    def add_redis_check(self, name: Optional[str] = None, level: int = 1) -> None:
+    def add_redis_check(self, name: str | None = None, level: int = 1) -> None:
         """
         Check that the given redis server is reachable.
 
@@ -537,5 +535,5 @@ def _set_success(check_name: str) -> None:
 
 
 @broadcast.decorator(expect_answers=True)
-def _get_all_versions() -> Optional[str]:
+def _get_all_versions() -> str | None:
     return version.get_version()

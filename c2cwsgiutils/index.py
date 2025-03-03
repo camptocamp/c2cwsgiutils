@@ -1,7 +1,7 @@
 import logging
 import urllib.parse
 import warnings
-from typing import Any, Optional, Union, cast
+from typing import Any, cast
 
 import jwt
 import pyramid.config
@@ -44,22 +44,22 @@ from c2cwsgiutils.config_utils import env_or_settings
 
 _LOG = logging.getLogger(__name__)
 
-additional_title: Optional[str] = None
+additional_title: str | None = None
 additional_noauth: list[str] = []
 additional_auth: list[str] = []
 _ELEM_ID = 0
 
 
 def _url(
-    request: pyramid.request.Request, route: str, params: Optional[dict[str, str]] = None
-) -> Optional[str]:
+    request: pyramid.request.Request, route: str, params: dict[str, str] | None = None
+) -> str | None:
     try:
         return request.route_url(route, _query=params)  # type: ignore
     except KeyError:
         return None
 
 
-def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
+def section(title: str, *content: str, sep: bool | None = True) -> str:
     """Get an HTML section."""
     printable_content = "\n".join(content)
     result = f"""
@@ -73,7 +73,7 @@ def section(title: str, *content: str, sep: Optional[bool] = True) -> str:
     return result
 
 
-def paragraph(*content: str, title: Optional[str] = None) -> str:
+def paragraph(*content: str, title: str | None = None) -> str:
     """Get an HTML paragraph."""
     body = ""
     if title:
@@ -82,7 +82,7 @@ def paragraph(*content: str, title: Optional[str] = None) -> str:
     return "<p>" + body + "</p>"
 
 
-def link(url: Optional[str], label: str, cssclass: str = "btn btn-primary", target: str = "_blank") -> str:
+def link(url: str | None, label: str, cssclass: str = "btn btn-primary", target: str = "_blank") -> str:
     """Get an HTML link."""
     attrs = ""
     if cssclass:
@@ -95,7 +95,7 @@ def link(url: Optional[str], label: str, cssclass: str = "btn btn-primary", targ
         return ""
 
 
-def form(url: Optional[str], *content: str, method: str = "get", target: str = "_blank") -> str:
+def form(url: str | None, *content: str, method: str = "get", target: str = "_blank") -> str:
     """Get an HTML form."""
     assert url is not None
     method_attrs = ""
@@ -110,7 +110,7 @@ def form(url: Optional[str], *content: str, method: str = "get", target: str = "
 
 
 def input_(
-    name: str, label: Optional[str] = None, type_: Optional[str] = None, value: Union[str, int] = ""
+    name: str, label: str | None = None, type_: str | None = None, value: str | int = ""
 ) -> str:
     """Get an HTML input."""
     global _ELEM_ID  # pylint: disable=global-statement

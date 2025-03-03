@@ -18,4 +18,8 @@ pylint:
 
 mypy:
   options:
-    python_version: '3.10'
+    python-version: '3.10'
+
+ruff:
+  options:
+    target-version: py310

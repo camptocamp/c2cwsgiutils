@@ -1,5 +1,5 @@
 FROM camptocamp/c2cwsgiutils AS base-all
-LABEL maintainer Camptocamp "info@camptocamp.com"
+LABEL org.opencontainers.image.authors="Camptocamp <info@camptocamp.com>"
 SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 
 # Used to convert the locked packages by poetry to pip requirements format

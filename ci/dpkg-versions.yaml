@@ -59,13 +59,13 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libgmp10: 2:6.3.0+dfsg-2ubuntu6.1
   ubuntu_24_04/libgnutls30t64: 3.8.3-1.1ubuntu3.3
   ubuntu_24_04/libgpg-error0: 1.47-3build2.1
-  ubuntu_24_04/libgssapi-krb5-2: 1.20.1-6ubuntu2.4
+  ubuntu_24_04/libgssapi-krb5-2: 1.20.1-6ubuntu2.5
   ubuntu_24_04/libhogweed6t64: 3.9.1-2.2build1.1
   ubuntu_24_04/libidn2-0: 2.3.7-2build1.1
-  ubuntu_24_04/libk5crypto3: 1.20.1-6ubuntu2.4
+  ubuntu_24_04/libk5crypto3: 1.20.1-6ubuntu2.5
   ubuntu_24_04/libkeyutils1: 1.6.3-3build1
-  ubuntu_24_04/libkrb5-3: 1.20.1-6ubuntu2.4
-  ubuntu_24_04/libkrb5support0: 1.20.1-6ubuntu2.4
+  ubuntu_24_04/libkrb5-3: 1.20.1-6ubuntu2.5
+  ubuntu_24_04/libkrb5support0: 1.20.1-6ubuntu2.5
   ubuntu_24_04/libksba8: 1.6.6-1build1
   ubuntu_24_04/libldap2: 2.6.7+dfsg-1~exp1ubuntu8.2
   ubuntu_24_04/liblz4-1: 1.9.4-1build1.1
@@ -83,7 +83,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libpam0g: 1.5.3-5ubuntu5.1
   ubuntu_24_04/libpcre2-8-0: 10.42-4ubuntu2.1
   ubuntu_24_04/libperl5.38t64: 5.38.2-3.2build2.1
-  ubuntu_24_04/libpq5: 16.6-0ubuntu0.24.04.1
+  ubuntu_24_04/libpq5: 16.8-0ubuntu0.24.04.1
   ubuntu_24_04/libproc2-0: 2:4.0.4-4ubuntu3.2
   ubuntu_24_04/libpsl5t64: 0.21.2-1.1build1
   ubuntu_24_04/libpython3-stdlib: 3.12.3-0ubuntu2
@@ -128,7 +128,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/perl-modules-5.38: 5.38.2-3.2build2.1
   ubuntu_24_04/pinentry-curses: 1.2.1-3ubuntu5
   ubuntu_24_04/postgresql-client: 16+257build1.1
-  ubuntu_24_04/postgresql-client-16: 16.6-0ubuntu0.24.04.1
+  ubuntu_24_04/postgresql-client-16: 16.8-0ubuntu0.24.04.1
   ubuntu_24_04/postgresql-client-common: 257build1.1
   ubuntu_24_04/procps: 2:4.0.4-4ubuntu3.2
   ubuntu_24_04/python3: 3.12.3-0ubuntu2

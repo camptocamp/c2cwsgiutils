@@ -798,12 +798,3 @@ def test_screenshot(app_connection):
         expected_filename=os.path.join(os.path.dirname(__file__), "my-check.expected.png"),
     )
 ```
-
-## Contributing
-
-Install the pre-commit hooks:
-
-```bash
-pip install pre-commit
-pre-commit install --allow-missing-config
-```

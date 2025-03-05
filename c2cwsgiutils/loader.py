@@ -8,7 +8,7 @@ from c2cwsgiutils import get_config_defaults, get_logconfig_dict
 _LOG = logging.getLogger(__name__)
 
 
-class Loader(BaseLoader):  # type: ignore
+class Loader(BaseLoader):  # type: ignore[misc]
     """The application loader."""
 
     def _get_defaults(self, defaults: dict[str, str] | None = None) -> dict[str, str]:
@@ -34,6 +34,7 @@ class Loader(BaseLoader):  # type: ignore
             :func:`logging.config.fileConfig`.
 
         """
+        del defaults  # Unused
         if "loggers" in self.get_sections():
             logging.config.dictConfig(get_logconfig_dict(self.uri.path))
         else:

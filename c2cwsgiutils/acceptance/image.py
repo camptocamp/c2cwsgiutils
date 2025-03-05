@@ -1,6 +1,6 @@
 import json
-import os
 import subprocess  # nosec
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import numpy as np  # pylint: disable=import-error
@@ -18,9 +18,9 @@ else:
 
 
 def check_image_file(
-    result_folder: str,
-    image_filename_to_check: str,
-    expected_filename: str,
+    result_folder: str | Path,
+    image_filename_to_check: str | Path,
+    expected_filename: str | Path,
     level: float = 1.0,
     generate_expected_image: bool = False,
     use_mask: bool = True,
@@ -40,7 +40,7 @@ def check_image_file(
     we use it as a mask.
     """
     result = skimage.io.imread(image_filename_to_check)
-    assert result is not None, "Wrong image: " + image_filename_to_check
+    assert result is not None, f"Wrong image: {image_filename_to_check}"
     check_image(result_folder, result, expected_filename, level, generate_expected_image, use_mask)
 
 
@@ -59,9 +59,9 @@ def normalize_image(image: NpNdarrayInt) -> NpNdarrayInt:
 
 
 def check_image(  # pylint: disable=too-many-locals,too-many-statements
-    result_folder: str,
+    result_folder: str | Path,
     image_to_check: NpNdarrayInt,
-    expected_filename: str,
+    expected_filename: str | Path,
     level: float = 1.0,
     generate_expected_image: bool = False,
     use_mask: bool = True,
@@ -92,18 +92,18 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
 
     """
     assert image_to_check is not None, "Image required"
-    image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
-    mask_filename: str | None = None
+    result_folder = Path(result_folder)
+    expected_filename = Path(expected_filename)
+    image_file_basename = expected_filename.stem
+    mask_filename: Path | None = None
     if image_file_basename.endswith(".expected"):
-        image_file_basename = os.path.splitext(image_file_basename)[0]
+        image_file_basename = Path(image_file_basename).stem
         if use_mask:
-            mask_filename = os.path.join(
-                os.path.dirname(expected_filename), image_file_basename + ".mask.png"
-            )
-            if not os.path.isfile(mask_filename):
+            mask_filename = expected_filename.with_name(image_file_basename + ".mask.png")
+            if not mask_filename.is_file():
                 mask_filename = None
-    result_filename = os.path.join(result_folder, f"{image_file_basename}.actual-masked.png")
-    diff_filename = os.path.join(result_folder, f"{image_file_basename}.diff.png")
+    result_filename = result_folder / f"{image_file_basename}.actual-masked.png"
+    diff_filename = result_folder / f"{image_file_basename}.diff.png"
 
     image_to_check = normalize_image(image_to_check)
 
@@ -112,13 +112,15 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
         background_color = [255, 255, 255]
         for color in range(3):
             img_hist, _ = skimage.exposure.histogram(
-                image_to_check[..., color], nbins=256, source_range="dtype"
+                image_to_check[..., color],
+                nbins=256,
+                source_range="dtype",
             )
             background_color[color] = np.argmax(img_hist)
 
         mask = skimage.io.imread(mask_filename)
 
-        assert mask is not None, "Wrong mask: " + mask_filename
+        assert mask is not None, "Wrong mask: " + str(mask_filename)
 
         # Normalize the mask
         if len(mask.shape) == 3 and mask.shape[2] == 3:
@@ -135,25 +137,25 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
         # Convert to boolean
         mask = mask == 0
 
-        assert mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1], (
+        assert mask.shape[0] == image_to_check.shape[0] and mask.shape[1] == image_to_check.shape[1], (  # noqa: PT018
             f"Mask and image should have the same shape ({mask.shape} != {image_to_check.shape})"
         )
         image_to_check[mask] = background_color
 
-    if not os.path.exists(result_folder):
-        os.makedirs(result_folder)
+    if not result_folder.exists():
+        result_folder.mkdir(parents=True)
     if generate_expected_image:
         skimage.io.imsave(expected_filename, image_to_check)
         return
-    if not os.path.isfile(expected_filename):
+    if not expected_filename.is_file():
         skimage.io.imsave(expected_filename, image_to_check)
-        raise AssertionError("Expected image not found: " + expected_filename)
+        raise AssertionError("Expected image not found: " + str(expected_filename))
     expected = skimage.io.imread(expected_filename)
-    assert expected is not None, "Wrong image: " + expected_filename
+    assert expected is not None, "Wrong image: " + str(expected_filename)
     expected = normalize_image(expected)
 
     if mask is not None:
-        assert expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1], (
+        assert expected.shape[0] == mask.shape[0] and expected.shape[1] == mask.shape[1], (  # noqa: PT018
             f"Mask and expected image should have the same shape ({mask.shape} != {expected.shape})"
         )
         expected[mask] = background_color
@@ -162,7 +164,11 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
         f"Images have different shapes expected {expected.shape} != actual {image_to_check.shape}"
     )
     score, diff = skimage.metrics.structural_similarity(
-        expected, image_to_check, multichannel=True, full=True, channel_axis=2
+        expected,
+        image_to_check,
+        multichannel=True,
+        full=True,
+        channel_axis=2,
     )
     diff = (255 - diff * 255).astype("uint8")
 
@@ -179,8 +185,8 @@ def check_image(  # pylint: disable=too-many-locals,too-many-statements
 
 def check_screenshot(
     url: str,
-    result_folder: str,
-    expected_filename: str,
+    result_folder: str | Path,
+    expected_filename: str | Path,
     width: int = 800,
     height: int = 600,
     sleep: int = 100,
@@ -216,15 +222,15 @@ def check_screenshot(
     if media is None:
         media = []
 
-    if not os.path.exists(os.path.join(os.path.dirname(__file__), "node_modules")):
-        subprocess.run(["npm", "install"], cwd=os.path.dirname(__file__), check=True)  # nosec
+    if not Path(__file__).parent.joinpath("node_modules").exists():
+        subprocess.run(["npm", "install"], cwd=Path(__file__).parent, check=True)  # nosec
 
-    image_file_basename = os.path.splitext(os.path.basename(expected_filename))[0]
+    image_file_basename = Path(expected_filename).stem
     if image_file_basename.endswith(".expected"):
-        image_file_basename = os.path.splitext(image_file_basename)[0]
+        image_file_basename = Path(image_file_basename).stem
 
-    result_folder = os.path.abspath(result_folder)
-    actual_filename = os.path.join(result_folder, f"{image_file_basename}.actual.png")
+    result_folder = Path(result_folder).resolve()
+    actual_filename = result_folder / f"{image_file_basename}.actual.png"
     subprocess.run(  # nosec
         [
             "node",
@@ -237,7 +243,7 @@ def check_screenshot(
             f"--media={json.dumps(media)}",
             f"--output={actual_filename}",
         ],
-        cwd=os.path.dirname(__file__),
+        cwd=Path(__file__).parent,
         check=True,
     )
     check_image(

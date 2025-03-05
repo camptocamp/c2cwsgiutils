@@ -35,13 +35,17 @@ def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """Initialize the Redis tracking."""
     global _ORIG  # pylint: disable=global-statement
     if config_utils.env_or_config(
-        config, "C2C_TRACK_REDIS", "c2c.track_redis", True, config_utils.config_bool
+        config,
+        "C2C_TRACK_REDIS",
+        "c2c.track_redis",
+        default=True,
+        type_=config_utils.config_bool,
     ):
         try:
             import redis.client  # pylint: disable=import-outside-toplevel
 
             _ORIG = redis.client.Redis.execute_command
-            redis.client.Redis.execute_command = _execute_command_patch  # type: ignore
+            redis.client.Redis.execute_command = _execute_command_patch  # type: ignore[method-assign,assignment]
             _LOG.info("Enabled the redis tracking")
-        except Exception:  # pragma: nocover  # pylint: disable=broad-except
+        except Exception:  # pragma: nocover  # pylint: disable=broad-exception-caught
             _LOG.warning("Cannot enable redis tracking", exc_info=True)

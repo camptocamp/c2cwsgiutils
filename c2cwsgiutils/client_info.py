@@ -16,7 +16,7 @@ class Filter:
     Concerned headers: Forwarded and the X_Forwarded_* Headers.
     """
 
-    def __init__(self, application: Callable[[dict[str, str], Any], Any]):
+    def __init__(self, application: Callable[[dict[str, str], Any], Any]) -> None:
         """Initialize the filter."""
         self._application = application
 

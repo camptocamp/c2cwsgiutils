@@ -58,7 +58,8 @@ def init(config_file: str = "c2c:///app/production.ini") -> None:
 def init_logging(config_file: str = "c2c:///app/production.ini") -> None:
     """Initialize the non-WSGI application."""
     warnings.warn(
-        "init_logging function is deprecated; use init instead so that all features are enabled", stacklevel=2
+        "init_logging function is deprecated; use init instead so that all features are enabled",
+        stacklevel=2,
     )
     loader = get_config_loader(config_file)
     loader.setup_logging(None)
@@ -83,7 +84,8 @@ def bootstrap_application_from_options(options: argparse.Namespace) -> PyramidEn
     https://docs.pylonsproject.org/projects/pyramid/en/latest/api/paster.html?highlight=bootstrap#pyramid.paster.bootstrap
     """
     return bootstrap_application(
-        options.config_uri, parse_vars(options.config_vars) if options.config_vars else None
+        options.config_uri,
+        parse_vars(options.config_vars) if options.config_vars else None,
     )
 
 

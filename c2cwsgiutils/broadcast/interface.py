@@ -16,6 +16,10 @@ class BaseBroadcaster:
 
     @abstractmethod
     def broadcast(
-        self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
+        self,
+        channel: str,
+        params: Mapping[str, Any],
+        expect_answers: bool,
+        timeout: float,
     ) -> list[Any] | None:
         """Broadcast a message to a channel."""

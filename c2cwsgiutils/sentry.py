@@ -76,45 +76,66 @@ def includeme(config: pyramid.config.Configurator | None = None) -> None:
 
         traces_sample_rate = float(
             config_utils.env_or_config(
-                config, "SENTRY_TRACES_SAMPLE_RATE", "c2c.sentry_traces_sample_rate", "0.0"
-            )
+                config,
+                "SENTRY_TRACES_SAMPLE_RATE",
+                "c2c.sentry_traces_sample_rate",
+                "0.0",
+            ),
         )
         integrations: list[sentry_sdk.integrations.Integration] = []
         if config_utils.config_bool(
             config_utils.env_or_config(
-                config, "SENTRY_INTEGRATION_LOGGING", "c2c.sentry_integration_logging", "true"
-            )
+                config,
+                "SENTRY_INTEGRATION_LOGGING",
+                "c2c.sentry_integration_logging",
+                "true",
+            ),
         ):
             integrations.append(
                 LoggingIntegration(
                     level=logging.DEBUG,
                     event_level=config_utils.env_or_config(
-                        config, "SENTRY_LEVEL", "c2c.sentry_level", "ERROR"
+                        config,
+                        "SENTRY_LEVEL",
+                        "c2c.sentry_level",
+                        "ERROR",
                     ).upper(),
-                )
+                ),
             )
         if config_utils.config_bool(
             config_utils.env_or_config(
-                config, "SENTRY_INTEGRATION_PYRAMID", "c2c.sentry_integration_pyramid", "true"
-            )
+                config,
+                "SENTRY_INTEGRATION_PYRAMID",
+                "c2c.sentry_integration_pyramid",
+                "true",
+            ),
         ):
             integrations.append(PyramidIntegration())
         if config_utils.config_bool(
             config_utils.env_or_config(
-                config, "SENTRY_INTEGRATION_SQLALCHEMY", "c2c.sentry_integration_sqlalchemy", "true"
-            )
+                config,
+                "SENTRY_INTEGRATION_SQLALCHEMY",
+                "c2c.sentry_integration_sqlalchemy",
+                "true",
+            ),
         ):
             integrations.append(SqlalchemyIntegration())
         if config_utils.config_bool(
             config_utils.env_or_config(
-                config, "SENTRY_INTEGRATION_REDIS", "c2c.sentry_integration_redis", "true"
-            )
+                config,
+                "SENTRY_INTEGRATION_REDIS",
+                "c2c.sentry_integration_redis",
+                "true",
+            ),
         ):
             integrations.append(RedisIntegration())
         if config_utils.config_bool(
             config_utils.env_or_config(
-                config, "SENTRY_INTEGRATION_ASYNCIO", "c2c.sentry_integration_asyncio", "true"
-            )
+                config,
+                "SENTRY_INTEGRATION_ASYNCIO",
+                "c2c.sentry_integration_asyncio",
+                "true",
+            ),
         ):
             integrations.append(AsyncioIntegration())
 
@@ -128,7 +149,10 @@ def includeme(config: pyramid.config.Configurator | None = None) -> None:
         _CLIENT_SETUP = True
 
         excludes = config_utils.env_or_config(
-            config, "SENTRY_EXCLUDES", "c2c.sentry.excludes", "sentry_sdk"
+            config,
+            "SENTRY_EXCLUDES",
+            "c2c.sentry.excludes",
+            "sentry_sdk",
         ).split(",")
         for exclude in excludes:
             ignore_logger(exclude)
@@ -160,7 +184,7 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
         try:
             _LOG.info("Enable WSGI filter for Sentry")
             return SentryWsgiMiddleware(application)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-exception-caught
             _LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
             return application
     else:

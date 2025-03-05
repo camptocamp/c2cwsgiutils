@@ -21,9 +21,14 @@ class LocalBroadcaster(interface.BaseBroadcaster):
         del self._subscribers[channel]
 
     def broadcast(
-        self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
+        self,
+        channel: str,
+        params: Mapping[str, Any],
+        expect_answers: bool,
+        timeout: float,
     ) -> list[Any] | None:
         """Broadcast a message to all the listeners."""
+        del timeout  # Not used
         subscriber = self._subscribers.get(channel, None)
         answers = [utils.add_host_info(subscriber(**params))] if subscriber is not None else []
         return answers if expect_answers else None

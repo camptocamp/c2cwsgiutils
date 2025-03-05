@@ -4,7 +4,7 @@ import functools
 import logging
 import warnings
 from collections.abc import Callable
-from typing import Any, Optional, TypeVar
+from typing import Any, TypeVar
 
 import pyramid.config
 
@@ -32,7 +32,10 @@ def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """
     global _broadcaster  # pylint: disable=global-statement
     broadcast_prefix = config_utils.env_or_config(
-        config, _BROADCAST_ENV_KEY, _BROADCAST_CONFIG_KEY, "broadcast_api_"
+        config,
+        _BROADCAST_ENV_KEY,
+        _BROADCAST_CONFIG_KEY,
+        "broadcast_api_",
     )
     master, slave, _ = redis_utils.get(config.get_settings() if config else None)
     if _broadcaster is None:
@@ -82,7 +85,10 @@ def unsubscribe(channel: str) -> None:
 
 
 def broadcast(
-    channel: str, params: dict[str, Any] | None = None, expect_answers: bool = False, timeout: float = 10
+    channel: str,
+    params: dict[str, Any] | None = None,
+    expect_answers: bool = False,
+    timeout: float = 10,
 ) -> list[Any] | None:
     """
     Broadcast a message to the given channel.
@@ -90,7 +96,10 @@ def broadcast(
     If answers are expected, it will wait up to "timeout" seconds to get all the answers.
     """
     return _get(need_init=True).broadcast(
-        channel, params if params is not None else {}, expect_answers, timeout
+        channel,
+        params if params is not None else {},
+        expect_answers,
+        timeout,
     )
 
 
@@ -100,7 +109,9 @@ _DecoratorReturn = TypeVar("_DecoratorReturn")
 
 
 def decorator(
-    channel: str | None = None, expect_answers: bool = False, timeout: float = 10
+    channel: str | None = None,
+    expect_answers: bool = False,
+    timeout: float = 10,
 ) -> Callable[[Callable[..., _DecoratorReturn]], Callable[..., list[_DecoratorReturn] | None]]:
     """
     Decorate function will be called through the broadcast functionality.
@@ -113,10 +124,7 @@ def decorator(
         def wrapper(**kwargs: Any) -> list[_DecoratorReturn] | None:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
-        if channel is None:
-            _channel = f"c2c_decorated_{func.__module__}.{func.__name__}"
-        else:
-            _channel = channel
+        _channel = f"c2c_decorated_{func.__module__}.{func.__name__}" if channel is None else channel
         subscribe(_channel, func)
 
         return wrapper

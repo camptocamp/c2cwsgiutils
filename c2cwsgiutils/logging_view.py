@@ -23,10 +23,15 @@ def includeme(config: pyramid.config.Configurator) -> None:
     """Install the view to configure the loggers, if configured to do so."""
     if auth.is_enabled(config, _ENV_KEY, _CONFIG_KEY):
         config.add_route(
-            "c2c_logging_level", config_utils.get_base_path(config) + r"/logging/level", request_method="GET"
+            "c2c_logging_level",
+            config_utils.get_base_path(config) + r"/logging/level",
+            request_method="GET",
         )
         config.add_view(
-            _logging_change_level, route_name="c2c_logging_level", renderer="fast_json", http_cache=0
+            _logging_change_level,
+            route_name="c2c_logging_level",
+            renderer="fast_json",
+            http_cache=0,
         )
         _restore_overrides(config)
         _LOG.info("Enabled the /logging/level API")
@@ -40,7 +45,10 @@ def _logging_change_level(request: pyramid.request.Request) -> Mapping[str, Any]
         logger = logging.getLogger(name)
         if level is not None:
             _LOG.critical(
-                "Logging of %s changed from %s to %s", name, logging.getLevelName(logger.level), level
+                "Logging of %s changed from %s to %s",
+                name,
+                logging.getLevelName(logger.level),
+                level,
             )
             _set_level(name=name, level=level)
             _store_override(request.registry.settings, name, level)
@@ -50,8 +58,7 @@ def _logging_change_level(request: pyramid.request.Request) -> Mapping[str, Any]
             "level": logging.getLevelName(logger.level),
             "effective_level": logging.getLevelName(logger.getEffectiveLevel()),
         }
-    else:
-        return {"status": 200, "overrides": dict(_list_overrides(request.registry.settings))}
+    return {"status": 200, "overrides": dict(_list_overrides(request.registry.settings))}
 
 
 @broadcast.decorator(expect_answers=True)
@@ -67,7 +74,7 @@ def _restore_overrides(config: pyramid.config.Configurator) -> None:
             logging.getLogger(name).setLevel(level)
     except ImportError:
         pass  # don't have redis
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-exception-caught
         # survive an error there. Logging levels is not business critical...
         _LOG.warning("Cannot restore logging levels", exc_info=True)
 

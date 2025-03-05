@@ -19,8 +19,7 @@ def wait_url(url: str, timeout: float = _DEFAULT_TIMEOUT) -> None:
         if r.status_code == 200:
             _LOG.info("%s service started", url)
             return True
-        else:
-            return False
+        return False
 
     retry_timeout(what, timeout=timeout)
 
@@ -44,7 +43,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = _DEFAULT_TIMEOUT, in
                 return ret
         except NameError:
             raise
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-exception-caught
             error = str(e)
             _LOG.info("  Failed: %s", e)
         if time.perf_counter() > timeout:

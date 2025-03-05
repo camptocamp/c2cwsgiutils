@@ -35,7 +35,7 @@ def _crude_add_cors(request: pyramid.request.Request, response: pyramid.response
         response = request.response
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = ",".join(
-        {request.headers.get("Access-Control-Request-Method", request.method)} | {"OPTIONS", "HEAD"}
+        {request.headers.get("Access-Control-Request-Method", request.method)} | {"OPTIONS", "HEAD"},
     )
     response.headers["Access-Control-Allow-Headers"] = "session-id"
     response.headers["Access-Control-Max-Age"] = "86400"
@@ -58,7 +58,7 @@ def _do_error(
     status: int,
     exception: Exception,
     logger: Callable[..., None] = _LOG.error,
-    reduce_info_sent: Callable[[Exception], None] = lambda e: None,
+    reduce_info_sent: Callable[[Exception], None] = lambda e: None,  # noqa: ARG005
 ) -> pyramid.response.Response:
     logger(
         "%s %s returned status code %s",
@@ -99,10 +99,9 @@ def _http_error(exception: HTTPException, request: pyramid.request.Request) -> A
         _add_cors(request)
         request.response.status_code = exception.status_code
         return {"message": str(exception), "status": exception.status_code}
-    else:
-        _crude_add_cors(request)
-        request.response.status_code = 200
-        return request.response
+    _crude_add_cors(request)
+    request.response.status_code = 200
+    return request.response
 
 
 def _include_dev_details(request: pyramid.request.Request) -> bool:
@@ -110,7 +109,8 @@ def _include_dev_details(request: pyramid.request.Request) -> bool:
 
 
 def _integrity_error(
-    exception: sqlalchemy.exc.StatementError, request: pyramid.request.Request
+    exception: sqlalchemy.exc.StatementError,
+    request: pyramid.request.Request,
 ) -> pyramid.response.Response:
     def reduce_info_sent(e: Exception) -> None:
         if isinstance(e, sqlalchemy.exc.StatementError):
@@ -122,7 +122,8 @@ def _integrity_error(
 
 
 def _client_interrupted_error(
-    exception: Exception, request: pyramid.request.Request
+    exception: Exception,
+    request: pyramid.request.Request,
 ) -> pyramid.response.Response:
     # No need to cry wolf if it's just the client that interrupted the connection
     return _do_error(request, 500, exception, logger=_LOG.info)
@@ -166,7 +167,10 @@ def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the error views."""
     if (
         config_utils.env_or_config(
-            config, "C2C_ENABLE_EXCEPTION_HANDLING", "c2c.enable_exception_handling", "0"
+            config,
+            "C2C_ENABLE_EXCEPTION_HANDLING",
+            "c2c.enable_exception_handling",
+            "0",
         )
         != "0"
     ):

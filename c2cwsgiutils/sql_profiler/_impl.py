@@ -51,12 +51,13 @@ class _Repository:
                             [
                                 row[0]
                                 for row in c.execute(
-                                    sqlalchemy.text(f"EXPLAIN ANALYZE {statement}"), parameters
+                                    sqlalchemy.text(f"EXPLAIN ANALYZE {statement}"),
+                                    parameters,
                                 )
-                            ]
+                            ],
                         )
                     _LOG.info(output)
-                except Exception:  # pylint: disable=broad-except # noqa: S110
+                except Exception:  # pylint: disable=broad-exception-caught
                     pass
 
 
@@ -75,11 +76,10 @@ def _setup_profiler(enable: str) -> None:
             _LOG.info("Enabling the SQL profiler")
             _REPOSITORY = _Repository()
             sqlalchemy.event.listen(sqlalchemy.engine.Engine, "before_cursor_execute", _REPOSITORY.profile)
-    else:
-        if _REPOSITORY is not None:
-            _LOG.info("Disabling the SQL profiler")
-            sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute", _REPOSITORY.profile)
-            _REPOSITORY = None
+    elif _REPOSITORY is not None:
+        _LOG.info("Disabling the SQL profiler")
+        sqlalchemy.event.remove(sqlalchemy.engine.Engine, "before_cursor_execute", _REPOSITORY.profile)
+        _REPOSITORY = None
 
 
 def _beautify_sql(statement: str) -> str:
@@ -87,8 +87,7 @@ def _beautify_sql(statement: str) -> str:
     statement = re.sub(r" ((?:LEFT )?(?:OUTER )?JOIN )", r"\n\1", statement)
     statement = re.sub(r" ON ", r"\n  ON ", statement)
     statement = re.sub(r" GROUP BY ", r"\nGROUP BY ", statement)
-    statement = re.sub(r" ORDER BY ", r"\nORDER BY ", statement)
-    return statement
+    return re.sub(r" ORDER BY ", r"\nORDER BY ", statement)
 
 
 def _indent(statement: str, indent: str = "  ") -> str:
@@ -100,7 +99,9 @@ def init(config: pyramid.config.Configurator) -> None:
     broadcast.subscribe("c2c_sql_profiler", _setup_profiler)
 
     config.add_route(
-        "c2c_sql_profiler", config_utils.get_base_path(config) + r"/sql_profiler", request_method="GET"
+        "c2c_sql_profiler",
+        config_utils.get_base_path(config) + r"/sql_profiler",
+        request_method="GET",
     )
     config.add_view(_sql_profiler_view, route_name="c2c_sql_profiler", renderer="fast_json", http_cache=0)
     _LOG.info("Enabled the /sql_profiler API")

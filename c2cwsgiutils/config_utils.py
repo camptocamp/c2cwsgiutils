@@ -21,7 +21,11 @@ def env_or_config(
 ) -> Any:
     """Get the setting from the environment or from the config file."""
     return env_or_settings(
-        config.get_settings() if config is not None else {}, env_name, config_name, default, type_
+        config.get_settings() if config is not None else {},
+        env_name,
+        config_name,
+        default,
+        type_,
     )
 
 

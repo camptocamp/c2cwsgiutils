@@ -38,10 +38,10 @@ class SQLAlchemyHandler(logging.Handler):
         self.engine = create_engine(sqlalchemy_url["url"])
         self.Log = create_log_class(  # pylint: disable=invalid-name
             tablename=sqlalchemy_url.get("tablename", "logs"),
-            tableargs=sqlalchemy_url.get("tableargs"),  # type: ignore
+            tableargs=sqlalchemy_url.get("tableargs"),  # type: ignore[arg-type]
         )
         Base.metadata.bind = self.engine
-        self.session = sessionmaker(bind=self.engine)()  # noqa
+        self.session = sessionmaker(bind=self.engine)()
         # Initialize log queue
         self.log_queue: Any = queue.Queue()
         # Initialize a thread to process the logs Asynchronously
@@ -68,10 +68,8 @@ class SQLAlchemyHandler(logging.Handler):
                 # try to reduce the number of INSERT requests to the DB
                 # by writing chunks of self.MAX_NB_LOGS size,
                 # but also do not wait forever before writing stuff (self.MAX_TIMOUT)
-                if (
-                    logs
-                    and (len(logs) >= self.MAX_NB_LOGS)
-                    or (time.perf_counter() >= (time_since_last + self.MAX_TIMEOUT))
+                if (logs and (len(logs) >= self.MAX_NB_LOGS)) or (
+                    time.perf_counter() >= (time_since_last + self.MAX_TIMEOUT)
                 ):
                     self._write_logs(logs)
                     break
@@ -87,7 +85,7 @@ class SQLAlchemyHandler(logging.Handler):
                 self.session.rollback()
                 self.session.bulk_save_objects(logs)
                 self.session.commit()
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-exception-caught #
                 # if we really cannot commit the log to DB, do not lock the
                 # thread and do not crash the application
                 _LOG.critical(e)
@@ -101,8 +99,9 @@ class SQLAlchemyHandler(logging.Handler):
             create_database(self.engine.url)
         # FIXME: we should not access directly the private __table_args__ # pylint: disable=fixme
         # variable, but add an accessor method in models.Log class
-        if not isinstance(self.Log.__table_args__, type(None)) and self.Log.__table_args__.get(
-            "schema", None
+        if self.Log.__table_args__ is not None and self.Log.__table_args__.get(
+            "schema",
+            None,
         ):
             with self.engine.begin() as connection:
                 if not self.engine.dialect.has_schema(connection, self.Log.__table_args__["schema"]):

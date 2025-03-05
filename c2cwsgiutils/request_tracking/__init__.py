@@ -10,7 +10,6 @@ import urllib.parse
 import uuid
 import warnings
 from collections.abc import Mapping
-from typing import Optional, Union
 
 import prometheus_client
 import pyramid.request
@@ -35,7 +34,7 @@ _PROMETHEUS_REQUESTS_SUMMARY = prometheus_client.Summary(
 def _gen_request_id(request: pyramid.request.Request) -> str:
     for id_header in _ID_HEADERS:
         if id_header in request.headers:
-            return request.headers[id_header]  # type: ignore
+            return request.headers[id_header]  # type: ignore[no-any-return]
     return str(uuid.uuid4())
 
 
@@ -65,7 +64,13 @@ def _patch_requests() -> None:
         port = parsed.port or (80 if parsed.scheme == "http" else 443)
         start = time.perf_counter()
         response = _HTTPAdapter_send(
-            self, request, timeout=timeout, stream=stream, verify=verify, cert=cert, proxies=proxies
+            self,
+            request,
+            timeout=timeout,
+            stream=stream,
+            verify=verify,
+            cert=cert,
+            proxies=proxies,
         )
 
         _PROMETHEUS_REQUESTS_SUMMARY.labels(
@@ -103,11 +108,14 @@ def includeme(config: pyramid.config.Configurator | None = None) -> None:
         config.add_request_method(_gen_request_id, "c2c_request_id", reify=True)
 
     _DEFAULT_TIMEOUT = config_utils.env_or_config(
-        config, "C2C_REQUESTS_DEFAULT_TIMEOUT", "c2c.requests_default_timeout", type_=float
+        config,
+        "C2C_REQUESTS_DEFAULT_TIMEOUT",
+        "c2c.requests_default_timeout",
+        type_=float,
     )
     _patch_requests()
 
-    if config_utils.env_or_config(config, "C2C_SQL_REQUEST_ID", "c2c.sql_request_id", False):
+    if config_utils.env_or_config(config, "C2C_SQL_REQUEST_ID", "c2c.sql_request_id", default=False):
         from . import _sql  # pylint: disable=import-outside-toplevel
 
         _sql.init()

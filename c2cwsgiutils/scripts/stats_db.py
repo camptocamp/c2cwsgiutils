@@ -29,7 +29,12 @@ def _parse_args() -> argparse.Namespace:
     c2cwsgiutils.setup_process.fill_arguments(parser)
     parser.add_argument("--db", type=str, required=True, help="DB connection string")
     parser.add_argument(
-        "--schema", type=str, action="append", required=True, default=["public"], help="schema to dump"
+        "--schema",
+        type=str,
+        action="append",
+        required=True,
+        default=["public"],
+        help="schema to dump",
     )
     parser.add_argument(
         "--extra",
@@ -45,7 +50,10 @@ def _parse_args() -> argparse.Namespace:
         help="A SQL query that returns a metric name and a value, with gauge name and help",
     )
     parser.add_argument(
-        "--prometheus-url", "--prometheus_url", type=str, help="Base URL for the Prometheus Pushgateway"
+        "--prometheus-url",
+        "--prometheus_url",
+        type=str,
+        help="Base URL for the Prometheus Pushgateway",
     )
     parser.add_argument(
         "--prometheus-instance",
@@ -80,7 +88,12 @@ class Reporter:
         return self.gauges[kind]
 
     def do_report(
-        self, metric: list[str], value: int, kind: str, kind_help: str, tags: dict[str, str]
+        self,
+        metric: list[str],
+        value: int,
+        kind: str,
+        kind_help: str,
+        tags: dict[str, str],
     ) -> None:
         """Report a metric."""
         _LOG.debug("%s.%s -> %d", kind, ".".join(metric), value)
@@ -149,7 +162,7 @@ def _do_indexes(
          ) AS foo
          ON t.tablename = foo.ctablename AND t.schemaname=foo.schemaname
     WHERE t.schemaname=:schema AND t.tablename=:table
-    """
+    """,
         ),
         params={"schema": schema, "table": table},
     ):
@@ -184,7 +197,7 @@ def _do_table_size(
     FROM pg_class c
     LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE relkind = 'r' AND nspname=:schema AND relname=:table
-    """
+    """,
         ),
         params={"schema": schema, "table": table},
     ).fetchone()
@@ -211,7 +224,7 @@ def _do_table_count(
     result = session.execute(
         sqlalchemy.text(
             "SELECT reltuples FROM pg_class where "
-            "oid=(quote_ident(:schema) || '.' || quote_ident(:table))::regclass;"
+            "oid=(quote_ident(:schema) || '.' || quote_ident(:table))::regclass;",
         ),
         params={"schema": schema, "table": table},
     ).fetchone()
@@ -230,7 +243,11 @@ def do_extra(session: scoped_session, sql: str, kind: str, gauge_help: str, repo
     """Do an extra report."""
     for metric, count in session.execute(sqlalchemy.text(sql)):
         reporter.do_report(
-            str(metric).split("."), count, kind=kind, kind_help=gauge_help, tags={"metric": metric}
+            str(metric).split("."),
+            count,
+            kind=kind,
+            kind_help=gauge_help,
+            tags={"metric": metric},
         )
 
 
@@ -250,7 +267,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
             """
     SELECT table_schema, table_name FROM information_schema.tables
     WHERE table_type='BASE TABLE' AND table_schema IN :schemas
-    """
+    """,
         ),
         params={"schemas": tuple(args.schema)},
     ).fetchall()
@@ -258,7 +275,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
         _LOG.info("Process table %s.%s.", schema, table)
         try:
             do_table(session, schema, table, reporter)
-        except Exception as e:  # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-exception-caught
             _LOG.exception("Process table %s.%s error.", schema, table)
             reporter.error([schema, table], e)
 
@@ -267,7 +284,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
             _LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, extra, "extra", "Extra metric", reporter)
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 _LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(pos + 1)], e)
     if args.extra_gauge:
@@ -276,7 +293,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
             _LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, sql, gauge, gauge_help, reporter)
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 _LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(len(args.extra) + pos + 1)], e)
 

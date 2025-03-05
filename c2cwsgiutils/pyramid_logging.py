@@ -83,7 +83,7 @@ def _make_message_dict(*args: Any, **kargv: Any) -> Mapping[str, Any]:
     return _un_underscore(msg)
 
 
-class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ignore
+class PyramidCeeSysLogHandler(cee_syslog_handler.CeeSysLogHandler):  # type: ignore[misc]
     """A CEE (JSON format) log handler with additional information about the current request."""
 
     def __init__(self, *args: Any, **kargv: Any) -> None:
@@ -113,7 +113,7 @@ else:
 class JsonLogHandler(Base):
     """Log to stdout in JSON."""
 
-    def __init__(self, stream: TextIO | None = None):
+    def __init__(self, stream: TextIO | None = None) -> None:
         """Initialize the handler."""
         super().__init__(stream)
         self.addFilter(_PYRAMID_FILTER)
@@ -122,6 +122,11 @@ class JsonLogHandler(Base):
     def format(self, record: Any) -> str:
         """Format the record into a JSON string."""
         message = _make_message_dict(
-            record, self._fqdn, debugging_fields=True, extra_fields=True, facility=None, static_fields={}
+            record,
+            self._fqdn,
+            debugging_fields=True,
+            extra_fields=True,
+            facility=None,
+            static_fields={},
         )
         return json.dumps(message)

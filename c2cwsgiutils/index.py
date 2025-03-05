@@ -52,7 +52,7 @@ _ELEM_ID = 0
 
 def _url(request: pyramid.request.Request, route: str, params: dict[str, str] | None = None) -> str | None:
     try:
-        return request.route_url(route, _query=params)  # type: ignore
+        return request.route_url(route, _query=params)  # type: ignore[no-any-return]
     except KeyError:
         return None
 
@@ -89,8 +89,7 @@ def link(url: str | None, label: str, cssclass: str = "btn btn-primary", target:
         attrs += f' target="{target}"'
     if url is not None:
         return f'<a href="{url}"{attrs}>{label}</a>'
-    else:
-        return ""
+    return ""
 
 
 def form(url: str | None, *content: str, method: str = "get", target: str = "_blank") -> str:
@@ -210,16 +209,14 @@ def _versions(request: pyramid.request.Request) -> str:
     versions_url = _url(request, "c2c_versions")
     if versions_url:
         return section("Versions " + link(versions_url, "Get"), sep=False)
-    else:
-        return ""
+    return ""
 
 
 def _stats(request: pyramid.request.Request) -> str:
     stats_url = _url(request, "c2c_read_stats_json")
     if stats_url:
         return section("Statistics", paragraph(link(stats_url, "Get")), sep=False)
-    else:
-        return ""
+    return ""
 
 
 def _profiler(request: pyramid.request.Request) -> str:
@@ -232,12 +229,11 @@ def _profiler(request: pyramid.request.Request) -> str:
                     link(sql_profiler_url, "Status"),
                     link(sql_profiler_url + "?enable=1", "Enable"),
                     link(sql_profiler_url + "?enable=0", "Disable"),
-                ]
+                ],
             ),
             sep=False,
         )
-    else:
-        return ""
+    return ""
 
 
 def _db_maintenance(request: pyramid.request.Request) -> str:
@@ -258,8 +254,7 @@ def _db_maintenance(request: pyramid.request.Request) -> str:
             ),
             sep=False,
         )
-    else:
-        return ""
+    return ""
 
 
 def _logging(request: pyramid.request.Request) -> str:
@@ -281,8 +276,7 @@ def _logging(request: pyramid.request.Request) -> str:
             paragraph(link(logging_url, "List overrides")),
             sep=False,
         )
-    else:
-        return ""
+    return ""
 
 
 def _debug(request: pyramid.request.Request) -> str:
@@ -296,7 +290,7 @@ def _debug(request: pyramid.request.Request) -> str:
                     link(_url(request, "c2c_debug_stacks"), "Stack traces"),
                     link(_url(request, "c2c_debug_headers"), "HTTP headers"),
                     link(_url(request, "c2c_debug_memory_maps"), "Mapped memory"),
-                ]
+                ],
             ),
             '<h2>Memory usage<span style="font-size: 0.5em;">, with <a href="https://mg.pov.lt/objgraph/">objgraph</a></span></h2>',
             "<p>Runs the garbage collector and dumps the memory usage as JSON.</p>",
@@ -341,8 +335,7 @@ def _debug(request: pyramid.request.Request) -> str:
             ),
             sep=False,
         )
-    else:
-        return ""
+    return ""
 
 
 def _health_check(request: pyramid.request.Request) -> str:
@@ -358,8 +351,7 @@ def _health_check(request: pyramid.request.Request) -> str:
             ),
             sep=False,
         )
-    else:
-        return ""
+    return ""
 
 
 def _github_login(request: pyramid.request.Request) -> dict[str, Any]:
@@ -387,7 +379,10 @@ def _github_login(request: pyramid.request.Request) -> dict[str, Any]:
     )
     authorization_url, state = oauth.authorization_url(
         env_or_settings(
-            settings, GITHUB_AUTH_URL_ENV, GITHUB_AUTH_URL_PROP, "https://github.com/login/oauth/authorize"
+            settings,
+            GITHUB_AUTH_URL_ENV,
+            GITHUB_AUTH_URL_PROP,
+            "https://github.com/login/oauth/authorize",
         ),
     )
     use_session = env_or_settings(settings, USE_SESSION_ENV, USE_SESSION_PROP, "").lower() == "true"
@@ -447,7 +442,7 @@ def _github_login_callback(request: pyramid.request.Request) -> dict[str, Any]:
             GITHUB_USER_URL_ENV,
             GITHUB_USER_URL_PROP,
             "https://api.github.com/user",
-        )
+        ),
     ).json()
 
     user_information: UserDetails = {
@@ -491,7 +486,8 @@ def _github_logout(request: pyramid.request.Request) -> dict[str, Any]:
         ),
     )
     raise HTTPFound(
-        location=request.params.get("came_from", _url(request, "c2c_index")), headers=request.response.headers
+        location=request.params.get("came_from", _url(request, "c2c_index")),
+        headers=request.response.headers,
     )
 
 
@@ -511,7 +507,10 @@ def includeme(config: pyramid.config.Configurator) -> None:
         config.add_view(_index, route_name="c2c_index", http_cache=0, renderer="./templates/index.html.mako")
         config.add_route("c2c_index_slash", base_path + "/", request_method=("GET", "POST"))
         config.add_view(
-            _index, route_name="c2c_index_slash", http_cache=0, renderer="./templates/index.html.mako"
+            _index,
+            route_name="c2c_index_slash",
+            http_cache=0,
+            renderer="./templates/index.html.mako",
         )
 
         settings = config.get_settings()
@@ -519,7 +518,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
         if auth_type_ == AuthenticationType.SECRET:
             _LOG.warning(
                 "It is recommended to use OAuth2 with GitHub login instead of the `C2C_SECRET` because it "
-                "protects from brute force attacks and the access grant is personal and can be revoked."
+                "protects from brute force attacks and the access grant is personal and can be revoked.",
             )
 
         if auth_type_ == AuthenticationType.GITHUB:
@@ -527,7 +526,10 @@ def includeme(config: pyramid.config.Configurator) -> None:
             config.add_view(_github_login, route_name="c2c_github_login", http_cache=0)
             config.add_route("c2c_github_callback", base_path + "/github-callback", request_method=("GET",))
             config.add_view(
-                _github_login_callback, route_name="c2c_github_callback", http_cache=0, renderer="fast_json"
+                _github_login_callback,
+                route_name="c2c_github_callback",
+                http_cache=0,
+                renderer="fast_json",
             )
             config.add_route("c2c_github_logout", base_path + "/github-logout", request_method=("GET",))
             config.add_view(_github_logout, route_name="c2c_github_logout", http_cache=0)

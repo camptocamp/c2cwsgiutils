@@ -42,11 +42,10 @@ def _db_maintenance(request: pyramid.request.Request) -> Mapping[str, Any]:
         _set_readonly(value=readonly)
         _store(request.registry.settings, readonly)
         return {"status": 200, "readonly": readonly}
-    else:
-        readonly = _get_redis_value(request.registry.settings)
-        if readonly is not None:
-            readonly = readonly == "true"
-        return {"status": 200, "current_readonly": readonly}
+    readonly = _get_redis_value(request.registry.settings)
+    if readonly is not None:
+        readonly = readonly == "true"
+    return {"status": 200, "current_readonly": readonly}
 
 
 @broadcast.decorator(expect_answers=True)
@@ -63,7 +62,7 @@ def _restore(config: pyramid.config.Configurator) -> None:
             db.FORCE_READONLY = readonly == "true"
     except ImportError:
         pass  # don't have redis
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-exception-caught
         # survive an error since crashing now can have bad consequences for the service. :/
         _LOG.error("Cannot restore readonly DB status.", exc_info=True)
 

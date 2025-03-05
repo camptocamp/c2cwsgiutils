@@ -114,7 +114,7 @@ def serialize_collected_data(collector: prometheus_client.registry.Collector) ->
         elif isinstance(process_gauge, prometheus_client.core.CounterMetricFamily):
             gauge["type"] = "counter"
         else:
-            raise NotImplementedError()
+            raise NotImplementedError
         for sample in process_gauge.samples:
             gauge["samples"].append(
                 {
@@ -153,12 +153,12 @@ def _deserialize_collected_data(
 
             if serialized_metric["type"] == "gauge":
                 metric: prometheus_client.core.Metric = prometheus_client.core.GaugeMetricFamily(
-                    **serialized_metric["args"]
+                    **serialized_metric["args"],
                 )
             elif serialized_metric["type"] == "counter":
                 metric = prometheus_client.core.CounterMetricFamily(**serialized_metric["args"])
             else:
-                raise NotImplementedError()
+                raise NotImplementedError
             for sample in serialized_metric["samples"]:
                 metric.samples.append(
                     prometheus_client.metrics_core.Sample(**sample),  # type: ignore[attr-defined]
@@ -169,7 +169,7 @@ def _deserialize_collected_data(
 class MemoryMapCollector(prometheus_client.registry.Collector):
     """The Linux memory map provider."""
 
-    def __init__(self, memory_type: str = "pss", pids: list[str] | None = None):
+    def __init__(self, memory_type: str = "pss", pids: list[str] | None = None) -> None:
         """
         Initialize.
 

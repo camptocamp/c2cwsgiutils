@@ -54,15 +54,21 @@ def get(
 def _init(settings: Mapping[str, Any] | None) -> None:
     global _master, _slave, _sentinel  # pylint: disable=global-statement
     sentinels = c2cwsgiutils.config_utils.env_or_settings(
-        settings, REDIS_SENTINELS_KEY, REDIS_SENTINELS_KEY_PROP
+        settings,
+        REDIS_SENTINELS_KEY,
+        REDIS_SENTINELS_KEY_PROP,
     )
     service_name = c2cwsgiutils.config_utils.env_or_settings(
-        settings, REDIS_SERVICENAME_KEY, REDIS_SERVICENAME_KEY_PROP
+        settings,
+        REDIS_SERVICENAME_KEY,
+        REDIS_SERVICENAME_KEY_PROP,
     )
     db = c2cwsgiutils.config_utils.env_or_settings(settings, _REDIS_DB_KEY, _REDIS_DB_KEY_PROP)
     url = c2cwsgiutils.config_utils.env_or_settings(settings, REDIS_URL_KEY, REDIS_URL_KEY_PROP)
     redis_options_ = c2cwsgiutils.config_utils.env_or_settings(
-        settings, _REDIS_OPTIONS_KEY, _REDIS_OPTIONS_KEY_PROP
+        settings,
+        _REDIS_OPTIONS_KEY,
+        _REDIS_OPTIONS_KEY_PROP,
     )
 
     redis_options = (
@@ -92,7 +98,9 @@ def _init(settings: Mapping[str, Any] | None) -> None:
         _slave = _master
     else:
         _LOG.info(
-            "No Redis configuration found, use %s or %s to configure it", REDIS_URL_KEY, REDIS_SENTINELS_KEY
+            "No Redis configuration found, use %s or %s to configure it",
+            REDIS_URL_KEY,
+            REDIS_SENTINELS_KEY,
         )
 
 
@@ -123,7 +131,7 @@ class PubSubWorkerThread(threading.Thread):
                     _LOG.warning("Redis connection problem")
                 last_was_ok = False
                 time.sleep(0.5)
-            except Exception:  # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-exception-caught
                 _LOG.warning("Unexpected error", exc_info=True)
         _LOG.info("Redis subscription worker stopped")
         pubsub.close()

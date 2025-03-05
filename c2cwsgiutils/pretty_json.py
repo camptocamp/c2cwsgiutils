@@ -35,7 +35,7 @@ def init(config: pyramid.config.Configurator) -> None:
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize json and fast_json renderer."""
     pretty_print = config_bool(
-        env_or_config(config, "C2C_JSON_PRETTY_PRINT", "c2c.json.pretty_print", "false")
+        env_or_config(config, "C2C_JSON_PRETTY_PRINT", "c2c.json.pretty_print", "false"),
     )
     sort_keys = config_bool(env_or_config(config, "C2C_JSON_SORT_KEYS", "c2c.json.sort_keys", "false"))
 
@@ -44,6 +44,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
     config.add_renderer("json", JSON(indent=2 if pretty_print else None, sort_keys=sort_keys))
     config.add_renderer("fast_json", JSON(serializer=fast_dump))
     config.add_renderer(
-        "cornice_json", CorniceRenderer(indent=2 if pretty_print else None, sort_keys=sort_keys)
+        "cornice_json",
+        CorniceRenderer(indent=2 if pretty_print else None, sort_keys=sort_keys),
     )
     config.add_renderer("cornice_fast_json", CorniceRenderer(serializer=fast_dump))

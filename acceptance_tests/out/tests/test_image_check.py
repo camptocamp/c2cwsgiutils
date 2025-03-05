@@ -6,7 +6,7 @@ from c2cwsgiutils.acceptance import image
 
 
 @pytest.mark.parametrize(
-    "expected_file_name,width,height,headers,media",
+    ("expected_file_name", "width", "height", "headers", "media"),
     [
         pytest.param("c2c.expected.png", 650, 500, {}, [{"name": "prefers-color-scheme", "value": "light"}]),
         pytest.param(

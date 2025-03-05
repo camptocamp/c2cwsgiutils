@@ -33,7 +33,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
         config: The pyramid Configuration
 
     """
-    logging.captureWarnings(True)
+    logging.captureWarnings(capture=True)
     config.include(coverage_setup.includeme)
     config.include(sentry.includeme)
     config.add_settings(handle_exceptions=False)

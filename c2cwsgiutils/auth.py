@@ -59,7 +59,7 @@ class AuthConfig(TypedDict, total=False):
 def get_expected_secret(request: pyramid.request.Request) -> str:
     """Return the secret expected from the client."""
     settings = request.registry.settings
-    return cast(str, env_or_settings(settings, SECRET_ENV, SECRET_PROP, False))
+    return cast(str, env_or_settings(settings, SECRET_ENV, SECRET_PROP, default=False))
 
 
 def _hash_secret(secret: str) -> str:
@@ -80,10 +80,7 @@ def _is_auth_secret(request: pyramid.request.Request) -> bool:
     secret = request.params.get("secret")
     if secret is None:
         secret = request.headers.get("X-API-Key")
-    if secret is None:
-        secret_hash = request.cookies.get(SECRET_ENV)
-    else:
-        secret_hash = _hash_secret(secret)
+    secret_hash = request.cookies.get(SECRET_ENV) if secret is None else _hash_secret(secret)
 
     if secret_hash is not None:
         if secret_hash == "" or secret == "":  # nosec
@@ -94,7 +91,12 @@ def _is_auth_secret(request: pyramid.request.Request) -> bool:
             return False
         # Login or refresh the cookie
         request.response.set_cookie(
-            SECRET_ENV, secret_hash, max_age=_COOKIE_AGE, httponly=True, secure=True, samesite="Strict"
+            SECRET_ENV,
+            secret_hash,
+            max_age=_COOKIE_AGE,
+            httponly=True,
+            secure=True,
+            samesite="Strict",
         )
         # Since this could be used from outside c2cwsgiutils views, we cannot set the path to c2c
         return True
@@ -158,7 +160,8 @@ def is_auth(request: pyramid.request.Request) -> bool:
 def auth_view(request: pyramid.request.Request) -> None:
     """Get the authentication view."""
     if not is_auth(request):
-        raise HTTPForbidden("Missing or invalid secret (parameter, X-API-Key header or cookie)")
+        message = "Missing or invalid secret (parameter, X-API-Key header or cookie)"
+        raise HTTPForbidden(message)
 
 
 class AuthenticationType(Enum):
@@ -198,7 +201,9 @@ def auth_type(settings: Mapping[str, Any] | None) -> AuthenticationType | None:
 
 
 def check_access(
-    request: pyramid.request.Request, repo: str | None = None, access_type: str | None = None
+    request: pyramid.request.Request,
+    repo: str | None = None,
+    access_type: str | None = None,
 ) -> bool:
     """
     Check if the user has access to the resource.
@@ -274,7 +279,9 @@ def check_access_config(request: pyramid.request.Request, auth_config: AuthConfi
 
 
 def is_enabled(
-    config: pyramid.config.Configurator, env_name: str | None = None, config_name: str | None = None
+    config: pyramid.config.Configurator,
+    env_name: str | None = None,
+    config_name: str | None = None,
 ) -> bool:
     """Is the authentication enable."""
     return (

@@ -11,7 +11,7 @@ Base = declarative_base()
 def create_log_class(tablename: str = "logs", tableargs: str | dict[str, str] = "") -> Any:
     """Get the sqlalchemy lgo class."""
 
-    class Log(Base):  # type: ignore
+    class Log(Base):  # type: ignore[valid-type,misc]
         """The SQLAlchemy class that represent the log table."""
 
         __table_args__ = tableargs

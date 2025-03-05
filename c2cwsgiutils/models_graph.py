@@ -24,7 +24,7 @@ def _generate_model_graph(module: Any, base: Any) -> None:
         """
     digraph {
         rankdir=BT;
-    """
+    """,
     )
 
     interesting = {
@@ -34,7 +34,7 @@ def _generate_model_graph(module: Any, base: Any) -> None:
     }
 
     for symbol in list(interesting):
-        symbol = getattr(module, symbol.__name__)
+        symbol = getattr(module, symbol.__name__)  # noqa: PLW2901
         if _is_interesting(symbol, base):
             _print_node(symbol, interesting)
 
@@ -56,7 +56,7 @@ def _is_interesting(what: Any, base: type) -> bool:
 
 
 def _get_table_desc(symbol: Any) -> str:
-    cols = [symbol.__name__, ""] + _get_local_cols(symbol)
+    cols = [symbol.__name__, "", *_get_local_cols(symbol)]
 
     return "\\n".join(cols)
 
@@ -70,7 +70,7 @@ def _get_all_cols(symbol: Any) -> list[str]:
             # Those are not fields
             pass
         elif isinstance(member, sa.sql.schema.SchemaItem):
-            cols.append(member_name + ("[null]" if member.nullable else ""))  # type: ignore
+            cols.append(member_name + ("[null]" if member.nullable else ""))  # type: ignore[attr-defined]
         elif isinstance(member, sa.orm.attributes.InstrumentedAttribute):
             nullable = (
                 member.property.columns[0].nullable
@@ -88,4 +88,4 @@ def _get_local_cols(symbol: Any) -> list[str]:
     for parent in symbol.__bases__:
         result -= set(_get_all_cols(parent))
 
-    return sorted(list(result))
+    return sorted(result)

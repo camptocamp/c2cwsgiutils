@@ -2,7 +2,6 @@ import contextlib
 import cProfile
 import pstats
 import sys
-from typing import Any
 
 
 class Profile(contextlib.ContextDecorator):
@@ -17,7 +16,7 @@ class Profile(contextlib.ContextDecorator):
     def __enter__(self) -> None:
         self.pr.enable()
 
-    def __exit__(self, *exc: Any) -> None:
+    def __exit__(self, *exc: object) -> None:
         del exc
 
         self.pr.disable()

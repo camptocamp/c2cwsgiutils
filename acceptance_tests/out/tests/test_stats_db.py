@@ -118,16 +118,16 @@ def test_standalone(prometheus_stats_db_connection, composition):
     """Test that stats db is correctly waiting for the Prometheus call, and exit after the call."""
     # To be able to debug
     composition.dc_process(["logs", "stats_db"])
-    ps = [l for l in composition.dc(["ps"]).split("\n")]
+    ps = [line for line in composition.dc(["ps"]).split("\n")]
     print("\n".join(ps))
-    ps = [l for l in ps if "c2cwsgiutils-stats_db-" in l]
+    ps = [line for line in ps if "c2cwsgiutils-stats_db-" in line]
     assert len(ps) == 1
     assert " Up " in ps[0]
     print("Call Prometheus URL")
     prometheus_stats_db_connection.session.get(prometheus_stats_db_connection.base_url)
-    ps = [l for l in composition.dc(["ps"]).split("\n")]
+    ps = [line for line in composition.dc(["ps"]).split("\n")]
     print("\n".join(ps))
-    ps = [l for l in ps if "c2cwsgiutils-stats_db-" in l]
+    ps = [line for line in ps if "c2cwsgiutils-stats_db-" in line]
     assert len(ps) == 1
     # TODO: verify that the container exited correctly
     # assert ps[0].strip().endswith(" Exit 0")

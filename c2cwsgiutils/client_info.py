@@ -1,7 +1,8 @@
 import logging
 import os
 import re
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 _LOG = logging.getLogger(__name__)
 SEP_RE = re.compile(r", *")
@@ -15,7 +16,7 @@ class Filter:
     Concerned headers: Forwarded and the X_Forwarded_* Headers.
     """
 
-    def __init__(self, application: Callable[[dict[str, str], Any], Any]):
+    def __init__(self, application: Callable[[dict[str, str], Any], Any]) -> None:
         """Initialize the filter."""
         self._application = application
 

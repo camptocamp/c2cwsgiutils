@@ -1,7 +1,7 @@
 import logging
 import os
 import warnings
-from typing import Optional
+from pathlib import Path
 
 import pyramid.config
 
@@ -14,7 +14,7 @@ def init() -> None:
     includeme()
 
 
-def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
+def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """Initialize the code coverage."""
     del config  # unused
     if os.environ.get("COVERAGE", "0") != "1":
@@ -22,10 +22,10 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     import coverage  # pylint: disable=import-outside-toplevel
 
     _LOG.warning("Setting up code coverage")
-    report_dir = "/tmp/coverage/api"  # noqa: S108 # nosec
-    os.makedirs(report_dir, exist_ok=True)
+    report_dir = Path("/tmp/coverage/api")  # noqa: S108 # nosec
+    report_dir.mkdir(parents=True, exist_ok=True)
     cov = coverage.Coverage(
-        data_file=os.path.join(report_dir, "coverage"),
+        data_file=str(report_dir / "coverage"),
         data_suffix=True,
         auto_data=True,
         branch=True,

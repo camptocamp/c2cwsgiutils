@@ -1,9 +1,9 @@
 import gc
 import logging
-import os
 import re
 import sys
 from collections import defaultdict
+from pathlib import Path
 from types import FunctionType, ModuleType
 from typing import Any
 
@@ -37,14 +37,14 @@ def get_size(obj: Any) -> int:
 
 def dump_memory_maps(pid: str = "self") -> list[dict[str, Any]]:
     """Get the Linux memory maps."""
-    filename = os.path.join("/proc", pid, "smaps")
-    if not os.path.exists(filename):
+    filename = Path("/proc") / pid / "smaps"
+    if not filename.exists():
         return []
-    with open(filename, encoding="utf-8") as input_:
+    with filename.open(encoding="utf-8") as input_:
         cur_dict: dict[str, int] = defaultdict(int)
         sizes: dict[str, Any] = {}
         for line in input_:
-            line = line.rstrip("\n")
+            line = line.rstrip("\n")  # noqa: PLW2901
             matcher = _SMAPS_LOCATION_RE.match(line)
             if matcher:
                 cur_dict = sizes.setdefault(matcher.group(1), defaultdict(int))

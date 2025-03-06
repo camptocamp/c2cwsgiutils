@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import prometheus_client
 import pyramid.config
@@ -29,8 +29,8 @@ _PROMETHEUS_PYRAMID_VIEWS_SUMMARY = prometheus_client.Summary(
 def _add_server_metric(
     request: pyramid.request.Request,
     name: str,
-    duration: Optional[float] = None,
-    description: Optional[str] = None,
+    duration: float | None = None,
+    description: str | None = None,
 ) -> None:
     # format: <name>;due=<duration>;desc=<description>
     metric = name
@@ -46,16 +46,14 @@ def _add_server_metric(
 
 
 def _create_finished_cb(
-    kind: str, measure: prometheus_client.Summary
+    kind: str,
+    measure: prometheus_client.Summary,
 ) -> Callable[[pyramid.request.Request], None]:  # pragma: nocover
     start = time.process_time()
 
     def finished_cb(request: pyramid.request.Request) -> None:
         if request.exception is not None:
-            if isinstance(request.exception, HTTPException):
-                status = request.exception.code
-            else:
-                status = 599
+            status = request.exception.code if isinstance(request.exception, HTTPException) else 599
         else:
             status = request.response.status_code
         if request.matched_route is None:
@@ -74,7 +72,10 @@ def _create_finished_cb(
                 status,
             )
         measure.labels(
-            method=request.method, route=name, status=status, group=str(status // 100 * 100)
+            method=request.method,
+            route=name,
+            status=status,
+            group=str(status // 100 * 100),
         ).observe(time.process_time() - start)
         _add_server_metric(request, kind, duration=time.process_time() - start)
 

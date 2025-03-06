@@ -3,7 +3,6 @@ inherits:
   - utils:no-design-checks
   - utils:c2cwsgiutils
   - utils:fix
-  - utils:unsafe
   - duplicated
 
 ignore-paths:
@@ -19,4 +18,11 @@ pylint:
 
 mypy:
   options:
-    python_version: '3.10'
+    python-version: '3.10'
+
+ruff:
+  options:
+    target-version: py310
+  disable:
+    - TD # Disable all TODO checks
+    - FIX # Disable all FIXME checks

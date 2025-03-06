@@ -8,7 +8,7 @@ def test_pushgateway_group_publisher():
     publisher.add("metric1", 12)
     publisher.add("metric2", 13, metric_labels={"toto": "TOTO", "tutu": "TUTU"})
     publisher.add("metric2", 14, metric_labels={"toto": "TOTO", "tutu": "TITI"})
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         publisher.add("metric1", 12, metric_type="counter")
 
     assert (

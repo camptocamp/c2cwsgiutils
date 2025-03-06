@@ -4,12 +4,13 @@ import random
 import string
 import threading
 import time
-from collections.abc import Mapping
-from typing import Any, Callable, Optional
-
-import redis
+from collections.abc import Callable, Mapping
+from typing import TYPE_CHECKING, Any
 
 from c2cwsgiutils.broadcast import interface, local, utils
+
+if TYPE_CHECKING:
+    import redis
 
 _LOG = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         self._pub_sub = self._master.pubsub(ignore_subscribe_messages=True)
 
         # Need to be subscribed to something for the thread to stay alive
-        self._pub_sub.subscribe(**{self._get_channel("c2c_dummy"): lambda message: None})
+        self._pub_sub.subscribe(**{self._get_channel("c2c_dummy"): lambda _: None})
         self._thread = redis_utils.PubSubWorkerThread(self._pub_sub, name="c2c_broadcast_listener")
         self._thread.start()
 
@@ -48,7 +49,7 @@ class RedisBroadcaster(interface.BaseBroadcaster):
             data = json.loads(message["data"])
             try:
                 response = callback(**data["params"])
-            except Exception as e:  # pragma: no cover  # pylint: disable=broad-except
+            except Exception as e:  # pragma: no cover  # pylint: disable=broad-exception-caught
                 _LOG.error("Failed handling a broadcast message", exc_info=True)
                 response = {"status": 500, "message": str(e)}
             answer_channel = data.get("answer_channel")
@@ -67,17 +68,23 @@ class RedisBroadcaster(interface.BaseBroadcaster):
         self._pub_sub.unsubscribe(actual_channel)
 
     def broadcast(
-        self, channel: str, params: Mapping[str, Any], expect_answers: bool, timeout: float
-    ) -> Optional[list[Any]]:
+        self,
+        channel: str,
+        params: Mapping[str, Any],
+        expect_answers: bool,
+        timeout: float,
+    ) -> list[Any] | None:
         """Broadcast a message to all the listeners."""
         if expect_answers:
             return self._broadcast_with_answer(channel, params, timeout)
-        else:
-            self._broadcast(channel, {"params": params})
-            return None
+        self._broadcast(channel, {"params": params})
+        return None
 
     def _broadcast_with_answer(
-        self, channel: str, params: Optional[Mapping[str, Any]], timeout: float
+        self,
+        channel: str,
+        params: Mapping[str, Any] | None,
+        timeout: float,
     ) -> list[Any]:
         cond = threading.Condition()
         answers = []

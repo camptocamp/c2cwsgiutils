@@ -4,7 +4,7 @@ import threading
 import time
 import traceback
 from collections.abc import Mapping
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import objgraph
 
@@ -17,7 +17,7 @@ FILES_FIELDS = {"__name__", "__doc__", "__package__", "__loader__", "__spec__", 
 def _dump_stacks_impl() -> dict[str, Any]:
     id2name = {th.ident: th.name for th in threading.enumerate()}
     threads = {}
-    for thread_id, stack in sys._current_frames().items():  # pylint: disable=W0212
+    for thread_id, stack in sys._current_frames().items():  # pylint: disable=protected-access
         frames = []
         for filename, lineno, name, line in traceback.extract_stack(stack):
             cur = {"file": filename, "line": lineno, "function": name}
@@ -31,7 +31,7 @@ def _dump_stacks_impl() -> dict[str, Any]:
 # pylint: disable=too-many-branches
 def _dump_memory_impl(
     limit: int,
-    analyze_type: Optional[str],
+    analyze_type: str | None,
     python_internals_map: bool = False,
 ) -> Mapping[str, Any]:
     nb_collected = [gc.collect(generation) for generation in range(3)]
@@ -39,7 +39,9 @@ def _dump_memory_impl(
         "nb_collected": nb_collected,
         "most_common_types": objgraph.most_common_types(limit=limit, shortnames=False),
         "leaking_objects": objgraph.most_common_types(
-            limit=limit, shortnames=False, objects=objgraph.get_leaking_objects()
+            limit=limit,
+            shortnames=False,
+            objects=objgraph.get_leaking_objects(),
         ),
     }
 

@@ -35,7 +35,8 @@ def _create_handlers(config: configparser.ConfigParser) -> dict[str, Any]:
     for hh in handlers:
         block = config[f"handler_{hh}"]
         if "args" in block:
-            raise ValueError(f"Can not parse args of handlers {hh}, use kwargs instead.")
+            message = f"Can not parse args of handlers {hh}, use kwargs instead."
+            raise ValueError(message)
         c = block["class"]
         if "." not in c:
             # classes like StreamHandler does not need the prefix in the ini so we add it here
@@ -116,10 +117,9 @@ def get_paste_config() -> str:
     for val in sys.argv:
         if next_one:
             return val
-        if val.startswith("--paste=") or val.startswith("--paster="):
+        if val.startswith(("--paste=", "--paster=")):
             return val.split("=")[1]
         if val in ["--paste", "--paster"]:
             next_one = True
 
-    fallback = os.environ.get("C2CWSGIUTILS_CONFIG", "production.ini")
-    return fallback
+    return os.environ.get("C2CWSGIUTILS_CONFIG", "production.ini")

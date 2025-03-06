@@ -1,7 +1,8 @@
 import re
 from collections.abc import Mapping, MutableMapping
 from enum import Enum
-from typing import Any, Optional, Union
+from pathlib import Path
+from typing import Any
 
 import requests
 
@@ -32,10 +33,10 @@ class Connection:
         url: str,
         expected_status: int = 200,
         cors: bool = True,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """Get the given URL (relative to the root of API)."""
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
@@ -46,7 +47,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -61,7 +62,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -75,9 +76,9 @@ class Connection:
     def get_xml(
         self,
         url: str,
-        schema: Optional[str] = None,
+        schema: Path | None = None,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -96,7 +97,7 @@ class Connection:
             r.raw.decode_content = True
             doc = etree.parse(r.raw)  # noqa: S320
             if schema is not None:
-                with open(schema, encoding="utf-8") as schema_file:
+                with schema.open(encoding="utf-8") as schema_file:
                     xml_schema = etree.XMLSchema(etree.parse(schema_file))  # noqa: S320
                 xml_schema.assertValid(doc)
             return doc
@@ -105,14 +106,16 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
         """POST the given URL (relative to the root of API)."""
         with self.session.post(
-            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors),
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
@@ -122,14 +125,16 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
         """POST files to the the given URL (relative to the root of API)."""
         with self.session.post(
-            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors),
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
@@ -139,14 +144,16 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> str | None:
         """POST the given URL (relative to the root of API)."""
         with self.session.post(
-            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors),
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
@@ -156,7 +163,7 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
@@ -171,14 +178,16 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> Any:
         """PATCH the given URL (relative to the root of API)."""
         with self.session.patch(
-            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors),
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
@@ -188,14 +197,16 @@ class Connection:
         self,
         url: str,
         expected_status: int = 204,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cors: bool = True,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> requests.Response:
         """DELETE the given URL (relative to the root of API)."""
         with self.session.delete(
-            self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors),
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
@@ -205,13 +216,15 @@ class Connection:
         self,
         url: str,
         expected_status: int = 200,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
         cache_expected: CacheExpected = CacheExpected.NO,
         **kwargs: Any,
     ) -> requests.Response:
         """Get the given URL (relative to the root of API)."""
         with self.session.options(
-            self.base_url + url, headers=self._merge_headers(headers, False), **kwargs
+            self.base_url + url,
+            headers=self._merge_headers(headers, cors=False),
+            **kwargs,
         ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             return r
@@ -219,8 +232,7 @@ class Connection:
     def _cors_headers(self, cors: bool) -> Mapping[str, str]:
         if cors:
             return {"Origin": self.origin}
-        else:
-            return {}
+        return {}
 
     def _check_cors(self, cors: bool, r: requests.Response) -> None:
         if cors:
@@ -230,8 +242,10 @@ class Connection:
                 assert r.headers["Access-Control-Allow-Origin"] == "*"
 
     def _merge_headers(
-        self, headers: Optional[Mapping[str, Union[str, bytes]]], cors: bool
-    ) -> MutableMapping[str, Union[str, bytes]]:
+        self,
+        headers: Mapping[str, str | bytes] | None,
+        cors: bool,
+    ) -> MutableMapping[str, str | bytes]:
         merged = dict(headers) if headers is not None else {}
         if self.session.headers is not None:
             merged.update(self.session.headers)
@@ -265,9 +279,8 @@ def check_response(
 def _get_json(r: requests.Response) -> Any:
     if r.status_code == 204:
         return None
-    else:
-        content_type = r.headers["Content-Type"].split(";")[0]
-        assert content_type == "application/json" or content_type.endswith("+json"), (
-            f"{r.status_code}, {content_type}, {r.text}"
-        )
-        return r.json()
+    content_type = r.headers["Content-Type"].split(";")[0]
+    assert content_type == "application/json" or content_type.endswith("+json"), (
+        f"{r.status_code}, {content_type}, {r.text}"
+    )
+    return r.json()

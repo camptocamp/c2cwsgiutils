@@ -3,14 +3,15 @@ import logging
 import os
 import re
 import warnings
-from typing import Optional, cast
+from pathlib import Path
+from typing import cast
 
 import prometheus_client
 import pyramid.config
 
 from c2cwsgiutils import auth, config_utils, prometheus
 
-_VERSIONS_PATH = "/app/versions.json"
+_VERSIONS_PATH = Path("/app/versions.json")
 _LOG = logging.getLogger(__name__)
 
 _PACKAGES = os.environ.get("C2C_PROMETHEUS_PACKAGES", "c2cwsgiutils,pyramid,gunicorn,SQLAlchemy").split(",")
@@ -52,10 +53,12 @@ class _View:
 
 def includeme(config: pyramid.config.Configurator) -> None:
     """Initialize the versions view."""
-    if os.path.isfile(_VERSIONS_PATH):
+    if _VERSIONS_PATH.is_file():
         versions = _read_versions()
         config.add_route(
-            "c2c_versions", config_utils.get_base_path(config) + r"/versions.json", request_method="GET"
+            "c2c_versions",
+            config_utils.get_base_path(config) + r"/versions.json",
+            request_method="GET",
         )
         config.add_view(_View(versions), route_name="c2c_versions", renderer="fast_json", http_cache=0)
         _LOG.info("Installed the /versions.json service")
@@ -83,14 +86,14 @@ def includeme(config: pyramid.config.Configurator) -> None:
 
 def _read_versions() -> dict[str, dict[str, str]]:
     """Read the version."""
-    with open(_VERSIONS_PATH, encoding="utf-8") as file:
+    with _VERSIONS_PATH.open(encoding="utf-8") as file:
         versions = json.load(file)
     return cast(dict[str, dict[str, str]], versions)
 
 
-def get_version() -> Optional[str]:
+def get_version() -> str | None:
     """Get the version."""
-    if not os.path.isfile(_VERSIONS_PATH):
+    if not _VERSIONS_PATH.is_file():
         return None
     versions = _read_versions()
     return versions["main"]["git_hash"]

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/camptocamp/tag-publish/0.13.3/tag_publish/schema.json
+
+pypi:
+  packages:
+    - {}
+  versions_type:
+    - tag
+    - version_tag
+    - stabilization_branch
+    - default_branch
+    - version_branch
+docker:
+  images:
+    - name: camptocamp/c2cwsgiutils
+dispatch:
+  - {}
+transformers:
+  branch_to_version:
+    - to: master
+
+      from_re: master

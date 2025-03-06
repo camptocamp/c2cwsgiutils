@@ -3,7 +3,8 @@
 import functools
 import logging
 import warnings
-from typing import Any, Callable, Optional, TypeVar
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 import pyramid.config
 
@@ -14,16 +15,16 @@ _LOG = logging.getLogger(__name__)
 _BROADCAST_ENV_KEY = "C2C_BROADCAST_PREFIX"
 _BROADCAST_CONFIG_KEY = "c2c.broadcast_prefix"
 
-_broadcaster: Optional[interface.BaseBroadcaster] = None
+_broadcaster: interface.BaseBroadcaster | None = None
 
 
-def init(config: Optional[pyramid.config.Configurator] = None) -> None:
+def init(config: pyramid.config.Configurator | None = None) -> None:
     """Initialize the broadcaster with Redis, if configured, for backward compatibility."""
     warnings.warn("init function is deprecated; use includeme instead", stacklevel=2)
     includeme(config)
 
 
-def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
+def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """
     Initialize the broadcaster with Redis, if configured.
 
@@ -31,7 +32,10 @@ def includeme(config: Optional[pyramid.config.Configurator] = None) -> None:
     """
     global _broadcaster  # pylint: disable=global-statement
     broadcast_prefix = config_utils.env_or_config(
-        config, _BROADCAST_ENV_KEY, _BROADCAST_CONFIG_KEY, "broadcast_api_"
+        config,
+        _BROADCAST_ENV_KEY,
+        _BROADCAST_CONFIG_KEY,
+        "broadcast_api_",
     )
     master, slave, _ = redis_utils.get(config.get_settings() if config else None)
     if _broadcaster is None:
@@ -81,15 +85,21 @@ def unsubscribe(channel: str) -> None:
 
 
 def broadcast(
-    channel: str, params: Optional[dict[str, Any]] = None, expect_answers: bool = False, timeout: float = 10
-) -> Optional[list[Any]]:
+    channel: str,
+    params: dict[str, Any] | None = None,
+    expect_answers: bool = False,
+    timeout: float = 10,
+) -> list[Any] | None:
     """
     Broadcast a message to the given channel.
 
     If answers are expected, it will wait up to "timeout" seconds to get all the answers.
     """
     return _get(need_init=True).broadcast(
-        channel, params if params is not None else {}, expect_answers, timeout
+        channel,
+        params if params is not None else {},
+        expect_answers,
+        timeout,
     )
 
 
@@ -99,23 +109,22 @@ _DecoratorReturn = TypeVar("_DecoratorReturn")
 
 
 def decorator(
-    channel: Optional[str] = None, expect_answers: bool = False, timeout: float = 10
-) -> Callable[[Callable[..., _DecoratorReturn]], Callable[..., Optional[list[_DecoratorReturn]]]]:
+    channel: str | None = None,
+    expect_answers: bool = False,
+    timeout: float = 10,
+) -> Callable[[Callable[..., _DecoratorReturn]], Callable[..., list[_DecoratorReturn] | None]]:
     """
     Decorate function will be called through the broadcast functionality.
 
     If expect_answers is set to True, the returned value will be a list of all the answers.
     """
 
-    def impl(func: Callable[..., _DecoratorReturn]) -> Callable[..., Optional[list[_DecoratorReturn]]]:
+    def impl(func: Callable[..., _DecoratorReturn]) -> Callable[..., list[_DecoratorReturn] | None]:
         @functools.wraps(func)
-        def wrapper(**kwargs: Any) -> Optional[list[_DecoratorReturn]]:
+        def wrapper(**kwargs: Any) -> list[_DecoratorReturn] | None:
             return broadcast(_channel, params=kwargs, expect_answers=expect_answers, timeout=timeout)
 
-        if channel is None:
-            _channel = f"c2c_decorated_{func.__module__}.{func.__name__}"
-        else:
-            _channel = channel
+        _channel = f"c2c_decorated_{func.__module__}.{func.__name__}" if channel is None else channel
         subscribe(_channel, func)
 
         return wrapper

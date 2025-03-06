@@ -1,18 +1,9 @@
-[tool.black]
+[tool.ruff]
+target-version = "py310"
 line-length = 110
-target-version = ['py310']
 
-[tool.isort]
-profile = "black"
-line_length = 110
-
-[tool.mypy]
-python_version = "3.10"
-ignore_missing_imports = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-strict = true
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
 
 [tool.poetry]
 name = "c2cwsgiutils"
@@ -24,17 +15,21 @@ keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
 repository = "https://github.com/camptocamp/c2cwsgiutils"
 license = "BSD-2-Clause"
 classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Environment :: Plugins",
-  "Framework :: Pyramid",
-  "Intended Audience :: Developers",
-  "License :: OSI Approved :: BSD License",
-  "Operating System :: OS Independent",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Intended Audience :: Information Technology",
-  "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-  "Typing :: Typed",
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Plugins',
+    'Framework :: Pyramid',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+    'Typing :: Typed',
 ]
 packages = [{ include = "c2cwsgiutils" }]
 include = [
@@ -206,23 +201,15 @@ types-ujson = "5.10.0.20240515"
 types-python-dateutil = "2.9.0.20241206"
 typing_extensions = "4.12.2"
 
-[build-system]
-requires = [
-  "poetry-core>=1.0.0",
-  "poetry-dynamic-versioning[plugin]",
-  "poetry-plugin-tweak-dependencies-version",
-  "poetry-plugin-drop-python-upper-constraint",
-  "poetry-dynamic-versioning"
-]
-build-backend = "poetry.core.masonry.api"
-
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
 pattern = "^(?P<base>\\d+(\\.\\d+)*)"
 format-jinja = """
-{%- if env.get("VERSION_TYPE") == "version_branch" -%}
-{{serialize_pep440(bump_version(base, 1 if env.get("IS_MASTER") == "TRUE" else 2), dev=distance)}}
+{%- if env.get("VERSION_TYPE") == "default_branch" -%}
+{{serialize_pep440(bump_version(base, 1), dev=distance)}}
+{%- elif env.get("VERSION_TYPE") == "stabilization_branch" -%}
+{{serialize_pep440(bump_version(base, 2), dev=distance)}}
 {%- elif distance == 0 -%}
 {{serialize_pep440(base)}}
 {%- else -%}
@@ -233,3 +220,13 @@ format-jinja = """
 [tool.poetry-plugin-tweak-dependencies-version]
 default = "present"
 SQLAlchemy = ">=1.4.0,<3.0.0"
+
+[build-system]
+requires = [
+  "poetry-core>=1.0.0",
+  "poetry-dynamic-versioning[plugin]",
+  "poetry-plugin-tweak-dependencies-version",
+  "poetry-plugin-drop-python-upper-constraint",
+  "poetry-dynamic-versioning"
+]
+build-backend = "poetry.core.masonry.api"

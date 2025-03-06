@@ -1,12 +1,12 @@
+import datetime
 import gc
 import logging
 import os
 import re
 import time
-from collections.abc import Mapping
-from datetime import datetime
+from collections.abc import Callable, Mapping
 from io import StringIO
-from typing import Any, Callable, cast
+from typing import Any, cast
 
 import objgraph
 import psutil
@@ -79,7 +79,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
     try:
         if request.params.get("no_warmup", "0").lower() in ("1", "true", "on"):
             request.invoke_subrequest(sub_request)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-exception-caught
         pass
 
     _LOG.debug("checking memory growth for %s", path)
@@ -119,7 +119,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
             "dirty_kb": (mem_after.dirty - mem_before.dirty) / 1024,
         },
         "elapsed_time": elapsed_time,
-        "objgraph.growth": objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False),  # type: ignore
+        "objgraph.growth": objgraph.growth(limit=limit, peak_stats=peak_stats, shortnames=False),  # type: ignore[return-value]
     }
 
 
@@ -162,18 +162,23 @@ def _error(request: pyramid.request.Request) -> Any:
 def _time(request: pyramid.request.Request) -> Any:
     del request  # unused
     return {
-        "local_time": str(datetime.now()),
-        "gmt_time": str(datetime.utcnow()),
+        "local_time": str(datetime.datetime.now()),  # noqa: DTZ005
+        "gmt_time": str(datetime.datetime.now(datetime.timezone.utc)),
         "epoch": time.time(),
-        "timezone": datetime.now().astimezone().tzname(),
+        "timezone": datetime.datetime.now().astimezone().tzname(),
     }
 
 
 def _add_view(
-    config: pyramid.config.Configurator, name: str, path: str, view: Callable[[pyramid.request.Request], Any]
+    config: pyramid.config.Configurator,
+    name: str,
+    path: str,
+    view: Callable[[pyramid.request.Request], Any],
 ) -> None:
     config.add_route(
-        "c2c_debug_" + name, config_utils.get_base_path(config) + r"/debug/" + path, request_method="GET"
+        "c2c_debug_" + name,
+        config_utils.get_base_path(config) + r"/debug/" + path,
+        request_method="GET",
     )
     config.add_view(view, route_name="c2c_debug_" + name, renderer="fast_json", http_cache=0)
 

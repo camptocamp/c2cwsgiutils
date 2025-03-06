@@ -1,7 +1,8 @@
 import logging
 import re
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import prometheus_client
 import sqlalchemy.event
@@ -77,10 +78,18 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
 
 
 def _before_cursor_execute(
-    conn: Connection, _cursor: Any, statement: str, _parameters: Any, _context: Any, _executemany: Any
+    conn: Connection,
+    _cursor: Any,
+    statement: str,
+    _parameters: Any,
+    _context: Any,
+    _executemany: Any,
 ) -> None:
     sqlalchemy.event.listen(
-        conn, "after_cursor_execute", _create_sqlalchemy_timer_cb(_simplify_sql(statement)), once=True
+        conn,
+        "after_cursor_execute",
+        _create_sqlalchemy_timer_cb(_simplify_sql(statement)),
+        once=True,
     )
 
 

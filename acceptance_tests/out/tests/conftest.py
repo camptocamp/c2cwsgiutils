@@ -1,4 +1,5 @@
 import logging
+import os
 import subprocess  # nosec
 from typing import Any, cast
 
@@ -12,9 +13,6 @@ _BASE_URL_APP2 = "http://localhost:8482/api/"
 _PROMETHEUS_TEST_URL = "http://localhost:9098/"
 _PROMETHEUS_STATS_DB_URL = "http://localhost:9099/"
 _LOG = logging.getLogger(__name__)
-
-
-import os
 
 
 class Composition:

@@ -1,7 +1,7 @@
 import logging
 import warnings
 from collections.abc import Mapping
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import pyramid.request
 
@@ -42,11 +42,10 @@ def _db_maintenance(request: pyramid.request.Request) -> Mapping[str, Any]:
         _set_readonly(value=readonly)
         _store(request.registry.settings, readonly)
         return {"status": 200, "readonly": readonly}
-    else:
-        readonly = _get_redis_value(request.registry.settings)
-        if readonly is not None:
-            readonly = readonly == "true"
-        return {"status": 200, "current_readonly": readonly}
+    readonly = _get_redis_value(request.registry.settings)
+    if readonly is not None:
+        readonly = readonly == "true"
+    return {"status": 200, "current_readonly": readonly}
 
 
 @broadcast.decorator(expect_answers=True)
@@ -63,7 +62,7 @@ def _restore(config: pyramid.config.Configurator) -> None:
             db.FORCE_READONLY = readonly == "true"
     except ImportError:
         pass  # don't have redis
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-exception-caught
         # survive an error since crashing now can have bad consequences for the service. :/
         _LOG.error("Cannot restore readonly DB status.", exc_info=True)
 
@@ -74,7 +73,7 @@ def _store(settings: Mapping[str, Any], readonly: bool) -> None:
         master.set(_REDIS_PREFIX + "force_readonly", "true" if readonly else "false")
 
 
-def _get_redis_value(settings: Mapping[str, Any]) -> Optional[str]:
+def _get_redis_value(settings: Mapping[str, Any]) -> str | None:
     _, slave, _ = redis_utils.get(settings)
     if slave is not None:
         value = slave.get(_REDIS_PREFIX + "force_readonly")

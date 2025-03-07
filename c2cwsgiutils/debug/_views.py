@@ -79,7 +79,7 @@ def _dump_memory_diff(request: pyramid.request.Request) -> list[Any]:
     try:
         if request.params.get("no_warmup", "0").lower() in ("1", "true", "on"):
             request.invoke_subrequest(sub_request)
-    except Exception:  # pylint: disable=broad-exception-caught
+    except Exception:  # pylint: disable=broad-exception-caught # noqa: S110
         pass
 
     _LOG.debug("checking memory growth for %s", path)

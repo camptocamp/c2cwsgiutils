@@ -181,8 +181,8 @@ def _get_alembic_version(alembic_ini_path: Path, name: str) -> str:
     env["PYTHONPATH"] = pythonpath
     dirname = alembic_ini_path.parent.resolve()
 
-    out = subprocess.check_output(  # nosec
-        ["alembic", "--config", alembic_ini_path, "--name", name, "heads"],
+    out = subprocess.check_output(  # noqa: S603,S607,RUF100
+        ["alembic", "--config", alembic_ini_path, "--name", name, "heads"],  # noqa: S607
         cwd=dirname,
         env=env,
     ).decode("utf-8")

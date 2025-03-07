@@ -223,7 +223,7 @@ def check_screenshot(
         media = []
 
     if not Path(__file__).parent.joinpath("node_modules").exists():
-        subprocess.run(["npm", "install"], cwd=Path(__file__).parent, check=True)  # nosec
+        subprocess.run(["npm", "install"], cwd=Path(__file__).parent, check=True)  # noqa: S603,S607
 
     image_file_basename = Path(expected_filename).stem
     if image_file_basename.endswith(".expected"):
@@ -231,8 +231,8 @@ def check_screenshot(
 
     result_folder = Path(result_folder).resolve()
     actual_filename = result_folder / f"{image_file_basename}.actual.png"
-    subprocess.run(  # nosec
-        [
+    subprocess.run(  # noqa: S603,S607,RUF100
+        [  # noqa: S607
             "node",
             "screenshot.js",
             f"--url={url}",

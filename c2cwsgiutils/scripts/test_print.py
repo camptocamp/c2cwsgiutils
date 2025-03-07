@@ -25,7 +25,8 @@ def _parse_args() -> argparse.Namespace:
 def deprecated() -> None:
     """Run the command and print a deprecated notice."""
     warnings.warn(
-        "c2cwsgiutils_test_print.py is deprecated; use c2cwsgiutils-test-print instead", stacklevel=2
+        "c2cwsgiutils_test_print.py is deprecated; use c2cwsgiutils-test-print instead",
+        stacklevel=2,
     )
     return main()
 

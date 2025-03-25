@@ -3,8 +3,9 @@
 import os
 import re
 import resource
-from collections.abc import Generator, Iterable
-from typing import Any, TypedDict, cast
+from collections.abc import Generator
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, TypedDict, cast
 
 import prometheus_client
 import prometheus_client.core
@@ -15,6 +16,10 @@ import pyramid.config
 
 from c2cwsgiutils import broadcast, redis_utils
 from c2cwsgiutils.debug.utils import dump_memory_maps
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
 
 PSUTILS = True
 try:
@@ -192,7 +197,9 @@ class MemoryMapCollector(prometheus_client.registry.Collector):
         )
 
         for pid in (
-            [p for p in os.listdir("/proc/") if _NUMBER_RE.match(p)] if self.pids is None else self.pids
+            [p.name for p in Path("/proc/").iterdir() if _NUMBER_RE.match(p.name)]
+            if self.pids is None
+            else self.pids
         ):
             for e in dump_memory_maps(pid):
                 gauge.add_metric([pid, e["name"]], e[self.memory_type + "_kb"] * 1024)

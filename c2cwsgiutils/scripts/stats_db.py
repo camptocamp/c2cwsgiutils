@@ -307,14 +307,14 @@ def main() -> None:
     success = False
     args = _parse_args()
     c2cwsgiutils.setup_process.init(args.config_uri)
-    for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", 10))):
+    for _ in range(int(os.environ.get("C2CWSGIUTILS_STATS_DB_TRYNUMBER", "10"))):
         try:
             _do_dtats_db(args)
             success = True
             break
         except:  # pylint: disable=bare-except
             _LOG.exception("Exception during run")
-        time.sleep(float(os.environ.get("C2CWSGIUTILS_STATS_DB_SLEEP", 1)))
+        time.sleep(float(os.environ.get("C2CWSGIUTILS_STATS_DB_SLEEP", "1")))
 
     if not success:
         _LOG.error("Not in success, exiting")

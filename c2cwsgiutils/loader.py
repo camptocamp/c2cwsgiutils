@@ -14,7 +14,7 @@ class Loader(BaseLoader):  # type: ignore[misc]
     def _get_defaults(self, defaults: dict[str, str] | None = None) -> dict[str, str]:
         d = get_config_defaults()
         d.update(defaults or {})
-        return cast('dict[str, str]', super()._get_defaults(d))
+        return cast("dict[str, str]", super()._get_defaults(d))
 
     def __repr__(self) -> str:
         """Get the object representation."""

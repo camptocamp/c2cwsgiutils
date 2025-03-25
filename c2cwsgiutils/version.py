@@ -88,7 +88,7 @@ def _read_versions() -> dict[str, dict[str, str]]:
     """Read the version."""
     with _VERSIONS_PATH.open(encoding="utf-8") as file:
         versions = json.load(file)
-    return cast(dict[str, dict[str, str]], versions)
+    return cast("dict[str, dict[str, str]]", versions)
 
 
 def get_version() -> str | None:

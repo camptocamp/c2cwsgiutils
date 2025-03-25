@@ -92,7 +92,7 @@ def _dump_memory_impl(
             cache = linecache.cache
             result[analyze_type]["biggest_objects"] = sorted(
                 ({"filename": k, "size_kb": get_size(v)} for k, v in cache.items()),
-                key=lambda i: -(cast(int, i["size_kb"])),
+                key=lambda i: -(cast("int", i["size_kb"])),
             )
         else:
             biggest_objects.reverse()

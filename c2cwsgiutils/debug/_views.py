@@ -185,7 +185,7 @@ def _add_view(
 
 def _dump_memory_maps(request: pyramid.request.Request) -> list[dict[str, Any]]:
     auth.auth_view(request)
-    return sorted(dump_memory_maps(), key=lambda i: cast(int, -i.get("pss_kb", 0)))
+    return sorted(dump_memory_maps(), key=lambda i: cast("int", -i.get("pss_kb", 0)))
 
 
 def _show_refs(request: pyramid.request.Request) -> pyramid.response.Response:

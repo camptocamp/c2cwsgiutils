@@ -236,8 +236,8 @@ class SessionFactory(_sessionmaker):
     def engine_name(self, readwrite: bool) -> str:
         """Get the engine name."""
         if readwrite:
-            return cast(str, self.rw_engine.c2c_name)  # type: ignore[attr-defined]
-        return cast(str, self.ro_engine.c2c_name)  # type: ignore[attr-defined]
+            return cast("str", self.rw_engine.c2c_name)  # type: ignore[attr-defined]
+        return cast("str", self.ro_engine.c2c_name)  # type: ignore[attr-defined]
 
     def __call__(  # type: ignore[override]
         self,

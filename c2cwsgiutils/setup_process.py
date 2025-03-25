@@ -102,4 +102,4 @@ def bootstrap_application(
     loader = get_config_loader(config_uri)
     loader.setup_logging(options)
     logging.getLogger(__name__).info("Loading the application from %s", config_uri)
-    return cast(PyramidEnv, bootstrap(config_uri, options=options))
+    return cast("PyramidEnv", bootstrap(config_uri, options=options))

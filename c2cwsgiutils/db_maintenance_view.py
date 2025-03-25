@@ -34,7 +34,7 @@ def includeme(config: pyramid.config.Configurator) -> None:
 
 def _db_maintenance(request: pyramid.request.Request) -> Mapping[str, Any]:
     auth.auth_view(request)
-    readonly_param = cast(str, request.params.get("readonly"))
+    readonly_param = cast("str", request.params.get("readonly"))
     if readonly_param is not None:
         readonly = readonly_param.lower() == "true"
 

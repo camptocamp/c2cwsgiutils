@@ -9,7 +9,7 @@ import pyramid.config
 
 def get_base_path(config: pyramid.config.Configurator) -> str:
     """Get the base path of all the views."""
-    return cast(str, env_or_config(config, "C2C_BASE_PATH", "c2c.base_path", "/c2c"))
+    return cast("str", env_or_config(config, "C2C_BASE_PATH", "c2c.base_path", "/c2c"))
 
 
 def env_or_config(

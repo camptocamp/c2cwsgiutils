@@ -459,7 +459,7 @@ def _github_login_callback(request: pyramid.request.Request) -> dict[str, Any]:
             "c2c-auth-jwt",
         ),
         jwt.encode(
-            cast(dict[str, Any], user_information),
+            cast("dict[str, Any]", user_information),
             env_or_settings(
                 settings,
                 GITHUB_AUTH_SECRET_ENV,

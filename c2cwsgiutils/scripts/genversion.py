@@ -23,7 +23,7 @@ def _get_package_version(comp: str) -> tuple[str | None, str | None]:
     src_matcher = _SRC_VERSION_RE.match(comp)
     matcher = src_matcher or _VERSION_RE.match(comp)
     if matcher:
-        return cast(tuple[str, str], matcher.groups())
+        return cast("tuple[str, str]", matcher.groups())
     if len(comp) > 0 and comp[:3] != "-e ":
         print("Cannot parse package version: " + comp)
     return None, None

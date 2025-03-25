@@ -59,7 +59,7 @@ class AuthConfig(TypedDict, total=False):
 def get_expected_secret(request: pyramid.request.Request) -> str:
     """Return the secret expected from the client."""
     settings = request.registry.settings
-    return cast(str, env_or_settings(settings, SECRET_ENV, SECRET_PROP, default=False))
+    return cast("str", env_or_settings(settings, SECRET_ENV, SECRET_PROP, default=False))
 
 
 def _hash_secret(secret: str) -> str:
@@ -117,7 +117,7 @@ def _is_auth_user_github(request: pyramid.request.Request) -> tuple[bool, UserDe
     if cookie:
         try:
             return True, cast(
-                UserDetails,
+                "UserDetails",
                 jwt.decode(
                     cookie,
                     env_or_settings(

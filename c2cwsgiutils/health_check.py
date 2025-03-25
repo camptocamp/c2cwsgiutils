@@ -117,7 +117,7 @@ class _OldBinding(_Binding):
         self.prev_bind = None
 
     def name(self) -> str:
-        return cast(str, self.engine.c2c_name)  # type: ignore[attr-defined]
+        return cast("str", self.engine.c2c_name)  # type: ignore[attr-defined]
 
     def __enter__(self) -> _scoped_session:
         self.prev_bind = self.session.bind  # type: ignore[assignment]

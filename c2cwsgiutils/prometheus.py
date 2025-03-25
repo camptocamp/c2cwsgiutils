@@ -136,7 +136,7 @@ class MultiProcessCustomCollector(prometheus_client.registry.Collector):
         for channel in MULTI_PROCESS_COLLECTOR_BROADCAST_CHANNELS:
             result = broadcast.broadcast(channel, expect_answers=True)
             if result is not None:
-                results.extend(cast(Iterable[list[SerializedMetric]], result))
+                results.extend(cast("Iterable[list[SerializedMetric]]", result))
         return _deserialize_collected_data(results)
 
 

@@ -9,13 +9,17 @@ env:
 jobs:
   build:
     name: Continuous integration
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     if: "!startsWith(github.event.head_commit.message, '[skip ci] ')"
 
     steps:
-      - run: pip install pyOpenSSL --upgrade
-      - uses: actions/checkout@v2
+      # Remove Python packages with wrong version
+      - run: sudo apt-get remove python3-debian python3-distro-info
+      - run: sudo apt-get update
+      - run: sudo apt-get install --yes libxslt1-dev libxml2-dev
+
+      - uses: actions/checkout@v4
 
       - uses: camptocamp/initialise-gopass-summon-action@v2
         with:
@@ -24,7 +28,10 @@ jobs:
           patterns: pypi docker
         if: env.HAS_SECRETS == 'HAS_SECRETS'
 
-      - run: echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
       - run: python3 -m pip install --user --requirement=ci/requirements.txt
 
       - name: Checks

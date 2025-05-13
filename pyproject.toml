@@ -6,45 +6,7 @@ line-length = 110
 convention = "numpy"
 
 [tool.poetry]
-name = "c2cwsgiutils"
 version = "0.0.0"
-description = "Common utilities for Camptocamp WSGI applications"
-readme = "README.md"
-authors = ["Camptocamp <info@camptocamp.com>"]
-keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
-repository = "https://github.com/camptocamp/c2cwsgiutils"
-license = "BSD-2-Clause"
-classifiers = [
-    'Development Status :: 5 - Production/Stable',
-    'Environment :: Plugins',
-    'Framework :: Pyramid',
-    'Intended Audience :: Developers',
-    'Intended Audience :: Information Technology',
-    'License :: OSI Approved :: BSD License',
-    'Operating System :: OS Independent',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: 3.13',
-    'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
-    'Typing :: Typed',
-]
-packages = [{ include = "c2cwsgiutils" }]
-include = [
-"c2cwsgiutils/py.typed",
-"c2cwsgiutils/acceptance/screenshot.js",
-"c2cwsgiutils/acceptance/package.json",
-"c2cwsgiutils/acceptance/package-lock.json",
-]
-
-[tool.poetry.scripts]
-c2cwsgiutils-genversion = "c2cwsgiutils.scripts.genversion:main"
-c2cwsgiutils-coverage-report = "c2cwsgiutils.scripts.coverage_report:main"
-c2cwsgiutils-stats-db = "c2cwsgiutils.scripts.stats_db:main"
-c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
-c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
 
 [tool.poetry.plugins."plaster.loader_factory"]
 c2c = "c2cwsgiutils.loader:Loader"
@@ -221,12 +183,56 @@ format-jinja = """
 default = "present"
 SQLAlchemy = ">=1.4.0,<3.0.0"
 
+[project]
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Plugins',
+    'Framework :: Pyramid',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+    'Typing :: Typed',
+]
+dynamic = ["dependencies", "version"]
+name = "c2cwsgiutils"
+description = "Common utilities for Camptocamp WSGI applications"
+readme = "README.md"
+keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
+license = "BSD-2-Clause"
+authors = [{name = "Camptocamp",email = "info@camptocamp.com"}]
+packages = [{ include = "c2cwsgiutils" }]
+include = [
+"c2cwsgiutils/py.typed",
+"c2cwsgiutils/acceptance/screenshot.js",
+"c2cwsgiutils/acceptance/package.json",
+"c2cwsgiutils/acceptance/package-lock.json",
+]
+requires-python = ">=3.10"
+
+[project.urls]
+repository = "https://github.com/camptocamp/c2cwsgiutils"
+"Bug Tracker" = "https://github.com/camptocamp/c2cwsgiutils/issues"
+
+[project.scripts]
+c2cwsgiutils-genversion = "c2cwsgiutils.scripts.genversion:main"
+c2cwsgiutils-coverage-report = "c2cwsgiutils.scripts.coverage_report:main"
+c2cwsgiutils-stats-db = "c2cwsgiutils.scripts.stats_db:main"
+c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
+c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
+
 [build-system]
 requires = [
   "poetry-core>=1.0.0",
   "poetry-dynamic-versioning[plugin]",
   "poetry-plugin-tweak-dependencies-version",
-  "poetry-plugin-drop-python-upper-constraint",
   "poetry-dynamic-versioning"
 ]
 build-backend = "poetry.core.masonry.api"

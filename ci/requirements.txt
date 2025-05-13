@@ -6,6 +6,5 @@ pytest==8.3.5
 scikit-image==0.25.2
 poetry-plugin-tweak-dependencies-version==1.5.2
 poetry-dynamic-versioning==1.8.2
-poetry-plugin-drop-python-upper-constraint==1.0.0
 importlib-metadata<8.7.1
 tag-publish==1.0.1

@@ -216,6 +216,7 @@ include = [
 "c2cwsgiutils/acceptance/package-lock.json",
 ]
 requires-python = ">=3.10"
+dependencies = ["requests", "pyyaml", "ujson", "cee_syslog_handler", "prometheus-client"]
 
 [project.urls]
 repository = "https://github.com/camptocamp/c2cwsgiutils"
@@ -227,6 +228,20 @@ c2cwsgiutils-coverage-report = "c2cwsgiutils.scripts.coverage_report:main"
 c2cwsgiutils-stats-db = "c2cwsgiutils.scripts.stats_db:main"
 c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
 c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
+
+[project.optional-dependencies]
+standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste"]
+alembic = ["alembic"]
+all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage"]
+tests = ["boltons", "lxml"]
+webserver = ["cornice", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako"]
+waitress = ["cornice", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste"]
+broadcast = ["redis"]
+debug = ["objgraph", "psutil", "coverage"]
+sentry = ["sentry-sdk"]
+oauth2 = ["pyjwt", "requests-oauthlib"]
+dev = ["waitress"]
+test_images = ["scikit-image"]
 
 [build-system]
 requires = [

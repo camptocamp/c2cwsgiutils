@@ -42,7 +42,7 @@ coverage = "7.8.2"
 # pylint = { version = "2.15.6" }
 prospector = { version = "1.17.1", extras = ["with_bandit", "with_mypy", "with_ruff"] }
 prospector-profile-duplicated = "1.10.5"
-prospector-profile-utils = "1.22.3"
+prospector-profile-utils = "1.23.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

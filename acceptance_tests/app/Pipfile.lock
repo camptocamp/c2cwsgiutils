@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6a80b04ae78e825500cc74d6267d5ce47c7d72c25e807682d7f8c294bd2876b8"
+            "sha256": "0033c17fd30ae36c7be081bea83224e933ec9c37ff6aaf99d6cff2d9f42b5b04"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,11 +18,11 @@
     "default": {
         "certifi": {
             "hashes": [
-                "sha256:5a1e7645bc0ec61a09e26c36f6106dd4cf40c6db3a1fb6352b0244e7fb057c7b",
-                "sha256:c198e21b1289c2ab85ee4e67bb4b4ef3ead0892059901a8d5b622f24a1101e90"
+                "sha256:1275f7a45be9464efc1173084eaa30f866fe2e47d389406136d332ed4967ec56",
+                "sha256:b650d30f370c2b724812bee08008be0c4163b163ddaec3f2546c1caf65f191db"
             ],
             "index": "pypi",
-            "version": "==2024.7.4"
+            "version": "==2024.12.14"
         },
         "distlib": {
             "hashes": [
@@ -372,11 +372,11 @@
         },
         "pygments": {
             "hashes": [
-                "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f",
-                "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c"
+                "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887",
+                "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==2.19.1"
+            "version": "==2.19.2"
         },
         "pylint": {
             "hashes": [
@@ -484,11 +484,11 @@
         },
         "rich": {
             "hashes": [
-                "sha256:439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098",
-                "sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90"
+                "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0",
+                "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==13.9.4"
+            "version": "==14.0.0"
         },
         "setoptconf-tmp": {
             "hashes": [

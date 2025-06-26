@@ -16,7 +16,7 @@
   html: {
     fileMatch: ['\\.html?$', '\\.html?.mako$'],
   },
-  baseBranches: ['release_4', '5.0', '5.1', '5.2', '6.0', '6.1', 'master'],
+  baseBranches: ['5.0', '5.1', '5.2', '6.0', '6.1', 'master'],
   packageRules: [
     /** Don't upgrade node_vm2 because version 0.4.7 (last version) is not working, for branch 5.1 */
     {

@@ -1,4 +1,4 @@
-c2cciutils==1.2.32
+c2cciutils==1.2.33
 importlib-metadata<8.0.0 # issue with twine, see: https://github.com/python/importlib_metadata/issues/492
 node_vm2==0.4.5 # Pin because version 0.4.7 is not working
 ruamel.yaml==0.17.40 # Pin because version 0.18.* is not working
@@ -9,3 +9,4 @@ certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerabil
 cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerability
 pip>=23.3 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability

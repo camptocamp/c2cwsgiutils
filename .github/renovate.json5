@@ -14,7 +14,7 @@
     'github>camptocamp/gs-renovate-config-preset:security.json5#1.3.2',
   ],
   html: {
-    fileMatch: ['\\.html?$', '\\.html?.mako$'],
+    managerFilePatterns: ['/\\.html?$/', '/\\.html?.mako$/'],
   },
   baseBranches: ['5.0', '5.1', '5.2', '6.0', '6.1', 'master'],
   packageRules: [

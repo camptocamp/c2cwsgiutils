@@ -10,3 +10,4 @@ cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerab
 pip>=23.3 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.32.4 # not directly required, pinned by Snyk to avoid a vulnerability

@@ -47,7 +47,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/hostname: 3.23ubuntu2
   ubuntu_22_04/init-system-helpers: '1.62'
   ubuntu_22_04/iputils: None
-  ubuntu_22_04/iputils-ping: 3:20211215-1
+  ubuntu_22_04/iputils-ping: 3:20211215-1ubuntu0.1
   ubuntu_22_04/keyutils: 1.6.1-2ubuntu3
   ubuntu_22_04/krb5: None
   ubuntu_22_04/libacl1: 2.3.1-1

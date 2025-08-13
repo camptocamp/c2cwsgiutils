@@ -223,7 +223,7 @@ def check_screenshot(
         media = []
 
     if not Path(__file__).parent.joinpath("node_modules").exists():
-        subprocess.run(["npm", "install"], cwd=Path(__file__).parent, check=True)  # noqa: S607
+        subprocess.run(["npm", "install"], cwd=Path(__file__).parent, check=True)  # noqa: S607, S603, RUF100
 
     image_file_basename = Path(expected_filename).stem
     if image_file_basename.endswith(".expected"):

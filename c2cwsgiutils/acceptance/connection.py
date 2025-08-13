@@ -95,10 +95,10 @@ class Connection:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
             r.raw.decode_content = True
-            doc = etree.parse(r.raw)  # noqa: S320
+            doc = etree.parse(r.raw)
             if schema is not None:
                 with schema.open(encoding="utf-8") as schema_file:
-                    xml_schema = etree.XMLSchema(etree.parse(schema_file))  # noqa: S320
+                    xml_schema = etree.XMLSchema(etree.parse(schema_file))
                 xml_schema.assertValid(doc)
             return doc
 

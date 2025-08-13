@@ -33,7 +33,7 @@ def _get_packages_version() -> dict[str, str]:
     result = {}
     with open(os.devnull, "w", encoding="utf-8") as devnull:  # noqa: PTH123
         for comp in (
-            subprocess.check_output(["python3", "-m", "pip", "freeze"], stderr=devnull)  # noqa: S603,S607
+            subprocess.check_output(["python3", "-m", "pip", "freeze"], stderr=devnull)  # noqa: S607
             .decode()
             .strip()
             .split("\n")

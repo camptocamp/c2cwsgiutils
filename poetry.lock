@@ -1688,14 +1688,14 @@ prospector = ">=1.15.0"
 
 [[package]]
 name = "prospector-profile-utils"
-version = "1.25.0"
+version = "1.26.0"
 description = "Some utility Prospector profiles."
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "prospector_profile_utils-1.25.0-py2.py3-none-any.whl", hash = "sha256:79e3a329c945e0e509a7a259f12336f83eadd75f47478af794efe8e62861cf1b"},
-    {file = "prospector_profile_utils-1.25.0.tar.gz", hash = "sha256:054f1a0d8dbe0a6817b9753cd29a74baa3062e1d24260241cf53ffd831505fa9"},
+    {file = "prospector_profile_utils-1.26.0-py2.py3-none-any.whl", hash = "sha256:dadf26f32bff0f2da5b5afed4362ee4b6daf6cfdb3e83445fcfd9733a6208351"},
+    {file = "prospector_profile_utils-1.26.0.tar.gz", hash = "sha256:a2a109667eca423342b8924d8bd740a149326a7b2d5fd547b60be96b48149d4c"},
 ]
 
 [package.dependencies]
@@ -3256,4 +3256,4 @@ webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "psycopg2"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "002f57dbe65e58c650afeb19fc6371df5f836dc86b2cdec0160e86d902566cd1"
+content-hash = "4fc6612dd9cddb7b1a004f2900a167f31d10a759cec7f40528a1f843cb068656"

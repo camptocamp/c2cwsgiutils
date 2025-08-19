@@ -25,8 +25,8 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/e2fsprogs: 1.46.5-2ubuntu1.2
   ubuntu_22_04/expat: 2.4.7-1ubuntu0.6
   ubuntu_22_04/findutils: 4.8.0-1ubuntu3
-  ubuntu_22_04/gcc-12: 12.3.0-1ubuntu1~22.04
-  ubuntu_22_04/gcc-12-base: 12.3.0-1ubuntu1~22.04
+  ubuntu_22_04/gcc-12: 12.3.0-1ubuntu1~22.04.2
+  ubuntu_22_04/gcc-12-base: 12.3.0-1ubuntu1~22.04.2
   ubuntu_22_04/gdbm: None
   ubuntu_22_04/glibc: None
   ubuntu_22_04/gmp: None
@@ -75,7 +75,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/libext2fs2: 1.46.5-2ubuntu1.2
   ubuntu_22_04/libffi: None
   ubuntu_22_04/libffi8: 3.4.2-4
-  ubuntu_22_04/libgcc-s1: 12.3.0-1ubuntu1~22.04
+  ubuntu_22_04/libgcc-s1: 12.3.0-1ubuntu1~22.04.2
   ubuntu_22_04/libgcrypt20: 1.9.4-3ubuntu3
   ubuntu_22_04/libgdbm-compat4: 1.23-1
   ubuntu_22_04/libgdbm6: 1.23-1
@@ -139,7 +139,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_22_04/libssh: None
   ubuntu_22_04/libssh-4: 0.9.6-2ubuntu0.22.04.4
   ubuntu_22_04/libssl3: 3.0.2-0ubuntu1.19
-  ubuntu_22_04/libstdc++6: 12.3.0-1ubuntu1~22.04
+  ubuntu_22_04/libstdc++6: 12.3.0-1ubuntu1~22.04.2
   ubuntu_22_04/libsystemd0: 249.11-0ubuntu3.16
   ubuntu_22_04/libtasn1-6: 4.18.0-4ubuntu0.1
   ubuntu_22_04/libtinfo6: 6.3-2ubuntu0.1

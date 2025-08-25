@@ -17,7 +17,10 @@ def test_with_secret(app_connection):
 
 def test_https(app_connection):
     content = app_connection.get(
-        "c2c", params={"secret": "changeme"}, headers={"X-Forwarded-Proto": "https"}, cors=False,
+        "c2c",
+        params={"secret": "changeme"},
+        headers={"X-Forwarded-Proto": "https"},
+        cors=False,
     )
     assert "https://app:8080/api/" in content
     assert "http://app:8080/api/" not in content

@@ -28,7 +28,10 @@ def main(_, **settings):
     # reconfiguration on the fly of the broadcast framework
     config.add_route("broadcast", r"/broadcast", request_method="GET")
     config.add_view(
-        lambda request: broadcast_view(), route_name="broadcast", renderer="fast_json", http_cache=0,
+        lambda request: broadcast_view(),
+        route_name="broadcast",
+        renderer="fast_json",
+        http_cache=0,
     )
 
     config.include(c2cwsgiutils.pyramid.includeme)

@@ -54,7 +54,10 @@ class Composition:
         return self.dc(["exec", "-T", container] + list(command), **kwargs)
 
     def exec_proc(
-        self, container: str, *command: str, **kwargs: dict[str, Any],
+        self,
+        container: str,
+        *command: str,
+        **kwargs: dict[str, Any],
     ) -> subprocess.CompletedProcess[str]:
         return self.dc_process(
             ["exec", "-T", container] + list(command),

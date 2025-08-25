@@ -38,7 +38,10 @@ def test_other(app_connection):
 
 def test_redirect_exception(app_connection):
     redirect = app_connection.get_raw(
-        "error", params={"code": 301}, expected_status=301, allow_redirects=False,
+        "error",
+        params={"code": 301},
+        expected_status=301,
+        allow_redirects=False,
     )
     assert redirect.headers["Location"] == "http://www.camptocamp.com/en/"
 

@@ -27,7 +27,9 @@ def test_ok(app_connection):
 
 def test_filter(app_connection):
     response = app_connection.get_json(
-        "c2c/health_check", params={"checks": "db_engine_sqlalchemy,fun_url"}, cors=False,
+        "c2c/health_check",
+        params={"checks": "db_engine_sqlalchemy,fun_url"},
+        cors=False,
     )
     print("response=" + json.dumps(response))
     assert _remove_timings(response) == {
@@ -53,7 +55,10 @@ def test_empty_filter(app_connection):
 
 def test_failure(app_connection):
     response = app_connection.get_json(
-        "c2c/health_check", params={"max_level": "2"}, expected_status=500, cors=False,
+        "c2c/health_check",
+        params={"max_level": "2"},
+        expected_status=500,
+        cors=False,
     )
     print("response=" + json.dumps(response))
     assert "redis:26379" in response["successes"]
@@ -79,7 +84,10 @@ def test_failure(app_connection):
 
 def test_failure_with_stack(app_connection):
     response = app_connection.get_json(
-        "c2c/health_check", params={"max_level": "2", "secret": "changeme"}, expected_status=500, cors=False,
+        "c2c/health_check",
+        params={"max_level": "2", "secret": "changeme"},
+        expected_status=500,
+        cors=False,
     )
     print("response=" + json.dumps(response))
     assert "redis:26379" in response["successes"]

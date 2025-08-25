@@ -14,7 +14,10 @@ def test_wrong():
     image = os.path.join(os.path.dirname(__file__), "test.wrong.png")
     with pytest.raises(AssertionError):
         check_image_file(
-            "/results", image, os.path.join(os.path.dirname(__file__), "test.expected.png"), use_mask=False,
+            "/results",
+            image,
+            os.path.join(os.path.dirname(__file__), "test.expected.png"),
+            use_mask=False,
         )
     check_image_file(
         "/results",

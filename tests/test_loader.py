@@ -9,7 +9,7 @@ from pyramid.scripts.common import get_config_loader
         read_data="""
 [app:main]
 variable = %(VARIABLE)s
-"""
+""",
     ),
 )
 @patch.dict("c2cwsgiutils.os.environ", {"VARIABLE": "value"})

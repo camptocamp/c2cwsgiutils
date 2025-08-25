@@ -19,7 +19,6 @@ _LOG = logging.getLogger(__name__)
 def composition(request):
     """Fixture that start/stop the Docker composition used for all the tests."""
     utils.wait_url(_BASE_URL + "ping")
-    return None
 
 
 @pytest.fixture
@@ -92,10 +91,10 @@ def _connect(master):
         lambda: psycopg2.connect(
             database="test",
             user="www-data",
-            password="www-data",
+            password="www-data",  # noqa: S106
             host="db" if master else "db_slave",
             port=5432,
-        )
+        ),
     )
 
 

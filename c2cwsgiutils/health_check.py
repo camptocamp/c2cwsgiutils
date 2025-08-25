@@ -188,7 +188,7 @@ def _get_alembic_version(alembic_ini_path: Path, name: str) -> str:
     ).decode("utf-8")
     out_match = _ALEMBIC_HEAD_RE.match(out)
     if not out_match:
-        raise Exception(  # pylint: disable=broad-exception-raised
+        raise Exception(  # noqa: TRY002
             "Cannot get the alembic HEAD version from: " + out,
         )
     return out_match.group(1)
@@ -324,7 +324,7 @@ class HealthCheck:
                             error_message = (
                                 f"Invalid alembic version (db: {actual_version}, code: {version_})"
                             )
-                            raise Exception(error_message)  # pylint: disable=broad-exception-raised
+                            raise Exception(error_message)  # noqa: TRY002
                 return version_
 
         self._checks.append(
@@ -395,7 +395,7 @@ class HealthCheck:
             def add(name: str, func: Callable[..., Any], *args: Any) -> None:
                 try:
                     result[name] = func(*args)
-                except Exception as e:  # pylint: disable=broad-exception-caught
+                except Exception as e:  # noqa: BLE001
                     result[name] = {"error": str(e)}
 
             if master is not None:
@@ -506,7 +506,7 @@ class HealthCheck:
             if result is not None:
                 results["successes"][name]["result"] = result
             _set_success(check_name=name)
-        except Exception as e:  # pylint: disable=broad-exception-caught
+        except Exception as e:  # noqa: BLE001
             _PROMETHEUS_HEALTH_CHECKS_FAILURE.labels(name=name).set(1)
             _LOG.warning("Health check %s failed", name, exc_info=True)
             failure = {"message": str(e), "timing": time.perf_counter() - start, "level": level}

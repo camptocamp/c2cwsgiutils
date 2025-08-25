@@ -99,7 +99,7 @@ def includeme(config: pyramid.config.Configurator | None = None) -> None:
     Use a X-Request-ID (or other) header to track all the logs related to a request
     including on the sub services.
     """
-    global _ID_HEADERS, _DEFAULT_TIMEOUT  # pylint: disable=global-statement
+    global _ID_HEADERS, _DEFAULT_TIMEOUT  # noqa: PLW0603
     _ID_HEADERS = ["X-Request-ID", "X-Correlation-ID", "Request-ID", "X-Varnish", "X-Amzn-Trace-Id"]
     if config is not None:
         extra_header = config_utils.env_or_config(config, "C2C_REQUEST_ID_HEADER", "c2c.request_id_header")

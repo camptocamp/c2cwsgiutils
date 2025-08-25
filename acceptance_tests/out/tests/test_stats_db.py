@@ -18,7 +18,7 @@ class _PrometheusThread:
             try:
                 with self._connection.session.get(self._connection.base_url) as r:
                     _LOG.debug("Prometheus: %s", r.text)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 _LOG.debug("Prometheus: %s", e)
             time.sleep(2)
 
@@ -102,30 +102,29 @@ def test_with_extra_gauge(app2_connection, prometheus_test_connection, compositi
 
 
 def test_error(app2_connection, prometheus_test_connection, composition):
-    with _Prometheus(prometheus_test_connection):
-        with pytest.raises(subprocess.CalledProcessError):
-            composition.exec(
-                "run_test",
-                "c2cwsgiutils-stats-db",
-                "--db=postgresql://www-data:www-data@db:5432/test",
-                "--schema=public",
-                "--extra=select 'toto, 42",
-                timeout=30,
-            )
+    with _Prometheus(prometheus_test_connection), pytest.raises(subprocess.CalledProcessError):
+        composition.exec(
+            "run_test",
+            "c2cwsgiutils-stats-db",
+            "--db=postgresql://www-data:www-data@db:5432/test",
+            "--schema=public",
+            "--extra=select 'toto, 42",
+            timeout=30,
+        )
 
 
 def test_standalone(prometheus_stats_db_connection, composition):
     """Test that stats db is correctly waiting for the Prometheus call, and exit after the call."""
     # To be able to debug
     composition.dc_process(["logs", "stats_db"])
-    ps = [line for line in composition.dc(["ps"]).split("\n")]
+    ps = list(composition.dc(["ps"]).split("\n"))
     print("\n".join(ps))
     ps = [line for line in ps if "c2cwsgiutils-stats_db-" in line]
     assert len(ps) == 1
     assert " Up " in ps[0]
     print("Call Prometheus URL")
     prometheus_stats_db_connection.session.get(prometheus_stats_db_connection.base_url)
-    ps = [line for line in composition.dc(["ps"]).split("\n")]
+    ps = list(composition.dc(["ps"]).split("\n"))
     print("\n".join(ps))
     ps = [line for line in ps if "c2cwsgiutils-stats_db-" in line]
     assert len(ps) == 1

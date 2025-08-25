@@ -23,7 +23,7 @@ def upgrade():
       id SERIAL PRIMARY KEY,
       value TEXT UNIQUE INITIALLY DEFERRED
     )
-    """
+    """,
     )
 
 

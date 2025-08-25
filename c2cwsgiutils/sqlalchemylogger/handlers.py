@@ -85,7 +85,7 @@ class SQLAlchemyHandler(logging.Handler):
                 self.session.rollback()
                 self.session.bulk_save_objects(logs)
                 self.session.commit()
-            except Exception as e:  # pylint: disable=broad-exception-caught #
+            except Exception as e:  # noqa: BLE001
                 # if we really cannot commit the log to DB, do not lock the
                 # thread and do not crash the application
                 _LOG.critical(e)

@@ -11,7 +11,11 @@ from c2cwsgiutils_app import models
 def _fill_db():
     for db, value in (("db", "master"), ("db_slave", "slave")):
         connection = psycopg2.connect(
-            database="test", user="www-data", password="www-data", host=db, port=5432
+            database="test",
+            user="www-data",
+            password="www-data",  # noqa: S106
+            host=db,
+            port=5432,
         )
         with connection.cursor() as curs:
             curs.execute("DELETE FROM hello")

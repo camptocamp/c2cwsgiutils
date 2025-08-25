@@ -275,7 +275,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
         _LOG.info("Process table %s.%s.", schema, table)
         try:
             do_table(session, schema, table, reporter)
-        except Exception as e:  # pylint: disable=broad-exception-caught
+        except Exception as e:  # noqa: BLE001
             _LOG.exception("Process table %s.%s error.", schema, table)
             reporter.error([schema, table], e)
 
@@ -284,7 +284,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
             _LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, extra, "extra", "Extra metric", reporter)
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except Exception as e:  # noqa: BLE001
                 _LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(pos + 1)], e)
     if args.extra_gauge:
@@ -293,7 +293,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
             _LOG.info("Process extra %s.", extra)
             try:
                 do_extra(session, sql, gauge, gauge_help, reporter)
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except Exception as e:  # noqa: BLE001
                 _LOG.exception("Process extra %s error.", extra)
                 reporter.error(["extra", str(len(args.extra) + pos + 1)], e)
 

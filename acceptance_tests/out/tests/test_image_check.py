@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -35,5 +35,5 @@ def test_screenshot(app_connection, expected_file_name, width, height, headers, 
         width=width,
         height=height,
         result_folder="results",
-        expected_filename=os.path.join(os.path.dirname(__file__), expected_file_name),
+        expected_filename=str(Path(__file__).parent / expected_file_name),
     )

@@ -33,7 +33,9 @@ def test_memory(app_connection):
 def test_memory_analyze_functions(app_connection):
     class_ = "builtins.function"
     memory = app_connection.get_json(
-        "c2c/debug/memory", params={"secret": "changeme", "analyze_type": class_}, cors=False
+        "c2c/debug/memory",
+        params={"secret": "changeme", "analyze_type": class_},
+        cors=False,
     )
     print("memory=" + json.dumps(memory, indent=4))
     assert len(memory) == 1
@@ -45,7 +47,9 @@ def test_memory_analyze_functions(app_connection):
 def test_memory_analyze_other(app_connection):
     class_ = "gunicorn.six.MovedAttribute"
     memory = app_connection.get_json(
-        "c2c/debug/memory", params={"secret": "changeme", "analyze_type": class_}, cors=False
+        "c2c/debug/memory",
+        params={"secret": "changeme", "analyze_type": class_},
+        cors=False,
     )
     print("memory=" + json.dumps(memory, indent=4))
     assert len(memory) == 1
@@ -57,7 +61,10 @@ def test_memory_analyze_other(app_connection):
 def test_sleep(app_connection):
     start_time = time.perf_counter()
     app_connection.get(
-        "c2c/debug/sleep", params={"secret": "changeme", "time": "0.1"}, expected_status=204, cors=False
+        "c2c/debug/sleep",
+        params={"secret": "changeme", "time": "0.1"},
+        expected_status=204,
+        cors=False,
     )
     assert time.perf_counter() - start_time > 0.1
 
@@ -69,7 +76,10 @@ def test_time(app_connection):
 
 def test_headers(app_connection):
     response = app_connection.get_json(
-        "c2c/debug/headers", params={"secret": "changeme"}, headers={"X-Toto": "42"}, cors=False
+        "c2c/debug/headers",
+        params={"secret": "changeme"},
+        headers={"X-Toto": "42"},
+        cors=False,
     )
     print("response=" + json.dumps(response, indent=4))
     assert response["headers"]["X-Toto"] == "42"
@@ -84,30 +94,43 @@ def _check_leak_there(response):
 
 def test_memory_diff(app_connection):
     response = app_connection.get_json(
-        "c2c/debug/memory_diff", params={"secret": "changeme", "path": "/api/ping?toto=tutu"}, cors=False
+        "c2c/debug/memory_diff",
+        params={"secret": "changeme", "path": "/api/ping?toto=tutu"},
+        cors=False,
     )
     _check_leak_there(response)
 
 
 def test_memory_diff_deprecated(app_connection):
     response = app_connection.get_json(
-        "c2c/debug/memory_diff/api/ping", params={"secret": "changeme"}, cors=False
+        "c2c/debug/memory_diff/api/ping",
+        params={"secret": "changeme"},
+        cors=False,
     )
     _check_leak_there(response)
 
 
 def test_error(app_connection):
     app_connection.get_json(
-        "c2c/debug/error", params={"secret": "changeme", "status": "500"}, expected_status=500, cors=False
+        "c2c/debug/error",
+        params={"secret": "changeme", "status": "500"},
+        expected_status=500,
+        cors=False,
     )
 
 
 def test_error_service(app_connection):
     app_connection.get_json(
-        "error", params={"secret": "changeme", "code": "500"}, expected_status=500, cors=False
+        "error",
+        params={"secret": "changeme", "code": "500"},
+        expected_status=500,
+        cors=False,
     )
     app_connection.get_json(
-        "error", params={"secret": "changeme", "code": "400"}, expected_status=400, cors=False
+        "error",
+        params={"secret": "changeme", "code": "400"},
+        expected_status=400,
+        cors=False,
     )
 
 
@@ -121,12 +144,12 @@ def test_memory_maps(app_connection):
 def test_show_refs(app_connection):
     refs = app_connection.get(
         "c2c/debug/show_refs.dot",
-        params=dict(
-            secret="changeme",
-            analyze_type="gunicorn.app.wsgiapp.WSGIApplication",
-            max_depth="3",
-            too_many="10",
-        ),
+        params={
+            "secret": "changeme",  # noqa: S106
+            "analyze_type": "gunicorn.app.wsgiapp.WSGIApplication",
+            "max_depth": "3",
+            "too_many": "10",
+        },
         cors=False,
     )
     print("refs=" + refs)

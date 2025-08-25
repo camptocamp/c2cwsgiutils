@@ -62,7 +62,7 @@ def _restore(config: pyramid.config.Configurator) -> None:
             db.FORCE_READONLY = readonly == "true"
     except ImportError:
         pass  # don't have redis
-    except Exception:  # pylint: disable=broad-exception-caught
+    except Exception:  # noqa: BLE001
         # survive an error since crashing now can have bad consequences for the service. :/
         _LOG.error("Cannot restore readonly DB status.", exc_info=True)
 

@@ -13,7 +13,7 @@ EXPECTED = {
     "remote_addr": "1.1.1.1",
     "remote_host": None,
     "scheme": "https",
-    "server_name": "0.0.0.0",
+    "server_name": "0.0.0.0",  # noqa: S104
     "server_port": 8080,
 }
 

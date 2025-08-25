@@ -8,11 +8,13 @@ from c2cwsgiutils_app import models
 
 
 def _failure(_request):
-    raise HTTPInternalServerError("failing check")
+    message = "failing check"
+    raise HTTPInternalServerError(message)
 
 
 def _failure_json(_request):
-    raise JsonCheckException("failing check", {"some": "json"})
+    message = "failing check"
+    raise JsonCheckException(message, {"some": "json"})
 
 
 @broadcast.decorator(expect_answers=True)

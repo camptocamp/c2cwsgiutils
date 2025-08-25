@@ -32,7 +32,7 @@ _sentinel: redis.sentinel.Sentinel | None = None
 
 def cleanup() -> None:
     """Cleanup the redis connections."""
-    global _master, _slave, _sentinel  # pylint: disable=global-statement
+    global _master, _slave, _sentinel  # noqa: PLW0603
     _master = None
     _slave = None
     _sentinel = None
@@ -52,7 +52,7 @@ def get(
 
 
 def _init(settings: Mapping[str, Any] | None) -> None:
-    global _master, _slave, _sentinel  # pylint: disable=global-statement
+    global _master, _slave, _sentinel  # noqa: PLW0603
     sentinels = c2cwsgiutils.config_utils.env_or_settings(
         settings,
         REDIS_SENTINELS_KEY,
@@ -131,7 +131,7 @@ class PubSubWorkerThread(threading.Thread):
                     _LOG.warning("Redis connection problem")
                 last_was_ok = False
                 time.sleep(0.5)
-            except Exception:  # pylint: disable=broad-exception-caught
+            except Exception:  # noqa: BLE001
                 _LOG.warning("Unexpected error", exc_info=True)
         _LOG.info("Redis subscription worker stopped")
         pubsub.close()

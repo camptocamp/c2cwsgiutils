@@ -91,7 +91,7 @@ def _connect(master):
         lambda: psycopg2.connect(
             database="test",
             user="www-data",
-            password="www-data",
+            password="www-data",  # noqa: S106
             host="db" if master else "db_slave",
             port=5432,
         ),

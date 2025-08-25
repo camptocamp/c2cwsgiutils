@@ -13,7 +13,7 @@ def _fill_db():
         connection = psycopg2.connect(
             database="test",
             user="www-data",
-            password="www-data",
+            password="www-data",  # noqa: S106
             host=db,
             port=5432,
         )

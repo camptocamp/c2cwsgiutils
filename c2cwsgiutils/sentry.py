@@ -39,7 +39,7 @@ def init(config: pyramid.config.Configurator | None = None) -> None:
 
 def includeme(config: pyramid.config.Configurator | None = None) -> None:
     """Initialize the Sentry integration."""
-    global _CLIENT_SETUP  # pylint: disable=global-statement
+    global _CLIENT_SETUP  # noqa: PLW0603
     sentry_url = config_utils.env_or_config(config, "SENTRY_URL", "c2c.sentry.url")
     if sentry_url is not None and not _CLIENT_SETUP:
         client_info: MutableMapping[str, Any] = {
@@ -184,7 +184,7 @@ def filter_wsgi_app(application: Callable[..., Any]) -> Callable[..., Any]:
         try:
             _LOG.info("Enable WSGI filter for Sentry")
             return SentryWsgiMiddleware(application)
-        except Exception:  # pylint: disable=broad-exception-caught
+        except Exception:  # noqa: BLE001
             _LOG.error("Failed enabling sentry. Continuing without it.", exc_info=True)
             return application
     else:

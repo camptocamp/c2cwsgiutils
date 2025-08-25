@@ -4,7 +4,7 @@ import json
 def _remove_timings(response):
     for status in ("successes", "failures"):
         assert status in response
-        for _key, value in response[status].items():
+        for value in response[status].values():
             assert "timing" in value
             del value["timing"]
     return response

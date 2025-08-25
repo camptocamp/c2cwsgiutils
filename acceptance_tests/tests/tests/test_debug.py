@@ -144,12 +144,12 @@ def test_memory_maps(app_connection):
 def test_show_refs(app_connection):
     refs = app_connection.get(
         "c2c/debug/show_refs.dot",
-        params=dict(
-            secret="changeme",
-            analyze_type="gunicorn.app.wsgiapp.WSGIApplication",
-            max_depth="3",
-            too_many="10",
-        ),
+        params={
+            "secret": "changeme",  # noqa: S106
+            "analyze_type": "gunicorn.app.wsgiapp.WSGIApplication",
+            "max_depth": "3",
+            "too_many": "10",
+        },
         cors=False,
     )
     print("refs=" + refs)

@@ -1,8 +1,7 @@
-import glob
 import logging
-import os
 import time
 import unittest
+from pathlib import Path
 
 from sqlalchemy import text
 
@@ -16,8 +15,8 @@ class SqlAlchemyLoggerTests(unittest.TestCase):
         pass
 
     def tearDown(self):
-        if glob.glob(self.dummy_db_name):
-            os.remove(self.dummy_db_name)
+        if Path(self.dummy_db_name).exists():
+            Path(self.dummy_db_name).unlink()
 
     def test_sqlalchemylogger_handlers(self):
         logger_db_engine = {"url": f"sqlite:///{self.dummy_db_name}"}
@@ -35,5 +34,6 @@ class SqlAlchemyLoggerTests(unittest.TestCase):
         handler.emit(x)
         time.sleep(handler.MAX_TIMEOUT + 1.0)
         result = handler.session.execute(text("SELECT * FROM logs")).fetchall()
-        assert glob.glob(self.dummy_db_name)
+        assert Path(self.dummy_db_name).exists()
+        assert test_message == result[0][4]
         assert test_message == result[0][4]

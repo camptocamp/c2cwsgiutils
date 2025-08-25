@@ -74,7 +74,7 @@ def _restore_overrides(config: pyramid.config.Configurator) -> None:
             logging.getLogger(name).setLevel(level)
     except ImportError:
         pass  # don't have redis
-    except Exception:  # pylint: disable=broad-exception-caught
+    except Exception:  # noqa: BLE001
         # survive an error there. Logging levels is not business critical...
         _LOG.warning("Cannot restore logging levels", exc_info=True)
 

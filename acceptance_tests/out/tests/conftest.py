@@ -1,6 +1,6 @@
 import logging
-import os
 import subprocess  # nosec
+from pathlib import Path
 from typing import Any, cast
 
 import pytest
@@ -19,14 +19,14 @@ class Composition:
     """The Docker composition."""
 
     def __init__(self, cwd: str) -> None:
-        self.cwd = os.path.join(os.getcwd(), cwd)
+        self.cwd = str(Path.cwd() / cwd)
         self.cwd = cwd
 
     def dc(self, args: list[str], version=2, **kwargs: Any) -> str:
         docker_compose = ["docker-compose"] if version == 1 else ["docker", "compose"]
         return cast(
             "str",
-            subprocess.run(  # nosec
+            subprocess.run(  # noqa: S603
                 [*docker_compose, *args],
                 **{
                     "cwd": self.cwd,
@@ -51,7 +51,7 @@ class Composition:
         )  # nosec
 
     def exec(self, container: str, *command: str, **kwargs: dict[str, Any]) -> str:
-        return self.dc(["exec", "-T", container] + list(command), **kwargs)
+        return self.dc(["exec", "-T", container, *list(command)], **kwargs)
 
     def exec_proc(
         self,
@@ -60,7 +60,7 @@ class Composition:
         **kwargs: dict[str, Any],
     ) -> subprocess.CompletedProcess[str]:
         return self.dc_process(
-            ["exec", "-T", container] + list(command),
+            ["exec", "-T", container, *list(command)],
             **kwargs,
         )
 

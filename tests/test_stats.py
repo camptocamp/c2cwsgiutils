@@ -27,7 +27,7 @@ def test_outcome_timer_context_failure():
     stats.BACKENDS["memory"] = backend
     try:
         with stats.outcome_timer_context(["toto"]):
-            raise OkException("Boom")
+            raise OkException("Boom")  # noqa: TRY301
         raise AssertionError
     except OkException:
         pass  # expected

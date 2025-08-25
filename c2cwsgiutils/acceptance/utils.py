@@ -43,7 +43,7 @@ def retry_timeout(what: Callable[[], Any], timeout: float = _DEFAULT_TIMEOUT, in
                 return ret
         except NameError:
             raise
-        except Exception as e:  # pylint: disable=broad-exception-caught
+        except Exception as e:  # noqa: BLE001
             error = str(e)
             _LOG.info("  Failed: %s", e)
         if time.perf_counter() > timeout:

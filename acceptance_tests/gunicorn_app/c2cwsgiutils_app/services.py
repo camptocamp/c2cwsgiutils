@@ -77,14 +77,14 @@ def error(request):
     if code == 301:
         raise HTTPMovedPermanently(location="http://www.camptocamp.com/en/")
     if code == 204:
-        raise HTTPNoContent()
+        raise HTTPNoContent
     if request.params.get("db", "0") == "dup":
         for _ in range(2):
             request.dbsession.add(models.Hello(value="toto"))
     elif request.params.get("db", "0") == "data":
         request.dbsession.add(models.Hello(id="abcd", value="toto"))
     else:
-        raise Exception("boom")
+        raise Exception("boom")  # noqa: TRY002
     return {"status": 200}
 
 

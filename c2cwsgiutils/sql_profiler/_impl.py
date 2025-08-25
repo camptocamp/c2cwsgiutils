@@ -57,7 +57,7 @@ class _Repository:
                             ],
                         )
                     _LOG.info(output)
-                except Exception:  # pylint: disable=broad-exception-caught # noqa: S110
+                except Exception:  # noqa: BLE001, S110
                     pass
 
 
@@ -70,7 +70,7 @@ def _sql_profiler_view(request: pyramid.request.Request) -> Mapping[str, Any]:
 
 
 def _setup_profiler(enable: str) -> None:
-    global _REPOSITORY  # pylint: disable=global-statement
+    global _REPOSITORY  # noqa: PLW0603
     if config_utils.config_bool(enable):
         if _REPOSITORY is None:
             _LOG.info("Enabling the SQL profiler")

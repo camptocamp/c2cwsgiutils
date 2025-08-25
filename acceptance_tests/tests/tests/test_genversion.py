@@ -7,7 +7,7 @@ def test_get_package_version():
     assert version == "3.12.0"
 
     name, version = _get_package_version(
-        "# Editable install with no version control (c2cgeoportal-geoportal===latest)"
+        "# Editable install with no version control (c2cgeoportal-geoportal===latest)",
     )
     assert name == "c2cgeoportal-geoportal"
     assert version == "latest"

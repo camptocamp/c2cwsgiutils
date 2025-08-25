@@ -33,11 +33,11 @@ def test_api(app_connection):
 
 def test_api_bad_secret(app_connection):
     app_connection.get_json(
-        "c2c/db/maintenance", params={"secret": "wrong", "readonly": "true"}, expected_status=403, cors=False
+        "c2c/db/maintenance", params={"secret": "wrong", "readonly": "true"}, expected_status=403, cors=False,
     )
 
 
 def test_api_missing_secret(app_connection):
     app_connection.get_json(
-        "c2c/db/maintenance", params={"readonly": "true"}, expected_status=403, cors=False
+        "c2c/db/maintenance", params={"readonly": "true"}, expected_status=403, cors=False,
     )

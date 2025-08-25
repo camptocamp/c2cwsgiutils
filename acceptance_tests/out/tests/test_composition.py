@@ -8,6 +8,6 @@ def test_run(app_connection, composition):
 def test_run_timeout(app_connection, composition):
     try:
         composition.exec("run_test", "sleep", "5", timeout=1)
-        raise AssertionError()
+        raise AssertionError
     except subprocess.TimeoutExpired:
         pass  # Expected

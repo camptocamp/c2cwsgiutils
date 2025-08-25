@@ -25,7 +25,7 @@ class Composition:
     def dc(self, args: list[str], version=2, **kwargs: Any) -> str:
         docker_compose = ["docker-compose"] if version == 1 else ["docker", "compose"]
         return cast(
-            str,
+            "str",
             subprocess.run(  # nosec
                 [*docker_compose, *args],
                 **{
@@ -54,7 +54,7 @@ class Composition:
         return self.dc(["exec", "-T", container] + list(command), **kwargs)
 
     def exec_proc(
-        self, container: str, *command: str, **kwargs: dict[str, Any]
+        self, container: str, *command: str, **kwargs: dict[str, Any],
     ) -> subprocess.CompletedProcess[str]:
         return self.dc_process(
             ["exec", "-T", container] + list(command),

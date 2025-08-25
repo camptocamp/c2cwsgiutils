@@ -19,7 +19,6 @@ _LOG = logging.getLogger(__name__)
 def composition(request):
     """Fixture that start/stop the Docker composition used for all the tests."""
     utils.wait_url(_BASE_URL + "ping")
-    return None
 
 
 @pytest.fixture
@@ -95,7 +94,7 @@ def _connect(master):
             password="www-data",
             host="db" if master else "db_slave",
             port=5432,
-        )
+        ),
     )
 
 

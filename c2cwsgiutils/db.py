@@ -51,7 +51,7 @@ def setup_session(
     With an accompanying tween that switches between the master and the slave DB
     connection. Uses prefixed entries in the application's settings.
 
-    The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
+    The slave DB will be used for anything that is GET, HEAD and OPTIONS queries. The master DB will be used for
     all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
@@ -111,7 +111,7 @@ def create_session(
     With an accompanying tween that switches between the master and the slave DB
     connection.
 
-    The slave DB will be used for anything that is GET and OPTIONS queries. The master DB will be used for
+    The slave DB will be used for anything that is GET, HEAD and OPTIONS queries. The master DB will be used for
     all the other queries. You can tweak this behavior with the force_master and force_slave parameters.
     Those parameters are lists of regex that are going to be matched against "{VERB} {PATH}". Warning, the
     path includes the route_prefix.
@@ -187,7 +187,10 @@ def _add_tween(
             has_force_master = any(r.match(method_path) for r in master_paths)
             if FORCE_READONLY or (
                 not has_force_master
-                and (request.method in ("GET", "OPTIONS") or any(r.match(method_path) for r in slave_paths))
+                and (
+                    request.method in ("GET", "HEAD", "OPTIONS")
+                    or any(r.match(method_path) for r in slave_paths)
+                )
             ):
                 _LOG.debug(
                     "Using %s database for: %s",
@@ -260,7 +263,7 @@ class SessionFactory(_sessionmaker):
             if FORCE_READONLY or (
                 not has_force_master
                 and (
-                    request.method in ("GET", "OPTIONS")
+                    request.method in ("GET", "OPTIONS", "HEAD")
                     or any(r.match(method_path) for r in self.slave_paths)
                 )
             ):

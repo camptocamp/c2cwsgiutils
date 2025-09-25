@@ -16,7 +16,7 @@ _LOG = logging.getLogger(__name__)
 _PROMETHEUS_DB_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("database"),
     "Database requests",
-    ["what"],
+    ["what", "engine"],
     unit="seconds",
 )
 
@@ -71,9 +71,10 @@ def _create_sqlalchemy_timer_cb(what: str, engine_name: str | None = None) -> Ca
     start = time.perf_counter()
 
     def after(*_args: Any, **_kwargs: Any) -> None:
-        _PROMETHEUS_DB_SUMMARY.labels({"query": what}).observe(time.perf_counter() - start)
+        elapsed_time = time.perf_counter() - start
+        _PROMETHEUS_DB_SUMMARY.labels(what=what, engine=engine_name).observe(elapsed_time)
         engine_suffix = f", on {engine_name}" if engine_name else ""
-        _LOG.debug("Execute statement '%s' in %d%s.", what, time.perf_counter() - start, engine_suffix)
+        _LOG.debug("Execute statement '%s' in %.3f%ss.", what, elapsed_time, engine_suffix)
 
     return after
 

@@ -15,7 +15,7 @@ LOG = logging.getLogger(__name__)
 _PROMETHEUS_DB_SUMMARY = prometheus_client.Summary(
     prometheus.build_metric_name("database"),
     "Database requests",
-    ["what"],
+    ["what", "engine"],
     unit="seconds",
 )
 
@@ -66,12 +66,14 @@ def _simplify_sql(sql: str) -> str:
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 
-def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
+def _create_sqlalchemy_timer_cb(what: str, engine_name: str | None = None) -> Callable[..., Any]:
     start = time.perf_counter()
 
     def after(*_args: Any, **_kwargs: Any) -> None:
-        _PROMETHEUS_DB_SUMMARY.labels({"query": what}).observe(time.perf_counter() - start)
-        LOG.debug("Execute statement '%s' in %d.", what, time.perf_counter() - start)
+        elapsed_time = time.perf_counter() - start
+        _PROMETHEUS_DB_SUMMARY.labels(what=what, engine=engine_name).observe(elapsed_time)
+        engine_suffix = f", on {engine_name}" if engine_name else ""
+        LOG.debug("Execute statement '%s' in %.3f%ss.", what, elapsed_time, engine_suffix)
 
     return after
 
@@ -79,8 +81,12 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
 def _before_cursor_execute(
     conn: Connection, _cursor: Any, statement: str, _parameters: Any, _context: Any, _executemany: Any
 ) -> None:
+    engine_name = getattr(conn.engine, "c2c_name", None)
     sqlalchemy.event.listen(
-        conn, "after_cursor_execute", _create_sqlalchemy_timer_cb(_simplify_sql(statement)), once=True
+        conn,
+        "after_cursor_execute",
+        _create_sqlalchemy_timer_cb(_simplify_sql(statement), engine_name),
+        once=True,
     )
 
 

@@ -1,0 +1,12 @@
+Backport of #2843 to master
+
+Error on cherry-picking: 6bc06aec0841eec12efa6ce1279d690c554ad289, d0b2062d370206d30da528917512c1b1b0b2ad6b, 28da909d7945467e6321922cce31a8e214ab40db
+
+To continue do:
+```bash
+git fetch && \
+  git checkout ghci/backport/2843-to-master && \
+  git reset --hard HEAD^ && \
+  git cherry-pick 6bc06aec0841eec12efa6ce1279d690c554ad289 d0b2062d370206d30da528917512c1b1b0b2ad6b 28da909d7945467e6321922cce31a8e214ab40db
+git push origin ghci/backport/2843-to-master --force
+```

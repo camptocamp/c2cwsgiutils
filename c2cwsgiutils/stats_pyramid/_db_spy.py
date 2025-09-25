@@ -66,12 +66,13 @@ def _simplify_sql(sql: str) -> str:
     return re.sub(r"%\(\w+\)\w", "?", sql)
 
 
-def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
+def _create_sqlalchemy_timer_cb(what: str, engine_name: str | None) -> Callable[..., Any]:
     start = time.perf_counter()
 
     def after(*_args: Any, **_kwargs: Any) -> None:
         _PROMETHEUS_DB_SUMMARY.labels({"query": what}).observe(time.perf_counter() - start)
-        _LOG.debug("Execute statement '%s' in %d.", what, time.perf_counter() - start)
+        engine_suffix = f", on {engine_name}" if engine_name else ""
+        _LOG.debug("Execute statement '%s' in %d%s.", what, time.perf_counter() - start, engine_suffix)
 
     return after
 
@@ -79,8 +80,12 @@ def _create_sqlalchemy_timer_cb(what: str) -> Callable[..., Any]:
 def _before_cursor_execute(
     conn: Connection, _cursor: Any, statement: str, _parameters: Any, _context: Any, _executemany: Any
 ) -> None:
+    engine_name = getattr(conn.engine, "c2c_name", None)
     sqlalchemy.event.listen(
-        conn, "after_cursor_execute", _create_sqlalchemy_timer_cb(_simplify_sql(statement)), once=True
+        conn,
+        "after_cursor_execute",
+        _create_sqlalchemy_timer_cb(_simplify_sql(statement), engine_name),
+        once=True,
     )
 
 

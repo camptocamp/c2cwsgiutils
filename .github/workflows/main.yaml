@@ -19,7 +19,7 @@ jobs:
         # Remove Python packages with wrong version
       - run: sudo apt-get remove python3-debian python3-distro-info
       - run: docker system prune --all --force
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -30,7 +30,7 @@ jobs:
           patterns: pypi docker
         if: env.HAS_SECRETS == 'HAS_SECRETS'
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
       - run: python3 -m pip install --requirement=ci/requirements.txt

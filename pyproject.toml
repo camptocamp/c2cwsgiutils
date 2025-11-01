@@ -37,20 +37,20 @@ sentry = "c2cwsgiutils.sentry:filter_factory"
 python = ">=3.10,<4.0"
 requests = { version = "2.32.5" }
 pyyaml = { version = "6.0.3" }
-alembic = { version = "1.16.5", optional = true }
+alembic = { version = "1.17.1", optional = true }
 boltons = { version = "25.0.0", optional = true }
 cornice = { version = "6.1.0", optional = true }
 redis = { version = "6.4.0", optional = true }
 gunicorn = { version = "23.0.0", optional = true }
 lxml = { version = "6.0.2", optional = true }
 objgraph = { version = "3.6.2", optional = true }
-psycopg2 = { version = "2.9.10", optional = true }
+psycopg2 = { version = "2.9.11", optional = true }
 pyramid = { version = "2.0.2", optional = true }
 pyramid-tm = { version = "2.6", optional = true }
-sentry-sdk = { version = "2.39.0", optional = true }
+sentry-sdk = { version = "2.43.0", optional = true }
 ujson = { version = "5.11.0" }
 cee_syslog_handler = { version = "0.6.0" }
-SQLAlchemy = { version = "2.0.43", optional = true }
+SQLAlchemy = { version = "2.0.44", optional = true }
 SQLAlchemy-Utils = { version = "0.42.0", optional = true }
 "zope.interface" = { version = "8.0.1", optional = true }
 "zope.sqlalchemy" = { version = "4.0", optional = true }
@@ -60,9 +60,9 @@ waitress = { version = "3.0.2", optional = true }
 scikit-image = { version = "0.25.2", optional = true }
 prometheus-client = { version = "0.23.1", optional = true}
 pyramid_mako = { version = "1.1.0", optional = true}
-psutil = { version = "7.1.0", optional = true}
+psutil = { version = "7.1.2", optional = true}
 Paste = { version = "3.10.1", optional = true}
-coverage = { version = "7.10.7", optional = true}
+coverage = { version = "7.11.0", optional = true}
 
 [tool.poetry.extras]
 standard = [
@@ -163,7 +163,7 @@ test_images = ["scikit-image"]
 prospector = { version = "1.17.3", extras = ["with_bandit", "with_mypy", "with_pyroma", "with_ruff"] }
 prospector-profile-duplicated = "1.10.5"
 prospector-profile-utils = "1.26.5"
-junit2html = "31.0.2"
+junit2html = "31.0.5"
 pytest = "8.4.2"
 pytest-cov = "7.0.0"
 pytest-html = "4.1.1"
@@ -171,7 +171,7 @@ types-pyyaml = "6.0.12.20250915"
 types-requests = "2.32.4.20250913"
 types-redis = "4.6.0.20241004"
 types-ujson = "5.10.0.20250822"
-types-python-dateutil = "2.9.0.20250822"
+types-python-dateutil = "2.9.0.20251008"
 typing_extensions = "4.15.0"
 
 [tool.poetry-dynamic-versioning]

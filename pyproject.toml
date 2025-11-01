@@ -68,7 +68,7 @@ sentry = "c2cwsgiutils.sentry:filter_factory"
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 requests = "2.32.5"
-pyyaml = { version = "6.0.2" }
+pyyaml = { version = "6.0.3" }
 alembic = { version = "1.13.3", optional = true }
 boltons = { version = "24.0.0", optional = true }
 cornice = { version = "6.1.0", optional = true }
@@ -76,13 +76,13 @@ redis = { version = "5.1.1", optional = true }
 gunicorn = { version = "23.0.0", optional = true }
 lxml = { version = "5.3.1", optional = true }
 objgraph = { version = "3.6.2", optional = true }
-psycopg2 = { version = "2.9.10", optional = true }
+psycopg2 = { version = "2.9.11", optional = true }
 pyramid = { version = "2.0.2", optional = true }
 pyramid-tm = { version = "2.5", optional = true }
 sentry-sdk = { version = "2.15.0", optional = true }
 ujson = { version = "5.10.0" }
 cee_syslog_handler = { version = "0.6.0" }
-SQLAlchemy = { version = "2.0.43", optional = true }
+SQLAlchemy = { version = "2.0.44", optional = true }
 SQLAlchemy-Utils = { version = "0.41.2", optional = true }
 "zope.interface" = { version = "7.0.3", optional = true }
 "zope.sqlalchemy" = { version = "3.1", optional = true }
@@ -175,7 +175,7 @@ prospector = { extras = ["with_bandit", "with_mypy", "with_pyroma"], version = "
 prospector-profile-duplicated = "1.6.0"
 prospector-profile-utils = "1.9.1"
 coverage = "7.6.12"
-junit2html = "31.0.2"
+junit2html = "31.0.5"
 pytest = "8.3.5"
 pytest-cov = "5.0.0"
 pytest-html = "4.1.1"

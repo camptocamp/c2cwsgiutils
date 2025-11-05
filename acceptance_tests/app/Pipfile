@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pipenv = "==2022.6.7"
-setuptools = "==70.0.0"
+setuptools = "==78.1.1"
 # Lock dependencies
 certifi = "==2025.10.5"
 distlib = "==0.3.9"

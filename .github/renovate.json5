@@ -1,4 +1,5 @@
 {
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
     'github>camptocamp/gs-renovate-config-preset:base.json5#1.5.1',
     'github>camptocamp/gs-renovate-config-preset:group.json5#1.5.1',
@@ -34,6 +35,17 @@
       matchFileNames: ['.github/workflows/rebuild.yaml'],
       enabled: false,
     },
+    /** Don't update psycopg2 on branch 5.2 because of compatibility issue with the used Python version */
+    {
+      matchBaseBranches: ['5.2'],
+      matchDepNames: ['psycopg2'],
+      enabled: false,
+    },
+    /* Don't update requests on the branches 5.0 and 5.1 because of compatibility issue with the used Python version */
+    {
+      matchBaseBranches: ['5.0', '5.1'],
+      matchDepNames: ['requests'],
+      enabled: false,
+    },
   ],
-  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
 }

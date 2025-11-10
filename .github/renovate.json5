@@ -41,9 +41,9 @@
       matchDepNames: ['psycopg2'],
       enabled: false,
     },
-    /* Don't update requests on the branches 5.0 and 5.1 because of compatibility issue with the used Python version */
+    /* Don't update requests on the branches 5.0 to 5.2 because of compatibility issue with the used Python version */
     {
-      matchBaseBranches: ['5.0', '5.1'],
+      matchBaseBranches: ['5.0', '5.1', '5.2'],
       matchDepNames: ['requests'],
       enabled: false,
     },

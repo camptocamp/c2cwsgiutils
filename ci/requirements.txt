@@ -9,7 +9,7 @@ importlib-metadata<8.0.0
 numpy==1.26.4 # avoid: ValueError: numpy.dtype size changed, may indicate binary incompatibility. Expected 96 from C header, got 88 from PyObject
 certifi>=2024.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
-urllib3>=1.26.17 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.6.0 # not directly required, pinned by Snyk to avoid a vulnerability
 jinja2>=3.1.3 # not directly required, pinned by Snyk to avoid a vulnerability
 cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerability
 idna>=3.7 # not directly required, pinned by Snyk to avoid a vulnerability

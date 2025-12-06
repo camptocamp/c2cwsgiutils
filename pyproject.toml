@@ -92,7 +92,7 @@ waitress = "3.0.2"
 scikit-image = { version = "0.24.0", optional = true }
 prometheus-client = { version = "0.21.1", optional = true}
 pyramid_mako = { version = "1.1.0", optional = true}
-urllib3 = "2.5.0"
+urllib3 = "2.6.0"
 
 [tool.poetry.extras]
 standard = [

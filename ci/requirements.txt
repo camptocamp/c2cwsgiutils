@@ -8,3 +8,4 @@ poetry-plugin-tweak-dependencies-version==1.5.5
 poetry-dynamic-versioning==1.4.1
 poetry-plugin-drop-python-upper-constraint==0.1.0
 importlib-metadata<8.5.1
+urllib3>=2.6.0 # not directly required, pinned by Snyk to avoid a vulnerability

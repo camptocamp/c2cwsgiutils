@@ -132,6 +132,7 @@ class MultiProcessCustomCollector(prometheus_client.registry.Collector):
 def _deserialize_collected_data(
     results: list[list[SerializedMetric]],
 ) -> Generator[prometheus_client.core.Metric, None, None]:
+    imported = set()
     for serialized_collection in results:
         if serialized_collection is None:
             continue
@@ -149,6 +150,10 @@ def _deserialize_collected_data(
             else:
                 raise NotImplementedError()
             for sample in serialized_metric["samples"]:
+                canonical = (sample["name"], frozenset(sample.get("labels", {}).items()))
+                if canonical in imported:
+                    continue
+                imported.add(canonical)
                 metric.samples.append(
                     prometheus_client.metrics_core.Sample(**sample),  # type: ignore[attr-defined]
                 )

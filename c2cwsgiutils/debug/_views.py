@@ -163,7 +163,7 @@ def _time(request: pyramid.request.Request) -> Any:
     del request  # unused
     return {
         "local_time": str(datetime.datetime.now()),  # noqa: DTZ005
-        "gmt_time": str(datetime.datetime.now(datetime.timezone.utc)),
+        "gmt_time": str(datetime.datetime.now(datetime.UTC)),
         "epoch": time.time(),
         "timezone": datetime.datetime.now().astimezone().tzname(),
     }

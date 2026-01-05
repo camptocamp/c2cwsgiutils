@@ -1,5 +1,5 @@
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 line-length = 110
 
 [tool.ruff.lint]
@@ -34,7 +34,7 @@ client_info = "c2cwsgiutils.client_info:filter_factory"
 sentry = "c2cwsgiutils.sentry:filter_factory"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = ">=3.11,<4.0"
 requests = { version = "2.32.5" }
 pyyaml = { version = "6.0.3" }
 alembic = { version = "1.17.2", optional = true }
@@ -201,11 +201,9 @@ classifiers = [
     'Framework :: Pyramid',
     'Intended Audience :: Developers',
     'Intended Audience :: Information Technology',
-    'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
@@ -226,7 +224,7 @@ include = [
 "c2cwsgiutils/acceptance/package.json",
 "c2cwsgiutils/acceptance/package-lock.json",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = ["requests", "pyyaml", "ujson", "cee_syslog_handler", "prometheus-client"]
 
 [project.urls]

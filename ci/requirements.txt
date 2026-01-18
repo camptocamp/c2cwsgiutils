@@ -15,3 +15,4 @@ cryptography>=42.0.2 # not directly required, pinned by Snyk to avoid a vulnerab
 idna>=3.7 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 requests>=2.32.4 # not directly required, pinned by Snyk to avoid a vulnerability
+virtualenv>=20.36.1 # not directly required, pinned by Snyk to avoid a vulnerability

@@ -1,4 +1,4 @@
-c2cciutils==1.1.48
+c2cciutils==1.1.61
 pipfile==0.0.2
 wheel==0.46.2
 setuptools==76.1.0

@@ -39,8 +39,8 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libblkid1: 2.39.3-9ubuntu6.3
   ubuntu_24_04/libbrotli1: 1.1.0-2build2
   ubuntu_24_04/libbz2-1.0: 1.0.8-5.1build0.1
-  ubuntu_24_04/libc-bin: 2.39-0ubuntu8.6
-  ubuntu_24_04/libc6: 2.39-0ubuntu8.6
+  ubuntu_24_04/libc-bin: 2.39-0ubuntu8.7
+  ubuntu_24_04/libc6: 2.39-0ubuntu8.7
   ubuntu_24_04/libcap-ng0: 0.8.4-2build2
   ubuntu_24_04/libcap2: 1:2.66-5ubuntu2.2
   ubuntu_24_04/libcap2-bin: 1:2.66-5ubuntu2.2

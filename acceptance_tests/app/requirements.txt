@@ -1,4 +1,4 @@
 poetry==1.8.5
-pip==25.3
+pip==26.0
 urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
 virtualenv>=20.36.1 # not directly required, pinned by Snyk to avoid a vulnerability

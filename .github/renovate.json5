@@ -1,50 +1,50 @@
 {
-  $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "github>camptocamp/gs-renovate-config-preset:base.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:group.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:ci.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:preset.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:pre-commit.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:python.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:docker.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:json-schema.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:shellcheck.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:stabilization-branches.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:own.json5#1.8.5",
-    "github>camptocamp/gs-renovate-config-preset:security.json5#1.8.5",
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'github>camptocamp/gs-renovate-config-preset:base.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:group.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:ci.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:preset.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:pre-commit.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:python.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:docker.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:json-schema.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:shellcheck.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:stabilization-branches.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:own.json5#1.8.5',
+    'github>camptocamp/gs-renovate-config-preset:security.json5#1.8.5',
   ],
   html: {
-    managerFilePatterns: ["/\\.html?$/", "/\\.html?.mako$/"],
+    managerFilePatterns: ['/\\.html?$/', '/\\.html?.mako$/'],
   },
-  baseBranchPatterns: ["master", "5.0", "5.1", "5.2", "6.0", "6.1"],
+  baseBranchPatterns: ['master', '5.0', '5.1', '5.2', '6.0', '6.1'],
   packageRules: [
     /** Don't upgrade node_vm2 because version 0.4.7 (last version) is not working, for branch 5.1 */
     {
-      matchBaseBranches: ["5.1"],
+      matchBaseBranches: ['5.1'],
       enabled: false,
-      matchDepNames: ["node_vm2"],
+      matchDepNames: ['node_vm2'],
     },
     /** Packages published very recently are not pushed to stabilization branches for security reasons */
     {
-      matchBaseBranches: ["/^[0-9]+\\.[0-9]+$/", "/release_.*/"],
-      minimumReleaseAge: "7 days",
+      matchBaseBranches: ['/^[0-9]+\\.[0-9]+$/', '/release_.*/'],
+      minimumReleaseAge: '7 days',
     },
     /** Ignore .github/workflows/rebuild-*.yaml */
     {
-      matchFileNames: [".github/workflows/rebuild.yaml"],
+      matchFileNames: ['.github/workflows/rebuild.yaml'],
       enabled: false,
     },
     /** Don't update psycopg2 on branch 5.2 because of compatibility issue with the used Python version */
     {
-      matchBaseBranches: ["5.2"],
-      matchDepNames: ["psycopg2"],
+      matchBaseBranches: ['5.2'],
+      matchDepNames: ['psycopg2'],
       enabled: false,
     },
     /** Don't update requests on the branches 5.0 to 5.2 because of compatibility issue with the used Python version */
     {
-      matchBaseBranches: ["5.0", "5.1", "5.2"],
-      matchDepNames: ["requests"],
+      matchBaseBranches: ['5.0', '5.1', '5.2'],
+      matchDepNames: ['requests'],
       enabled: false,
     },
   ],

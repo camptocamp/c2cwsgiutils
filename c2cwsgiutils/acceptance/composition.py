@@ -39,7 +39,13 @@ class Composition:
         warnings.warn("The c2cwsgiutils.acceptance.composition should be used only if it's relay needed.")
         self.cwd = os.path.dirname(composition)
         filename = os.path.basename(composition)
-        self.docker_compose = ["docker-compose"]
+        # Prefer 'docker compose' if available, else fallback to 'docker-compose'
+        try:
+            subprocess.check_output(["docker", "compose", "--version"], stderr=subprocess.DEVNULL)  # nosec
+            self.docker_compose = ["docker", "compose"]
+        except subprocess.CalledProcessError:
+            LOG.warning("Docker Compose v2 not found, falling back to docker-compose")
+            self.docker_compose = ["docker-compose"]
         if filename != "docker-compose.yaml":
             self.docker_compose.append("--file=" + filename)
         self.coverage_paths = coverage_paths

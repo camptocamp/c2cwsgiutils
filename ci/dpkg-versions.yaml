@@ -49,7 +49,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libcurl4t64: 8.5.0-2ubuntu10.6
   ubuntu_24_04/libdb5.3t64: 5.3.28+dfsg2-7
   ubuntu_24_04/libdebconfclient0: 0.271ubuntu3
-  ubuntu_24_04/libexpat1: 2.6.1-2ubuntu0.3
+  ubuntu_24_04/libexpat1: 2.6.1-2ubuntu0.4
   ubuntu_24_04/libext2fs2t64: 1.47.0-2.4~exp1ubuntu4.1
   ubuntu_24_04/libffi8: 3.4.6-1build1
   ubuntu_24_04/libgcc-s1: 14.2.0-4ubuntu2~24.04
@@ -57,7 +57,7 @@ camptocamp/c2cwsgiutils:latest:
   ubuntu_24_04/libgdbm-compat4t64: 1.23-5.1build1
   ubuntu_24_04/libgdbm6t64: 1.23-5.1build1
   ubuntu_24_04/libgmp10: 2:6.3.0+dfsg-2ubuntu6.1
-  ubuntu_24_04/libgnutls30t64: 3.8.3-1.1ubuntu3.4
+  ubuntu_24_04/libgnutls30t64: 3.8.3-1.1ubuntu3.5
   ubuntu_24_04/libgpg-error0: 1.47-3build2.1
   ubuntu_24_04/libgssapi-krb5-2: 1.20.1-6ubuntu2.6
   ubuntu_24_04/libhogweed6t64: 3.9.1-2.2build1.1

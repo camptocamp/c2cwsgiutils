@@ -70,3 +70,4 @@ jobs:
 
       - name: Publish
         run: c2cciutils-publish --type=rebuild --branch=${{ matrix.branch }}
+        continue-on-error: true

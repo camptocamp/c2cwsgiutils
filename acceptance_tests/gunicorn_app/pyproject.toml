@@ -36,13 +36,13 @@ main = "c2cwsgiutils_app:main"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-coverage = "7.13.2"
+coverage = "7.13.4"
 
 [tool.poetry.dev-dependencies]
 # pylint = { version = "2.15.6" }
 prospector = { version = "1.18.0", extras = ["with_bandit", "with_mypy", "with_ruff"] }
-prospector-profile-duplicated = "1.11.0"
-prospector-profile-utils = "1.26.5"
+prospector-profile-duplicated = "1.12.0"
+prospector-profile-utils = "1.27.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

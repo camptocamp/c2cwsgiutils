@@ -47,5 +47,11 @@
       matchDepNames: ['requests'],
       enabled: false,
     },
+    /** Keep setuptools below 81.0.0 */
+    {
+      enabled: false,
+      matchDepNames: ['setuptools'],
+      allowedVersions: '<81.0.0',
+    },
   ],
 }

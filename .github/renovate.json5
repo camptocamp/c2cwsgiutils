@@ -25,11 +25,6 @@
       enabled: false,
       matchDepNames: ['node_vm2'],
     },
-    /** Packages published very recently are not pushed to stabilization branches for security reasons */
-    {
-      matchBaseBranches: ['/^[0-9]+\\.[0-9]+$/', '/release_.*/'],
-      minimumReleaseAge: '7 days',
-    },
     /** Ignore .github/workflows/rebuild-*.yaml */
     {
       matchFileNames: ['.github/workflows/rebuild.yaml'],

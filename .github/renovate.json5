@@ -48,12 +48,5 @@
       matchDepNames: ['setuptools'],
       allowedVersions: '<81.0.0',
     },
-    /** Update c2cciutils immediately */
-    {
-      matchPackageNames: ['c2cciutils'],
-      minimumReleaseAge: '0 days',
-      schedule: [],
-      groupName: 'c2cciutils',
-    },
   ],
 }

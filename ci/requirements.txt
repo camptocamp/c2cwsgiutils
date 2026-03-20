@@ -11,3 +11,5 @@ pygments>=2.15.0 # not directly required, pinned by Snyk to avoid a vulnerabilit
 requests<=2.32.5 # Workaround for docker-compose: docker.errors.DockerException: Error while fetching server API version: Not supported URL scheme http+docker
 protobuf>=5.29.6 # not directly required, pinned by Snyk to avoid a vulnerability
 pyopenssl>=26.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+markdown>=3.8.1 # not directly required, pinned by Snyk to avoid a vulnerability
+pyasn1>=0.6.3 # not directly required, pinned by Snyk to avoid a vulnerability

@@ -39,7 +39,7 @@ class Connection:
         with self.session.get(self.base_url + url, headers=self._merge_headers(headers, cors), **kwargs) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
-            return None if r.status_code == 204 else r.text
+            return None if r.status_code == 204 else r.text  # type: ignore[attr-defined]
 
     def get_raw(
         self,
@@ -90,8 +90,8 @@ class Connection:
         ) as r:
             check_response(r, expected_status, cache_expected=cache_expected)
             self._check_cors(cors, r)
-            r.raw.decode_content = True
-            doc = etree.parse(r.raw)  # nosec
+            r.raw.decode_content = True  # type: ignore[attr-defined]
+            doc = etree.parse(r.raw)  # type: ignore[attr-defined] # nosec
             if schema is not None:
                 with open(schema, encoding="utf-8") as schema_file:
                     xml_schema = etree.XMLSchema(etree.parse(schema_file))  # nosec
@@ -147,7 +147,7 @@ class Connection:
         ) as r:
             check_response(r, expected_status, cache_expected)
             self._check_cors(cors, r)
-            return None if r.status_code == 204 else r.text
+            return None if r.status_code == 204 else r.text  # type: ignore[attr-defined]
 
     def put_json(
         self,

@@ -5,5 +5,5 @@ pre-commit==4.5.1
 pytest==9.0.2
 scikit-image==0.26.0
 poetry-dynamic-versioning==1.10.0
-importlib-metadata<8.9.1
+importlib-metadata<9.0.1
 tag-publish==1.1.1

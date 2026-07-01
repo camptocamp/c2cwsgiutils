@@ -1,70 +1,3 @@
-
-[build-system]
-requires = [
-  "poetry-core>=1.0.0",
-  "poetry-dynamic-versioning[plugin]",
-  "poetry-dynamic-versioning"
-]
-build-backend = "poetry.core.masonry.api"
-
-[project]
-classifiers = [
-    'Development Status :: 5 - Production/Stable',
-    'Environment :: Plugins',
-    'Framework :: Pyramid',
-    'Intended Audience :: Developers',
-    'Intended Audience :: Information Technology',
-    'Operating System :: OS Independent',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: 3.13',
-    'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
-    'Typing :: Typed',
-]
-dynamic = ["dependencies", "version"]
-name = "c2cwsgiutils"
-description = "Common utilities for Camptocamp WSGI applications"
-readme = "README.md"
-keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
-license = "BSD-2-Clause"
-authors = [{name = "Camptocamp",email = "info@camptocamp.com"}]
-packages = [{ include = "c2cwsgiutils" }]
-include = [
-"c2cwsgiutils/py.typed",
-"c2cwsgiutils/acceptance/screenshot.js",
-"c2cwsgiutils/acceptance/package.json",
-"c2cwsgiutils/acceptance/package-lock.json",
-]
-requires-python = ">=3.11"
-dependencies = ["requests", "pyyaml", "ujson", "cee_syslog_handler", "prometheus-client", "setuptools<81.0.0"]
-
-[project.urls]
-repository = "https://github.com/camptocamp/c2cwsgiutils"
-"Bug Tracker" = "https://github.com/camptocamp/c2cwsgiutils/issues"
-
-[project.scripts]
-c2cwsgiutils-genversion = "c2cwsgiutils.scripts.genversion:main"
-c2cwsgiutils-coverage-report = "c2cwsgiutils.scripts.coverage_report:main"
-c2cwsgiutils-stats-db = "c2cwsgiutils.scripts.stats_db:main"
-c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
-c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
-
-[project.optional-dependencies]
-standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste"]
-alembic = ["alembic"]
-all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage"]
-tests = ["boltons", "lxml"]
-webserver = ["cornice", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako"]
-waitress = ["cornice", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste"]
-broadcast = ["redis"]
-debug = ["objgraph", "psutil", "coverage"]
-sentry = ["sentry-sdk"]
-oauth2 = ["pyjwt", "requests-oauthlib"]
-dev = ["waitress"]
-test_images = ["scikit-image"]
-
 [tool.ruff]
 target-version = "py311"
 line-length = 110
@@ -228,7 +161,7 @@ test_images = ["scikit-image"]
 
 [tool.poetry.group.dev.dependencies]
 # pylint = { version = "2.15.6" }
-prospector = { version = "1.18.0", extras = ["with_bandit", "with_mypy", "with_pyroma", "with_ruff"] }
+prospector = { version = "1.19.0", extras = ["with_bandit", "with_mypy", "with_pyroma", "with_ruff"] }
 prospector-profile-duplicated = "1.12.0"
 prospector-profile-utils = "1.27.0"
 junit2html = "31.1.4"
@@ -262,3 +195,69 @@ format-jinja = """
 default = "present"
 SQLAlchemy = ">=1.4.0,<3.0.0"
 setuptools = "<81.0.0"
+
+[project]
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Plugins',
+    'Framework :: Pyramid',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+    'Typing :: Typed',
+]
+dynamic = ["dependencies", "version"]
+name = "c2cwsgiutils"
+description = "Common utilities for Camptocamp WSGI applications"
+readme = "README.md"
+keywords = ["geo", "gis", "sqlalchemy", "orm", "wsgi"]
+license = "BSD-2-Clause"
+authors = [{name = "Camptocamp",email = "info@camptocamp.com"}]
+packages = [{ include = "c2cwsgiutils" }]
+include = [
+"c2cwsgiutils/py.typed",
+"c2cwsgiutils/acceptance/screenshot.js",
+"c2cwsgiutils/acceptance/package.json",
+"c2cwsgiutils/acceptance/package-lock.json",
+]
+requires-python = ">=3.11"
+dependencies = ["requests", "pyyaml", "ujson", "cee_syslog_handler", "prometheus-client", "setuptools<81.0.0"]
+
+[project.urls]
+repository = "https://github.com/camptocamp/c2cwsgiutils"
+"Bug Tracker" = "https://github.com/camptocamp/c2cwsgiutils/issues"
+
+[project.scripts]
+c2cwsgiutils-genversion = "c2cwsgiutils.scripts.genversion:main"
+c2cwsgiutils-coverage-report = "c2cwsgiutils.scripts.coverage_report:main"
+c2cwsgiutils-stats-db = "c2cwsgiutils.scripts.stats_db:main"
+c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
+c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
+
+[project.optional-dependencies]
+standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste"]
+alembic = ["alembic"]
+all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage"]
+tests = ["boltons", "lxml"]
+webserver = ["cornice", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako"]
+waitress = ["cornice", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste"]
+broadcast = ["redis"]
+debug = ["objgraph", "psutil", "coverage"]
+sentry = ["sentry-sdk"]
+oauth2 = ["pyjwt", "requests-oauthlib"]
+dev = ["waitress"]
+test_images = ["scikit-image"]
+
+[build-system]
+requires = [
+  "poetry-core>=1.0.0",
+  "poetry-dynamic-versioning[plugin]",
+  "poetry-dynamic-versioning"
+]
+build-backend = "poetry.core.masonry.api"

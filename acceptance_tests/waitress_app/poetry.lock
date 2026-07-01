@@ -441,13 +441,13 @@ files = [
 
 [[package]]
 name = "prospector"
-version = "1.18.0"
+version = "1.19.0"
 description = "Prospector is a tool to analyse Python code by aggregating the result of other tools."
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 files = [
-    {file = "prospector-1.18.0-py3-none-any.whl", hash = "sha256:7ec348c69df9c93e524f75ce98700ea8843b43782c71183fece9c6d7c3598fb9"},
-    {file = "prospector-1.18.0.tar.gz", hash = "sha256:e0d3d8f8601dd86064a120aca93d91bfe30a35b2241ebd84279738d3a1f2f87c"},
+    {file = "prospector-1.19.0-py3-none-any.whl", hash = "sha256:f097ee768024087ea7d118c31d8a9db5bc9e60f9c79b63c8b9596963dab0a7fe"},
+    {file = "prospector-1.19.0.tar.gz", hash = "sha256:c7e0b74daee9b4610b9dc993e07e97d506a7a8ede7d5417dbf4ddc7cee0167e9"},
 ]
 
 [package.dependencies]
@@ -917,4 +917,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "04b3034592593e58af57ce488c40c6e780f3f0a89ed3703878bb90cfd3089940"
+content-hash = "866081f6295ba60c72077f15489922fb76d1f74fe4d03d785a7c61ae87c5fab4"

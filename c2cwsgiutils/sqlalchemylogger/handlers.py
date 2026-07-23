@@ -43,10 +43,16 @@ class SQLAlchemyHandler(logging.Handler):
         else:
             self._start(sqlalchemy_url, does_not_contain_expression, contains_expression)
 
-    def start(self):
+    def start(self) -> None:
+        """Force startup of logger in case of delayed startup"""
         self._start(self.sqlalchemy_url, self.does_not_contain_expression, self.contains_expression)
 
-    def _start(self, sqlalchemy_url, does_not_contain_expression, contains_expression):
+    def _start(
+        self,
+        sqlalchemy_url: dict[str, str],
+        does_not_contain_expression: str,
+        contains_expression: str,
+    ) -> None:
         if self.started:
             # only start once
             return

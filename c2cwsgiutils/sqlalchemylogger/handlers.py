@@ -31,7 +31,6 @@ class SQLAlchemyHandler(logging.Handler):
         sqlalchemy_url: dict[str, str],
         does_not_contain_expression: str = "",
         contains_expression: str = "",
-        delay_startup=False,
     ) -> None:
         """Initialize the SQLAlchemyHandler."""
         super().__init__()

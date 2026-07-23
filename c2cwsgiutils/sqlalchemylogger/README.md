@@ -72,7 +72,7 @@ production.ini
 ```
 [handler_sqlalchemylogger]
 class = c2cwsgiutils.sqlalchemylogger.handlers.SQLAlchemyHandler
-args = ({'url':'postgresql://','tablename':'logs','tableargs': {'schema':'logs'}, 'delay_start': true},'healthcheck')
+args = ({'url':'postgresql://','tablename':'logs','tableargs': {'schema':'logs'}, 'delay_startup': true},'healthcheck')
 level = NOTSET
 formatter = generic
 propagate = 0

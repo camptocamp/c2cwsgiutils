@@ -69,6 +69,7 @@ if __name__ == '__main__':
 snippet for configuration with gunicorn and paste:
 
 production.ini
+
 ```
 [handler_sqlalchemylogger]
 class = c2cwsgiutils.sqlalchemylogger.handlers.SQLAlchemyHandler
@@ -79,6 +80,7 @@ propagate = 0
 ```
 
 gunicorn.conf.py
+
 ```
 def post_fork(server, worker):
     import logging
@@ -87,6 +89,7 @@ def post_fork(server, worker):
 ```
 
 The gunicorn must be started with this config file:
+
 ```
 gunicorn -c gunicorn.conf.py [...]
 ```

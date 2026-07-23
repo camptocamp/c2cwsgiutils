@@ -36,7 +36,7 @@ class SQLAlchemyHandler(logging.Handler):
         """Initialize the SQLAlchemyHandler."""
         super().__init__()
 
-        if delay_startup:
+        if sqlalchemy_url.get('delay_startup', False):
             self.sqlalchemy_url = sqlalchemy_url
             self.does_not_contain_expression = does_not_contain_expression
             self.contains_expression = contains_expression

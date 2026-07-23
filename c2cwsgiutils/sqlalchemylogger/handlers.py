@@ -31,9 +31,22 @@ class SQLAlchemyHandler(logging.Handler):
         sqlalchemy_url: dict[str, str],
         does_not_contain_expression: str = "",
         contains_expression: str = "",
+        delay_startup = False,
     ) -> None:
         """Initialize the SQLAlchemyHandler."""
         super().__init__()
+
+        if delay_startup:
+            self.sqlalchemy_url = sqlalchemy_url
+            self.does_not_contain_expression = does_not_contain_expression
+            self.contains_expression = contains_expression
+        else:
+            self._start(sqlalchemy_url, does_not_contain_expression, contains_expression)
+
+    def start(self):
+        self._start(self.sqlalchemy_url, self.does_not_contain_expression, self.contains_expression)
+        
+    def _start(self, sqlalchemy_url, does_not_contain_expression, contains_expression):
         # Initialize DB session
         self.engine = create_engine(sqlalchemy_url["url"])
         self.Log = create_log_class(  # pylint: disable=invalid-name

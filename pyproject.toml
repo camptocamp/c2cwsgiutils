@@ -256,8 +256,7 @@ test_images = ["scikit-image"]
 
 [build-system]
 requires = [
-  "poetry-core>=1.0.0",
-  "poetry-dynamic-versioning[plugin]",
-  "poetry-dynamic-versioning"
+  "poetry-core==2.4.0",
+  "poetry-dynamic-versioning==1.10.0"
 ]
 build-backend = "poetry.core.masonry.api"

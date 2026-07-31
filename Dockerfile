@@ -1,4 +1,4 @@
-FROM ubuntu:24.04 AS base-all-0
+FROM ubuntu:26.04 AS base-all-0
 LABEL org.opencontainers.image.authors="Camptocamp <info@camptocamp.com>"
 SHELL ["/bin/bash", "-o", "pipefail", "-cux"]
 

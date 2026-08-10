@@ -18,12 +18,16 @@ _REDIS_OPTIONS_KEY = "C2C_REDIS_OPTIONS"
 REDIS_SENTINELS_KEY = "C2C_REDIS_SENTINELS"
 REDIS_SERVICENAME_KEY = "C2C_REDIS_SERVICENAME"
 _REDIS_DB_KEY = "C2C_REDIS_DB"
+_REDIS_PUBSUB_RETRY_DELAY_KEY = "C2C_REDIS_PUBSUB_RETRY_DELAY"
+_REDIS_PUBSUB_GET_MESSAGE_TIMEOUT_KEY = "C2C_REDIS_PUBSUB_GET_MESSAGE_TIMEOUT"
 
 REDIS_URL_KEY_PROP = "c2c.redis_url"
 _REDIS_OPTIONS_KEY_PROP = "c2c.redis_options"
 REDIS_SENTINELS_KEY_PROP = "c2c.redis_sentinels"
 REDIS_SERVICENAME_KEY_PROP = "c2c.redis_servicename"
 _REDIS_DB_KEY_PROP = "c2c.redis_db"
+_REDIS_PUBSUB_RETRY_DELAY_KEY_PROP = "c2c.redis_pubsub_retry_delay"
+_REDIS_PUBSUB_GET_MESSAGE_TIMEOUT_KEY_PROP = "c2c.redis_pubsub_get_message_timeout"
 
 _master: Optional["redis.client.Redis[str]"] = None
 _slave: Optional["redis.client.Redis[str]"] = None
@@ -107,11 +111,30 @@ def _init(settings: Mapping[str, Any] | None) -> None:
 class PubSubWorkerThread(threading.Thread):
     """A clone of redis.client.PubSubWorkerThread that doesn't die when the connections are broken."""
 
-    def __init__(self, pubsub: redis.client.PubSub, name: str | None = None) -> None:
+    def __init__(
+        self,
+        pubsub: redis.client.PubSub,
+        name: str | None = None,
+        settings: Mapping[str, Any] | None = None,
+    ) -> None:
         """Initialize the PubSubWorkerThread."""
         super().__init__(name=name, daemon=True)
         self.pubsub = pubsub
         self._running = False
+        self._retry_delay = c2cwsgiutils.config_utils.env_or_settings(
+            settings,
+            _REDIS_PUBSUB_RETRY_DELAY_KEY,
+            _REDIS_PUBSUB_RETRY_DELAY_KEY_PROP,
+            0.5,
+            float,
+        )
+        self._get_message_timeout = c2cwsgiutils.config_utils.env_or_settings(
+            settings,
+            _REDIS_PUBSUB_GET_MESSAGE_TIMEOUT_KEY,
+            _REDIS_PUBSUB_GET_MESSAGE_TIMEOUT_KEY_PROP,
+            1.0,
+            float,
+        )
 
     def run(self) -> None:
         """Run the worker."""
@@ -122,15 +145,17 @@ class PubSubWorkerThread(threading.Thread):
         last_was_ok = True
         while pubsub.subscribed:
             try:
-                pubsub.get_message(ignore_subscribe_messages=True, timeout=1)
+                pubsub.get_message(
+                    ignore_subscribe_messages=True, timeout=self._get_message_timeout
+                )
                 if not last_was_ok:
-                    _LOG.info("Redis is back")
+                    _LOG.debug("Redis is back")
                     last_was_ok = True
             except redis.exceptions.RedisError:
                 if last_was_ok:
-                    _LOG.warning("Redis connection problem")
+                    _LOG.debug("Redis connection problem")
                 last_was_ok = False
-                time.sleep(0.5)
+                time.sleep(self._retry_delay)
             except Exception:  # noqa: BLE001
                 _LOG.warning("Unexpected error", exc_info=True)
         _LOG.info("Redis subscription worker stopped")

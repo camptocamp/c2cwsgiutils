@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import json
 import subprocess  # nosec
 from pathlib import Path

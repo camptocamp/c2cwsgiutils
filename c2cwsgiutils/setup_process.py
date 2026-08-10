@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """
 Used by standalone (non-wsgi) processes to setup all the bits and pieces of c2cwsgiutils that could be useful.
 

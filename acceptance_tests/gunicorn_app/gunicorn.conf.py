@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 ###
 # app configuration
 # https://docs.gunicorn.org/en/stable/settings.html

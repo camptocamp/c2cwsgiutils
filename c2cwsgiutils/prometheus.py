@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """Every thing we needs to have the metrics in Prometheus."""
 
 import os

@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """Generate statsd metrics for pyramid and SQLAlchemy events."""
 
 import warnings

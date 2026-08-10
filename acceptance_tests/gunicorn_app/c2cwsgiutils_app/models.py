@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import sqlalchemy as sa
 from sqlalchemy.orm import declarative_base
 

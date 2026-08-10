@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 from c2cwsgiutils.stats_pyramid._db_spy import (
     _simplify_sql as simplify_sql,  # pylint: disable=W0212
 )

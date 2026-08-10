@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import re
 from collections.abc import Mapping, MutableMapping
 from enum import Enum

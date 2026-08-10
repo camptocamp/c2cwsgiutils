@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import hashlib
 import logging
 from collections.abc import Mapping

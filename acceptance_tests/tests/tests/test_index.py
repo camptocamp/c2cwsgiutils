@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def test_without_secret(app_connection):
     content = app_connection.get("c2c", cors=False)
     assert "Health checks" in content

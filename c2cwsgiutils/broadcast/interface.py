@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 from abc import abstractmethod
 from collections.abc import Callable, Mapping
 from typing import Any

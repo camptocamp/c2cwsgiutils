@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """Install exception views to have nice JSON error pages."""
 
 import logging

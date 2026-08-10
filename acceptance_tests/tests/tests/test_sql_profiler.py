@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def _switch(app_connection, enable=None):
     params = {"secret": "changeme"}
     if enable is not None:

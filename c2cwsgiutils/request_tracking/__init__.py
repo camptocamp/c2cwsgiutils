@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """
 Allows to track the request_id in the logs, the DB and others.
 
@@ -43,9 +45,9 @@ def _patch_requests() -> None:
         self: requests.adapters.HTTPAdapter,
         request: requests.models.PreparedRequest,
         stream: bool = False,
-        timeout: None | float | tuple[float, float] | tuple[float, None] = None,
+        timeout: float | tuple[float, float] | tuple[float, None] | None = None,
         verify: bool | str = True,
-        cert: None | bytes | str | tuple[bytes | str, bytes | str] = None,
+        cert: bytes | str | tuple[bytes | str, bytes | str] | None = None,
         proxies: Mapping[str, str] | None = None,
     ) -> requests.Response:
         pyramid_request = get_current_request()

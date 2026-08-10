@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import re
 
 _PID_RE = re.compile(r',pid="([0-9]+)"')

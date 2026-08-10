@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """
 Setup an health_check API.
 

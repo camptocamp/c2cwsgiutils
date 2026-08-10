@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """
 A view (URL=/sql_provider) allowing to enabled/disable a SQL spy.
 

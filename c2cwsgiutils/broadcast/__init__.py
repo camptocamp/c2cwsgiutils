@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """Broadcast messages to all the processes of Gunicorn in every containers."""
 
 import functools

@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def test_ok(app_connection):
     params = {"secret": "changeme"}
     response = app_connection.get_json("c2c/versions.json", params=params, cors=False)

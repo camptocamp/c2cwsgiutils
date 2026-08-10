@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 """SQLalchemy models."""
 
 import logging

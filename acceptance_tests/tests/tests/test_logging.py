@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import logging
 
 _LOG = logging.getLogger(__name__)

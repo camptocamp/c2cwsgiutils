@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026, Camptocamp SA
+
 """Provide prometheus gauges for every tables of a database."""
 
 import argparse

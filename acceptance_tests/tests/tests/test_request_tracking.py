@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def test_auto_requests(app_connection):
     result = app_connection.get_json("tracking/1")
     assert result["request_id"] == result["sub"]["request_id"]

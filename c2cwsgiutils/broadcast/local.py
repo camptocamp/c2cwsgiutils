@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 from collections.abc import Callable, Mapping, MutableMapping
 from typing import Any
 

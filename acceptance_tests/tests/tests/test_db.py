@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def test_slave(app_connection, slave_db_connection):
     assert app_connection.get_json("hello") == {"value": "slave"}
 

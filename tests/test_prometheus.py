@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import pytest
 
 from c2cwsgiutils.prometheus import PushgatewayGroupPublisher

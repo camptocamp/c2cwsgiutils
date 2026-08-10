@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import inspect
 import sys
 from typing import Any

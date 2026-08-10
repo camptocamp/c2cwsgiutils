@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import logging
 import subprocess  # nosec
 from pathlib import Path

@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 from pyramid.config import Configurator
 from pyramid.httpexceptions import HTTPInternalServerError
 

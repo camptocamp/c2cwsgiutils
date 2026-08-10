@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026, Camptocamp SA
+
 import json
 import logging
 import os

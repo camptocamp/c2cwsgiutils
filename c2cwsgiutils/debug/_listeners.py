@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 import gc
 import sys
 import threading

@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def test_get_hello(composition):
     logs = composition.exec("app", "get-hello").splitlines()
     logs = [o for o in logs if not o.startswith("{")]

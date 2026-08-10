@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 from unittest.mock import patch
 
 from c2cwsgiutils import get_config_defaults

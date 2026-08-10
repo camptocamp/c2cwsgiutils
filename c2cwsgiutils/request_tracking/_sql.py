@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Camptocamp SA
+
 from typing import Any
 
 import sqlalchemy.event

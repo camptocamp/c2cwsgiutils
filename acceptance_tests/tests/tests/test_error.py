@@ -1,3 +1,6 @@
+# Copyright (c) 2026, Camptocamp SA
+
+
 def test_not_found(app_connection):
     error = app_connection.get_json("inexistent", expected_status=404)
     print("error=" + repr(error))

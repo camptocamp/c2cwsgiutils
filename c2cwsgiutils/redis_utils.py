@@ -130,9 +130,7 @@ class PubSubWorkerThread(threading.Thread):
         last_was_ok = True
         while pubsub.subscribed:
             try:
-                pubsub.get_message(
-                    ignore_subscribe_messages=True, timeout=self._get_message_timeout
-                )
+                pubsub.get_message(ignore_subscribe_messages=True, timeout=self._get_message_timeout)
                 if not last_was_ok:
                     LOG.debug("Redis is back")
                     last_was_ok = True

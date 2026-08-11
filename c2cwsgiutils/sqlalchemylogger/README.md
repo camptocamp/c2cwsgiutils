@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
 ## Use with forking server (ex: `gunicorn`)
 
-snippet for configuration with gunicorn and paste:
+Snippet for configuration with `gunicorn` and `paste`:
 
 production.ini
 

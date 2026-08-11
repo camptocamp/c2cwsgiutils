@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
 Snippet for configuration with `gunicorn` and `paste`:
 
-production.ini
+`production.ini`:
 
 ```
 [handler_sqlalchemylogger]

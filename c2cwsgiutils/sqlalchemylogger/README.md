@@ -79,7 +79,7 @@ formatter = generic
 propagate = 0
 ```
 
-gunicorn.conf.py
+`gunicorn.conf.py`:
 
 ```python
 def post_fork(server, worker):

@@ -81,7 +81,7 @@ propagate = 0
 
 gunicorn.conf.py
 
-```
+```python
 def post_fork(server, worker):
     import logging
     logger = logging.getHandlerByName('sqlalchemylogger')

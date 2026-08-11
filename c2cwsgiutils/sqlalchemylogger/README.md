@@ -64,7 +64,7 @@ if __name__ == '__main__':
     time.sleep(2)
 ```
 
-# Use with forking server (ex: gunicorn)
+## Use with forking server (ex: `gunicorn`)
 
 snippet for configuration with gunicorn and paste:
 

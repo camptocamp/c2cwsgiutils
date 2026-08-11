@@ -90,6 +90,6 @@ def post_fork(server, worker):
 
 The gunicorn must be started with this config file:
 
-```
+```bash
 gunicorn -c gunicorn.conf.py [...]
 ```

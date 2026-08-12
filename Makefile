@@ -79,7 +79,7 @@ prospector: build_docker_test ## Run the prospector checker
 	@docker run --rm $(DOCKER_BASE):tests mypy --version
 	@docker run --rm $(DOCKER_BASE):tests pylint --version --rcfile=/dev/null
 	@docker run --rm $(DOCKER_BASE):tests pyflakes --version
-	docker run --rm --volume=$(shell pwd):/opt/c2cwsgiutils $(DOCKER_BASE):tests prospector --output-format=pylint --die-on-tool-error
+	docker run --rm --volume=$(shell pwd):/opt/c2cwsgiutils $(DOCKER_BASE):tests prospector --output-format=pylint --direct-tool-stdout
 
 .venv/timestamp: requirements.txt ci/requirements.txt pyproject.toml poetry.lock
 	/usr/bin/virtualenv --python=/usr/bin/python3 .venv

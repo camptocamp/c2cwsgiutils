@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 110
-target-version = ["py39"]
+target-version = ["py310"]
 
 [tool.isort]
 profile = "black"
@@ -8,7 +8,7 @@ line_length = 110
 known_local_folder = ["c2cwsgiutils_app"]
 
 [tool.mypy]
-python_version = 3.9
+python_version = "3.10"
 ignore_missing_imports = true
 warn_redundant_casts = true
 warn_unused_ignores = true
@@ -21,10 +21,15 @@ version = "0.1.0"
 description = "Test application for c2cwsgiutils"
 authors = ["Camptocamp <info@camptocamp.com>"]
 classifiers = [
-  "Programming Language :: Python",
-  "Framework :: Pyramid",
-  "Topic :: Internet :: WWW/HTTP",
-  "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+    'Framework :: Pyramid',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Topic :: Internet :: WWW/HTTP',
+    'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
 ]
 packages = [{ include = "c2cwsgiutils_app" }]
 

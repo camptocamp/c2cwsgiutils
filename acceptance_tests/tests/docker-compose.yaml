@@ -38,6 +38,11 @@ services:
       - db
       - db_slave
       - redis
+    depends_on:
+      alembic_master:
+        condition: service_completed_successfully
+      alembic_slave:
+        condition: service_completed_successfully
     ports:
       - 8480:8080
 
@@ -90,6 +95,9 @@ services:
       - OTHER_LOG_LEVEL=INFO
     links:
       - db
+    depends_on:
+      db:
+        condition: service_healthy
     command:
       - /app/run-alembic
 
@@ -103,6 +111,9 @@ services:
       - OTHER_LOG_LEVEL=INFO
     links:
       - db_slave:db
+    depends_on:
+      db_slave:
+        condition: service_healthy
     command:
       - /app/run-alembic
 
@@ -113,6 +124,10 @@ services:
       POSTGRES_PASSWORD: www-data
       POSTGRES_DB: test
     command: postgres -c log_line_prefix="%a " -c log_statement=all
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U www-data -d test"]
+      interval: 1s
+      retries: 30
 
   db_slave: *db
 
@@ -126,6 +141,11 @@ services:
     links:
       - db
       - redis
+    depends_on:
+      alembic_master:
+        condition: service_completed_successfully
+      alembic_slave:
+        condition: service_completed_successfully
     ports:
       - 9098:9090
 
@@ -171,6 +191,11 @@ services:
     links:
       - db
       - redis
+    depends_on:
+      alembic_master:
+        condition: service_completed_successfully
+      alembic_slave:
+        condition: service_completed_successfully
     ports:
       - 9099:9090
 
@@ -208,6 +233,11 @@ services:
     working_dir: /acceptance_tests
     environment:
       - WAITRESS
+    depends_on:
+      app:
+        condition: service_started
+      app2:
+        condition: service_started
     command:
       - tail
       - -f

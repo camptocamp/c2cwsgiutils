@@ -39,10 +39,14 @@ max_sleep = 60
 
 if __name__ == "__main__":
     # Get the alembic head revision
-    head = subprocess.check_output(
-        ["alembic", "--config", "/app/alembic.ini", "heads"],  # noqa: S607
-        text=True,
-    ).splitlines()[0].split()[0]
+    head = (
+        subprocess.check_output(
+            ["alembic", "--config", "/app/alembic.ini", "heads"],  # noqa: S607
+            text=True,
+        )
+        .splitlines()[0]
+        .split()[0]
+    )
     # wait for the alembic migrations to be applied on both databases
     nb_success = 0
     for db in ("db", "db_slave"):

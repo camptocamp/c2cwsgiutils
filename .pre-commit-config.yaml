@@ -113,7 +113,7 @@ repos:
             |\.github/ghci\.yaml
           )$
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.14.0
+    rev: 44.14.1
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/sbrunner/python-versions-hook

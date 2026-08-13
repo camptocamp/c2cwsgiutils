@@ -125,7 +125,7 @@ services:
       POSTGRES_DB: test
     command: postgres -c log_line_prefix="%a " -c log_statement=all
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U www-data -d test"]
+      test: ['CMD-SHELL', 'pg_isready -U www-data -d test']
       interval: 1s
       retries: 30
 

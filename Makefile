@@ -37,6 +37,7 @@ acceptance-run: tests build_test_app  ## Start the application used to run the a
 	cd acceptance_tests/tests/; docker compose up --detach db db_slave
 	cd acceptance_tests/tests/; docker compose run -T --no-deps app /app/scripts/wait-db
 	cd acceptance_tests/tests/; docker compose up --detach
+	cd acceptance_tests/tests/; docker compose run -T --no-deps app /app/scripts/wait-alembic
 
 .PHONY: acceptance-in
 acceptance-in: acceptance-run  ## Run the internal acceptance tests

@@ -3684,4 +3684,4 @@ webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "psycopg2"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "d6ffab2ec63d4f590badc8c5ef2d1770599befcd4ac8f91e076697a231112216"
+content-hash = "5338a7989b01fb56af5775842607187c8488fd73c215f0d5993b8a9bd827cdcf"

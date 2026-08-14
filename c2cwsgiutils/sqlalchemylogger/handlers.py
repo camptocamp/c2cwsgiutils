@@ -36,6 +36,29 @@ class SQLAlchemyHandler(logging.Handler):
     ) -> None:
         """Initialize the SQLAlchemyHandler."""
         super().__init__()
+
+        self.started = False
+        if sqlalchemy_url.get("delay_startup", False):
+            self.sqlalchemy_url = sqlalchemy_url
+            self.does_not_contain_expression = does_not_contain_expression
+            self.contains_expression = contains_expression
+        else:
+            self._start(sqlalchemy_url, does_not_contain_expression, contains_expression)
+
+    def start(self) -> None:
+        """Force startup of logger in case of delayed startup."""
+        self._start(self.sqlalchemy_url, self.does_not_contain_expression, self.contains_expression)
+
+    def _start(
+        self,
+        sqlalchemy_url: dict[str, str],
+        does_not_contain_expression: str,
+        contains_expression: str,
+    ) -> None:
+        if self.started:
+            # only start once
+            return
+
         # Initialize DB session
         self.engine = create_engine(sqlalchemy_url["url"])
         self.Log = create_log_class(  # pylint: disable=invalid-name
@@ -55,6 +78,7 @@ class SQLAlchemyHandler(logging.Handler):
             self.addFilter(DoesNotContainExpression(does_not_contain_expression))
         if contains_expression:
             self.addFilter(ContainsExpression(contains_expression))
+        self.started = True
 
     def _processor(self) -> None:
         _LOG.debug("%s: starting processor thread", __name__)

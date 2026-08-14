@@ -32,6 +32,12 @@ jobs:
         with:
           ref: ${{ matrix.branch }}
 
+      - uses: camptocamp/initialise-gopass-summon-action@v2
+        with:
+          ci-gpg-private-key: ${{secrets.CI_GPG_PRIVATE_KEY}}
+          github-gopass-ci-token: ${{secrets.GOPASS_CI_GITHUB_TOKEN}}
+          patterns: docker
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'

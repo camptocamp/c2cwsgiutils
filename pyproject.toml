@@ -42,18 +42,18 @@ alembic = { version = "1.19.1", optional = true }
 boltons = { version = "26.1.0", optional = true }
 cornice = { version = "6.1.0", optional = true }
 redis = { version = "8.1.0", optional = true }
-gunicorn = { version = "26.0.0", optional = true }
-lxml = { version = "6.1.1", optional = true }
+gunicorn = { version = "26.2.0", optional = true }
+lxml = { version = "6.1.2", optional = true }
 objgraph = { version = "3.6.2", optional = true }
 psycopg2 = { version = "2.9.12", optional = true }
 pyramid = { version = "2.1", optional = true }
 pyramid-tm = { version = "2.6", optional = true }
-sentry-sdk = { version = "2.68.0", optional = true }
+sentry-sdk = { version = "2.68.1", optional = true }
 ujson = { version = "5.13.0" }
 cee_syslog_handler = { version = "0.6.0" }
 SQLAlchemy = { version = "2.0.52", optional = true }
 SQLAlchemy-Utils = { version = "0.42.1", optional = true }
-"zope.interface" = { version = "8.5", optional = true }
+"zope.interface" = { version = "8.6", optional = true }
 "zope.sqlalchemy" = { version = "4.1", optional = true }
 pyjwt = { version = "2.13.0", optional = true }
 requests-oauthlib = { version = "2.0.0", optional = true }
@@ -168,7 +168,7 @@ junit2html = "31.1.4"
 pytest = "9.1.1"
 pytest-cov = "7.1.0"
 pytest-html = "4.2.0"
-types-pyyaml = "6.0.12.20260724"
+types-pyyaml = "6.0.12.20260815"
 types-requests = "2.33.0.20260712"
 types-redis = "4.6.0.20241004"
 types-ujson = "5.10.0.20250822"
@@ -258,7 +258,7 @@ test_images = ["scikit-image"]
 
 [build-system]
 requires = [
-  "poetry-core==2.4.0",
+  "poetry-core==2.4.1",
   "poetry-dynamic-versioning[plugin]==1.10.0"
 ]
 build-backend = "poetry.core.masonry.api"

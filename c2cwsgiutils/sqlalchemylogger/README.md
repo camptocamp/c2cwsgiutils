@@ -63,3 +63,33 @@ if __name__ == '__main__':
     # logs after a timeout
     time.sleep(2)
 ```
+
+## Use with forking server (ex: `gunicorn`)
+
+Snippet for configuration with `gunicorn` and `paste`:
+
+`production.ini`:
+
+```
+[handler_sqlalchemylogger]
+class = c2cwsgiutils.sqlalchemylogger.handlers.SQLAlchemyHandler
+args = ({'url':'postgresql://','tablename':'logs','tableargs': {'schema':'logs'}, 'delay_startup': True},'healthcheck')
+level = NOTSET
+formatter = generic
+propagate = 0
+```
+
+`gunicorn.conf.py`:
+
+```python
+def post_fork(server, worker):
+    import logging
+    logger = logging.getHandlerByName('sqlalchemylogger')
+    logger.start()
+```
+
+The gunicorn must be started with this config file:
+
+```bash
+gunicorn -c gunicorn.conf.py [...]
+```

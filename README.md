@@ -200,6 +200,7 @@ To enable most of the features of c2cwsgiutils, you need to add this line to you
 
 ```python
 import c2cwsgiutils.pyramid
+
 config.include(c2cwsgiutils.pyramid.includeme)
 ```
 
@@ -296,7 +297,7 @@ Or with the `with` statement:
 ```python
 from c2cwsgiutils.profile import Profiler
 
-with Profile('/my_file.prof'):
+with Profile("/my_file.prof"):
     ...
 ```
 
@@ -333,10 +334,9 @@ And your code that initializes the DB connection must look like that:
 ```python
 import c2cwsgiutils.db
 
+
 def main(config):
-    c2cwsgiutils.db.init(config, 'sqlalchemy', 'sqlalchemy_slave', force_slave=[
-        "POST /api/hello"
-    ])[0]
+    c2cwsgiutils.db.init(config, "sqlalchemy", "sqlalchemy_slave", force_slave=["POST /api/hello"])[0]
 ```
 
 You can use the `force_slave` and `force_master` parameters to override the defaults and force a route to use
@@ -350,17 +350,19 @@ setup). For example:
 ```python
 from c2cwsgiutils.health_check import HealthCheck
 
+
 def custom_check(request):
     global not_happy
     if not_happy:
         raise Exception("I'm not happy")
     return "happy"
 
+
 health_check = HealthCheck(config)
 health_check.add_db_session_check(models.DBSession, at_least_one_model=models.Hello)
-health_check.add_url_check('http://localhost:8080/api/hello')
-health_check.add_custom_check('custom', custom_check, 2)
-health_check.add_alembic_check(models.DBSession, '/app/alembic.ini', 3)
+health_check.add_url_check("http://localhost:8080/api/hello")
+health_check.add_custom_check("custom", custom_check, 2)
+health_check.add_alembic_check(models.DBSession, "/app/alembic.ini", 3)
 ```
 
 Then, the URL `{C2C_BASE_PATH}/health_check?max_level=3` can be used to run the health checks and get a report
@@ -601,11 +603,13 @@ To have CORS compliant views, define your views like that:
 
 ```python
 from c2cwsgiutils import services
+
 hello_service = services.create("hello", "/hello", cors_credentials=True)
+
 
 @hello_service.get()
 def hello_get(request):
-    return {'hello': True}
+    return {"hello": True}
 ```
 
 ## Waitress
@@ -788,6 +792,7 @@ To do the image test call `check_screenshot` e.g.:
 
 ```python
 from c2cwsgiutils.acceptance import image
+
 
 def test_screenshot(app_connection):
     image.check_screenshot(

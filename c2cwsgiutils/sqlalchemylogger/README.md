@@ -10,6 +10,7 @@ or create a new logger by calling the `logging.getlogger` method.
 import logging
 from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 
+
 def _setup_sqlalchemy_logger():
     """
     Setup sqlalchemy logger.
@@ -26,8 +27,11 @@ def _setup_sqlalchemy_logger():
     )
     logger.addHandler(handler)
 
+
 def main(_, **settings):
-   _setup_sqlalchemy_logger ()
+    _setup_sqlalchemy_logger()
+
+
 ...
 ```
 
@@ -49,16 +53,16 @@ import time
 
 from c2cwsgiutils.sqlalchemylogger.handlers import SQLAlchemyHandler
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
-        format='%(asctime)s : %(name)s : %(levelname)s : %(message)s',
+        format="%(asctime)s : %(name)s : %(levelname)s : %(message)s",
         level=logging.DEBUG,
     )
     logger = logging.getLogger(__name__)
-    logger_db_engine = {'url':'sqlite:///logger_db.sqlite3'}
+    logger_db_engine = {"url": "sqlite:///logger_db.sqlite3"}
 
     logger.addHandler(SQLAlchemyHandler(logger_db_engine))
-    logger.info('bla')
+    logger.info("bla")
     # wait a few seconds because the second thread will write the
     # logs after a timeout
     time.sleep(2)
@@ -84,7 +88,8 @@ propagate = 0
 ```python
 def post_fork(server, worker):
     import logging
-    logger = logging.getHandlerByName('sqlalchemylogger')
+
+    logger = logging.getHandlerByName("sqlalchemylogger")
     logger.start()
 ```
 

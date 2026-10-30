@@ -1,6 +1,6 @@
 This module is used to ship logging records to an SQL database.
 
-Currently only `sqlite` and `postgres_psycopg2` are fully supported.
+Currently only `sqlite` and PostgreSQL with `psycopg` (version 3) are fully supported.
 
 To add the handler, setup it directly in your app's main function. You
 can add it to an existing logger (setup in you `.ini` file),
@@ -19,7 +19,7 @@ def _setup_sqlalchemy_logger():
     handler = SQLAlchemyHandler(
         sqlalchemy_url={
             # "url": "sqlite:///logger_db.sqlite3",
-            "url": "postgresql://postgres:password@localhost:5432/test",
+            "url": "postgresql+psycopg://postgres:password@localhost:5432/test",
             "tablename": "test",
             "tableargs": {"schema": "xyz"},
         },

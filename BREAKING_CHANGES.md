@@ -1,5 +1,12 @@
 # Changelog
 
+## Release 7.0
+
+- `psycopg2` is replaced by `psycopg` (version 3). The `standard`, `webserver`, `waitress` and `all`
+  extras now install `psycopg` instead of `psycopg2`. Use `postgresql+psycopg://` in your SQLAlchemy
+  URLs, or upgrade to SQLAlchemy 2.1 or newer where `postgresql://` uses `psycopg` by default.
+- The minimum supported SQLAlchemy version is now 2.1, and SQLAlchemy-Utils 0.43 is required.
+
 ## Release 6.1
 
 - The `handlers` in the `.ini` files don't support `args` anymore. You must use `kwargs`

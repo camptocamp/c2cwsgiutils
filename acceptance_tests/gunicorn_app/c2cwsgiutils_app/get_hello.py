@@ -2,7 +2,7 @@
 
 import argparse
 
-import psycopg2
+import psycopg
 import transaction
 
 import c2cwsgiutils.db
@@ -12,8 +12,8 @@ from c2cwsgiutils_app import models
 
 def _fill_db():
     for db, value in (("db", "master"), ("db_slave", "slave")):
-        connection = psycopg2.connect(
-            database="test",
+        connection = psycopg.connect(
+            dbname="test",
             user="www-data",
             password="www-data",  # noqa: S106
             host=db,

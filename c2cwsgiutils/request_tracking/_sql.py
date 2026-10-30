@@ -11,7 +11,7 @@ def _add_session_id(session: Session, _transaction: Any) -> None:
     request = get_current_request()
     if request is not None:
         session.execute(
-            sqlalchemy.text("set application_name=:session_id"),
+            sqlalchemy.text("SELECT set_config('application_name', :session_id, false)"),
             params={"session_id": request.c2c_request_id},
         )
 

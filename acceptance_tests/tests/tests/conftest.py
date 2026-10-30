@@ -2,7 +2,7 @@
 
 import logging
 
-import psycopg2
+import psycopg
 import pytest
 
 from c2cwsgiutils.acceptance import utils
@@ -90,8 +90,8 @@ def _create_table(master):
 
 def _connect(master):
     return utils.retry_timeout(
-        lambda: psycopg2.connect(
-            database="test",
+        lambda: psycopg.connect(
+            dbname="test",
             user="www-data",
             password="www-data",  # noqa: S106
             host="db" if master else "db_slave",

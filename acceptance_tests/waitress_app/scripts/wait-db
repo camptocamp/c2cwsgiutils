@@ -31,7 +31,7 @@
 import sys
 import time
 
-import psycopg2
+import psycopg
 
 sleep_time = 1
 max_sleep = 60
@@ -40,10 +40,11 @@ if __name__ == "__main__":
     # wait for the WSGI to be UP
     nb_success = 0
     for db in ("db", "db_slave"):
+        sleep_time = 1
         while sleep_time < max_sleep:
             print(f"Waiting for the DataBase server '{db}' to be reachable")
             try:
-                connection = psycopg2.connect(host=db, password="www-data", user="www-data", database="test")  # noqa: S106
+                connection = psycopg.connect(host=db, password="www-data", user="www-data", dbname="test")  # noqa: S106
                 cursor = connection.cursor()
                 cursor.execute("SELECT 1")
                 nb_success += 1

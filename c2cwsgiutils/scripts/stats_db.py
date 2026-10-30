@@ -270,7 +270,7 @@ def _do_dtats_db(args: argparse.Namespace) -> None:
     SELECT table_schema, table_name FROM information_schema.tables
     WHERE table_type='BASE TABLE' AND table_schema IN :schemas
     """,
-        ),
+        ).bindparams(sqlalchemy.bindparam("schemas", expanding=True)),
         params={"schemas": tuple(args.schema)},
     ).fetchall()
     for schema, table in tables:

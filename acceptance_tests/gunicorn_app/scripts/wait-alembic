@@ -32,7 +32,7 @@ import subprocess
 import sys
 import time
 
-import psycopg2
+import psycopg
 
 sleep_time = 1
 max_sleep = 60
@@ -50,10 +50,11 @@ if __name__ == "__main__":
     # wait for the alembic migrations to be applied on both databases
     nb_success = 0
     for db in ("db", "db_slave"):
+        sleep_time = 1
         while sleep_time < max_sleep:
             print(f"Waiting for the alembic migration '{head}' on '{db}'")
             try:
-                connection = psycopg2.connect(host=db, password="www-data", user="www-data", database="test")  # noqa: S106
+                connection = psycopg.connect(host=db, password="www-data", user="www-data", dbname="test")  # noqa: S106
                 cursor = connection.cursor()
                 cursor.execute("SELECT version_num FROM alembic_version")
                 versions = [row[0] for row in cursor.fetchall()]

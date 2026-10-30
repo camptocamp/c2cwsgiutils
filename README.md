@@ -82,11 +82,11 @@ health_check.add_alembic_check(dbsession, "/app/alembic.ini", 1)
 The related environment variables:
 
 - `DEVELOPMENT`: set to `1` to enable the development mode, default is `0`.
-- `SQLALCHEMY_URL`: SQL alchemy URL, like `postgresql://user:password@host:port/dbname`.
+- `SQLALCHEMY_URL`: SQL alchemy URL, like `postgresql+psycopg://user:password@host:port/dbname`.
 - `SQLALCHEMY_POOL_RECYCLE`: The SQL alchemy pool recycle, default is `30`.
 - `SQLALCHEMY_POOL_SIZE`: The SQL alchemy pool size, default is `5`.
 - `SQLALCHEMY_MAX_OVERFLOW`: SQL alchemy max overflow, default is `25`.
-- `SQLALCHEMY_SLAVE_URL`: The SQL alchemy slave (read only) URL, like `postgresql://user:password@host:port/dbname`.
+- `SQLALCHEMY_SLAVE_URL`: The SQL alchemy slave (read only) URL, like `postgresql+psycopg://user:password@host:port/dbname`.
 - `SQLALCHEMY_SLAVE_POOL_RECYCLE`: The SQL alchemy slave pool recycle, default is `30`.
 - `SQLALCHEMY_SLAVE_POOL_SIZE`: The SQL alchemy slave pool size, default is `5`.
 - `SQLALCHEMY_SLAVE_MAX_OVERFLOW`: The SQL alchemy slave max overflow, default is `25`.

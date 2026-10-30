@@ -3,8 +3,16 @@
 set -eu
 
 # wait for the DB to be UP
-while ! echo "import sqlalchemy; sqlalchemy.create_engine('${SQLALCHEMY_URL}').connect()" | python3 2> /dev/null; do
-  echo "Waiting for the DB to be reachable"
+max_attempts=60
+for attempt in {1..60}; do
+  if echo "import sqlalchemy; sqlalchemy.create_engine('${SQLALCHEMY_URL}').connect()" | python3; then
+    break
+  fi
+  echo "Waiting for the DB to be reachable (${attempt}/${max_attempts})"
+  if [[ ${attempt} -eq ${max_attempts} ]]; then
+    echo "The database is not reachable after ${max_attempts} attempts" >&2
+    exit 1
+  fi
   sleep 1
 done
 

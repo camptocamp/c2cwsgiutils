@@ -38,21 +38,21 @@ python = ">=3.11,<4.0"
 requests = { version = "2.34.2" }
 pyyaml = { version = "6.0.3" }
 setuptools = "80.9.0"
-alembic = { version = "1.19.1", optional = true }
-boltons = { version = "26.1.0", optional = true }
+alembic = { version = "1.20.0", optional = true }
+boltons = { version = "26.2.0", optional = true }
 cornice = { version = "6.1.0", optional = true }
 redis = { version = "8.1.0", optional = true }
 gunicorn = { version = "26.2.0", optional = true }
-lxml = { version = "6.1.2", optional = true }
+lxml = { version = "6.1.3", optional = true }
 objgraph = { version = "3.6.2", optional = true }
-psycopg2 = { version = "2.9.12", optional = true }
+psycopg = { version = "3.3.6", extras = ["binary"], optional = true }
 pyramid = { version = "2.1", optional = true }
 pyramid-tm = { version = "2.6", optional = true }
-sentry-sdk = { version = "2.68.1", optional = true }
+sentry-sdk = { version = "2.70.0", optional = true }
 ujson = { version = "6.0.0" }
 cee_syslog_handler = { version = "0.6.0" }
-SQLAlchemy = { version = "2.0.52", optional = true }
-SQLAlchemy-Utils = { version = "0.42.1", optional = true }
+SQLAlchemy = { version = "2.1.6", optional = true }
+SQLAlchemy-Utils = { version = "0.43.0", optional = true }
 "zope.interface" = { version = "8.6", optional = true }
 "zope.sqlalchemy" = { version = "4.1", optional = true }
 pyjwt = { version = "2.15.0", optional = true }
@@ -63,7 +63,7 @@ prometheus-client = { version = "0.26.0", optional = true}
 pyramid_mako = { version = "1.1.0", optional = true}
 psutil = { version = "7.2.2", optional = true}
 Paste = { version = "3.10.1", optional = true}
-coverage = { version = "7.15.4", optional = true}
+coverage = { version = "7.16.2", optional = true}
 
 [tool.poetry.extras]
 standard = [
@@ -79,7 +79,7 @@ standard = [
   # webserver
   "cornice",
   "gunicorn",
-  "psycopg2",
+  "psycopg",
   "pyramid",
   "pyramid-tm",
   "SQLAlchemy",
@@ -101,7 +101,7 @@ broadcast = ["redis"]
 webserver = [
   "cornice",
   "gunicorn",
-  "psycopg2",
+  "psycopg",
   "pyramid",
   "pyramid-tm",
   "SQLAlchemy",
@@ -114,7 +114,7 @@ waitress = [
   "waitress",
   "Paste",
   "cornice",
-  "psycopg2",
+  "psycopg",
   "pyramid",
   "pyramid-tm",
   "SQLAlchemy",
@@ -141,7 +141,7 @@ all = [
   # webserver
   "cornice",
   "gunicorn",
-  "psycopg2",
+  "psycopg",
   "pyramid",
   "pyramid-tm",
   "SQLAlchemy",
@@ -168,8 +168,8 @@ junit2html = "31.1.4"
 pytest = "9.1.1"
 pytest-cov = "7.1.0"
 pytest-html = "4.2.0"
-types-pyyaml = "6.0.12.20260815"
-types-requests = "2.33.0.20260712"
+types-pyyaml = "6.0.12.20260906"
+types-requests = "2.33.0.20260906"
 types-redis = "4.6.0.20241004"
 types-ujson = "5.10.0.20250822"
 types-python-dateutil = "2.9.0.20260807"
@@ -195,7 +195,8 @@ format-jinja = """
 
 [tool.poetry-plugin-tweak-dependencies-version]
 default = "present"
-SQLAlchemy = ">=1.4.0,<3.0.0"
+SQLAlchemy = ">=2.1.0,<3.0.0"
+psycopg = ">=3.2,<4.0"
 setuptools = "<81.0.0"
 
 [project]
@@ -243,12 +244,12 @@ c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
 c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
 
 [project.optional-dependencies]
-standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste"]
+standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg[binary]>=3.2,<4.0", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste"]
 alembic = ["alembic"]
-all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage"]
+all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg[binary]>=3.2,<4.0", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage"]
 tests = ["boltons", "lxml"]
-webserver = ["cornice", "gunicorn", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako"]
-waitress = ["cornice", "psycopg2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=1.4.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste"]
+webserver = ["cornice", "gunicorn", "psycopg[binary]>=3.2,<4.0", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako"]
+waitress = ["cornice", "psycopg[binary]>=3.2,<4.0", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste"]
 broadcast = ["redis"]
 debug = ["objgraph", "psutil", "coverage"]
 sentry = ["sentry-sdk"]
@@ -258,7 +259,7 @@ test_images = ["scikit-image"]
 
 [build-system]
 requires = [
-  "poetry-core==2.4.0",
+  "poetry-core==2.5.0",
   "poetry-dynamic-versioning[plugin]==1.10.0"
 ]
 build-backend = "poetry.core.masonry.api"

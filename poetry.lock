@@ -2198,6 +2198,24 @@ files = [
 ]
 
 [[package]]
+name = "prometheus-client"
+version = "0.26.0"
+description = "Python client for the Prometheus monitoring system."
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"standard\" or extra == \"all\" or extra == \"webserver\" or extra == \"waitress\""
+files = [
+    {file = "prometheus_client-0.26.0-py3-none-any.whl", hash = "sha256:fa93d06737aa02bacd05794768508bb97d2fbee28cb3bca04eaae92f0ca953d6"},
+    {file = "prometheus_client-0.26.0.tar.gz", hash = "sha256:04a91bcf94e2cf74a44a1a874d651a2e853ed354b6e822f3b7487751465d5c2b"},
+]
+
+[package.extras]
+aiohttp = ["aiohttp"]
+django = ["django"]
+twisted = ["twisted"]
+
+[[package]]
 name = "prospector"
 version = "1.20.0"
 description = "Prospector is a tool to analyse Python code by aggregating the result of other tools."
@@ -4049,19 +4067,19 @@ test = ["zope.testing"]
 
 [extras]
 alembic = ["alembic"]
-all = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "alembic", "boltons", "cornice", "coverage", "gunicorn", "lxml", "objgraph", "psutil", "psycopg", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
+all = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "alembic", "boltons", "cornice", "coverage", "gunicorn", "lxml", "objgraph", "prometheus-client", "psutil", "psycopg", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
 broadcast = ["redis"]
 debug = ["coverage", "objgraph", "psutil"]
 dev = ["waitress"]
 oauth2 = ["pyjwt", "requests-oauthlib"]
 sentry = ["sentry-sdk"]
-standard = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "alembic", "cornice", "gunicorn", "psycopg", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
+standard = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "alembic", "cornice", "gunicorn", "prometheus-client", "psycopg", "pyjwt", "pyramid", "pyramid-tm", "pyramid_mako", "redis", "requests-oauthlib", "sentry-sdk", "waitress", "zope.interface", "zope.sqlalchemy"]
 test-images = ["scikit-image"]
 tests = ["boltons", "lxml"]
-waitress = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "cornice", "psycopg", "pyramid", "pyramid-tm", "pyramid_mako", "waitress", "zope.interface", "zope.sqlalchemy"]
-webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "psycopg", "pyramid", "pyramid-tm", "pyramid_mako", "zope.interface", "zope.sqlalchemy"]
+waitress = ["Paste", "SQLAlchemy", "SQLAlchemy-Utils", "cornice", "prometheus-client", "psycopg", "pyramid", "pyramid-tm", "pyramid_mako", "waitress", "zope.interface", "zope.sqlalchemy"]
+webserver = ["SQLAlchemy", "SQLAlchemy-Utils", "cornice", "gunicorn", "prometheus-client", "psycopg", "pyramid", "pyramid-tm", "pyramid_mako", "zope.interface", "zope.sqlalchemy"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "3d426b0b9df3b690f8611f116591c133bf00d0e4401baf77e09396d2dcb20be3"
+content-hash = "b97698741a8b8f7ceb59f5156da21c8783e7934cc9c5fcf4ed37457d23977601"

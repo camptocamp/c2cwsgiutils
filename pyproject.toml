@@ -86,7 +86,7 @@ standard = [
   "SQLAlchemy-Utils",
   "zope.interface",
   "zope.sqlalchemy",
-  "prometheus_client",
+  "prometheus-client",
   "pyramid_mako",
   # waitress
   "waitress",
@@ -108,7 +108,7 @@ webserver = [
   "SQLAlchemy-Utils",
   "zope.interface",
   "zope.sqlalchemy",
-  "prometheus_client",
+  "prometheus-client",
   "pyramid_mako"]
 waitress = [
   "waitress",
@@ -121,7 +121,7 @@ waitress = [
   "SQLAlchemy-Utils",
   "zope.interface",
   "zope.sqlalchemy",
-  "prometheus_client",
+  "prometheus-client",
   "pyramid_mako"]
 tests = ["lxml", "boltons"]
 all = [
@@ -148,7 +148,7 @@ all = [
   "SQLAlchemy-Utils",
   "zope.interface",
   "zope.sqlalchemy",
-  "prometheus_client",
+  "prometheus-client",
   "pyramid_mako",
   # tests
   "lxml",
@@ -244,12 +244,12 @@ c2cwsgiutils-test-print = "c2cwsgiutils.scripts.test_print:main"
 c2cwsgiutils-check-es = "c2cwsgiutils.scripts.check_es:main"
 
 [project.optional-dependencies]
-standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste"]
+standard = ["alembic", "cornice", "redis", "gunicorn", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "Paste", "prometheus-client"]
 alembic = ["alembic"]
-all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage"]
+all = ["alembic", "boltons", "cornice", "redis", "gunicorn", "lxml", "objgraph", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "sentry-sdk", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyjwt", "requests-oauthlib", "waitress", "pyramid_mako", "psutil", "Paste", "coverage", "prometheus-client"]
 tests = ["boltons", "lxml"]
-webserver = ["cornice", "gunicorn", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako"]
-waitress = ["cornice", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste"]
+webserver = ["cornice", "gunicorn", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "pyramid_mako", "prometheus-client"]
+waitress = ["cornice", "psycopg[binary]<4.0,>=3.2", "pyramid", "pyramid-tm", "SQLAlchemy<3.0.0,>=2.1.0", "SQLAlchemy-Utils", "zope.interface", "zope.sqlalchemy", "waitress", "pyramid_mako", "Paste", "prometheus-client"]
 broadcast = ["redis"]
 debug = ["objgraph", "psutil", "coverage"]
 sentry = ["sentry-sdk"]

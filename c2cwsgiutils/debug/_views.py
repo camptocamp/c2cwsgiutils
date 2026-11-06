@@ -1,6 +1,6 @@
 # Copyright (c) 2026, Camptocamp SA
 
-import datetime
+import datetime as dt
 import gc
 import logging
 import os
@@ -164,10 +164,10 @@ def _error(request: pyramid.request.Request) -> Any:
 def _time(request: pyramid.request.Request) -> Any:
     del request  # unused
     return {
-        "local_time": str(datetime.datetime.now()),  # noqa: DTZ005
-        "gmt_time": str(datetime.datetime.now(datetime.UTC)),
+        "local_time": str(dt.datetime.now()),  # noqa: DTZ005
+        "gmt_time": str(dt.datetime.now(dt.UTC)),
         "epoch": time.time(),
-        "timezone": datetime.datetime.now().astimezone().tzname(),
+        "timezone": dt.datetime.now().astimezone().tzname(),
     }
 
 
